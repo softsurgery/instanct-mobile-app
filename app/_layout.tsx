@@ -17,7 +17,18 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
         {/* Auth */}
-        <Stack.Screen name="index" options={{}} />
+        <Stack.Screen
+          name="index"
+          options={{
+            title: "",
+          }}
+        />
+        <Stack.Screen
+          name="auth/sign-in"
+          options={{
+            title: "Sign In",
+          }}
+        />
       </Stack>
       <PortalHost />
     </ThemeProvider>
