@@ -1,5 +1,5 @@
-import { Signup } from "@/components/auth/Signup";
+import { SignupLayout } from "@/components/auth/SignupLayout";
 
 export default function Screen() {
-  return <Signup />;
+  return <SignupLayout />;
 }

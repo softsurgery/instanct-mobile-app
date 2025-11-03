@@ -20,4 +20,4 @@ export interface RequestClientSignUpDto {
 
 export interface ResponseClientSignupDto {
   user: ResponseClientDto;
- }
+}

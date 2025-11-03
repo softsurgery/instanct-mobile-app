@@ -1,0 +1,8 @@
+{
+  "screens": {
+    "explore": "Explore",
+    "chat": "Chat",
+    "map": "Map",
+    "menu": "Menu"
+  }
+}

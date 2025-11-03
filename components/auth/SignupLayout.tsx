@@ -16,7 +16,7 @@ interface SignupProps {
   className?: string;
 }
 
-export const Signup = ({ className }: SignupProps) => {
+export const SignupLayout = ({ className }: SignupProps) => {
   const navigation = useNavigation<any>();
   const authStore = useAuthStore();
   const { signUpFormStructure } = useSignUpFormStructure({ store: authStore });
@@ -25,7 +25,9 @@ export const Signup = ({ className }: SignupProps) => {
     <StableKeyboardAwareScrollView>
       <View className={cn("flex flex-col justify-center gap-5 p-4", className)}>
         <View className="my-5">
-          <Text className="text-2xl font-extrabold text-center">Create Account</Text>
+          <Text className="text-2xl font-extrabold text-center">
+            Create Account
+          </Text>
           <Text className="text-2xl font-thin text-center">
             Join us and get started!
           </Text>

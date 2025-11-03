@@ -1,14 +1,15 @@
-import OnBoarding from "@/components/OnBoarding";
 import { setAndroidNavigationBar } from "@/lib/android-navigation-bar";
 import { usePreferencePersistStore } from "@/stores/usePreferencePersistStore";
-import { SplashScreen } from "expo-router";
+import { router, SplashScreen } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React from "react";
-import { Platform } from "react-native";
+import { useTranslation } from "react-i18next";
+import { ActivityIndicator, Platform } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function Page() {
+  const { i18n } = useTranslation();
   const { setColorScheme } = useColorScheme();
   const preferencePersistStore = usePreferencePersistStore();
   const isDarkMode = React.useMemo(
@@ -19,6 +20,7 @@ export default function Page() {
     if (preferencePersistStore.isReady) {
       // Set system color scheme
       setColorScheme(preferencePersistStore.theme);
+      i18n.changeLanguage(preferencePersistStore.language);
 
       // Set Android navigation bar
       setAndroidNavigationBar(isDarkMode ? "light" : "dark");
@@ -29,8 +31,9 @@ export default function Page() {
       }
 
       SplashScreen.hideAsync();
+      router.replace("/main");
     }
   }, [preferencePersistStore.theme, preferencePersistStore.isReady]);
 
-  return <OnBoarding />;
+  return <ActivityIndicator className="flex-1" size="large" />;
 }
