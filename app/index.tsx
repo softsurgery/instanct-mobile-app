@@ -1,12 +1,10 @@
-import { Button } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
+import OnBoarding from "@/components/OnBoarding";
 import { setAndroidNavigationBar } from "@/lib/android-navigation-bar";
-import { cn } from "@/lib/utils";
 import { usePreferencePersistStore } from "@/stores/usePreferencePersistStore";
-import { router, SplashScreen } from "expo-router";
+import { SplashScreen } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React from "react";
-import { Platform, View } from "react-native";
+import { Platform } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -34,15 +32,5 @@ export default function Page() {
     }
   }, [preferencePersistStore.theme, preferencePersistStore.isReady]);
 
-  return (
-    <View className={cn("flex flex-col flex-1 items-center justify-center")}>
-      <Button
-        onPress={() => {
-          router.navigate("/auth/sign-in");
-        }}
-      >
-        <Text>Get Started</Text>
-      </Button>
-    </View>
-  );
+  return <OnBoarding />;
 }
