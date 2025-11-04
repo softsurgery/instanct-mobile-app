@@ -9,6 +9,7 @@ import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import StarRating from "react-native-star-rating-widget";
 import { DatePicker } from "./DatePicker";
+import { PictureUploader } from "./PictureUploader";
 import Select from "./Select";
 import { Field, FieldVariant } from "./types";
 
@@ -171,17 +172,19 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           </View>
         </View>
       );
-    // case "picture":
-    //   return (
-    //     <PictureUploader
-    //       {...field?.props}
-    //       image={field?.props?.image}
-    //       onFileChange={field?.props?.onFileChange}
-    //       onUpload={field?.props?.onUpload}
-    //       className={field?.className}
-    //       editable={field?.props?.editable}
-    //     />
-    //   );
+    case "picture":
+      return (
+        <PictureUploader
+          {...field?.props}
+          wrapperClassName={field?.wrapperClassName}
+          className={field?.className}
+          image={field?.props?.image}
+          fallback={field?.props?.alt}
+          onFileChange={field?.props?.onFileChange}
+          onUpload={field?.props?.onUpload}
+          editable={field?.props?.editable}
+        />
+      );
     // case "radio":
     //   return (
     //     <RadioField

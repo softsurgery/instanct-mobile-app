@@ -22,7 +22,8 @@ export interface Field<T = any> {
   id: string;
   label: string;
   className?: string;
-  containerClassName?: string;
+  fieldClassName?: string;
+  wrapperClassName?: string;
   variant: FieldVariant;
   required?: boolean;
   description?: string;

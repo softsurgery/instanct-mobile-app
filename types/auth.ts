@@ -1,4 +1,4 @@
-// import { ResponseClientDto } from "./user-management";
+import { ResponseClientDto } from "./user-management";
 
 export interface ResponseClientSigninDto {
   access_token: string;
@@ -18,6 +18,6 @@ export interface RequestClientSignUpDto {
   password: string;
 }
 
-// export interface ResponseClientSignupDto {
-//   user: ResponseClientDto;
-// }
+export interface ResponseClientSignupDto {
+  user: ResponseClientDto;
+}

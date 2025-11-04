@@ -1,0 +1,68 @@
+import { LucideIcon } from "lucide-react-native";
+import { View } from "react-native";
+import { useRTL } from "~/hooks/useRTL";
+import { cn } from "~/lib/utils";
+import { StablePressable } from "../shared/StablePressable";
+import { Icon } from "../ui/icon";
+import { IconBadge } from "../ui/icon-badge";
+import { Text } from "../ui/text";
+
+type Shortcut =
+  | {
+      icon: LucideIcon;
+      onPress: () => void;
+      badgeText?: string;
+    }
+  | React.ReactNode;
+
+interface ApplicationHeaderProps {
+  className?: string;
+  title: string;
+  shortcuts?: Shortcut[];
+}
+export const ApplicationHeader = ({
+  className,
+  title,
+  shortcuts,
+}: ApplicationHeaderProps) => {
+  const isRTL = useRTL();
+  return (
+    <View
+      className={cn(
+        "flex flex-row justify-between items-center gap-2 px-2",
+        isRTL ? "flex-row-reverse" : "",
+        className
+      )}
+    >
+      <Text variant="h1">{title}</Text>
+      <View className="flex flex-row gap-2">
+        {shortcuts?.map((shortcut, index) => {
+          if (
+            shortcut !== null &&
+            typeof shortcut === "object" &&
+            "icon" in shortcut
+          ) {
+            return (
+              <StablePressable
+                key={index}
+                className="p-1"
+                onPress={shortcut.onPress}
+              >
+                {shortcut.badgeText ? (
+                  <IconBadge
+                    as={shortcut.icon}
+                    size={28}
+                    badgeText={shortcut.badgeText}
+                  />
+                ) : (
+                  <Icon as={shortcut.icon} size={28} />
+                )}
+              </StablePressable>
+            );
+          }
+          return shortcut;
+        })}
+      </View>
+    </View>
+  );
+};
