@@ -81,7 +81,7 @@ export const FormBuilder = React.forwardRef(
                             structure.orientation === "vertical"
                               ? "w-full"
                               : getItemWidth(fieldCount),
-                            field.containerClassName
+                            field.fieldClassName
                           )}
                         >
                           {/* Label */}
@@ -104,10 +104,7 @@ export const FormBuilder = React.forwardRef(
                                 {!field?.error && (
                                   <Text
                                     className={cn(
-                                      "text-md text-gray-500 dark:text-gray-400",
-                                      field.variant === "picture"
-                                        ? "text-center"
-                                        : ""
+                                      "text-md text-gray-500 dark:text-gray-400"
                                     )}
                                   >
                                     {field.description}
