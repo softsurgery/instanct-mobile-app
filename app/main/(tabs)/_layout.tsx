@@ -4,7 +4,7 @@ import { useRTL } from "@/hooks/useRTL";
 import { NAV_THEME } from "@/lib/theme";
 import * as Haptics from "expo-haptics";
 import { Tabs } from "expo-router";
-import { Map, Menu, MessageCircle, Plus, Telescope } from "lucide-react-native";
+import { Map, Menu, MessageCircle, Telescope } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -28,7 +28,7 @@ export default function TabLayout() {
     return (
       <Button
         variant={"link"}
-        className="flex-1 items-center justify-center mt-2"
+        className="flex flex-col flex-1 items-center justify-center mt-5"
         onPress={withHaptic(onPress)}
       >
         {children}
@@ -49,22 +49,7 @@ export default function TabLayout() {
       icon: MessageCircle,
       iconSize: 34,
     },
-    {
-      name: "add_job",
-      customButton: (props: any) => {
-        const { onPress } = props;
-        return (
-          <Button
-            variant="default"
-            className="w-16 h-16 -top-4 rounded-full flex items-center justify-center shadow-lg mx-auto"
-            onPress={withHaptic(onPress)}
-          >
-            <Icon as={Plus} size={32} className="text-white" />
-          </Button>
-        );
-      },
-      hideLabel: true,
-    },
+
     {
       name: "map",
       title: t("screens.map"),
@@ -120,14 +105,12 @@ export default function TabLayout() {
                   />
                 )
               : undefined,
-            tabBarButton: tab.customButton || VibratingTabButton,
-            tabBarLabel: tab.hideLabel ? () => null : undefined,
+            tabBarButton: VibratingTabButton,
             tabBarActiveTintColor: isDarkColorScheme
               ? NAV_THEME.dark.colors.primary
               : NAV_THEME.light.colors.primary,
             tabBarLabelStyle: {
               fontSize: 11,
-              marginTop: 4,
             },
           }}
         />
