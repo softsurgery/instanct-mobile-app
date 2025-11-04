@@ -23,6 +23,23 @@ export default function MainLayout() {
           animationDuration: 200,
         }}
       />
+      <Stack.Screen
+        name="update-profile"
+        options={{
+          title: "My Profile",
+        }}
+      />
+
+      {/* Settings */}
+      <Stack.Screen
+        name="settings"
+        options={{
+          title: "Settings",
+          animation: "fade_from_bottom",
+          animationDuration: 200,
+          headerBackVisible: false,
+        }}
+      />
     </Stack>
   );
 }
