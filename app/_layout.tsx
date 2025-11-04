@@ -8,6 +8,7 @@ import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
 import React from "react";
 import { View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import Toastable from "react-native-toastable";
 import "../global.css";
 import "../i18n";
@@ -30,38 +31,40 @@ export default function RootLayout() {
   if (!ready) return null;
   return (
     <ThemeProvider value={NAV_THEME[colorScheme ?? "light"]}>
-      <QueryClientProvider client={queryClient}>
-        <Toastable position="top" />
-        <StatusBar style={isDarkColorScheme ? "light" : "dark"} translucent />
-        <View className={cn("flex-1", colorScheme)}>
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              contentStyle: {
-                flex: 1,
-                backgroundColor: isDarkColorScheme
-                  ? NAV_THEME.dark.colors.background
-                  : NAV_THEME.light.colors.background,
-              },
-              headerStyle: {
-                backgroundColor: isDarkColorScheme
-                  ? NAV_THEME.dark.colors.card
-                  : NAV_THEME.light.colors.card,
-              },
-              headerTintColor: isDarkColorScheme
-                ? NAV_THEME.dark.colors.text
-                : NAV_THEME.light.colors.text,
-              headerTitleStyle: {
-                fontSize: 20,
-                color: isDarkColorScheme
+      <SafeAreaProvider>
+        <QueryClientProvider client={queryClient}>
+          <Toastable position="top" />
+          <StatusBar style={isDarkColorScheme ? "light" : "dark"} translucent />
+          <View className={cn("flex-1", colorScheme)}>
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                contentStyle: {
+                  flex: 1,
+                  backgroundColor: isDarkColorScheme
+                    ? NAV_THEME.dark.colors.background
+                    : NAV_THEME.light.colors.background,
+                },
+                headerStyle: {
+                  backgroundColor: isDarkColorScheme
+                    ? NAV_THEME.dark.colors.card
+                    : NAV_THEME.light.colors.card,
+                },
+                headerTintColor: isDarkColorScheme
                   ? NAV_THEME.dark.colors.text
                   : NAV_THEME.light.colors.text,
-              },
-            }}
-          />
-          <PortalHost />
-        </View>
-      </QueryClientProvider>
+                headerTitleStyle: {
+                  fontSize: 20,
+                  color: isDarkColorScheme
+                    ? NAV_THEME.dark.colors.text
+                    : NAV_THEME.light.colors.text,
+                },
+              }}
+            />
+            <PortalHost />
+          </View>
+        </QueryClientProvider>
+      </SafeAreaProvider>
     </ThemeProvider>
   );
 }
