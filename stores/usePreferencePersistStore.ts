@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
@@ -21,6 +20,8 @@ const preferencePersistStore: PreferencePersistData = {
 
 let _set: (fn: Partial<PreferencePersistStore>) => void;
 
+const isClient = typeof window !== "undefined";
+
 export const usePreferencePersistStore = create<PreferencePersistStore>()(
   persist(
     (set, get) => {
@@ -29,28 +30,22 @@ export const usePreferencePersistStore = create<PreferencePersistStore>()(
       return {
         ...preferencePersistStore,
         isReady: false,
-        setTheme: (theme) =>
-          set((state) => ({
-            ...state,
-            theme,
-          })),
-        setLanguage: (language) =>
-          set((state) => ({
-            ...state,
-            language,
-          })),
+
+        setTheme: (theme) => set({ theme }),
+        setLanguage: (language) => set({ language }),
         toggleTheme: () =>
           set((state) => ({
-            ...state,
             theme: state.theme === "light" ? "dark" : "light",
           })),
       };
     },
-
     {
       name: "preference-storage",
-      storage: createJSONStorage(() => AsyncStorage),
-
+      storage: createJSONStorage(() =>
+        isClient
+          ? require("@react-native-async-storage/async-storage").default
+          : undefined
+      ),
       onRehydrateStorage: () => {
         return () => {
           _set({ isReady: true });

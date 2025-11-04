@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
@@ -24,9 +23,11 @@ const authPersistStore: AuthPersistData = {
 
 let _set: (fn: Partial<AuthPersistStore>) => void;
 
+const isClient = typeof window !== "undefined";
+
 export const useAuthPersistStore = create<AuthPersistStore>()(
   persist(
-    (set, get) => {
+    (set) => {
       _set = set;
 
       return {
@@ -45,8 +46,11 @@ export const useAuthPersistStore = create<AuthPersistStore>()(
     },
     {
       name: "auth-storage",
-      storage: createJSONStorage(() => AsyncStorage),
-
+      storage: createJSONStorage(() =>
+        isClient
+          ? require("@react-native-async-storage/async-storage").default
+          : undefined
+      ),
       onRehydrateStorage: () => {
         return () => {
           _set({ isReady: true });
