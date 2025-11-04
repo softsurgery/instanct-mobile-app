@@ -2,6 +2,7 @@
   "screens": {
     "explore": "Explorer",
     "chat": "Chat",
+    "like": "Aimer",
     "map": "Carte",
     "menu": "Menu"
   }

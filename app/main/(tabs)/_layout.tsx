@@ -4,7 +4,13 @@ import { useRTL } from "@/hooks/useRTL";
 import { NAV_THEME } from "@/lib/theme";
 import * as Haptics from "expo-haptics";
 import { Tabs } from "expo-router";
-import { Map, Menu, MessageCircle, Telescope } from "lucide-react-native";
+import {
+  Heart,
+  Map,
+  Menu,
+  MessageCircle,
+  Telescope,
+} from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -28,7 +34,7 @@ export default function TabLayout() {
     return (
       <Button
         variant={"link"}
-        className="flex flex-col flex-1 items-center justify-center mt-5"
+        className="flex-1 flex flex-col mt-2"
         onPress={withHaptic(onPress)}
       >
         {children}
@@ -41,26 +47,31 @@ export default function TabLayout() {
       name: "index",
       title: t("screens.explore"),
       icon: Telescope,
-      iconSize: 34,
+      iconSize: 30,
     },
     {
       name: "chat",
       title: t("screens.chat"),
       icon: MessageCircle,
-      iconSize: 34,
+      iconSize: 30,
     },
-
+    {
+      name: "like",
+      title: t("screens.like"),
+      icon: Heart,
+      iconSize: 30,
+    },
     {
       name: "map",
       title: t("screens.map"),
       icon: Map,
-      iconSize: 34,
+      iconSize: 30,
     },
     {
       name: "menu",
       title: t("screens.menu"),
       icon: Menu,
-      iconSize: 34,
+      iconSize: 30,
     },
   ];
 
@@ -93,6 +104,7 @@ export default function TabLayout() {
                   <Icon
                     as={tab.icon}
                     size={tab.iconSize}
+                    className="mt-2"
                     color={
                       focused
                         ? isDarkColorScheme
@@ -111,6 +123,8 @@ export default function TabLayout() {
               : NAV_THEME.light.colors.primary,
             tabBarLabelStyle: {
               fontSize: 11,
+              fontWeight: "bold",
+              marginTop: -4,
             },
           }}
         />
