@@ -23,6 +23,13 @@ export default function MainLayout() {
           animationDuration: 200,
         }}
       />
+      {/* Notification */}
+      <Stack.Screen
+        name="notifications"
+        options={{
+          title: "Notification",
+        }}
+      />
       <Stack.Screen
         name="update-profile"
         options={{
