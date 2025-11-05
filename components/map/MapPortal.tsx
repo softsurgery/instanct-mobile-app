@@ -1,63 +1,64 @@
-import * as Location from "expo-location";
+import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
+import { NearbyUser } from "@/types";
+import { formatDistanceToNow } from "date-fns";
 import React from "react";
-import { ActivityIndicator, View } from "react-native";
-import MapView, { Marker, Region } from "react-native-maps";
+import { ActivityIndicator, Text, View } from "react-native";
+import MapView, { Callout, Marker } from "react-native-maps";
 
-interface MapPortalProps {
-  className?: string;
-}
+export const MapPortal = () => {
+  const { location, nearbyUsers, loading } = useLiveGeolocation({
+    updateInterval: 5,
+    radiusKm: 4,
+  });
 
-export const MapPortal = ({ className }: MapPortalProps) => {
-  const [region, setRegion] = React.useState<Region | null>(null);
-  const [loading, setLoading] = React.useState(true);
-
-  React.useEffect(() => {
-    (async () => {
-      // Ask for permission to access location
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        console.warn("Permission to access location was denied");
-        setLoading(false);
-        return;
-      }
-
-      // Get current position
-      const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
-      });
-
-      const { latitude, longitude } = location.coords;
-      setRegion({
-        latitude,
-        longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      });
-      setLoading(false);
-    })();
-  }, []);
-
-  if (loading) {
+  if (loading || !location)
     return (
       <View className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" />
       </View>
     );
-  }
+
+  const { latitude, longitude } = location.coords;
 
   return (
-    <View className="flex-1">
-      {region && (
-        <MapView
-          className="w-screen h-screen"
-          style={{ flex: 1 }}
-          showsUserLocation={true}
-          followsUserLocation={true}
-          region={region}
+    <MapView
+      style={{ flex: 1 }}
+      showsUserLocation
+      followsUserLocation
+      initialRegion={{
+        latitude,
+        longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      }}
+    >
+      {nearbyUsers.map((u: NearbyUser) => (
+        <Marker
+          key={u.userId}
+          coordinate={{
+            latitude: u.latitude,
+            longitude: u.longitude,
+          }}
+          pinColor={u.isOnline ? "blue" : "gray"}
         >
-          <Marker coordinate={region} title="You are here" />
-        </MapView>
-      )}
-    </View>
+          <Callout>
+            <View>
+              <Text>User {u.userId}</Text>
+              {u.isOnline ? (
+                <Text>🟢 Online</Text>
+              ) : (
+                <Text>
+                  Last seen{" "}
+                  {formatDistanceToNow(new Date(u.updatedAt), {
+                    addSuffix: true,
+                  })}
+                </Text>
+              )}
+              <Text>{(u.distance ?? 0).toFixed(2)} km away</Text>
+            </View>
+          </Callout>
+        </Marker>
+      ))}
+    </MapView>
   );
 };
