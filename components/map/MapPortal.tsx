@@ -1,16 +1,13 @@
-import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
+import { useGeolocationContext } from "@/contexts/GeolocationContext";
 import { NearbyUser } from "@/types";
 import { formatDistanceToNow } from "date-fns";
 import React from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import MapView, { Callout, Marker } from "react-native-maps";
+import { Text } from "../ui/text";
 
 export const MapPortal = () => {
-  const { location, nearbyUsers, loading } = useLiveGeolocation({
-    updateInterval: 5,
-    radiusKm: 4,
-  });
-
+  const { location, nearbyUsers, loading } = useGeolocationContext();
   if (loading || !location)
     return (
       <View className="flex-1 items-center justify-center">
@@ -41,8 +38,8 @@ export const MapPortal = () => {
           }}
           pinColor={u.isOnline ? "blue" : "gray"}
         >
-          <Callout>
-            <View>
+          <Callout className="border bg-red-500">
+            <View className="bg-card">
               <Text>User {u.userId}</Text>
               {u.isOnline ? (
                 <Text>🟢 Online</Text>

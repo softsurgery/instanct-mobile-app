@@ -1,4 +1,6 @@
+import { GeolocationContext } from "@/contexts/GeolocationContext";
 import { NotificationContext } from "@/contexts/NotificationsContext";
+import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
 import { useNotifications } from "@/hooks/content/notification/useNotifications";
 import { NAV_THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
@@ -31,6 +33,10 @@ const queryClient = new QueryClient();
 export default function RootLayout() {
   const { colorScheme } = useColorScheme();
   const { newCount, notifications, resetCount } = useNotifications();
+  const { location, nearbyUsers, loading } = useLiveGeolocation({
+    updateInterval: 5,
+    radiusKm: 4,
+  });
   const [ready, setReady] = React.useState(false);
 
   const isDarkColorScheme = colorScheme === "dark";
@@ -50,39 +56,43 @@ export default function RootLayout() {
           <NotificationContext.Provider
             value={{ newCount, notifications, resetCount }}
           >
-            <Toastable position="top" />
-            <StatusBar
-              style={isDarkColorScheme ? "light" : "dark"}
-              translucent
-            />
-            <View className={cn("flex-1", colorScheme)}>
-              <Stack
-                screenOptions={{
-                  headerShown: false,
-                  contentStyle: {
-                    flex: 1,
-                    backgroundColor: isDarkColorScheme
-                      ? NAV_THEME.dark.colors.background
-                      : NAV_THEME.light.colors.background,
-                  },
-                  headerStyle: {
-                    backgroundColor: isDarkColorScheme
-                      ? NAV_THEME.dark.colors.card
-                      : NAV_THEME.light.colors.card,
-                  },
-                  headerTintColor: isDarkColorScheme
-                    ? NAV_THEME.dark.colors.text
-                    : NAV_THEME.light.colors.text,
-                  headerTitleStyle: {
-                    fontSize: 20,
-                    color: isDarkColorScheme
+            <GeolocationContext.Provider
+              value={{ location, nearbyUsers, loading }}
+            >
+              <Toastable position="top" />
+              <StatusBar
+                style={isDarkColorScheme ? "light" : "dark"}
+                translucent
+              />
+              <View className={cn("flex-1", colorScheme)}>
+                <Stack
+                  screenOptions={{
+                    headerShown: false,
+                    contentStyle: {
+                      flex: 1,
+                      backgroundColor: isDarkColorScheme
+                        ? NAV_THEME.dark.colors.background
+                        : NAV_THEME.light.colors.background,
+                    },
+                    headerStyle: {
+                      backgroundColor: isDarkColorScheme
+                        ? NAV_THEME.dark.colors.card
+                        : NAV_THEME.light.colors.card,
+                    },
+                    headerTintColor: isDarkColorScheme
                       ? NAV_THEME.dark.colors.text
                       : NAV_THEME.light.colors.text,
-                  },
-                }}
-              />
-              <PortalHost />
-            </View>
+                    headerTitleStyle: {
+                      fontSize: 20,
+                      color: isDarkColorScheme
+                        ? NAV_THEME.dark.colors.text
+                        : NAV_THEME.light.colors.text,
+                    },
+                  }}
+                />
+                <PortalHost />
+              </View>
+            </GeolocationContext.Provider>
           </NotificationContext.Provider>
         </QueryClientProvider>
       </SafeAreaProvider>

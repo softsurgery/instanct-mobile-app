@@ -1,8 +1,9 @@
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
+import { disconnectSocket, getSocket } from "@/lib/socket";
 import { NearbyUser } from "@/types";
 import * as Location from "expo-location";
 import React from "react";
-import { io, Socket } from "socket.io-client";
+import { Socket } from "socket.io-client";
 
 interface UseLiveGeolocationOptions {
   updateInterval?: number;
@@ -13,8 +14,9 @@ export function useLiveGeolocation({
   updateInterval = 5,
   radiusKm = 5,
 }: UseLiveGeolocationOptions) {
-  const apiUrl = process.env.EXPO_PUBLIC_API_SOCKET_URL;
+  const apiUrl = process.env.EXPO_PUBLIC_API_SOCKET_URL!;
   const { accessToken } = useAuthPersistStore();
+
   const [nearbyUsers, setNearbyUsers] = React.useState<NearbyUser[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [location, setLocation] =
@@ -30,6 +32,7 @@ export function useLiveGeolocation({
           accuracy: Location.Accuracy.High,
         });
         setLocation(pos);
+
         (socket ?? socketRef.current)?.emit("update_location", {
           latitude: pos.coords.latitude,
           longitude: pos.coords.longitude,
@@ -53,12 +56,7 @@ export function useLiveGeolocation({
         return;
       }
 
-      const socket = io(`${apiUrl}/geolocation`, {
-        extraHeaders: accessToken
-          ? { Authorization: `Bearer ${accessToken}` }
-          : {},
-        transports: ["websocket"],
-      });
+      const socket = getSocket("geolocation", apiUrl, accessToken);
       socketRef.current = socket;
 
       socket.on("connect", async () => {
@@ -74,17 +72,16 @@ export function useLiveGeolocation({
       socket.on("user_moved", (data: NearbyUser) => {
         if (!isMounted) return;
         setNearbyUsers((prev) => {
-          const i = prev.findIndex((u) => u.userId === data.userId);
-          if (i !== -1) {
+          const index = prev.findIndex((u) => u.userId === data.userId);
+          if (index !== -1) {
             const copy = [...prev];
-            copy[i] = { ...copy[i], ...data };
+            copy[index] = { ...copy[index], ...data };
             return copy;
           }
           return [...prev, data];
         });
       });
 
-      // periodic updates
       await updateLocation(socket);
       intervalRef.current = setInterval(
         () => updateLocation(socket),
@@ -95,7 +92,8 @@ export function useLiveGeolocation({
     return () => {
       isMounted = false;
       if (intervalRef.current) clearInterval(intervalRef.current);
-      socketRef.current?.disconnect();
+      disconnectSocket("geolocation");
+      socketRef.current = null;
     };
   }, [accessToken, apiUrl, updateInterval, updateLocation]);
 
