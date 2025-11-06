@@ -46,15 +46,30 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       [name]: value,
     }));
   },
-  setNested: (path, value) => {
+  setNested: (path: string, value: unknown) => {
+    if (!path.includes(".")) {
+      set((state) => ({
+        ...state,
+        [path]: value,
+      }));
+      return;
+    }
+
     const [rootKey, ...restPath] = path.split(".");
     const nestedPath = restPath.join(".");
+
     set((state) => {
+      const rootValue = state[rootKey as keyof AuthData];
+      if (typeof rootValue !== "object" || rootValue === null) {
+        throw new Error(`Cannot set nested path on non-object: ${rootKey}`);
+      }
+
       const updatedRoot = setDeepValue(
-        { ...state[rootKey as keyof AuthData] },
+        { ...(rootValue as object) },
         nestedPath,
         value
       );
+
       return {
         ...state,
         [rootKey]: updatedRoot,
