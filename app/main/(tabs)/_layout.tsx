@@ -34,7 +34,7 @@ export default function TabLayout() {
     return (
       <Button
         variant={"link"}
-        className="flex-1 flex flex-col mt-2"
+        className="flex-1 flex flex-col"
         onPress={withHaptic(onPress)}
       >
         {children}
@@ -104,7 +104,6 @@ export default function TabLayout() {
                   <Icon
                     as={tab.icon}
                     size={tab.iconSize}
-                    className="mt-2"
                     color={
                       focused
                         ? isDarkColorScheme
@@ -124,7 +123,7 @@ export default function TabLayout() {
             tabBarLabelStyle: {
               fontSize: 11,
               fontWeight: "bold",
-              marginTop: -4,
+              margin: "auto",
             },
           }}
         />
