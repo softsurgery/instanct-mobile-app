@@ -1,11 +1,18 @@
 import { setDeepValue } from "@/lib/object";
-import { NearbyUser } from "@/types";
+import { NearbyUser, ResponseClientDto } from "@/types";
 import * as Location from "expo-location";
 import { create } from "zustand";
 
 interface MapData {
+  connected: boolean;
   location: Location.LocationObject | null;
+  users: ResponseClientDto[];
   nearbyUsers: NearbyUser[];
+  reconnection: {
+    reconnecting: boolean;
+    reconnectAttempt: number;
+    reconnectDelay: number;
+  };
   loading: boolean;
 }
 
@@ -14,12 +21,20 @@ interface MapStore extends MapData {
   setNested: <T>(path: string, value: T) => void;
   setNearbyUsers: (prev: NearbyUser[]) => void;
   updateNearbyUser: (data: NearbyUser) => void;
+  getUserById: (id: string) => ResponseClientDto | null;
   reset: () => void;
 }
 
 const initialState: MapData = {
+  connected: false,
   location: null,
+  users: [],
   nearbyUsers: [],
+  reconnection: {
+    reconnecting: false,
+    reconnectAttempt: 0,
+    reconnectDelay: 0,
+  },
   loading: true,
 };
 
@@ -89,6 +104,9 @@ export const useMapStore = create<MapStore>((set, get) => ({
       }
       return { ...state, nearbyUsers: [...state.nearbyUsers, data] };
     });
+  },
+  getUserById: (id: string) => {
+    return get().users.find((u) => u.id === id) ?? null;
   },
   reset: () => {
     set({ ...initialState });

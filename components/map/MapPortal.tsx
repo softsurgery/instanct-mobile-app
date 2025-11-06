@@ -8,6 +8,7 @@ import { ActivityIndicator, View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { MapRenderer } from "./MapRenderer";
+import { MapStatus } from "./MapStatus";
 import { UsersScrollList } from "./UserScrollList/UsersScrollList";
 
 interface MapPortalProps {
@@ -31,14 +32,13 @@ export const MapPortal = ({ className }: MapPortalProps) => {
     <View className={cn("flex-1", className)}>
       <View className="flex-1 relative">
         <View className="absolute inset-0 border-y border-border top-0">
-          {/* 🗺️ Map layer */}
           <MapRenderer
             className="flex-1"
             latitude={latitude}
             longitude={longitude}
             nearbyUsers={mapStore.nearbyUsers}
           />
-          {/* 🧑 Horizontal user scroll list (anchored at bottom) */}
+
           <View className="py-4 absolute bottom-0 left-0 right-0 bg-card/80 rounded-t-2xl">
             <UsersScrollList
               users={mapStore.nearbyUsers}
@@ -47,7 +47,6 @@ export const MapPortal = ({ className }: MapPortalProps) => {
           </View>
         </View>
 
-        {/* 🧭 Floating header */}
         <StableSafeAreaView className="absolute top-0 left-0 right-0 z-20 px-2">
           <ApplicationHeader
             title="Map"
@@ -62,6 +61,7 @@ export const MapPortal = ({ className }: MapPortalProps) => {
               },
             ]}
           />
+          <MapStatus />
         </StableSafeAreaView>
       </View>
     </View>

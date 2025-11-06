@@ -1,20 +1,30 @@
-import { io, Socket } from "socket.io-client";
+import { io, ManagerOptions, Socket, SocketOptions } from "socket.io-client";
 
 type SocketNamespace = "geolocation" | "chat" | "notifications" | string;
 
 const sockets: Record<SocketNamespace, Socket> = {};
 
+interface SocketConfig extends Partial<ManagerOptions & SocketOptions> {
+  token?: string;
+}
+
 export function getSocket(
   namespace: SocketNamespace,
   apiUrl: string,
-  token?: string
+  config: SocketConfig = {}
 ): Socket {
   if (sockets[namespace]) return sockets[namespace];
 
+  const { token, ...options } = config;
+
   const socket = io(`${apiUrl}/${namespace}`, {
-    extraHeaders: token ? { Authorization: `Bearer ${token}` } : {},
     transports: ["websocket"],
-    reconnection: false,
+    extraHeaders: token ? { Authorization: `Bearer ${token}` } : {},
+    reconnection: true,
+    reconnectionAttempts: Infinity,
+    reconnectionDelay: 2000,
+    reconnectionDelayMax: 10000,
+    ...options,
   });
 
   sockets[namespace] = socket;
