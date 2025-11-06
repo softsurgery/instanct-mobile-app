@@ -1,6 +1,6 @@
-import { useGeolocationContext } from "@/contexts/GeolocationContext";
 import { useNotificationContext } from "@/contexts/NotificationsContext";
 import { cn } from "@/lib/utils";
+import { useMapStore } from "@/stores/useMapStore";
 import { router } from "expo-router";
 import { Bell } from "lucide-react-native";
 import React from "react";
@@ -15,44 +15,55 @@ interface MapPortalProps {
 }
 
 export const MapPortal = ({ className }: MapPortalProps) => {
+  const mapStore = useMapStore();
   const { newCount, resetCount } = useNotificationContext();
-  const { location, nearbyUsers, loading } = useGeolocationContext();
-  if (loading || !location)
+
+  if (mapStore.loading || !mapStore.location || !mapStore.location.coords)
     return (
       <View className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" />
       </View>
     );
 
-  const { latitude, longitude } = location.coords;
+  const { latitude, longitude } = mapStore.location.coords;
 
   return (
-    <StableSafeAreaView className={cn("", className)}>
-      <ApplicationHeader
-        title="Map"
-        className="mb-2 mx-2"
-        shortcuts={[
-          {
-            icon: Bell,
-            onPress: () => {
-              router.push("/main/notifications");
-              resetCount();
-            },
-            badgeText: newCount > 0 ? `${newCount}` : undefined,
-          },
-        ]}
-      />
-      <View className="flex-1 flex flex-col justify-between">
-        <MapRenderer
-          className="flex-[8] border-y border-border"
-          latitude={latitude}
-          longitude={longitude}
-          nearbyUsers={nearbyUsers}
-        />
-        <View className="flex-1 bg-card/75">
-          <UsersScrollList users={nearbyUsers} />
+    <View className={cn("flex-1", className)}>
+      <View className="flex-1 relative">
+        <View className="absolute inset-0 border-y border-border top-0">
+          {/* 🗺️ Map layer */}
+          <MapRenderer
+            className="flex-1"
+            latitude={latitude}
+            longitude={longitude}
+            nearbyUsers={mapStore.nearbyUsers}
+          />
+          {/* 🧑 Horizontal user scroll list (anchored at bottom) */}
+          <View className="py-4 absolute bottom-0 left-0 right-0 bg-card/80 rounded-t-2xl">
+            <UsersScrollList
+              users={mapStore.nearbyUsers}
+              className="rounded-full"
+            />
+          </View>
         </View>
+
+        {/* 🧭 Floating header */}
+        <StableSafeAreaView className="absolute top-0 left-0 right-0 z-20 px-2">
+          <ApplicationHeader
+            title="Map"
+            shortcuts={[
+              {
+                icon: Bell,
+                onPress: () => {
+                  router.push("/main/notifications");
+                  resetCount();
+                },
+                badgeText: newCount > 0 ? `${newCount}` : undefined,
+              },
+            ]}
+          />
+        </StableSafeAreaView>
       </View>
-    </StableSafeAreaView>
+    </View>
   );
 };

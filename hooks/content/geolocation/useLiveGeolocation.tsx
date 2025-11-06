@@ -1,5 +1,6 @@
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
 import { disconnectSocket, getSocket } from "@/lib/socket";
+import { useMapStore } from "@/stores/useMapStore";
 import { NearbyUser } from "@/types";
 import * as Location from "expo-location";
 import React from "react";
@@ -16,11 +17,7 @@ export function useLiveGeolocation({
 }: UseLiveGeolocationOptions) {
   const apiUrl = process.env.EXPO_PUBLIC_API_SOCKET_URL!;
   const { accessToken } = useAuthPersistStore();
-
-  const [nearbyUsers, setNearbyUsers] = React.useState<NearbyUser[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [location, setLocation] =
-    React.useState<Location.LocationObject | null>(null);
+  const mapStore = useMapStore();
 
   const socketRef = React.useRef<Socket | null>(null);
   const intervalRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
@@ -31,7 +28,7 @@ export function useLiveGeolocation({
         const pos = await Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.High,
         });
-        setLocation(pos);
+        mapStore.set("location", pos);
 
         (socket ?? socketRef.current)?.emit("update_location", {
           latitude: pos.coords.latitude,
@@ -52,7 +49,7 @@ export function useLiveGeolocation({
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         console.warn("❌ Location permission denied");
-        if (isMounted) setLoading(false);
+        if (isMounted) mapStore.set("loading", false);
         return;
       }
 
@@ -62,24 +59,16 @@ export function useLiveGeolocation({
       socket.on("connect", async () => {
         socket.emit("identify");
         await updateLocation(socket);
-        if (isMounted) setLoading(false);
+        if (isMounted) mapStore.set("loading", false);
       });
 
       socket.on("nearby_users", (users: NearbyUser[]) => {
-        if (isMounted) setNearbyUsers(users);
+        if (isMounted) mapStore.setNearbyUsers(users);
       });
 
       socket.on("user_moved", (data: NearbyUser) => {
         if (!isMounted) return;
-        setNearbyUsers((prev) => {
-          const index = prev.findIndex((u) => u.userId === data.userId);
-          if (index !== -1) {
-            const copy = [...prev];
-            copy[index] = { ...copy[index], ...data };
-            return copy;
-          }
-          return [...prev, data];
-        });
+        mapStore.updateNearbyUser(data);
       });
 
       await updateLocation(socket);
@@ -97,5 +86,5 @@ export function useLiveGeolocation({
     };
   }, [accessToken, apiUrl, updateInterval, updateLocation]);
 
-  return { location, nearbyUsers, loading };
+  return { loading: mapStore.loading };
 }

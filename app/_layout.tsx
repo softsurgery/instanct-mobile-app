@@ -1,4 +1,3 @@
-import { GeolocationContext } from "@/contexts/GeolocationContext";
 import { NotificationContext } from "@/contexts/NotificationsContext";
 import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
 import { useNotifications } from "@/hooks/content/notification/useNotifications";
@@ -33,7 +32,7 @@ const queryClient = new QueryClient();
 export default function RootLayout() {
   const { colorScheme } = useColorScheme();
   const { newCount, notifications, resetCount } = useNotifications();
-  const { location, nearbyUsers, loading } = useLiveGeolocation({
+  useLiveGeolocation({
     updateInterval: 5,
     radiusKm: 4,
   });
@@ -56,43 +55,39 @@ export default function RootLayout() {
           <NotificationContext.Provider
             value={{ newCount, notifications, resetCount }}
           >
-            <GeolocationContext.Provider
-              value={{ location, nearbyUsers, loading }}
-            >
-              <Toastable position="top" />
-              <StatusBar
-                style={isDarkColorScheme ? "light" : "dark"}
-                translucent
-              />
-              <View className={cn("flex-1", colorScheme)}>
-                <Stack
-                  screenOptions={{
-                    headerShown: false,
-                    contentStyle: {
-                      flex: 1,
-                      backgroundColor: isDarkColorScheme
-                        ? NAV_THEME.dark.colors.background
-                        : NAV_THEME.light.colors.background,
-                    },
-                    headerStyle: {
-                      backgroundColor: isDarkColorScheme
-                        ? NAV_THEME.dark.colors.card
-                        : NAV_THEME.light.colors.card,
-                    },
-                    headerTintColor: isDarkColorScheme
+            <Toastable position="top" />
+            <StatusBar
+              style={isDarkColorScheme ? "light" : "dark"}
+              translucent
+            />
+            <View className={cn("flex-1", colorScheme)}>
+              <Stack
+                screenOptions={{
+                  headerShown: false,
+                  contentStyle: {
+                    flex: 1,
+                    backgroundColor: isDarkColorScheme
+                      ? NAV_THEME.dark.colors.background
+                      : NAV_THEME.light.colors.background,
+                  },
+                  headerStyle: {
+                    backgroundColor: isDarkColorScheme
+                      ? NAV_THEME.dark.colors.card
+                      : NAV_THEME.light.colors.card,
+                  },
+                  headerTintColor: isDarkColorScheme
+                    ? NAV_THEME.dark.colors.text
+                    : NAV_THEME.light.colors.text,
+                  headerTitleStyle: {
+                    fontSize: 20,
+                    color: isDarkColorScheme
                       ? NAV_THEME.dark.colors.text
                       : NAV_THEME.light.colors.text,
-                    headerTitleStyle: {
-                      fontSize: 20,
-                      color: isDarkColorScheme
-                        ? NAV_THEME.dark.colors.text
-                        : NAV_THEME.light.colors.text,
-                    },
-                  }}
-                />
-                <PortalHost />
-              </View>
-            </GeolocationContext.Provider>
+                  },
+                }}
+              />
+              <PortalHost />
+            </View>
           </NotificationContext.Provider>
         </QueryClientProvider>
       </SafeAreaProvider>
