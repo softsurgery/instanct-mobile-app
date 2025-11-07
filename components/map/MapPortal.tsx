@@ -39,7 +39,7 @@ export const MapPortal = ({ className }: MapPortalProps) => {
             nearbyUsers={mapStore.nearbyUsers}
           />
 
-          <View className="py-4 absolute bottom-0 left-0 right-0 bg-card/80 rounded-t-2xl">
+          <View className="py-4 absolute bottom-0 left-0 right-0 bg-background/50 rounded-t-2xl">
             <UsersScrollList
               users={mapStore.nearbyUsers}
               className="rounded-full"

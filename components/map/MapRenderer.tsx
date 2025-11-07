@@ -12,6 +12,7 @@ import { Button } from "../ui/button";
 import { Icon } from "../ui/icon";
 import { Text } from "../ui/text";
 import { UserMarker } from "./UserMarker";
+import { AndroidDarkMapStyle } from "./utils/AndroidDarkMapStyle";
 
 const screenHeight = Dimensions.get("window").height;
 
@@ -31,7 +32,6 @@ export const MapRenderer = ({
   nearbyUsers,
 }: MapRendererProps) => {
   const { colorScheme } = useColorScheme();
-  const isDarkColorScheme = colorScheme === "dark";
   const mapRef = React.useRef<MapView>(null);
 
   const [selectedUser, setSelectedUser] = React.useState<NearbyUser | null>(
@@ -84,6 +84,11 @@ export const MapRenderer = ({
           longitudeDelta: 0.01,
         }}
         onRegionChangeComplete={(region) => setCurrentRegion(region)}
+        customMapStyle={
+          colorScheme === "dark" ? AndroidDarkMapStyle : undefined
+        }
+        showsCompass={false}
+        showsMyLocationButton={false}
       >
         {nearbyUsers.map((u) => (
           <UserMarker
@@ -114,9 +119,8 @@ export const MapRenderer = ({
           <TouchableWithoutFeedback>
             <View
               style={{
-                backgroundColor: isDarkColorScheme
-                  ? THEME.dark.card
-                  : THEME.light.card,
+                backgroundColor:
+                  colorScheme === "dark" ? THEME.dark.card : THEME.light.card,
                 borderTopLeftRadius: 20,
                 borderTopRightRadius: 20,
                 padding: 20,

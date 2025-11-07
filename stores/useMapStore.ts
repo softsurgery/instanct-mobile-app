@@ -94,15 +94,27 @@ export const useMapStore = create<MapStore>((set, get) => ({
   },
   updateNearbyUser: (data: NearbyUser) => {
     set((state) => {
-      const index = state.nearbyUsers.findIndex(
-        (u) => u.userId === data.userId
-      );
-      if (index !== -1) {
-        const copy = [...state.nearbyUsers];
-        copy[index] = { ...copy[index], ...data };
-        return { ...state, nearbyUsers: copy };
+      const existing = state.nearbyUsers.find((u) => u.userId === data.userId);
+
+      if (
+        existing &&
+        existing.updatedAt &&
+        data.updatedAt &&
+        data.updatedAt < existing.updatedAt
+      ) {
+        return state;
       }
-      return { ...state, nearbyUsers: [...state.nearbyUsers, data] };
+
+      const copy = [...state.nearbyUsers];
+      const index = copy.findIndex((u) => u.userId === data.userId);
+
+      if (index !== -1) {
+        copy[index] = { ...copy[index], ...data };
+      } else {
+        copy.push(data);
+      }
+
+      return { ...state, nearbyUsers: copy };
     });
   },
   getUserById: (id: string) => {

@@ -1,7 +1,8 @@
+import { api } from "@/api";
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
 import { disconnectSocket, getSocket } from "@/lib/socket";
 import { useMapStore } from "@/stores/useMapStore";
-import { NearbyUser } from "@/types";
+import { NearbyUser, ResponseClientDto } from "@/types";
 import * as Location from "expo-location";
 import React from "react";
 import { Socket } from "socket.io-client";
@@ -44,6 +45,41 @@ export function useLiveGeolocation({
     [radiusKm]
   );
 
+  /** --- 🧩 Fetch and cache new user info when nearby users change --- */
+  const fetchMissingUsers = React.useCallback(
+    async (nearby: NearbyUser[]) => {
+      const existingIds = new Set(mapStore.users.map((u) => u.id));
+      const missing = nearby.filter((u) => !existingIds.has(u.userId));
+
+      if (missing.length === 0) return;
+
+      try {
+        const fetchedUsers = await Promise.all(
+          missing.map(async (u) => {
+            try {
+              const res = await api.client.findById(u.userId);
+              return res as ResponseClientDto;
+            } catch (err) {
+              console.warn(`⚠️ Failed to fetch user ${u.userId}:`, err);
+              return null;
+            }
+          })
+        );
+
+        const valid = fetchedUsers.filter(
+          (u): u is ResponseClientDto => u !== null
+        );
+
+        if (valid.length > 0) {
+          mapStore.set("users", [...mapStore.users, ...valid]);
+        }
+      } catch (err) {
+        console.warn("⚠️ Error fetching missing users:", err);
+      }
+    },
+    [mapStore.users]
+  );
+
   /** --- 🔌 Initialize and manage socket connection --- */
   React.useEffect(() => {
     let isMounted = true;
@@ -68,7 +104,6 @@ export function useLiveGeolocation({
 
       /** 🟢 Connected */
       socket.on("connect", async () => {
-        // console.log("🟢 Connected to geolocation socket");
         socket.emit("identify");
         if (isMounted) {
           mapStore.set("connected", true);
@@ -84,20 +119,12 @@ export function useLiveGeolocation({
 
       /** 🔴 Disconnected */
       socket.on("disconnect", () => {
-        // console.log("🔴 Disconnected from geolocation socket");
         if (isMounted) mapStore.set("connected", false);
       });
 
-      /** 🔁 Reconnection events (safe) */
+      /** 🔁 Reconnection lifecycle */
       socket.io.on("reconnect_attempt", (attempt: number) => {
-        const baseDelay = 2000; // from options
-        const maxDelay = 10000;
-        // approximate backoff manually (Socket.IO uses exponential backoff)
-        const delay = Math.min(
-          baseDelay * Math.pow(1.5, attempt - 1),
-          maxDelay
-        );
-
+        const delay = Math.min(2000 * Math.pow(1.5, attempt - 1), 10000);
         // console.log(`🔁 Reconnect attempt #${attempt} (next in ~${delay}ms)`);
         if (isMounted)
           mapStore.set("reconnection", {
@@ -129,16 +156,40 @@ export function useLiveGeolocation({
         await updateLocation(socket);
       });
 
-      /** 👥 Handle user updates */
-      socket.on("nearby_users", (users: NearbyUser[]) => {
-        if (isMounted) mapStore.setNearbyUsers(users);
+      socket.on("nearby_users", async (users: NearbyUser[]) => {
+        if (!isMounted) return;
+
+        mapStore.setNearbyUsers(users);
+
+        for (const u of users) {
+          const existing = mapStore.getUserById(u.userId);
+          if (!existing) {
+            try {
+              // Fetch once for new users
+              const userResp = await api.client.findById(u.userId);
+              mapStore.set("users", [...mapStore.users, userResp]);
+            } catch (e) {
+              console.warn("Failed to fetch user info:", e);
+            }
+          }
+        }
       });
 
-      socket.on("user_moved", (data: NearbyUser) => {
-        if (isMounted) mapStore.updateNearbyUser(data);
+      socket.on("user_moved", async (data: NearbyUser) => {
+        if (!isMounted) return;
+        mapStore.updateNearbyUser(data);
+
+        const existing = mapStore.getUserById(data.userId);
+        if (!existing) {
+          try {
+            const userResp = await api.client.findById(data.userId);
+            mapStore.set("users", [...mapStore.users, userResp]);
+          } catch (e) {
+            console.warn("Failed to fetch user info:", e);
+          }
+        }
       });
 
-      /** 🕐 Periodically update location */
       await updateLocation(socket);
       intervalRef.current = setInterval(
         () => updateLocation(socket),
@@ -146,7 +197,6 @@ export function useLiveGeolocation({
       );
     })();
 
-    /** 🧹 Cleanup */
     return () => {
       isMounted = false;
       if (intervalRef.current) clearInterval(intervalRef.current);
@@ -154,13 +204,14 @@ export function useLiveGeolocation({
       socketRef.current = null;
       mapStore.set("connected", false);
     };
-  }, [accessToken, apiUrl, updateInterval, updateLocation]);
+  }, [accessToken, apiUrl, updateInterval, updateLocation, fetchMissingUsers]);
 
   return {
     connected: mapStore.connected,
     loading: mapStore.loading,
     reconnection: mapStore.reconnection,
     nearbyUsers: mapStore.nearbyUsers,
+    users: mapStore.users,
     location: mapStore.location,
   };
 }
