@@ -12,9 +12,14 @@ import { UserScrollListEntry } from "./UserScrollListEntry";
 interface UsersScrollListProps {
   className?: string;
   users: NearbyUser[];
+  onUserPress?: (user: any) => void;
 }
 
-export const UsersScrollList = ({ className, users }: UsersScrollListProps) => {
+export const UsersScrollList = ({
+  className,
+  users,
+  onUserPress,
+}: UsersScrollListProps) => {
   const onSearchAvatarPress = () => {
     alert("Search");
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -42,6 +47,7 @@ export const UsersScrollList = ({ className, users }: UsersScrollListProps) => {
           className={cn("mx-1 my-auto")}
           key={item.userId}
           userId={item.userId}
+          onPress={onUserPress}
         />
       ))}
     </ScrollView>

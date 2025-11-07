@@ -8,14 +8,20 @@ import React from "react";
 interface UserScrollListEntryProps {
   className?: string;
   userId: string;
+  onPress?: (user: any) => void;
 }
 
 export const UserScrollListEntry = ({
   className,
   userId,
+  onPress,
 }: UserScrollListEntryProps) => {
   const mapStore = useMapStore();
   const user = React.useMemo(() => mapStore.getUserById(userId), [userId]);
+  const nearbyUser = React.useMemo(
+    () => mapStore.getNearbyUserById(userId),
+    [userId]
+  );
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
   const { jsx: profilePicture } = useServerImage({
     id: user?.profile?.pictureId,
@@ -27,11 +33,9 @@ export const UserScrollListEntry = ({
   return (
     <StablePressable
       className={cn(className)}
-      onPress={() => {
-        alert(JSON.stringify(user, null, 2));
-      }}
+      onPress={() => onPress?.({ ...nearbyUser, user })}
     >
-      {profilePicture}
+      {profilePicture}!
     </StablePressable>
   );
 };

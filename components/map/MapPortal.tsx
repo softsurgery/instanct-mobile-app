@@ -9,7 +9,6 @@ import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { MapRenderer } from "./MapRenderer";
 import { MapStatus } from "./MapStatus";
-import { UsersScrollList } from "./UserScrollList/UsersScrollList";
 
 interface MapPortalProps {
   className?: string;
@@ -38,13 +37,6 @@ export const MapPortal = ({ className }: MapPortalProps) => {
             longitude={longitude}
             nearbyUsers={mapStore.nearbyUsers}
           />
-
-          <View className="py-4 absolute bottom-0 left-0 right-0 bg-background/50 rounded-t-2xl">
-            <UsersScrollList
-              users={mapStore.nearbyUsers}
-              className="rounded-full"
-            />
-          </View>
         </View>
 
         <StableSafeAreaView className="absolute top-0 left-0 right-0 z-20 px-2">

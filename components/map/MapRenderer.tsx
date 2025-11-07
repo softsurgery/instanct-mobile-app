@@ -1,5 +1,6 @@
 import { THEME } from "@/lib/theme";
 import { identifyUser } from "@/lib/user";
+import { useMapStore } from "@/stores/useMapStore";
 import { NearbyUser, ResponseClientDto } from "@/types";
 import { formatDistanceToNow } from "date-fns";
 import { LucideMessageCircle, Search } from "lucide-react-native";
@@ -12,6 +13,7 @@ import { Button } from "../ui/button";
 import { Icon } from "../ui/icon";
 import { Text } from "../ui/text";
 import { UserMarker } from "./UserMarker";
+import { UsersScrollList } from "./UserScrollList/UsersScrollList";
 import { AndroidDarkMapStyle } from "./utils/AndroidDarkMapStyle";
 
 const screenHeight = Dimensions.get("window").height;
@@ -31,6 +33,7 @@ export const MapRenderer = ({
   longitude,
   nearbyUsers,
 }: MapRendererProps) => {
+  const mapStore = useMapStore();
   const { colorScheme } = useColorScheme();
   const mapRef = React.useRef<MapView>(null);
 
@@ -103,6 +106,14 @@ export const MapRenderer = ({
           />
         ))}
       </MapView>
+
+      <View className="py-4 absolute bottom-0 left-0 right-0 bg-background/50 rounded-t-2xl">
+        <UsersScrollList
+          users={mapStore.nearbyUsers}
+          className="rounded-full"
+          onUserPress={(user: any) => handleMarkerPress({ ...user })}
+        />
+      </View>
 
       <Modal
         isVisible={modalVisible}

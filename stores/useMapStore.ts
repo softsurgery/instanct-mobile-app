@@ -22,6 +22,7 @@ interface MapStore extends MapData {
   setNearbyUsers: (prev: NearbyUser[]) => void;
   updateNearbyUser: (data: NearbyUser) => void;
   getUserById: (id: string) => ResponseClientDto | null;
+  getNearbyUserById: (id: string) => NearbyUser | null;
   reset: () => void;
 }
 
@@ -119,6 +120,9 @@ export const useMapStore = create<MapStore>((set, get) => ({
   },
   getUserById: (id: string) => {
     return get().users.find((u) => u.id === id) ?? null;
+  },
+  getNearbyUserById: (id: string) => {
+    return get().nearbyUsers.find((u) => u.userId === id) ?? null;
   },
   reset: () => {
     set({ ...initialState });
