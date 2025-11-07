@@ -59,16 +59,13 @@ export default function Select({
       >
         <Input
           pointerEvents="none"
-          editable={false}
           value={selectedOption?.label || ""}
           placeholder={placeholder || "Select an option"}
           className="pr-10 cursor-pointer"
         />
-        <Icon
-          as={ChevronDown}
-          size={18}
-          className="absolute right-3 text-muted-foreground"
-        />
+        <View className="absolute right-3 text-muted-foreground">
+          <Icon as={ChevronDown} size={18} />
+        </View>
       </TouchableOpacity>
       <Modal
         isVisible={visible}
