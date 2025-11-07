@@ -1,7 +1,9 @@
 import { cn } from "@/lib/utils";
 import React from "react";
 import { Dimensions, View } from "react-native";
+import { useSharedValue } from "react-native-reanimated";
 import Carousel from "react-native-reanimated-carousel";
+import { AnimatedDot } from "./AnimatedDot";
 import { PremiumCard } from "./PremiumCard";
 
 interface PremiumCarouselProps {
@@ -11,6 +13,7 @@ interface PremiumCarouselProps {
 const { width } = Dimensions.get("window");
 
 export const PremiumCarousel = ({ className }: PremiumCarouselProps) => {
+  const progress = useSharedValue<number>(0);
   const premiumTiers = [
     {
       title: "Instanct",
@@ -51,7 +54,7 @@ export const PremiumCarousel = ({ className }: PremiumCarouselProps) => {
     <View className={cn("flex items-center justify-center", className)}>
       <Carousel
         width={width}
-        height={420}
+        height={280}
         data={premiumTiers}
         renderItem={({ item }) => <PremiumCard {...item} />}
         mode="parallax"
@@ -59,7 +62,15 @@ export const PremiumCarousel = ({ className }: PremiumCarouselProps) => {
         autoPlay
         autoPlayInterval={3500}
         scrollAnimationDuration={900}
+        onProgressChange={(_, absoluteProgress) => {
+          progress.value = absoluteProgress;
+        }}
       />
+      <View className="flex flex-row space-x-2">
+        {premiumTiers.map((_, index) => (
+          <AnimatedDot key={index} index={index} progress={progress} />
+        ))}
+      </View>
     </View>
   );
 };

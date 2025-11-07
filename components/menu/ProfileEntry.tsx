@@ -54,11 +54,7 @@ export const ProfileEntry = ({ className }: ProfileEntryProps) => {
           </Button>
         </View>
       </View>
-      <View className="flex flex-row gap-4">
-        <Button className="flex-1" onPress={() => refetchCurrentUser()}>
-          <Text>Refresh</Text>
-        </Button>
-      </View>
+
       <PremiumCarousel />
     </View>
   );
