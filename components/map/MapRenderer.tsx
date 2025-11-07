@@ -1,22 +1,14 @@
-import { THEME } from "@/lib/theme";
-import { identifyUser } from "@/lib/user";
 import { useMapStore } from "@/stores/useMapStore";
 import { NearbyUser, ResponseClientDto } from "@/types";
-import { formatDistanceToNow } from "date-fns";
-import { LucideMessageCircle, Search } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import React from "react";
-import { Dimensions, TouchableWithoutFeedback, View } from "react-native";
+import { View } from "react-native";
 import MapView, { Region } from "react-native-maps";
 import Modal from "react-native-modal";
-import { Button } from "../ui/button";
-import { Icon } from "../ui/icon";
-import { Text } from "../ui/text";
 import { UserMarker } from "./UserMarker";
+import { UserModalContent } from "./UserModalContent";
 import { UsersScrollList } from "./UserScrollList/UsersScrollList";
 import { AndroidDarkMapStyle } from "./utils/AndroidDarkMapStyle";
-
-const screenHeight = Dimensions.get("window").height;
 
 interface MapRendererProps {
   className?: string;
@@ -126,56 +118,7 @@ export const MapRenderer = ({
         }}
         backdropOpacity={0}
       >
-        {selectedUser && (
-          <TouchableWithoutFeedback>
-            <View
-              style={{
-                backgroundColor:
-                  colorScheme === "dark" ? THEME.dark.card : THEME.light.card,
-                borderTopLeftRadius: 20,
-                borderTopRightRadius: 20,
-                padding: 20,
-                minHeight: screenHeight * 0.25,
-              }}
-            >
-              <View className="w-12 h-1.5 bg-muted-foreground/40 self-center rounded-full mb-4" />
-              <View className="flex-row items-center gap-3">
-                {selectedUser.profilePicture}
-                <View>
-                  <Text className="text-lg font-semibold">
-                    {identifyUser(selectedUser.user) ??
-                      `User ${selectedUser.userId}`}
-                  </Text>
-
-                  {selectedUser.isOnline ? (
-                    <Text className="text-green-600">Online</Text>
-                  ) : (
-                    <Text>
-                      Last seen{" "}
-                      {formatDistanceToNow(new Date(selectedUser.updatedAt), {
-                        addSuffix: true,
-                      })}
-                    </Text>
-                  )}
-
-                  <Text className="text-sm mt-1">
-                    {(selectedUser.distance ?? 0).toFixed(2)} km away
-                  </Text>
-                </View>
-              </View>
-              <View className="flex flex-row items-center justify-between gap-2 my-4">
-                <Button size="sm" className="flex-1">
-                  <Icon as={Search} size={24} />
-                  <Text>View profile</Text>
-                </Button>
-                <Button variant={"secondary"} size="sm" className="flex-1">
-                  <Icon as={LucideMessageCircle} size={24} />
-                  <Text>Send message</Text>
-                </Button>
-              </View>
-            </View>
-          </TouchableWithoutFeedback>
-        )}
+        {selectedUser && <UserModalContent nearbyUser={selectedUser} />}
       </Modal>
     </View>
   );

@@ -35,7 +35,7 @@ export const UserScrollListEntry = ({
       className={cn(className)}
       onPress={() => onPress?.({ ...nearbyUser, user })}
     >
-      {profilePicture}!
+      {profilePicture}
     </StablePressable>
   );
 };
