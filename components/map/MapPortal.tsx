@@ -1,8 +1,9 @@
+import { useMapContext } from "@/contexts/MapContext";
 import { useNotificationContext } from "@/contexts/NotificationsContext";
 import { cn } from "@/lib/utils";
 import { useMapStore } from "@/stores/useMapStore";
 import { router } from "expo-router";
-import { Bell } from "lucide-react-native";
+import { Bell, RefreshCcw } from "lucide-react-native";
 import React from "react";
 import { ActivityIndicator, View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
@@ -17,6 +18,7 @@ interface MapPortalProps {
 export const MapPortal = ({ className }: MapPortalProps) => {
   const mapStore = useMapStore();
   const { newCount, resetCount } = useNotificationContext();
+  const { restartSocket } = useMapContext();
 
   if (mapStore.loading || !mapStore.location || !mapStore.location.coords)
     return (
@@ -43,6 +45,13 @@ export const MapPortal = ({ className }: MapPortalProps) => {
           <ApplicationHeader
             title="Map"
             shortcuts={[
+              {
+                icon: RefreshCcw,
+                onPress: () => {
+                  mapStore.set("nearbyUsers", []);
+                  restartSocket();
+                },
+              },
               {
                 icon: Bell,
                 onPress: () => {

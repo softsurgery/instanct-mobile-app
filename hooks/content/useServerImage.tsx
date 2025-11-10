@@ -30,14 +30,11 @@ export const useServerImage = ({
     queryKey: ["server-image", id],
     queryFn: async () => api.upload.getUploadById(id!),
     enabled: !!id && enabled,
-    staleTime: Infinity,
-    retry: false,
   });
 
   const upload = React.useMemo(() => uploadResp ?? null, [uploadResp]);
 
   const jsx = React.useMemo(() => {
-    // 1️⃣ Server image loaded → show Image
     if (upload && !isUploadPending) {
       return (
         <Image

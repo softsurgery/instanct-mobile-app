@@ -17,13 +17,20 @@ interface MapData {
 }
 
 interface MapStore extends MapData {
+  //common
   set: <K extends keyof MapData>(name: K, value: MapData[K]) => void;
   setNested: <T>(path: string, value: T) => void;
+  reset: () => void;
+  //additional
+  addNearbyUser: (user: NearbyUser) => void;
+  addUser: (user: ResponseClientDto) => void;
+
   setNearbyUsers: (prev: NearbyUser[]) => void;
+  setUsers: (prev: ResponseClientDto[]) => void;
   updateNearbyUser: (data: NearbyUser) => void;
+
   getUserById: (id: string) => ResponseClientDto | null;
   getNearbyUserById: (id: string) => NearbyUser | null;
-  reset: () => void;
 }
 
 const initialState: MapData = {
@@ -75,6 +82,40 @@ export const useMapStore = create<MapStore>((set, get) => ({
         ...state,
         [rootKey]: updatedRoot,
       };
+    });
+  },
+  addNearbyUser: (user: NearbyUser) => {
+    set((state) => {
+      const existing = state.nearbyUsers.find((u) => u.userId === user.userId);
+      if (existing) return state;
+      const updated = [...state.nearbyUsers];
+      updated.push(user);
+      return { ...state, nearbyUsers: updated };
+    });
+  },
+  addUser: (user: ResponseClientDto) => {
+    set((state) => {
+      const existing = state.users.find((u) => u.id === user.id);
+      if (existing) return state;
+      const updated = [...state.users];
+      updated.push(user);
+      return { ...state, users: updated };
+    });
+  },
+  setUsers: (users: ResponseClientDto[]) => {
+    set((state) => {
+      const updated = [...state.users];
+
+      for (const newUser of users) {
+        const index = updated.findIndex((u) => u.id === newUser.id);
+        if (index !== -1) {
+          updated[index] = { ...updated[index], ...newUser };
+        } else {
+          updated.push(newUser);
+        }
+      }
+
+      return { ...state, users: updated };
     });
   },
   setNearbyUsers: (users: NearbyUser[]) => {

@@ -24,3 +24,9 @@ export interface NearbyUser {
   profilePicture?: React.ReactNode;
   updatedAt: string;
 }
+
+export interface Cluster {
+  latitude: number;
+  longitude: number;
+  users: NearbyUser[];
+}

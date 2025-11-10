@@ -21,8 +21,10 @@ export const MapStatus = ({ className }: MapStatusProps) => {
         {mapStore.connected ? "Online" : "Offline"}
       </Text>{" "}
       {!mapStore.connected && (
-        <Text className={cn("text-xs font-bold text-red-500")}>
-          Reconnecting ({mapStore.reconnection.reconnectAttempt})
+        <Text
+          className={cn("text-xs font-bold text-gray-200 dark:text-gray-400")}
+        >
+          / Reconnecting ({mapStore.reconnection.reconnectAttempt})
         </Text>
       )}
     </Text>
