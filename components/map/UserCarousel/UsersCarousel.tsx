@@ -7,19 +7,19 @@ import * as Haptics from "expo-haptics";
 import { Search } from "lucide-react-native";
 import React from "react";
 import { ScrollView } from "react-native";
-import { UserScrollListEntry } from "./UserScrollListEntry";
+import { UserCarouselEntry } from "./UserCarouselEntry";
 
-interface UsersScrollListProps {
+interface UsersCarouselProps {
   className?: string;
   users: NearbyUser[];
   onUserPress?: (user: any) => void;
 }
 
-export const UsersScrollList = ({
+export const UsersCarousel = ({
   className,
   users,
   onUserPress,
-}: UsersScrollListProps) => {
+}: UsersCarouselProps) => {
   const onSearchAvatarPress = () => {
     alert("Search");
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -43,7 +43,7 @@ export const UsersScrollList = ({
         </Avatar>
       </StablePressable>
       {users.map((item, index) => (
-        <UserScrollListEntry
+        <UserCarouselEntry
           className={cn("mx-1 my-auto")}
           key={item.userId}
           userId={item.userId}

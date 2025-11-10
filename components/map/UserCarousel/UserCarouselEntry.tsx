@@ -5,17 +5,17 @@ import { cn } from "@/lib/utils";
 import { useMapStore } from "@/stores/useMapStore";
 import React from "react";
 
-interface UserScrollListEntryProps {
+interface UserCarouselEntryProps {
   className?: string;
   userId: string;
   onPress?: (user: any) => void;
 }
 
-export const UserScrollListEntry = ({
+export const UserCarouselEntry = ({
   className,
   userId,
   onPress,
-}: UserScrollListEntryProps) => {
+}: UserCarouselEntryProps) => {
   const mapStore = useMapStore();
   const user = React.useMemo(() => mapStore.getUserById(userId), [userId]);
   const nearbyUser = React.useMemo(

@@ -5,9 +5,9 @@ import React from "react";
 import { View } from "react-native";
 import MapView, { Region } from "react-native-maps";
 import Modal from "react-native-modal";
+import { UsersCarousel } from "./UserCarousel/UsersCarousel";
 import { UserMarker } from "./UserMarker";
 import { UserModalContent } from "./UserModalContent";
-import { UsersScrollList } from "./UserScrollList/UsersScrollList";
 import { UsersMarker } from "./UsersMarker";
 import { AndroidDarkMapStyle } from "./utils/AndroidDarkMapStyle";
 import { groupUsers } from "./utils/grouping";
@@ -131,7 +131,7 @@ export const MapRenderer = ({
       </MapView>
 
       <View className="py-4 absolute bottom-0 left-0 right-0 bg-background/50 rounded-t-2xl">
-        <UsersScrollList
+        <UsersCarousel
           users={mapStore.nearbyUsers}
           className="rounded-full"
           onUserPress={(user: any) => handleMarkerPress({ ...user })}
