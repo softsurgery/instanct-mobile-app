@@ -1,4 +1,4 @@
-import { useCurrentUser } from "@/hooks/content/useCurrentUser";
+import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { useServerImage } from "@/hooks/content/useServerImage";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import { cn } from "@/lib/utils";
