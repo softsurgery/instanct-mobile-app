@@ -1,5 +1,4 @@
 import { NotificationContext } from "@/contexts/NotificationsContext";
-import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
 import { useNotifications } from "@/hooks/content/notification/useNotifications";
 import { NAV_THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
@@ -32,10 +31,7 @@ const queryClient = new QueryClient();
 export default function RootLayout() {
   const { colorScheme } = useColorScheme();
   const { newCount, notifications, resetCount } = useNotifications();
-  useLiveGeolocation({
-    updateInterval: 5,
-    radiusKm: 4,
-  });
+
   const [ready, setReady] = React.useState(false);
 
   const isDarkColorScheme = colorScheme === "dark";
