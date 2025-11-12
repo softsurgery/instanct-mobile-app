@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { View } from "react-native";
+import { ThemeToggle } from "../ThemeToggle";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
 
@@ -24,6 +25,7 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
       <Text variant={"lead"}>Discovery</Text>
       <Text variant={"lead"}>Global</Text>
       <Text variant={"lead"}>Legal</Text>
+      <ThemeToggle className="my-4" />
       <Button variant={"destructive"} onPress={logout}>
         <Text>Logout</Text>
       </Button>
