@@ -1,0 +1,10 @@
+{
+  "titles": {
+    "TEST": "This is a test notification",
+    "NEW_SIGNIN": "New Sign-in!"
+  },
+  "descriptions": {
+    "TEST": "This is a test notification description designed to verify that the notification system is working properly.",
+    "NEW_SIGNIN": "We noticed a new sigin from a new device"
+  }
+}
