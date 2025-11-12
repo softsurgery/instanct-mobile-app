@@ -45,7 +45,7 @@ export const UserMarker = ({
     id: user?.profile?.pictureId,
     fallback,
     className: "rounded-full",
-    size: { width: 48, height: 48 },
+    size: { width: 50, height: 50 },
   });
 
   const { scale, opacity } = usePulseAnimation({ active: isOnline });

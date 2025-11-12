@@ -17,7 +17,10 @@ export const UserCarouselEntry = ({
   onPress,
 }: UserCarouselEntryProps) => {
   const mapStore = useMapStore();
-  const user = React.useMemo(() => mapStore.getUserById(userId), [userId]);
+  const user = React.useMemo(
+    () => mapStore.getUserById(userId),
+    [userId, mapStore.users]
+  );
   const nearbyUser = React.useMemo(
     () => mapStore.getNearbyUserById(userId),
     [userId]

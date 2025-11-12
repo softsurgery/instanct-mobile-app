@@ -4,8 +4,9 @@ import { identifyUserAvatar } from "@/lib/user";
 import { useMapStore } from "@/stores/useMapStore";
 import { NearbyUser } from "@/types";
 import React from "react";
-import { Animated, Text, View } from "react-native";
+import { Animated, View } from "react-native";
 import { Marker } from "react-native-maps";
+import { Text } from "../ui/text";
 
 interface UsersMarkerProps {
   nearbyUsers: NearbyUser[];
@@ -29,7 +30,7 @@ export const UsersMarker = ({
   const { jsxArray: userPictures } = useServerImages({
     ids: users.map((u) => u?.profile?.pictureId),
     className: "rounded-full",
-    size: { width: 40, height: 40 },
+    size: { width: 50, height: 50 },
     fallbacks: users.map((u) => identifyUserAvatar(u)),
   });
 
@@ -52,13 +53,13 @@ export const UsersMarker = ({
         />
       )}
 
-      <View className="w-16 h-12 flex-row items-center relative">
+      <View className="w-16 h-12 flex flex-row items-center">
         {displayUsers.map((user, index) => (
           <View
             key={user.id}
             className="absolute"
             style={{
-              left: index * 16,
+              left: index * 25,
               zIndex: displayUsers.length - index,
             }}
           >
@@ -68,12 +69,10 @@ export const UsersMarker = ({
 
         {users.length > 3 && (
           <View
-            className="absolute top-2 w-9 h-9 rounded-full bg-green-500 items-center justify-center"
-            style={{ left: displayUsers.length, zIndex: 10 }}
+            className="w-12 h-12 rounded-full bg-card border border-foreground items-center justify-center"
+            style={{ zIndex: 10 }}
           >
-            <Text className="text-white font-bold text-xs">
-              +{users.length - 3}
-            </Text>
+            <Text className="font-bold">+ {users.length - 3}</Text>
           </View>
         )}
       </View>

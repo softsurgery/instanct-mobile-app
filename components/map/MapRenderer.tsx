@@ -71,11 +71,6 @@ export const MapRenderer = ({
     groupUsers(nearbyUsers, (currentRegion?.latitudeDelta || 0) * 5000)
   );
 
-  // const clusters = React.useMemo(
-  //   () => groupUsers(nearbyUsers, (currentRegion?.latitudeDelta || 0) * 5000),
-  //   [nearbyUsers, currentRegion]
-  // );
-
   return (
     <View className={className}>
       <MapView
@@ -87,9 +82,6 @@ export const MapRenderer = ({
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         }}
-        // onRegionChangeComplete={(region) => {
-        //   setCurrentRegion(region);
-        // }}
         customMapStyle={
           colorScheme === "dark" ? AndroidDarkMapStyle : undefined
         }
@@ -134,7 +126,7 @@ export const MapRenderer = ({
         <UsersCarousel
           users={mapStore.nearbyUsers}
           className="rounded-full"
-          onUserPress={(user: any) => handleMarkerPress({ ...user })}
+          onUserPress={(user) => handleMarkerPress({ ...user })}
         />
       </View>
 
