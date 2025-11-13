@@ -3,9 +3,11 @@ import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import { cn } from "@/lib/utils";
 import { NearbyUser } from "@/types";
 import { formatDistanceToNow } from "date-fns";
+import { router } from "expo-router";
 import { Calendar, LucideMessageCircle } from "lucide-react-native";
 import React from "react";
 import { TouchableWithoutFeedback, View } from "react-native";
+import { StablePressable } from "../shared/StablePressable";
 import { Button } from "../ui/button";
 import { Icon } from "../ui/icon";
 import { Text } from "../ui/text";
@@ -13,11 +15,13 @@ import { Text } from "../ui/text";
 interface UserModalContentProps {
   className?: string;
   nearbyUser: NearbyUser;
+  closeModal?: () => void;
 }
 
 export const UserModalContent = ({
   className,
   nearbyUser,
+  closeModal,
 }: UserModalContentProps) => {
   const identification = React.useMemo(
     () => identifyUser(nearbyUser.user),
@@ -40,7 +44,17 @@ export const UserModalContent = ({
       <View className={cn("bg-card rounded-t-2xl p-4 pb-8 ", className)}>
         <View className="w-12 h-1.5 bg-muted-foreground/40 self-center rounded-full mb-4" />
         <View className="flex-row items-center gap-3">
-          {profilePicture}
+          <StablePressable
+            onPress={() => {
+              closeModal?.();
+              router.push({
+                pathname: "/main/inspect-profile",
+                params: { id: nearbyUser?.user?.id },
+              });
+            }}
+          >
+            {profilePicture}
+          </StablePressable>
           <View>
             <Text className="text-lg font-semibold">{identification}</Text>
 

@@ -4,7 +4,13 @@ import React from "react";
 
 export default function AuthLayout() {
   return (
-    <Stack>
+    <Stack
+      screenOptions={{
+        contentStyle: {
+          flex: 1,
+        },
+      }}
+    >
       <Stack.Screen
         name="sign-in"
         options={{

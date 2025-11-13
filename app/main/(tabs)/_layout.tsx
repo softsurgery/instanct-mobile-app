@@ -34,7 +34,7 @@ export default function TabLayout() {
     return (
       <Button
         variant={"link"}
-        className="flex-1 flex flex-col"
+        className="flex-1 flex flex-col mt-2"
         onPress={withHaptic(onPress)}
       >
         {children}
@@ -123,7 +123,6 @@ export default function TabLayout() {
             tabBarLabelStyle: {
               fontSize: 11,
               fontWeight: "bold",
-              margin: "auto",
             },
           }}
         />

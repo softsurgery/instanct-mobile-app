@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
 import { Image, ImageSource } from "expo-image";
 import React from "react";
+import { View } from "react-native";
 import { api } from "~/api";
 import {
   Avatar,
@@ -15,6 +16,7 @@ interface UseServerImagesProps {
   ids: (number | undefined)[];
   fallbacks?: (string | React.ReactNode | ImageSource | undefined)[];
   size: { width: number; height: number };
+  wrapperClassName?: string;
   className?: string;
   enabled?: boolean;
 }
@@ -24,6 +26,7 @@ export const useServerImages = ({
   fallbacks = [],
   size,
   className,
+  wrapperClassName,
   enabled = true,
 }: UseServerImagesProps) => {
   const queries = useQueries({
@@ -45,17 +48,26 @@ export const useServerImages = ({
 
       if (upload && !q.isPending) {
         return (
-          <Image
+          <View
             key={id}
-            source={upload}
+            className={cn(wrapperClassName, "flex items-center justify-center")}
             style={{
-              width: size.width,
-              height: size.height,
+              width: size.width * 1.05,
+              height: size.height * 1.05,
               borderRadius: size.width / 2,
             }}
-            className={cn(className)}
-            contentFit="cover"
-          />
+          >
+            <Image
+              className={cn(className)}
+              source={upload}
+              style={{
+                width: size.width,
+                height: size.height,
+                borderRadius: size.width / 2,
+              }}
+              contentFit="cover"
+            />
+          </View>
         );
       }
 
@@ -78,17 +90,26 @@ export const useServerImages = ({
         ("uri" in fallback || typeof fallback === "number")
       ) {
         return (
-          <Image
+          <View
             key={id}
-            source={fallback as ImageSource}
-            className={cn(className)}
+            className={cn(wrapperClassName, "flex items-center justify-center")}
             style={{
-              width: size.width,
-              height: size.height,
+              width: size.width * 1.05,
+              height: size.height * 1.05,
               borderRadius: size.width / 2,
             }}
-            contentFit="cover"
-          />
+          >
+            <Image
+              source={fallback as ImageSource}
+              className={cn(className)}
+              style={{
+                width: size.width,
+                height: size.height,
+                borderRadius: size.width / 2,
+              }}
+              contentFit="cover"
+            />
+          </View>
         );
       }
 

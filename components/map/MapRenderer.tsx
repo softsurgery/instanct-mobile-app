@@ -141,7 +141,12 @@ export const MapRenderer = ({
         }}
         backdropOpacity={0}
       >
-        {selectedUser && <UserModalContent nearbyUser={selectedUser} />}
+        {selectedUser && (
+          <UserModalContent
+            nearbyUser={selectedUser}
+            closeModal={handleCloseModal}
+          />
+        )}
       </Modal>
     </View>
   );

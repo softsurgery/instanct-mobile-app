@@ -10,7 +10,13 @@ export default function MainLayout() {
   });
   return (
     <MapContext.Provider value={{ restartSocket }}>
-      <Stack>
+      <Stack
+        screenOptions={{
+          contentStyle: {
+            flex: 1,
+          },
+        }}
+      >
         <Stack.Screen
           name="index"
           options={{
@@ -35,6 +41,14 @@ export default function MainLayout() {
           name="notifications"
           options={{
             title: "Notification",
+          }}
+        />
+        {/* Profile */}
+        <Stack.Screen
+          name="inspect-profile"
+          options={{
+            title: "",
+            headerShown: false,
           }}
         />
         <Stack.Screen
