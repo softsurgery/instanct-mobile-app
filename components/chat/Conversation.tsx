@@ -1,0 +1,287 @@
+import {
+  differenceInCalendarDays,
+  format,
+  isToday,
+  isYesterday,
+} from "date-fns";
+import { ImageBackground } from "expo-image";
+import React from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  Text,
+  View,
+} from "react-native";
+import { io } from "socket.io-client";
+
+import { useQuery } from "@tanstack/react-query";
+
+import { StableSafeAreaView } from "../shared/StableSafeAreaView";
+import { ChatBubble } from "./conversation/ChatBubble";
+import { ChatHeaderLeft } from "./conversation/ChatHeaderLeft";
+import { ChatHeaderRight } from "./conversation/ChatHeaderRight";
+
+import { api } from "~/api";
+import { useServerImage } from "~/hooks/content/useServerImage";
+
+import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
+import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
+import { useDebounce } from "@/hooks/useDebounce";
+import { identifyUser, identifyUserAvatar } from "@/lib/user";
+import { usePreferencePersistStore } from "@/stores/usePreferencePersistStore";
+import { ResponseMessageDto } from "~/types";
+import { ConversationInput } from "./conversation/ConversationInput";
+
+interface ConversationProps {
+  id: number;
+}
+
+const CHAT_SERVER_URL = process.env.EXPO_PUBLIC_API_SOCKET_URL;
+
+type FlatListItem =
+  | { type: "header"; date: string }
+  | { type: "message"; message: ResponseMessageDto };
+
+export const Conversation = ({ id }: ConversationProps) => {
+  const authPersistStore = useAuthPersistStore();
+  const preferencePersistStore = usePreferencePersistStore();
+  const { currentUser } = useCurrentUser();
+
+  const [socket, setSocket] = React.useState<any>(null);
+  const [messages, setMessages] = React.useState<ResponseMessageDto[]>([]);
+  const [loadingMore, setLoadingMore] = React.useState(false);
+  const [hasMore, setHasMore] = React.useState(true);
+  const [input, setInput] = React.useState("");
+  const [isInitialMessagesLoading, setIsInitialMessagesLoading] =
+    React.useState(true);
+  const { value: debouncedIsInitialMessagesLoading, loading: isLoading } =
+    useDebounce(isInitialMessagesLoading, 1000);
+
+  const { data: conversation, isPending: isConversationLoading } = useQuery({
+    queryKey: ["conversation", id],
+    queryFn: () => api.chat.conversation.findById(id),
+  });
+
+  const user = React.useMemo(() => {
+    if (!conversation || !currentUser) return null;
+    return conversation.participants.find(
+      (participant) => participant.id !== currentUser.id
+    );
+  }, [conversation, currentUser]);
+
+  const { jsx: profilePicture } = useServerImage({
+    id: user?.profile?.pictureId,
+    fallback: identifyUserAvatar(user),
+    size: { width: 40, height: 40 },
+    enabled: !!user?.profile?.pictureId,
+  });
+
+  // -----------------------------
+  // Message grouping by day
+  // -----------------------------
+  const groupMessagesByDay = React.useCallback(
+    (msgs: ResponseMessageDto[]): FlatListItem[] => {
+      // Sort messages descending
+      const sorted = [...msgs].sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+
+      const grouped: Record<string, ResponseMessageDto[]> = {};
+      sorted.forEach((msg) => {
+        const dateKey = format(new Date(msg.createdAt), "yyyy-MM-dd");
+        if (!grouped[dateKey]) grouped[dateKey] = [];
+        grouped[dateKey].push(msg);
+      });
+
+      // Create headers dynamically
+      return Object.entries(grouped).flatMap(([date, msgs]) => {
+        const dateObj = new Date(date);
+        let label: string;
+
+        if (isToday(dateObj)) label = "Today";
+        else if (isYesterday(dateObj)) label = "Yesterday";
+        else {
+          const diff = differenceInCalendarDays(new Date(), dateObj);
+          if (diff <= 4) label = `${diff} days ago`;
+          else label = format(dateObj, "MMMM dd, yyyy");
+        }
+
+        return [
+          ...msgs.map((msg) => ({ type: "message" as const, message: msg })),
+          { type: "header" as const, date: label },
+        ];
+      });
+    },
+    []
+  );
+
+  const flattenedMessages = React.useMemo(
+    () => groupMessagesByDay(messages),
+    [messages, groupMessagesByDay]
+  );
+
+  // -----------------------------
+  // Load messages
+  // -----------------------------
+  const loadMessages = React.useCallback(
+    (before?: string | Date) => {
+      if (!socket) return;
+      setLoadingMore(true);
+      socket.emit("getConversationMessages", {
+        conversationId: id,
+        limit: 20,
+        before: before instanceof Date ? before.toISOString() : before,
+      });
+    },
+    [socket, id]
+  );
+
+  // -----------------------------
+  // Socket setup
+  // -----------------------------
+  React.useEffect(() => {
+    const s = io(CHAT_SERVER_URL, {
+      extraHeaders: {
+        Authorization: `Bearer ${authPersistStore.accessToken}`,
+      },
+    });
+
+    setSocket(s);
+
+    s.on("connect", () => {
+      console.log("✅ Connected to chat server");
+      s.emit("joinConversation", { conversationId: id });
+      loadMessages();
+    });
+
+    s.on("conversationMessages", (newMessages: ResponseMessageDto[]) => {
+      if (newMessages.length === 0) setHasMore(false);
+      else {
+        setMessages((prev) => [...prev, ...newMessages]);
+      }
+      setLoadingMore(false);
+      setIsInitialMessagesLoading(false);
+    });
+
+    s.on("message", (message: ResponseMessageDto) => {
+      setMessages((prev) => [message, ...prev]);
+    });
+
+    s.on("error", (err: any) => console.log("❌ Socket error:", err));
+
+    return () => {
+      setMessages([]);
+      s.disconnect();
+    };
+  }, [id]);
+
+  // -----------------------------
+  // Send message
+  // -----------------------------
+  const sendMessage = () => {
+    if (!input.trim() || !socket) return;
+    socket.emit("message", { conversationId: id, content: input.trim() });
+    setInput("");
+  };
+
+  // -----------------------------
+  // Infinite scroll
+  // -----------------------------
+  const handleLoadMore = () => {
+    if (loadingMore || !hasMore || messages.length === 0) return;
+    const oldest = messages[messages.length - 1];
+    loadMessages(oldest.createdAt);
+  };
+
+  return (
+    <StableSafeAreaView className="flex-1 bg-background">
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <ImageBackground
+          source={
+            preferencePersistStore.theme === "dark"
+              ? require("~/assets/images/message-cover-dark.png")
+              : require("~/assets/images/message-cover.png")
+          }
+          style={{ flex: 1 }}
+          resizeMode="cover"
+        >
+          {/* Header */}
+          <View className="flex flex-row bg-background justify-between items-center">
+            <ChatHeaderLeft
+              profilePicture={profilePicture}
+              identifier={identifyUser(user)}
+              lastSeen={format(new Date(), "hh:mm a")}
+            />
+            <ChatHeaderRight />
+          </View>
+
+          {/* Messages */}
+          {isConversationLoading || debouncedIsInitialMessagesLoading ? (
+            <View className="flex-1 justify-center items-center">
+              <ActivityIndicator />
+              <Text className="text-foreground font-bold">
+                Loading conversation...
+              </Text>
+            </View>
+          ) : (
+            <FlatList
+              className="flex-1 bg-gree-500"
+              inverted
+              keyboardShouldPersistTaps="handled"
+              data={flattenedMessages}
+              keyExtractor={(item, index) =>
+                item.type === "header"
+                  ? `header-${item.date}`
+                  : item.message.id.toString()
+              }
+              renderItem={({ item }) => {
+                if (item.type === "header") {
+                  return (
+                    <View className="w-fit items-center py-2 my-1 mx-auto">
+                      <Text className="text-xs text-foreground">
+                        {item.date}
+                      </Text>
+                    </View>
+                  );
+                }
+                return (
+                  <ChatBubble
+                    message={item.message.content}
+                    timestamp={item.message.createdAt}
+                    right={item.message.userId === currentUser?.id}
+                  />
+                );
+              }}
+              onEndReached={handleLoadMore}
+              onEndReachedThreshold={0.2}
+              contentContainerStyle={{
+                marginTop:
+                  100 + Math.min(25 * (input.match(/\n/g)?.length ?? 0), 100),
+                marginBottom: 12,
+              }}
+              ListFooterComponent={
+                loadingMore ? (
+                  <View className="py-2">
+                    <ActivityIndicator />
+                  </View>
+                ) : null
+              }
+            />
+          )}
+          {/* Input */}
+          <ConversationInput
+            input={input}
+            setInput={setInput}
+            sendMessage={sendMessage}
+          />
+        </ImageBackground>
+      </KeyboardAvoidingView>
+    </StableSafeAreaView>
+  );
+};
