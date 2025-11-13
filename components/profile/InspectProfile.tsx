@@ -1,11 +1,14 @@
 import { api } from "@/api";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useFollowSystem } from "@/hooks/content/users/useFollowSystem";
 import { useIdentifiedUser } from "@/hooks/content/users/useIdentifiedUser";
 import { useServerImage } from "@/hooks/content/useServerImage";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import { cn } from "@/lib/utils";
-import { createClientStore } from "@/stores/useClientStore";
+import { createClientStore, useClientStore } from "@/stores/useClientStore";
 import { ServerErrorResponse } from "@/types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigation } from "expo-router";
@@ -13,8 +16,7 @@ import { Mail, UserPlus } from "lucide-react-native";
 import React from "react";
 import { Image, View } from "react-native";
 import { showToastable } from "react-native-toastable";
-import { Button } from "../ui/button";
-import { Icon } from "../ui/icon";
+import { StableScrollView } from "../shared/StableScrollView";
 import { ProfileStat } from "./ProfileStat";
 
 interface InspectProfileProps {
@@ -26,15 +28,19 @@ export const InspectProfile = ({ className, id }: InspectProfileProps) => {
   const queryClient = useQueryClient();
   const navigation = useNavigation();
   const storeRef = React.useRef(createClientStore());
-  const clientStore = storeRef.current();
+  // const clientStore = storeRef?.current();
+  const clientStore = useClientStore();
+
   const { user } = useIdentifiedUser({ id });
+  const [value, setValue] = React.useState("account");
 
   const identity = React.useMemo(() => identifyUser(user), [user]);
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
   const { jsx: profilePicture } = useServerImage({
     id: user?.profile?.pictureId,
     fallback,
-    wrapperClassName: "border-4 border-primary rounded-full shadow-md",
+    wrapperClassName:
+      "border border-border bg-background rounded-full shadow-md",
     size: { width: 100, height: 100 },
   });
 
@@ -116,7 +122,7 @@ export const InspectProfile = ({ className, id }: InspectProfileProps) => {
   }, [clientStore?.response, user]);
 
   return (
-    <View className={cn("flex-1 bg-background", className)}>
+    <StableScrollView className={cn("flex-1 bg-background", className)}>
       {/* Cover Image */}
       <View className="relative w-full h-48 bg-card">
         <Image
@@ -155,7 +161,7 @@ export const InspectProfile = ({ className, id }: InspectProfileProps) => {
       </View>
 
       {/* Bio Section */}
-      <View className="flex flex-col gap-4 flex-1 px-5 mt-6">
+      <View className="flex flex-col gap-4 flex-1 px-4 mt-6 pb-10">
         <View className="flex flex-row w-full justify-between gap-2">
           <Button
             size="sm"
@@ -176,12 +182,90 @@ export const InspectProfile = ({ className, id }: InspectProfileProps) => {
             <Text>Send Message</Text>
           </Button>
         </View>
-        <View>
-          <Text variant="small" className="text-foreground">
-            {user?.profile?.bio || "No bio available."}
-          </Text>
+        <View></View>
+        <View className="flex flex-col gap-4">
+          {/* Experience */}
+          <Card>
+            <CardHeader>
+              <CardTitle variant={"large"}>Experience</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-4">
+              {/* Job 1 */}
+              <View className="flex flex-col">
+                <Text className="font-semibold">Senior Software Engineer</Text>
+                <Text className="text-sm text-muted-foreground">
+                  TechNova Labs
+                </Text>
+                <Text className="text-xs text-muted-foreground">
+                  Jan 2022 — Present
+                </Text>
+                <Text className="text-sm mt-1">
+                  Lead mobile development using React Native. Mentors junior
+                  engineers and collaborates with design and backend teams.
+                </Text>
+              </View>
+
+              {/* Job 2 */}
+              <View className="flex flex-col">
+                <Text className="font-semibold">Mobile Developer</Text>
+                <Text className="text-sm text-muted-foreground">
+                  BluePixel Studio
+                </Text>
+                <Text className="text-xs text-muted-foreground">
+                  2019 — 2021
+                </Text>
+                <Text className="text-sm mt-1">
+                  Built cross-platform apps for fintech and e-commerce clients
+                  using React Native and GraphQL.
+                </Text>
+              </View>
+            </CardContent>
+          </Card>
+
+          {/* Education */}
+          <Card>
+            <CardHeader>
+              <CardTitle variant={"large"}>Education</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-3">
+              <View className="flex flex-col">
+                <Text className="font-semibold">UC Berkeley</Text>
+                <Text className="text-sm text-muted-foreground">
+                  B.S. in Computer Science
+                </Text>
+                <Text className="text-xs text-muted-foreground">
+                  2013 — 2017
+                </Text>
+              </View>
+            </CardContent>
+          </Card>
+
+          {/* Skills */}
+          <Card>
+            <CardHeader>
+              <CardTitle variant={"large"}>Skills</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <View className="flex flex-row flex-wrap gap-2">
+                {[
+                  "React Native",
+                  "TypeScript",
+                  "GraphQL",
+                  "Node.js",
+                  "Redux",
+                ].map((skill, idx) => (
+                  <View
+                    key={idx}
+                    className="px-3 py-1 bg-secondary rounded-full"
+                  >
+                    <Text className="text-sm">{skill}</Text>
+                  </View>
+                ))}
+              </View>
+            </CardContent>
+          </Card>
         </View>
       </View>
-    </View>
+    </StableScrollView>
   );
 };
