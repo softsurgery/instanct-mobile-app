@@ -1,43 +1,49 @@
 import { useNotificationContext } from "@/contexts/NotificationsContext";
-import { cn } from "@/lib/utils";
+import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { router } from "expo-router";
 import { Bell, Settings } from "lucide-react-native";
 import { View } from "react-native";
+import { InspectProfile } from "../profile/InspectProfile";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
-import { ProfileEntry } from "./ProfileEntry";
 
 interface MenuPortalProps {
   className?: string;
 }
 
 export const MenuPortal = ({ className }: MenuPortalProps) => {
+  const { currentUser } = useCurrentUser();
   const { newCount, resetCount } = useNotificationContext();
   return (
-    <StableSafeAreaView className={cn("px-4", className)}>
-      <ApplicationHeader
-        title="Menu"
-        shortcuts={[
-          {
-            icon: Bell,
-            onPress: () => {
-              router.push("/main/notifications");
-              resetCount();
-            },
-            badgeText: newCount > 0 ? `${newCount}` : undefined,
-          },
-          {
-            key: "settings",
-            icon: Settings,
-            onPress: () => {
-              router.push("/main/settings");
-            },
-          },
-        ]}
+    <View className="flex-1">
+      <InspectProfile
+        id={currentUser?.id as string}
+        coverExtra={
+          <StableSafeAreaView
+            className="absolute top-0 left-0 right-0 z-30 px-2"
+            pointerEvents="box-none"
+          >
+            <ApplicationHeader
+              title="Menu"
+              shortcuts={[
+                {
+                  icon: Bell,
+                  onPress: () => {
+                    router.push("/main/notifications");
+                    resetCount();
+                  },
+                  badgeText: newCount > 0 ? `${newCount}` : undefined,
+                },
+                {
+                  key: "settings",
+                  icon: Settings,
+                  onPress: () => router.push("/main/settings"),
+                },
+              ]}
+            />
+          </StableSafeAreaView>
+        }
       />
-      <View>
-        <ProfileEntry />
-      </View>
-    </StableSafeAreaView>
+    </View>
   );
 };

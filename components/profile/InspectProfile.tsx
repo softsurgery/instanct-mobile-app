@@ -22,9 +22,14 @@ import { ProfileStat } from "./ProfileStat";
 interface InspectProfileProps {
   className?: string;
   id: string;
+  coverExtra?: React.ReactNode;
 }
 
-export const InspectProfile = ({ className, id }: InspectProfileProps) => {
+export const InspectProfile = ({
+  className,
+  id,
+  coverExtra,
+}: InspectProfileProps) => {
   const queryClient = useQueryClient();
   const navigation = useNavigation();
   const storeRef = React.useRef(createClientStore());
@@ -125,6 +130,7 @@ export const InspectProfile = ({ className, id }: InspectProfileProps) => {
     <StableScrollView className={cn("flex-1 bg-background", className)}>
       {/* Cover Image */}
       <View className="relative w-full h-48 bg-card">
+        {coverExtra}
         <Image
           source={require("@/assets/images/partial-react-logo.png")}
           className="w-full h-full"

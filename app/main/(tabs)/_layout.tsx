@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { useRTL } from "@/hooks/useRTL";
 import { NAV_THEME } from "@/lib/theme";
@@ -7,13 +6,14 @@ import { Tabs } from "expo-router";
 import {
   Heart,
   Map,
-  Menu,
   MessageCircle,
   Telescope,
+  User,
 } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { Pressable } from "react-native";
 
 export default function TabLayout() {
   const { colorScheme } = useColorScheme();
@@ -32,13 +32,12 @@ export default function TabLayout() {
   const VibratingTabButton = (props: any) => {
     const { onPress, children } = props;
     return (
-      <Button
-        variant={"link"}
-        className="flex-1 flex flex-col mt-2"
+      <Pressable
+        className="flex flex-col justify-center items-center mt-2 gap-1"
         onPress={withHaptic(onPress)}
       >
         {children}
-      </Button>
+      </Pressable>
     );
   };
 
@@ -70,7 +69,7 @@ export default function TabLayout() {
     {
       name: "menu",
       title: t("screens.menu"),
-      icon: Menu,
+      icon: User,
       iconSize: 30,
     },
   ];
