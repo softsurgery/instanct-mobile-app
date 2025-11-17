@@ -3,13 +3,7 @@ import { useRTL } from "@/hooks/useRTL";
 import { NAV_THEME } from "@/lib/theme";
 import * as Haptics from "expo-haptics";
 import { Tabs } from "expo-router";
-import {
-  Heart,
-  Map,
-  MessageCircle,
-  Telescope,
-  User,
-} from "lucide-react-native";
+import { Map, MessageCircle, Telescope, User } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -54,12 +48,7 @@ export default function TabLayout() {
       icon: MessageCircle,
       iconSize: 30,
     },
-    {
-      name: "like",
-      title: t("screens.like"),
-      icon: Heart,
-      iconSize: 30,
-    },
+
     {
       name: "map",
       title: t("screens.map"),
