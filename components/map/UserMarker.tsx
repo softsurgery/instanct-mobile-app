@@ -7,6 +7,7 @@ import { ResponseClientDto } from "@/types";
 import React from "react";
 import { Animated, View } from "react-native";
 import { Marker } from "react-native-maps";
+import { Text } from "../ui/text";
 
 interface UserMarkerProps {
   userId: string;
@@ -56,7 +57,7 @@ export const UserMarker = ({
       onPress={() => onPress(user)}
       anchor={{ x: 0.5, y: 0.5 }}
     >
-      {isOnline && (
+      {isOnline ? (
         <Animated.View
           style={[
             {
@@ -70,9 +71,14 @@ export const UserMarker = ({
             },
           ]}
         />
-      )}
-      <View className="rounded-full overflow-hidden bg-background/25">
+      ) : null}
+      <View className="rounded-full overflow-hidden w-fit">
         {profilePicture}
+      </View>
+      <View>
+        <Text className="mt-1 mx-auto text-xs font-medium bg-background/50 p-1 rounded-lg">
+          {user?.username}
+        </Text>
       </View>
     </Marker>
   );
