@@ -18,20 +18,17 @@ export default function Page() {
   );
   React.useEffect(() => {
     if (preferencePersistStore.isReady) {
-      // Set system color scheme
-      setColorScheme(preferencePersistStore.theme);
-      i18n.changeLanguage(preferencePersistStore.language);
-
       // Set Android navigation bar
-      setAndroidNavigationBar(isDarkMode ? "light" : "dark");
-
-      // Apply web background if on web
-      if (Platform.OS === "web") {
-        document.documentElement.classList.add("bg-background");
-      }
 
       SplashScreen.hideAsync();
-      router.replace("/main");
+      setTimeout(() => {
+        // Set system color scheme
+        setColorScheme(preferencePersistStore.theme);
+        if (Platform.OS === "android")
+          setAndroidNavigationBar(isDarkMode ? "light" : "dark");
+        i18n.changeLanguage(preferencePersistStore.language);
+        router.replace("/main");
+      }, 100);
     }
   }, [preferencePersistStore.theme, preferencePersistStore.isReady]);
 

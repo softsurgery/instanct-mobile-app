@@ -6,7 +6,7 @@ import { ThemeProvider } from "@react-navigation/native";
 import { PortalHost } from "@rn-primitives/portal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as Notifications from "expo-notifications";
-import { Stack, useRootNavigationState } from "expo-router";
+import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
 import React from "react";
@@ -32,18 +32,8 @@ export default function RootLayout() {
   const { colorScheme } = useColorScheme();
   const { newCount, notifications, resetCount } = useNotifications();
 
-  const [ready, setReady] = React.useState(false);
-
   const isDarkColorScheme = colorScheme === "dark";
 
-  const navigationState = useRootNavigationState();
-  React.useEffect(() => {
-    if (navigationState) {
-      setReady(true);
-    }
-  }, [navigationState]);
-
-  if (!ready) return null;
   return (
     <ThemeProvider value={NAV_THEME[colorScheme ?? "light"]}>
       <SafeAreaProvider>
@@ -51,12 +41,12 @@ export default function RootLayout() {
           <NotificationContext.Provider
             value={{ newCount, notifications, resetCount }}
           >
-            <Toastable position="top" />
-            <StatusBar
-              style={isDarkColorScheme ? "light" : "dark"}
-              translucent
-            />
             <View className={cn("flex-1", colorScheme)}>
+              <Toastable position="top" />
+              <StatusBar
+                style={colorScheme === "dark" ? "light" : "dark"}
+                translucent
+              />
               <Stack
                 screenOptions={{
                   headerShown: false,
@@ -66,6 +56,7 @@ export default function RootLayout() {
                       ? NAV_THEME.dark.colors.background
                       : NAV_THEME.light.colors.background,
                   },
+                  keyboardHandlingEnabled: true,
                   headerStyle: {
                     backgroundColor: isDarkColorScheme
                       ? NAV_THEME.dark.colors.card
