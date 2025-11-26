@@ -1,5 +1,6 @@
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
 import { cn } from "@/lib/utils";
+import { useMapStore } from "@/stores/useMapStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { View } from "react-native";
@@ -14,8 +15,10 @@ interface SettingsPortalProps {
 export const SettingsPortal = ({ className }: SettingsPortalProps) => {
   const authPersistStore = useAuthPersistStore();
   const queryClient = useQueryClient();
+  const mapStore = useMapStore();
   const logout = () => {
     authPersistStore.logout?.();
+    mapStore.reset();
     queryClient.clear();
     router.replace("/");
   };

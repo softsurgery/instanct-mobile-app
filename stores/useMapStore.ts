@@ -1,5 +1,5 @@
 import { setDeepValue } from "@/lib/object";
-import { NearbyUser, ResponseClientDto } from "@/types";
+import { Cluster, NearbyUser, ResponseClientDto } from "@/types";
 import * as Location from "expo-location";
 import { create } from "zustand";
 
@@ -8,6 +8,7 @@ interface MapData {
   location: Location.LocationObject | null;
   users: ResponseClientDto[];
   nearbyUsers: NearbyUser[];
+  clusters: Cluster[];
   reconnection: {
     reconnecting: boolean;
     reconnectAttempt: number;
@@ -31,6 +32,8 @@ interface MapStore extends MapData {
 
   getUserById: (id: string) => ResponseClientDto | null;
   getNearbyUserById: (id: string) => NearbyUser | null;
+
+  restart: () => void;
 }
 
 const initialState: MapData = {
@@ -38,6 +41,7 @@ const initialState: MapData = {
   location: null,
   users: [],
   nearbyUsers: [],
+  clusters: [],
   reconnection: {
     reconnecting: false,
     reconnectAttempt: 0,
@@ -164,6 +168,14 @@ export const useMapStore = create<MapStore>((set, get) => ({
   },
   getNearbyUserById: (id: string) => {
     return get().nearbyUsers.find((u) => u.userId === id) ?? null;
+  },
+  restart: () => {
+    set({
+      nearbyUsers: [],
+      users: [],
+      clusters: [],
+      connected: false,
+    });
   },
   reset: () => {
     set({ ...initialState });

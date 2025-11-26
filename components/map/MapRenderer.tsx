@@ -1,16 +1,15 @@
 import { useMapStore } from "@/stores/useMapStore";
-import { Cluster, NearbyUser } from "@/types";
+import { NearbyUser } from "@/types";
 import { useColorScheme } from "nativewind";
 import React from "react";
 import { View } from "react-native";
-import MapView, { Region } from "react-native-maps";
+import MapView from "react-native-map-clustering";
+import { Region } from "react-native-maps";
 import Modal from "react-native-modal";
 import { UsersCarousel } from "./UserCarousel/UsersCarousel";
 import { UserMarker } from "./UserMarker";
 import { UserModalContent } from "./UserModalContent";
-import { UsersMarker } from "./UsersMarker";
 import { AndroidDarkMapStyle } from "./utils/AndroidDarkMapStyle";
-import { groupUsers } from "./utils/grouping";
 
 interface MapRendererProps {
   className?: string;
@@ -25,7 +24,6 @@ export const MapRenderer = ({
   style,
   latitude,
   longitude,
-  nearbyUsers,
 }: MapRendererProps) => {
   const { colorScheme } = useColorScheme();
   const mapStore = useMapStore();
@@ -44,6 +42,7 @@ export const MapRenderer = ({
     }
 
     if (mapRef.current) {
+      // @ts-ignore
       mapRef.current.animateToRegion(
         {
           latitude: user.latitude,
@@ -62,14 +61,11 @@ export const MapRenderer = ({
   const handleCloseModal = () => {
     setModalVisible(false);
     if (prevRegion && mapRef.current) {
-      mapRef.current.animateToRegion(prevRegion, 500);
+      // @ts-ignore
+      mapRef.current?.animateToRegion(prevRegion, 500);
     }
     setSelectedUser(null);
   };
-
-  const [clusters, setClusters] = React.useState<Cluster[]>(
-    groupUsers(nearbyUsers, (currentRegion?.latitudeDelta || 0) * 5000)
-  );
 
   return (
     <View className={className}>
@@ -79,47 +75,28 @@ export const MapRenderer = ({
         initialRegion={{
           latitude,
           longitude,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
+          latitudeDelta: 0.1,
+          longitudeDelta: 0.1,
         }}
+        clusteringEnabled={true}
+        animationEnabled={true}
+        onClusterPress={(cluster, markers) => {}}
         customMapStyle={
           colorScheme === "dark" ? AndroidDarkMapStyle : undefined
         }
-        showsCompass={false}
-        showsMyLocationButton={false}
-        onRegionChange={(region) => {
+        onRegionChangeComplete={(region) => {
           setCurrentRegion(region);
-          setClusters(groupUsers(nearbyUsers, region.latitudeDelta * 5000));
         }}
       >
-        {clusters.map((cluster, i) =>
-          cluster.users.length === 1 ? (
-            <UserMarker
-              key={cluster.users[0].userId}
-              userId={cluster.users[0].userId}
-              latitude={cluster.latitude}
-              longitude={cluster.longitude}
-              isOnline={cluster.users[0].isOnline}
-              onPress={(user) =>
-                handleMarkerPress({ ...cluster.users[0], user })
-              }
-            />
-          ) : (
-            <UsersMarker
-              key={`cluster-${i}`}
-              latitude={cluster.latitude}
-              longitude={cluster.longitude}
-              nearbyUsers={cluster.users}
-              onPress={(users) => {
-                if (users?.length === 1) {
-                  handleMarkerPress(users[0]);
-                } else {
-                  console.log("Cluster clicked:", users);
-                }
-              }}
-            />
-          )
-        )}
+        {mapStore.nearbyUsers.map((u, idx) => (
+          <UserMarker
+            key={idx}
+            userId={u.userId}
+            coordinate={{ latitude, longitude }}
+            isOnline={u.isOnline}
+            onPress={(user) => handleMarkerPress({ ...u, user })}
+          />
+        ))}
       </MapView>
 
       <View className="py-4 absolute bottom-0 left-0 right-0 bg-background/50 rounded-t-2xl">

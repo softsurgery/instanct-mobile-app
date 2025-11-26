@@ -1,8 +1,7 @@
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { Image, ImageSource } from "expo-image";
 import React from "react";
-import { View } from "react-native";
+import { Image, View } from "react-native";
 import { api } from "~/api";
 import {
   Avatar,
@@ -14,8 +13,8 @@ import { Text } from "~/components/ui/text";
 
 interface UseServerImageProps {
   id?: number;
-  size: { width: number; height: number };
-  fallback?: string | React.ReactNode | ImageSource;
+  size?: { width: number; height: number };
+  fallback?: string | React.ReactNode;
   className?: string;
   wrapperClassName?: string;
   enabled?: boolean;
@@ -43,27 +42,35 @@ export const useServerImage = ({
         <View
           className={cn(wrapperClassName, "flex items-center justify-center")}
           style={{
-            width: size.width * 1.05,
-            height: size.height * 1.05,
-            borderRadius: size.width / 2,
+            width: size?.width ? size.width * 1.05 : undefined,
+            height: size?.height ? size.height * 1.05 : undefined,
+            borderRadius: size?.width ? (size.width * 1.05) / 2 : undefined,
           }}
         >
           <Image
             className={cn(className)}
-            source={upload}
-            style={{
-              width: size.width,
-              height: size.height,
-              borderRadius: size.width / 2,
+            source={{
+              uri: upload,
             }}
-            contentFit="cover"
+            style={{
+              width: size?.width || "auto",
+              height: size?.height || "auto",
+              borderRadius: size?.width ? size.width / 2 : undefined,
+            }}
           />
         </View>
       );
     }
 
     if (isUploadPending && id) {
-      return <Skeleton style={{ ...size, borderRadius: size.width / 2 }} />;
+      return (
+        <Skeleton
+          style={{
+            ...size,
+            borderRadius: size?.width ? size.width / 2 : undefined,
+          }}
+        />
+      );
     }
 
     if (
@@ -75,20 +82,19 @@ export const useServerImage = ({
         <View
           className={cn(wrapperClassName, "flex items-center justify-center")}
           style={{
-            width: size.width * 1.05,
-            height: size.height * 1.05,
-            borderRadius: size.width / 2,
+            width: size?.width ? size.width * 1.05 : undefined,
+            height: size?.height ? size.height * 1.05 : undefined,
+            borderRadius: size?.width ? (size.width * 1.05) / 2 : undefined,
           }}
         >
           <Image
-            source={fallback as ImageSource}
+            alt={typeof fallback === "string" ? fallback : ""}
             className={cn(className)}
             style={{
-              width: size.width,
-              height: size.height,
-              borderRadius: size.width / 2,
+              width: size?.width || "auto",
+              height: size?.height || "auto",
+              borderRadius: size?.width ? size.width / 2 : undefined,
             }}
-            contentFit="cover"
           />
         </View>
       );
@@ -100,9 +106,9 @@ export const useServerImage = ({
         <Avatar
           className={cn(className)}
           style={{
-            width: size.width,
-            height: size.height,
-            borderRadius: size.width / 2,
+            width: size?.width || "auto",
+            height: size?.height || "auto",
+            borderRadius: size?.width ? size.width / 2 : undefined,
           }}
         >
           <AvatarImage />
@@ -119,7 +125,11 @@ export const useServerImage = ({
     }
 
     // 6️⃣ Default → Skeleton
-    return <Skeleton style={{ ...size, borderRadius: size.width / 2 }} />;
+    return (
+      <Skeleton
+        style={{ ...size, borderRadius: size?.width ? size.width / 2 : "auto" }}
+      />
+    );
   }, [upload, isUploadPending, fallback, size]);
 
   return { upload, isUploadPending, jsx };

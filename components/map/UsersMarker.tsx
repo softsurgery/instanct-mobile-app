@@ -26,12 +26,12 @@ export const UsersMarker = ({
     return mapStore.users.filter((u) =>
       nearbyUsers.some((nu) => nu.userId === u.id)
     );
-  }, [nearbyUsers]);
+  }, [nearbyUsers, mapStore.users]);
 
   const { jsxArray: userPictures } = useServerImages({
     ids: users.map((u) => u?.profile?.pictureId),
     className: "rounded-full",
-    size: { width: 50, height: 50 },
+    size: { width: 40, height: 40 },
     fallbacks: users.map((u) => identifyUserAvatar(u)),
   });
 
@@ -45,14 +45,13 @@ export const UsersMarker = ({
       anchor={{ x: 0.5, y: 0.5 }}
     >
       <View className="flex flex-col items-center justify-center">
-        {/* User Images */}
-        <View className="w-12 h-12 flex flex-row items-center justify-center relative">
+        {/* Overlapping user icons */}
+        <View className="flex flex-row items-center justify-center">
           {displayUsers.map((user, index) => (
             <View
               key={user.id}
-              className="absolute"
               style={{
-                left: index * 25,
+                marginLeft: index === 0 ? 0 : -18,
                 zIndex: displayUsers.length - index,
               }}
             >
@@ -61,16 +60,9 @@ export const UsersMarker = ({
           ))}
         </View>
 
-        {/* Centered text */}
-        <Text
-          className="mt-2 text-xs font-medium bg-background/60 p-1 rounded-lg text-center"
-          style={{
-            width: 80,
-            left: 30,
-            opacity: extraCount > 0 ? 1 : 0,
-          }}
-        >
-          + {extraCount} Person
+        {/* Label */}
+        <Text className="mt-1 text-xs font-extrabold bg-background/60 px-2 py-1 rounded-lg text-center">
+          {users.length} Person{users.length > 1 ? "s" : ""}
         </Text>
       </View>
     </Marker>

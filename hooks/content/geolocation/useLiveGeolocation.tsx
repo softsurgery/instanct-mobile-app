@@ -110,8 +110,21 @@ export function useLiveGeolocation({
       await updateLocation(socket);
     });
 
-    socket.on("nearby_users", async (users: NearbyUser[]) => {
-      mapStore.setNearbyUsers(users);
+    socket.on("nearby_users", async (nearbyList: NearbyUser[]) => {
+      mapStore.setNearbyUsers(nearbyList);
+
+      // fetch profiles for all nearby users (lazy)
+      for (const n of nearbyList) {
+        const existing = mapStore.getUserById(n.userId);
+        if (!existing) {
+          try {
+            const profile = await api.client.findById(n.userId);
+            mapStore.addUser(profile); // prevents duplicates
+          } catch (e) {
+            console.warn("Failed to fetch profile:", e);
+          }
+        }
+      }
     });
 
     socket.on("user_moved", async (data: NearbyUser) => {
@@ -120,10 +133,10 @@ export function useLiveGeolocation({
       const existing = mapStore.getUserById(data.userId);
       if (!existing) {
         try {
-          const userResp = await api.client.findById(data.userId);
-          mapStore.set("users", [...mapStore.users, userResp]);
+          const profile = await api.client.findById(data.userId);
+          mapStore.addUser(profile);
         } catch (e) {
-          console.warn("Failed to fetch user info:", e);
+          console.warn("❌ Failed retrieving user", e);
         }
       }
     });
@@ -141,7 +154,6 @@ export function useLiveGeolocation({
       if (intervalRef.current) clearInterval(intervalRef.current);
       disconnectSocket("geolocation");
       socketRef.current = null;
-      mapStore.set("connected", false);
     };
   }, [accessToken, apiUrl, updateInterval, updateLocation, restartCount]);
 

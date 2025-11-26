@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { NearbyUser } from "@/types";
 import { formatDistanceToNow } from "date-fns";
 import { router } from "expo-router";
-import { Calendar, LucideMessageCircle } from "lucide-react-native";
+import { LucideMessageCircle, User } from "lucide-react-native";
 import React from "react";
 import { TouchableWithoutFeedback, View } from "react-native";
 import { StablePressable } from "../shared/StablePressable";
@@ -39,20 +39,20 @@ export const UserModalContent = ({
     size: { width: 50, height: 50 },
   });
 
+  const inspectProfile = () => {
+    closeModal?.();
+    router.push({
+      pathname: "/main/inspect-profile",
+      params: { id: nearbyUser?.user?.id },
+    });
+  };
+
   return (
     <TouchableWithoutFeedback>
       <View className={cn("bg-card rounded-t-2xl p-4 pb-8 ", className)}>
         <View className="w-12 h-1.5 bg-muted-foreground/40 self-center rounded-full mb-4" />
         <View className="flex-row items-center gap-3">
-          <StablePressable
-            onPress={() => {
-              closeModal?.();
-              router.push({
-                pathname: "/main/inspect-profile",
-                params: { id: nearbyUser?.user?.id },
-              });
-            }}
-          >
+          <StablePressable onPress={inspectProfile}>
             {profilePicture}
           </StablePressable>
           <View>
@@ -61,7 +61,7 @@ export const UserModalContent = ({
             {nearbyUser.isOnline ? (
               <Text className="text-green-600">Online</Text>
             ) : (
-              <Text>
+              <Text className="">
                 Last active{" "}
                 {formatDistanceToNow(new Date(nearbyUser.updatedAt), {
                   addSuffix: true,
@@ -75,11 +75,16 @@ export const UserModalContent = ({
           </View>
         </View>
         <View className="flex flex-row items-center justify-between gap-2 my-4">
-          <Button variant={"default"} size="sm" className="flex-1">
-            <Icon as={Calendar} size={24} />
-            <Text>Check Schedule</Text>
+          <Button
+            variant={"default"}
+            size="lg"
+            className="flex-1"
+            onPress={inspectProfile}
+          >
+            <Icon as={User} size={24} color={"white"} />
+            <Text>View Profile</Text>
           </Button>
-          <Button variant={"outline"} size="sm" className="flex-1">
+          <Button variant={"outline"} size="lg" className="flex-1">
             <Icon as={LucideMessageCircle} size={24} />
             <Text>Say Hi!</Text>
           </Button>

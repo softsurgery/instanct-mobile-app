@@ -93,9 +93,9 @@ export const ObjectivesBadgeList = ({
                     entering={FadeIn.springify().delay(50)}
                     exiting={FadeOut.duration(150)}
                     layout={LinearTransition.springify()}
-                    className="px-3 py-1 rounded-full border border-border bg-white/10"
+                    className="px-3 py-1 rounded-full border border-border bg-card"
                   >
-                    <Text className="text-white text-sm">{param.label}</Text>
+                    <Text className="text-sm">{param.label}</Text>
                   </Animated.View>
                 ))}
             </React.Fragment>

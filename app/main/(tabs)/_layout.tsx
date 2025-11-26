@@ -76,8 +76,8 @@ export default function TabLayout() {
         sceneStyle: {
           flex: 1,
           backgroundColor: isDarkColorScheme
-            ? NAV_THEME.dark.colors.background
-            : NAV_THEME.light.colors.background,
+            ? NAV_THEME.dark.colors.card
+            : NAV_THEME.light.colors.card,
         },
       }}
     >
