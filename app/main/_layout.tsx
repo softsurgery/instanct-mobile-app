@@ -73,7 +73,6 @@ export default function MainLayout() {
             title: "Settings",
             animation: "fade_from_bottom",
             animationDuration: 200,
-            headerBackVisible: false,
           }}
         />
       </Stack>

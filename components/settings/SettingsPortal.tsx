@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { useMapStore } from "@/stores/useMapStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 import { ThemeToggle } from "../ThemeToggle";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
@@ -23,18 +23,31 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
     router.replace("/");
   };
   return (
-    <View className={cn("flex-1 p-4", className)}>
-      <Text variant={"lead"}>Accounts Settings</Text>
-      <Text variant={"lead"}>Discovery</Text>
-      <Text variant={"lead"}>Global</Text>
-      <Text variant={"lead"}>Legal</Text>
-      <ThemeToggle className="my-4" />
-      <Button variant={"destructive"} onPress={logout}>
-        <Text>Logout</Text>
-      </Button>
-      <Button variant={"ghost"}>
-        <Text>Delete Account</Text>
-      </Button>
+    <View className={cn("flex flex-col gap-4 flex-1 p-4", className)}>
+      <View>
+        <Text variant={"lead"}>Accounts Settings</Text>
+        <View className="flex flex-col gap-2"></View>
+        <Text variant={"lead"}>Discovery</Text>
+        <View className="flex flex-col gap-2"></View>
+        <Text variant={"lead"}>Preferences</Text>
+        <View className="flex flex-col gap-2">
+          <ThemeToggle className="my-4" />
+        </View>
+        <Text variant={"lead"}>Global</Text>
+        <View className="flex flex-col gap-2"></View>
+        <Text variant={"lead"}>Legal</Text>
+        <View className="flex flex-col gap-2"></View>
+      </View>
+      <View className="flex flex-col gap-2">
+        <Button variant={"outline"} onPress={logout}>
+          <Text>Logout</Text>
+        </Button>
+        <Button variant={"destructive"} onPress={() => {
+          Alert.alert('Coming Soon!')
+        }}>
+          <Text>Delete Account</Text>
+        </Button>
+      </View>
     </View>
   );
 };
