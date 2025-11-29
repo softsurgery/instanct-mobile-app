@@ -3,25 +3,21 @@ import { useServerImage } from "@/hooks/content/useServerImage";
 import { usePulseAnimation } from "@/hooks/usePulseAnimation";
 import { identifyUserAvatar } from "@/lib/user";
 import { useMapStore } from "@/stores/useMapStore";
-import { ResponseClientDto } from "@/types";
 import React from "react";
 import { Animated, Platform, View } from "react-native";
-import { MapMarkerProps, Marker } from "react-native-maps";
 import { Text } from "../ui/text";
 
 interface UserMarkerProps {
   userId: string;
   isOnline?: boolean;
-  onPress: (user: ResponseClientDto | null) => void;
+  isCurrentUser?: boolean;
 }
 
 export const UserMarker = ({
   userId,
-  coordinate,
   isOnline,
-  onPress,
-  ...props
-}: UserMarkerProps & MapMarkerProps) => {
+  isCurrentUser = false,
+}: UserMarkerProps) => {
   const width = 50;
   const height = 50;
   const activeBackgroundColor = "rgba(34,197,94,0.8)";
@@ -35,7 +31,7 @@ export const UserMarker = ({
 
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
 
-  const { jsx: profilePicture, upload } = useServerImage({
+  const { jsx: profilePicture } = useServerImage({
     id: user?.profile?.pictureId,
     fallback,
     className: "rounded-full",
@@ -45,66 +41,53 @@ export const UserMarker = ({
   //pulse animation
   const { scale, opacity } = usePulseAnimation({ active: isOnline });
 
-  const onlinePulseBlock = () => {
-    if (isOnline)
-      return (
-        <Animated.View
-          style={{
-            width,
-            height,
-            borderRadius: width / 2,
-            position: "absolute",
-            backgroundColor: activeBackgroundColor,
-            transform: [{ scale }],
-            opacity,
-          }}
-        />
-      );
+  const OnlinePulseBlock = () => {
+    return (
+      <Animated.View
+        style={{
+          width,
+          height,
+          borderRadius: width / 2,
+          position: "absolute",
+          backgroundColor: activeBackgroundColor,
+          transform: [{ scale }],
+          opacity,
+        }}
+      />
+    );
   };
 
   if (Platform.OS === "ios")
     return (
-      <Marker coordinate={coordinate} onPress={() => onPress(user)} {...props}>
-        <View className="flex flex-col items-center justify-center w-full h-full">
-          <View>
-            {/* Online pulsing highlight */}
-            {onlinePulseBlock()}
-            {/* Avatar */}
-            <View
-              style={{
-                width,
-                height,
-                borderRadius: width / 2,
-                overflow: "hidden",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              {profilePicture}
-            </View>
+      <View className="flex flex-col items-center justify-center w-full h-full">
+        <View>
+          {/* Online pulsing highlight */}
+          {isOnline ? <OnlinePulseBlock /> : null}
+          {/* Avatar */}
+          <View
+            style={{
+              width,
+              height,
+              borderRadius: width / 2,
+              overflow: "hidden",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {profilePicture}
           </View>
-
-          {/* Username */}
-          {user?.username && (
-            <Text className="mt-1 text-xs font-extrabold bg-background/50 px-2 py-1 rounded-lg text-center">
-              {user.username}
-            </Text>
-          )}
         </View>
-      </Marker>
-    );
 
+        {/* Username */}
+        <Text className="mt-1 text-xs font-extrabold bg-background/50 px-2 py-1 rounded-lg text-center">
+          {!isCurrentUser ? user?.username : "You"}
+        </Text>
+      </View>
+    );
   return (
-    <Marker
-      coordinate={coordinate}
-      onPress={() => onPress(user)}
-      style={{
-        backgroundColor: "blue",
-      }}
-      {...props}
-    >
-      {onlinePulseBlock()}
+    <View>
+      {isOnline ? <OnlinePulseBlock /> : null}
       {profilePicture}
-    </Marker>
+    </View>
   );
 };

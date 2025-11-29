@@ -1,14 +1,16 @@
+import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { useMapStore } from "@/stores/useMapStore";
 import { NearbyUser } from "@/types";
 import { useColorScheme } from "nativewind";
 import React from "react";
-import { View } from "react-native";
+import { ActivityIndicator, Alert, View } from "react-native";
 import MapView from "react-native-map-clustering";
-import { Region } from "react-native-maps";
+import { Marker, Region } from "react-native-maps";
 import Modal from "react-native-modal";
 import { UsersCarousel } from "./UserCarousel/UsersCarousel";
 import { UserMarker } from "./UserMarker";
 import { UserModalContent } from "./UserModalContent";
+import { UsersMarker } from "./UsersMarker";
 import { AndroidDarkMapStyle } from "./utils/AndroidDarkMapStyle";
 
 interface MapRendererProps {
@@ -25,9 +27,11 @@ export const MapRenderer = ({
   latitude,
   longitude,
 }: MapRendererProps) => {
+  const { currentUser } = useCurrentUser();
   const { colorScheme } = useColorScheme();
   const mapStore = useMapStore();
   const mapRef = React.useRef<MapView>(null);
+  const superCluster = React.useRef<any>(null);
 
   const [selectedUser, setSelectedUser] = React.useState<NearbyUser | null>(
     null
@@ -36,17 +40,34 @@ export const MapRenderer = ({
   const [prevRegion, setPrevRegion] = React.useState<Region | null>(null);
   const [modalVisible, setModalVisible] = React.useState(false);
 
-  const handleMarkerPress = (user: NearbyUser) => {
+  const nearbyUsersAndMyself = React.useMemo(() => {
+    const myself: NearbyUser = {
+      latitude,
+      longitude,
+      userId: currentUser?.id as string,
+      distance: 0,
+      isOnline: true,
+      profilePicture: null,
+      updatedAt: new Date().toISOString(),
+    };
+    return [...mapStore.nearbyUsers, myself];
+  }, [currentUser, mapStore.nearbyUsers]);
+
+  const handleMarkerPress = (
+    latitude: number,
+    longitude: number,
+    userId: string
+  ) => {
     if (currentRegion) {
       setPrevRegion(currentRegion);
     }
 
     if (mapRef.current) {
-      // @ts-ignore
+      //@ts-ignore
       mapRef.current.animateToRegion(
         {
-          latitude: user.latitude,
-          longitude: user.longitude,
+          latitude: latitude,
+          longitude: longitude,
           latitudeDelta: 0.0002,
           longitudeDelta: 0.0002,
         },
@@ -54,7 +75,8 @@ export const MapRenderer = ({
       );
     }
 
-    setSelectedUser(user);
+    const user = mapStore.nearbyUsers.find((u) => u.userId === userId);
+    if (user) setSelectedUser(user);
     setModalVisible(true);
   };
 
@@ -67,35 +89,83 @@ export const MapRenderer = ({
     setSelectedUser(null);
   };
 
+  if (!currentUser) return <ActivityIndicator />;
   return (
     <View className={className}>
       <MapView
         ref={mapRef}
+        superClusterRef={superCluster}
         style={{ flex: 1, ...style }}
         initialRegion={{
           latitude,
           longitude,
-          latitudeDelta: 0.1,
-          longitudeDelta: 0.1,
+          latitudeDelta: 0.02,
+          longitudeDelta: 0.02,
         }}
-        clusteringEnabled={true}
-        animationEnabled={true}
-        onClusterPress={(cluster, markers) => {}}
         customMapStyle={
           colorScheme === "dark" ? AndroidDarkMapStyle : undefined
         }
-        onRegionChangeComplete={(region) => {
+        onRegionChange={(region) => {
           setCurrentRegion(region);
         }}
+        clusteringEnabled={true}
+        renderCluster={(cluster) => {
+          const { geometry, onPress, properties } = cluster;
+          const latitude = geometry.coordinates[1];
+          const longitude = geometry.coordinates[0];
+
+          // extract clustered userIds
+          const clusterIds = properties.cluster_id
+            ? superCluster.current?.getLeaves?.(cluster.id, Infinity)
+            : [];
+
+          const nearbyUsers = nearbyUsersAndMyself.filter((u) =>
+            clusterIds.map((c: any) => c.properties?.id).includes(u.userId)
+          );
+
+          return (
+            <UsersMarker
+              key={cluster.id}
+              nearbyUsers={nearbyUsers}
+              currentUserIncluded={
+                !!nearbyUsers.find(
+                  (u) => u.userId === (currentUser?.id as string)
+                )
+              }
+              latitude={latitude}
+              longitude={longitude}
+              onPress={(users) => {
+                if (!users || users.length === 0) return;
+                if (users.length === 1) {
+                  // act as normal single press
+                  handleMarkerPress(
+                    users[0].latitude,
+                    users[0].longitude,
+                    users[0].userId
+                  );
+                } else {
+                  Alert.alert(JSON.stringify(nearbyUsers)); // show carousel users and keep map zoom centered
+                  // setModalVisible(true);
+                  // mapStore.setModalUsers(users);
+                }
+              }}
+            />
+          );
+        }}
       >
-        {mapStore.nearbyUsers.map((u, idx) => (
-          <UserMarker
-            key={idx}
-            userId={u.userId}
-            coordinate={{ latitude, longitude }}
-            isOnline={u.isOnline}
-            onPress={(user) => handleMarkerPress({ ...u, user })}
-          />
+        {nearbyUsersAndMyself.map((u) => (
+          <Marker
+            key={u.userId}
+            id={u.userId}
+            coordinate={{ latitude: u.latitude, longitude: u.longitude }}
+            onPress={() => handleMarkerPress(u.latitude, u.longitude, u.userId)}
+          >
+            <UserMarker
+              userId={u.userId}
+              isOnline={u.isOnline}
+              isCurrentUser={u.userId === currentUser?.id}
+            />
+          </Marker>
         ))}
       </MapView>
 
@@ -103,7 +173,9 @@ export const MapRenderer = ({
         <UsersCarousel
           users={mapStore.nearbyUsers}
           className="rounded-full"
-          onUserPress={(user) => handleMarkerPress({ ...user })}
+          onUserPress={(user) =>
+            handleMarkerPress(user.latitude, user.longitude, user.userId)
+          }
         />
       </View>
 
