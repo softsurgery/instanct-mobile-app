@@ -1,9 +1,10 @@
 import { useNotificationContext } from "@/contexts/NotificationsContext";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
+import { cn } from "@/lib/utils";
 import { router } from "expo-router";
 import { Bell, Settings } from "lucide-react-native";
 import { View } from "react-native";
-import { InspectProfile } from "../profile/InspectProfile";
+import { InspectBaseProfile } from "../profile/BaseProfile";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 
@@ -15,8 +16,8 @@ export const MenuPortal = ({ className }: MenuPortalProps) => {
   const { currentUser } = useCurrentUser();
   const { newCount, resetCount } = useNotificationContext();
   return (
-    <View className="flex-1">
-      <InspectProfile
+    <View className={cn("flex-1", className)}>
+      <InspectBaseProfile
         id={currentUser?.id as string}
         coverExtra={
           <StableSafeAreaView
