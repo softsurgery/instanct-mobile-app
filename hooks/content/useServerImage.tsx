@@ -17,6 +17,7 @@ interface UseServerImageProps {
   fallback?: string | React.ReactNode;
   className?: string;
   wrapperClassName?: string;
+  fallbackClassName?: string;
   enabled?: boolean;
 }
 
@@ -26,6 +27,7 @@ export const useServerImage = ({
   fallback,
   className,
   wrapperClassName,
+  fallbackClassName,
   enabled = true,
 }: UseServerImageProps) => {
   const { data: uploadResp, isPending: isUploadPending } = useQuery({
@@ -113,7 +115,7 @@ export const useServerImage = ({
         >
           <AvatarImage />
           <AvatarFallback>
-            <Text>{fallback.toUpperCase()}</Text>
+            <Text className={fallbackClassName}>{fallback.toUpperCase()}</Text>
           </AvatarFallback>
         </Avatar>
       );

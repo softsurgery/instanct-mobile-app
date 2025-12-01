@@ -23,6 +23,8 @@ export const UsersMarker = ({
   currentUserIncluded,
   onPress,
 }: UsersMarkerProps) => {
+  const width = 30;
+  const height = 30;
   const { currentUser } = useCurrentUser();
   const mapStore = useMapStore();
 
@@ -31,9 +33,10 @@ export const UsersMarker = ({
   }, [nearbyUsers, mapStore.users, currentUser]);
 
   const { jsxArray: userPictures } = useServerImages({
-    ids: mapStore.users.map((u) => u?.profile?.pictureId),
+    ids: nearbyUsers.map((u) => u?.user?.profile?.pictureId),
     className: "rounded-full",
-    size: { width: 40, height: 40 },
+    fallbackClassName: "text-xs",
+    size: { width, height },
     fallbacks: mapStore.users.map((u) => identifyUserAvatar(u)),
   });
 
@@ -52,7 +55,8 @@ export const UsersMarker = ({
             <View
               key={user.id}
               style={{
-                marginLeft: index === 0 ? 0 : -18,
+                marginLeft:
+                  nearbyUsers.length > 2 ? (index === 0 ? 0 : -width * 0.4) : 0,
                 zIndex: displayUsers.length - index,
               }}
             >

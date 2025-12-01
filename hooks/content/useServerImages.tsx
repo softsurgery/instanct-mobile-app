@@ -17,6 +17,7 @@ interface UseServerImagesProps {
   fallbacks?: (string | React.ReactNode | ImageSource | undefined)[];
   size: { width: number; height: number };
   wrapperClassName?: string;
+  fallbackClassName?: string;
   className?: string;
   enabled?: boolean;
 }
@@ -27,6 +28,7 @@ export const useServerImages = ({
   size,
   className,
   wrapperClassName,
+  fallbackClassName,
   enabled = true,
 }: UseServerImagesProps) => {
   const queries = useQueries({
@@ -126,7 +128,9 @@ export const useServerImages = ({
           >
             <AvatarImage />
             <AvatarFallback>
-              <Text>{fallback.toUpperCase()}</Text>
+              <Text className={fallbackClassName}>
+                {fallback.toUpperCase()}
+              </Text>
             </AvatarFallback>
           </Avatar>
         );

@@ -1,10 +1,11 @@
 import { useServerImage } from "@/hooks/content/useServerImage";
+import { usePanResponder } from "@/hooks/usePanResponder";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import { cn } from "@/lib/utils";
 import { NearbyUser } from "@/types";
 import { formatDistanceToNow } from "date-fns";
 import { router } from "expo-router";
-import { LucideMessageCircle, User } from "lucide-react-native";
+import { LucideMessageCircle } from "lucide-react-native";
 import React from "react";
 import { TouchableWithoutFeedback, View } from "react-native";
 import { StablePressable } from "../shared/StablePressable";
@@ -15,14 +16,18 @@ import { Text } from "../ui/text";
 interface UserModalContentProps {
   className?: string;
   nearbyUser: NearbyUser;
+  clusterView?: boolean;
   closeModal?: () => void;
 }
 
 export const UserModalContent = ({
   className,
   nearbyUser,
+  clusterView = false,
   closeModal,
 }: UserModalContentProps) => {
+  const { panHandlers } = usePanResponder();
+
   const identification = React.useMemo(
     () => identifyUser(nearbyUser.user),
     [nearbyUser.user]
@@ -47,46 +52,70 @@ export const UserModalContent = ({
     });
   };
 
+  if (clusterView)
+    return (
+      <View className={cn("bg-card rounded-t-2xl", className)} {...panHandlers}>
+        <View className="flex flex-row justify-between items-center my-4">
+          <View className="flex-row items-center gap-3">
+            <StablePressable onPress={inspectProfile}>
+              {profilePicture}
+            </StablePressable>
+            <View className="flex flex-col gap-1">
+              <Text className="text-md font-semibold">{identification}</Text>
+              {nearbyUser.isOnline ? (
+                <Text className="text-xs text-green-600">Online</Text>
+              ) : (
+                <Text className="text-xs opacity-70">
+                  Last active{" "}
+                  {formatDistanceToNow(new Date(nearbyUser.updatedAt), {
+                    addSuffix: true,
+                  })}
+                </Text>
+              )}
+              <Text className="text-xs">
+                {(nearbyUser.distance ?? 0).toFixed(2)} km away
+              </Text>
+            </View>
+          </View>
+          <Button variant={"outline"} size="sm">
+            <Icon as={LucideMessageCircle} size={20} />
+            <Text>Send message</Text>
+          </Button>
+        </View>
+      </View>
+    );
   return (
     <TouchableWithoutFeedback>
-      <View className={cn("bg-card rounded-t-2xl p-4 pb-8 ", className)}>
+      <View
+        className={cn("bg-card rounded-t-2xl p-6", className)}
+        {...panHandlers}
+      >
         <View className="w-12 h-1.5 bg-muted-foreground/40 self-center rounded-full mb-4" />
-        <View className="flex-row items-center gap-3">
-          <StablePressable onPress={inspectProfile}>
-            {profilePicture}
-          </StablePressable>
-          <View>
-            <Text className="text-lg font-semibold">{identification}</Text>
-
-            {nearbyUser.isOnline ? (
-              <Text className="text-green-600">Online</Text>
-            ) : (
-              <Text className="">
-                Last active{" "}
-                {formatDistanceToNow(new Date(nearbyUser.updatedAt), {
-                  addSuffix: true,
-                })}
+        <View className="flex flex-row justify-between items-center my-4">
+          <View className="flex-row items-center gap-3">
+            <StablePressable onPress={inspectProfile}>
+              {profilePicture}
+            </StablePressable>
+            <View className="flex flex-col gap-1">
+              <Text className="text-md font-semibold">{identification}</Text>
+              {nearbyUser.isOnline ? (
+                <Text className="text-xs text-green-600">Online</Text>
+              ) : (
+                <Text className="text-xs opacity-70">
+                  Last active{" "}
+                  {formatDistanceToNow(new Date(nearbyUser.updatedAt), {
+                    addSuffix: true,
+                  })}
+                </Text>
+              )}
+              <Text className="text-xs">
+                {(nearbyUser.distance ?? 0).toFixed(2)} km away
               </Text>
-            )}
-
-            <Text className="text-xs mt-1">
-              {(nearbyUser.distance ?? 0).toFixed(2)} km away
-            </Text>
+            </View>
           </View>
-        </View>
-        <View className="flex flex-row items-center justify-between gap-2 my-4">
-          <Button
-            variant={"default"}
-            size="lg"
-            className="flex-1"
-            onPress={inspectProfile}
-          >
-            <Icon as={User} size={24} color={"white"} />
-            <Text>View Profile</Text>
-          </Button>
-          <Button variant={"outline"} size="lg" className="flex-1">
-            <Icon as={LucideMessageCircle} size={24} />
-            <Text>Say Hi!</Text>
+          <Button variant={"outline"} size="sm">
+            <Icon as={LucideMessageCircle} size={20} />
+            <Text>Send message</Text>
           </Button>
         </View>
       </View>
