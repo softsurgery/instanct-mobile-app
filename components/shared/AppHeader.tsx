@@ -19,23 +19,28 @@ interface ApplicationHeaderProps {
   className?: string;
   title: string;
   shortcuts?: Shortcut[];
+  reverse?: boolean;
 }
+
 export const ApplicationHeader = ({
   className,
   title,
   shortcuts,
+  reverse = false,
 }: ApplicationHeaderProps) => {
   const isRTL = useRTL();
   return (
     <View
       className={cn(
         "flex flex-row justify-between items-center gap-2 px-2",
-        isRTL ? "flex-row-reverse" : "",
+        isRTL || reverse ? "flex-row-reverse" : "flex-row",
         className
       )}
     >
       <Text variant="h1">{title}</Text>
-      <View className="flex flex-row gap-2">
+      <View
+        className={cn("flex gap-2", reverse ? "flex-row-reverse" : "flex-row")}
+      >
         {shortcuts?.map((shortcut, index) => {
           if (
             shortcut !== null &&
