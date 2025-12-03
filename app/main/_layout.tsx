@@ -57,6 +57,12 @@ export default function MainLayout() {
             title: "My Profile",
           }}
         />
+        <Stack.Screen
+          name="edit-screen"
+          options={{
+            title: "Edit Screen",
+          }}
+        />
         {/* chat */}
         <Stack.Screen
           name="chat/conversation"

@@ -39,6 +39,9 @@ export interface ResponseProfileDto extends DatabaseEntity {
   user: ResponseClientDto;
   pictureId?: number;
   picture?: Upload;
+  experiences?: Experience[] | null;
+  educations?: Education[] | null;
+  skills?: Skill[] | null;
 }
 
 export class UpdateProfileDto {
@@ -68,4 +71,23 @@ export interface ResponseIsFollowingDto {
   userId?: string;
   targetId?: string;
   isFollowing?: boolean;
+}
+
+export interface Experience {
+  title: string;
+  company: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+}
+
+export interface Education {
+  school: string;
+  degree: string;
+  startYear: number;
+  endYear: number;
+}
+
+export interface Skill {
+  name: string;
 }

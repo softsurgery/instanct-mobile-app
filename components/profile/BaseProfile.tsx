@@ -10,15 +10,25 @@ import { useServerImage } from "@/hooks/content/useServerImage";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import { cn } from "@/lib/utils";
 import { createClientStore, useClientStore } from "@/stores/useClientStore";
-import { ServerErrorResponse } from "@/types";
+import { Education, Experience, ServerErrorResponse, Skill } from "@/types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigation } from "expo-router";
-import { Mail, UserPlus } from "lucide-react-native";
+import { router, useNavigation } from "expo-router";
+import { Mail, Pen, Plus, UserPlus } from "lucide-react-native";
 import React from "react";
 import { Image, View } from "react-native";
 import { showToastable } from "react-native-toastable";
+import { StablePressable } from "../shared/StablePressable";
 import { StableScrollView } from "../shared/StableScrollView";
+import { Separator } from "../ui/separator";
 import { ProfileStat } from "./ProfileStat";
+
+interface ProfileSection<T = unknown> {
+  key: string;
+  title: string;
+  data: T[];
+  editable: boolean;
+  renderItem: (item: any) => React.ReactNode;
+}
 
 interface InspectBaseProfileProps {
   className?: string;
@@ -34,7 +44,6 @@ export const InspectBaseProfile = ({
   const queryClient = useQueryClient();
   const navigation = useNavigation();
   const storeRef = React.useRef(createClientStore());
-  // const clientStore = storeRef?.current();
   const { currentUser } = useCurrentUser();
   const clientStore = useClientStore();
 
@@ -104,12 +113,11 @@ export const InspectBaseProfile = ({
     clientStore.set("followings", followings);
   }, [followers, followings]);
 
-  const { data: followDataCount, isPending: isFollowDataCountPending } =
-    useQuery({
-      queryKey: ["follow-data-count", user?.id],
-      queryFn: () => api.follow.findDataCount(user?.id!),
-      enabled: !!user?.id,
-    });
+  const { data: followDataCount } = useQuery({
+    queryKey: ["follow-data-count", user?.id],
+    queryFn: () => api.follow.findDataCount(user?.id!),
+    enabled: !!user?.id,
+  });
 
   React.useEffect(() => {
     if (followDataCount)
@@ -123,9 +131,102 @@ export const InspectBaseProfile = ({
     };
   }, []);
 
+  // ---------------------------------------------------------------
+  //  PROFILE SECTIONS CONFIG
+  // ---------------------------------------------------------------
+  const profileSections: ProfileSection[] = [
+    {
+      key: "experience",
+      title: "Experience",
+      data: user?.profile?.experiences as unknown[],
+      editable: currentUser?.id === user?.id,
+      renderItem: (experience: Experience) => (
+        <View className="flex flex-col">
+          <Text className="font-semibold">{experience.title}</Text>
+          <Text className="text-sm text-muted-foreground">
+            {experience.company}
+          </Text>
+          <Text className="text-xs text-muted-foreground">
+            {experience.startDate} — {experience.endDate}
+          </Text>
+          <Text className="text-sm mt-1">{experience.description}</Text>
+        </View>
+      ),
+    },
+    {
+      key: "education",
+      title: "Education",
+      data: user?.profile?.educations as unknown[],
+      editable: currentUser?.id === user?.id,
+      renderItem: (edu: Education) => (
+        <View className="flex flex-col">
+          <Text className="font-semibold">{edu.school}</Text>
+          <Text className="text-sm text-muted-foreground">{edu.degree}</Text>
+          <Text className="text-xs text-muted-foreground">
+            {edu.startYear} — {edu.endYear}
+          </Text>
+        </View>
+      ),
+    },
+    {
+      key: "skills",
+      title: "Skills",
+      data: user?.profile?.skills as unknown[],
+      editable: currentUser?.id === user?.id,
+      renderItem: (skill: Skill) => (
+        <Text className="text-sm font-bold">{skill.name}</Text>
+      ),
+    },
+  ];
+
+  // ---------------------------------------------------------------
+  //  SECTION RENDERER
+  // ---------------------------------------------------------------
+  const renderSection = (section: ProfileSection) => (
+    <Card key={section.key} className="m-0 pt-1">
+      <CardHeader className="flex flex-row items-center justify-between mt-2 -mb-2">
+        <CardTitle>
+          <Text variant="h4">{section.title}</Text>
+        </CardTitle>
+
+        {section.editable && (
+          <View className="flex flex-row gap-1 items-center -mx-2">
+            <StablePressable
+              className="p-2"
+              onPress={() => router.push("/main/edit-screen")}
+              onPressClassname="bg-primary/25 rounded-full"
+            >
+              <Icon as={Plus} size={20} className="text-muted-foreground" />
+            </StablePressable>
+
+            <StablePressable
+              className="p-2"
+              onPress={() => router.push("/main/edit-screen")}
+              onPressClassname="bg-primary/25 rounded-full"
+            >
+              <Icon as={Pen} size={18} className="text-muted-foreground" />
+            </StablePressable>
+          </View>
+        )}
+      </CardHeader>
+
+      <Separator />
+
+      <CardContent className="flex flex-col gap-2">
+        {Array.isArray(section.data) &&
+          section.data.map((item, idx) => (
+            <View key={idx}>{section.renderItem(item)}</View>
+          ))}
+      </CardContent>
+    </Card>
+  );
+
+  // ---------------------------------------------------------------
+  //  UI LAYOUT
+  // ---------------------------------------------------------------
   return (
     <StableScrollView className={cn("flex-1 bg-background", className)}>
-      {/* Cover Image */}
+      {/* Cover */}
       <View className="relative w-full h-48 bg-card">
         {coverExtra}
         <Image
@@ -135,12 +236,10 @@ export const InspectBaseProfile = ({
         />
       </View>
 
-      {/* Profile Header */}
+      {/* Header */}
       <View className="flex-row items-center px-5 -mt-12">
-        {/* Profile Picture */}
         <View className="z-10">{profilePicture}</View>
 
-        {/* Info + Stats */}
         <View className="flex-1 mt-16">
           <View className="flex-row items-center justify-between mx-2">
             <View>
@@ -154,7 +253,6 @@ export const InspectBaseProfile = ({
               )}
             </View>
 
-            {/* Profile Stats */}
             <ProfileStat
               clientStore={clientStore}
               className="flex flex-row gap-4"
@@ -163,20 +261,24 @@ export const InspectBaseProfile = ({
         </View>
       </View>
 
-      {/* Bio Section */}
+      {/* Bio + Sections */}
       <View className="flex flex-col gap-4 flex-1 px-4 mt-6 pb-10">
+        <Text className="italic text-xs">{user?.profile?.bio}</Text>
+
+        {/* Follow buttons */}
         {currentUser?.id !== user?.id && (
           <View className="flex flex-row w-full justify-between gap-2">
             <Button
               size="sm"
               onPress={() => (isFollowing ? unfollowUser() : followUser())}
               variant={isFollowing ? "outline" : "default"}
-              className="flex flex-row flex-1 gap-2 "
+              className="flex flex-row flex-1 gap-2"
               disabled={isFollowPending || isUnfollowPending}
             >
               {!isFollowing && <Icon as={UserPlus} size={20} />}
               <Text>{isFollowing ? "Following" : "Follow"}</Text>
             </Button>
+
             <Button
               size="sm"
               className="flex flex-row flex-1 gap-2"
@@ -187,88 +289,10 @@ export const InspectBaseProfile = ({
             </Button>
           </View>
         )}
-        <View></View>
+
+        {/* Render all abstracted profile sections */}
         <View className="flex flex-col gap-4">
-          {/* Experience */}
-          <Card>
-            <CardHeader>
-              <CardTitle variant={"large"}>Experience</CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-4">
-              {/* Job 1 */}
-              <View className="flex flex-col">
-                <Text className="font-semibold">Senior Software Engineer</Text>
-                <Text className="text-sm text-muted-foreground">
-                  TechNova Labs
-                </Text>
-                <Text className="text-xs text-muted-foreground">
-                  Jan 2022 — Present
-                </Text>
-                <Text className="text-sm mt-1">
-                  Lead mobile development using React Native. Mentors junior
-                  engineers and collaborates with design and backend teams.
-                </Text>
-              </View>
-
-              {/* Job 2 */}
-              <View className="flex flex-col">
-                <Text className="font-semibold">Mobile Developer</Text>
-                <Text className="text-sm text-muted-foreground">
-                  BluePixel Studio
-                </Text>
-                <Text className="text-xs text-muted-foreground">
-                  2019 — 2021
-                </Text>
-                <Text className="text-sm mt-1">
-                  Built cross-platform apps for fintech and e-commerce clients
-                  using React Native and GraphQL.
-                </Text>
-              </View>
-            </CardContent>
-          </Card>
-
-          {/* Education */}
-          <Card>
-            <CardHeader>
-              <CardTitle variant={"large"}>Education</CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-3">
-              <View className="flex flex-col">
-                <Text className="font-semibold">UC Berkeley</Text>
-                <Text className="text-sm text-muted-foreground">
-                  B.S. in Computer Science
-                </Text>
-                <Text className="text-xs text-muted-foreground">
-                  2013 — 2017
-                </Text>
-              </View>
-            </CardContent>
-          </Card>
-
-          {/* Skills */}
-          <Card>
-            <CardHeader>
-              <CardTitle variant={"large"}>Skills</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <View className="flex flex-row flex-wrap gap-2">
-                {[
-                  "React Native",
-                  "TypeScript",
-                  "GraphQL",
-                  "Node.js",
-                  "Redux",
-                ].map((skill, idx) => (
-                  <View
-                    key={idx}
-                    className="px-3 py-1 bg-secondary rounded-full"
-                  >
-                    <Text className="text-sm">{skill}</Text>
-                  </View>
-                ))}
-              </View>
-            </CardContent>
-          </Card>
+          {profileSections.map(renderSection)}
         </View>
       </View>
     </StableScrollView>

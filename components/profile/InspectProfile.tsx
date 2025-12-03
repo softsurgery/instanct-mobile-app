@@ -1,4 +1,3 @@
-import { useNotificationContext } from "@/contexts/NotificationsContext";
 import { cn } from "@/lib/utils";
 import { router } from "expo-router";
 import { ArrowLeft } from "lucide-react-native";
@@ -13,7 +12,6 @@ interface InspectProfileProps {
 }
 
 export const InspectProfile = ({ className, id }: InspectProfileProps) => {
-  const { newCount, resetCount } = useNotificationContext();
   return (
     <View className={cn("flex-1", className)}>
       <InspectBaseProfile
