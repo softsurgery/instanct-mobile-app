@@ -11,6 +11,9 @@ export default ({ config }) => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: "com.softsurgery.instanctmobileapp",
+    infoPlist: {
+      UIDesignRequiresCompatibility: true,
+    },
   },
   android: {
     adaptiveIcon: {
