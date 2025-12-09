@@ -5,7 +5,7 @@ import { cn } from "~/lib/utils";
 import { StablePressable } from "../shared/StablePressable";
 import { Icon } from "../ui/icon";
 import { IconBadge } from "../ui/icon-badge";
-import { Text } from "../ui/text";
+import { Text, TextVariantDefaults } from "../ui/text";
 
 type Shortcut =
   | {
@@ -18,6 +18,7 @@ type Shortcut =
 interface ApplicationHeaderProps {
   className?: string;
   title: string;
+  titleVariant?: TextVariantDefaults;
   shortcuts?: Shortcut[];
   reverse?: boolean;
 }
@@ -25,6 +26,7 @@ interface ApplicationHeaderProps {
 export const ApplicationHeader = ({
   className,
   title,
+  titleVariant = "h1",
   shortcuts,
   reverse = false,
 }: ApplicationHeaderProps) => {
@@ -37,7 +39,9 @@ export const ApplicationHeader = ({
         className
       )}
     >
-      <Text variant="h1">{title}</Text>
+      <Text variant={titleVariant} className="mx-2">
+        {title}
+      </Text>
       <View
         className={cn("flex gap-2", reverse ? "flex-row-reverse" : "flex-row")}
       >
