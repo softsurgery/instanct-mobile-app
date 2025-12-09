@@ -16,10 +16,10 @@ export default function TabLayout() {
 
   const isDarkColorScheme = colorScheme === "dark";
 
-  const withHaptic = (onPress: Function) => {
+  const withHaptic = (functions: Function[]) => {
     return async () => {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      onPress();
+      functions.forEach((fn) => fn());
     };
   };
 
@@ -28,7 +28,7 @@ export default function TabLayout() {
     return (
       <Pressable
         className="flex flex-col justify-center items-center mt-2 gap-1"
-        onPress={withHaptic(onPress)}
+        onPress={withHaptic([onPress])}
       >
         {children}
       </Pressable>
