@@ -1,5 +1,7 @@
 import { EditScreen } from "@/components/EditScreen";
+import { useLocalSearchParams } from "expo-router";
 
 export default function Screen() {
-  return <EditScreen />;
+  const { id } = useLocalSearchParams();
+  return <EditScreen id={id as string} />;
 }
