@@ -26,7 +26,7 @@ export const MapPortal = ({ className }: MapPortalProps) => {
   };
 
   return (
-    <View className={cn("flex-1", className)}>
+    <View className={cn("flex-1 bg-background", className)}>
       <View className="flex-1 relative">
         <View className="absolute inset-0 border-y border-border top-0">
           {mapStore.loading ||
