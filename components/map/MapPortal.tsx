@@ -2,6 +2,7 @@ import { useMapContext } from "@/contexts/MapContext";
 import { useNotificationContext } from "@/contexts/NotificationsContext";
 import { cn } from "@/lib/utils";
 import { useMapStore } from "@/stores/useMapStore";
+import { IconMessageChatbot } from "@tabler/icons-react-native";
 import { router } from "expo-router";
 import { Bell, RefreshCcw } from "lucide-react-native";
 import React from "react";
@@ -63,6 +64,12 @@ export const MapPortal = ({ className }: MapPortalProps) => {
                   resetCount();
                 },
                 badgeText: newCount > 0 ? `${newCount}` : undefined,
+              },
+              {
+                icon: IconMessageChatbot,
+                onPress: () => {
+                  router.push("/main/chat");
+                },
               },
             ]}
           />
