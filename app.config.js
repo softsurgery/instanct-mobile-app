@@ -4,9 +4,10 @@ export default ({ config }) => ({
   slug: "instanct-mobile-app",
   version: "1.0.0",
   orientation: "portrait",
-  icon: "./assets/images/logo.png",
+  icon: "./assets/images/logo.svg",
   scheme: "instanctmobileapp",
   userInterfaceStyle: "automatic",
+  assetBundlePatterns: ["**/*"],
   newArchEnabled: true,
   ios: {
     supportsTablet: true,

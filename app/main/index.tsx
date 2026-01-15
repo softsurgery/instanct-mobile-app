@@ -1,4 +1,4 @@
-import OnBoarding from "@/components/OnBoarding";
+import OnBoarding from "@/components/auth/OnBoarding";
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
 import { router } from "expo-router";
 import React from "react";
