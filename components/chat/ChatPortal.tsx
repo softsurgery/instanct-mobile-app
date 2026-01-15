@@ -6,7 +6,7 @@ import { LegendList } from "@legendapp/list";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { router } from "expo-router";
-import { Bell } from "lucide-react-native";
+import { ArrowLeft } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, RefreshControl, View } from "react-native";
@@ -101,31 +101,27 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
   );
 
   return (
-    <StableSafeAreaView className={cn("flex flex-1 mx-2", className)}>
+    <StableSafeAreaView className={cn("flex flex-1", className)}>
       <ApplicationHeader
+        className="border-b border-border pb-2 bg-transparent"
         title={t("screens.chat")}
+        titleVariant="large"
+        reverse
         shortcuts={[
           {
-            icon: Bell,
+            key: "back",
+            icon: ArrowLeft,
             onPress: () => {
-              router.push("/main/notifications");
-              resetCount();
+              router.back();
             },
-            badgeText: newCount > 0 ? `${newCount}` : undefined,
           },
         ]}
       />
-      <View className="px-4"></View>
 
-      <View className="flex-1 mx-2">
+      <View className="flex-1 bg-background">
         {/* Manual Tabs */}
 
         <View className="flex-1">
-          <View className="flex flex-col gap-2">
-            <Text className="text-sm">Recent Messages</Text>
-          </View>
-
-          <Separator className="mt-2" />
           <LegendList
             className={cn("flex-1")}
             data={conversations}

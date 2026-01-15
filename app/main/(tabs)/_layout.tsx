@@ -43,13 +43,6 @@ export default function TabLayout() {
       iconSize: 30,
     },
     {
-      name: "chat",
-      title: t("screens.chat"),
-      icon: MessageCircle,
-      iconSize: 30,
-    },
-
-    {
       name: "map",
       title: t("screens.map"),
       icon: Map,

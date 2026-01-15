@@ -77,6 +77,13 @@ export default function MainLayout() {
           />
           {/* chat */}
           <Stack.Screen
+            name="chat"
+            options={{
+              title: "Chat",
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
             name="chat/conversation"
             options={{
               title: "",
@@ -89,7 +96,7 @@ export default function MainLayout() {
             name="settings"
             options={{
               title: "Settings",
-              headerShown: false,
+              headerShown: true,
               animation: "fade_from_bottom",
               animationDuration: 200,
             }}

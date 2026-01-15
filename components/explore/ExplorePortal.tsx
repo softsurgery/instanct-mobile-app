@@ -1,5 +1,6 @@
 import { useNotificationContext } from "@/contexts/NotificationsContext";
 import { cn } from "@/lib/utils";
+import { IconMessageChatbot } from "@tabler/icons-react-native";
 import { router } from "expo-router";
 import { Bell } from "lucide-react-native";
 import React from "react";
@@ -15,7 +16,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   const { newCount, resetCount } = useNotificationContext();
 
   return (
-    <StableSafeAreaView className={cn("flex-1 px-2", className)}>
+    <StableSafeAreaView className={cn("flex-1 px-2 bg-background", className)}>
       <ApplicationHeader
         title="Explore"
         shortcuts={[
@@ -26,6 +27,12 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
               resetCount();
             },
             badgeText: newCount > 0 ? `${newCount}` : undefined,
+          },
+          {
+            icon: IconMessageChatbot,
+            onPress: () => {
+              router.push("/main/chat");
+            },
           },
         ]}
       />
