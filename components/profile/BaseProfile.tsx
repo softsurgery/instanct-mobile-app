@@ -177,6 +177,15 @@ export const InspectBaseProfile = ({
         <Text className="text-sm font-bold">{skill.name}</Text>
       ),
     },
+    {
+      key: "objectives",
+      title: "Objectives",
+      data: user?.profile?.skills ? [user?.profile?.skills] : [],
+      editable: currentUser?.id === user?.id,
+      renderItem: (objective: string) => (
+        <Text className="text-sm">{objective}</Text>
+      ),
+    },
   ];
 
   // ---------------------------------------------------------------
