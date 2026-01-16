@@ -96,7 +96,7 @@ export default function MainLayout() {
             name="settings"
             options={{
               title: "Settings",
-              headerShown: true,
+              headerShown: false,
               animation: "fade_from_bottom",
               animationDuration: 200,
             }}
