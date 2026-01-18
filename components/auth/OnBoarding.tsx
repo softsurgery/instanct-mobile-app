@@ -79,24 +79,27 @@ export default function OnBoarding({ className }: OnBoardingProps) {
           />
         </View>
 
-        <View className="flex flex-row gap-2 mt-5 px-4">
+        <View className="flex flex-col gap-4 px-6 mb-2">
           <Button
-            className="flex-1"
-            variant="outline"
+            size="lg"
+            className="w-full rounded-lg"
             onPress={() => router.navigate("/auth/sign-in")}
           >
-            <Text className="text-lg tracking-wider font-bold">
-              {"Get Started".toUpperCase()}
-            </Text>
+            <Text className="text-lg font-bold">Get Started</Text>
           </Button>
+
           <Button
-            className="flex-1"
-            variant="outline"
+            size="lg"
+            variant="secondary"
+            className="w-full gap-3 rounded-lg border-border"
             onPress={() => router.navigate("/auth/sign-in")}
           >
-            <Text className="text-lg tracking-wider font-bold">
-              {"Get Started".toUpperCase()}
-            </Text>
+            <Image
+              source={require("~/assets/images/google.png")}
+              style={{ width: 22, height: 22 }}
+              contentFit="contain"
+            />
+            <Text className="text-lg font-bold">Continue with Google</Text>
           </Button>
         </View>
       </View>
