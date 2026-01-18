@@ -3,7 +3,7 @@ import { useRTL } from "@/hooks/useRTL";
 import { NAV_THEME } from "@/lib/theme";
 import * as Haptics from "expo-haptics";
 import { Tabs } from "expo-router";
-import { Map, MessageCircle, Telescope, User } from "lucide-react-native";
+import { Map, Telescope, User } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -41,18 +41,21 @@ export default function TabLayout() {
       title: t("screens.explore"),
       icon: Telescope,
       iconSize: 30,
+      render: true,
     },
     {
       name: "map",
       title: t("screens.map"),
       icon: Map,
       iconSize: 30,
+      render: true,
     },
     {
       name: "menu",
       title: t("screens.menu"),
       icon: User,
       iconSize: 30,
+      render: true,
     },
   ];
 
@@ -91,8 +94,8 @@ export default function TabLayout() {
                           ? NAV_THEME.dark.colors.primary
                           : NAV_THEME.light.colors.primary
                         : isDarkColorScheme
-                        ? NAV_THEME.dark.colors.text
-                        : NAV_THEME.light.colors.text
+                          ? NAV_THEME.dark.colors.text
+                          : NAV_THEME.light.colors.text
                     }
                   />
                 )

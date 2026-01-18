@@ -2,7 +2,7 @@ import { useNotificationContext } from "@/contexts/NotificationsContext";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { cn } from "@/lib/utils";
 import { router } from "expo-router";
-import { Bell, Settings } from "lucide-react-native";
+import { Bell, FlaskConical, Settings } from "lucide-react-native";
 import { View } from "react-native";
 import { InspectBaseProfile } from "../profile/BaseProfile";
 import { ApplicationHeader } from "../shared/AppHeader";
@@ -40,6 +40,15 @@ export const MenuPortal = ({ className }: MenuPortalProps) => {
                   icon: Settings,
                   onPress: () => router.push("/main/settings"),
                 },
+                ...(process.env.NODE_ENV === "development"
+                  ? [
+                      {
+                        key: "flask",
+                        icon: FlaskConical,
+                        onPress: () => router.push("/main/test"),
+                      },
+                    ]
+                  : []),
               ]}
             />
           </StableSafeAreaView>
