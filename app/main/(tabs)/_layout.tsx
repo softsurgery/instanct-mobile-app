@@ -68,6 +68,7 @@ export default function TabLayout() {
             ? NAV_THEME.dark.colors.card
             : NAV_THEME.light.colors.card,
           borderColor: "transparent",
+          height: "9%",
         },
         sceneStyle: {
           flex: 1,
@@ -105,7 +106,7 @@ export default function TabLayout() {
               ? NAV_THEME.dark.colors.primary
               : NAV_THEME.light.colors.primary,
             tabBarLabelStyle: {
-              fontSize: 11,
+              fontSize: 9,
               fontWeight: "bold",
             },
           }}
