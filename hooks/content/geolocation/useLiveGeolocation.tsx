@@ -43,7 +43,7 @@ export function useLiveGeolocation({
         console.warn("⚠️ Failed to fetch location:", err);
       }
     },
-    [radiusKm]
+    [radiusKm],
   );
 
   const initializeSocket = async () => {
@@ -118,7 +118,7 @@ export function useLiveGeolocation({
         const existing = mapStore.getUserById(n.userId);
         if (!existing) {
           try {
-            const profile = await api.client.findById(n.userId);
+            const profile = await api.user.findById(n.userId);
             mapStore.addUser(profile); // prevents duplicates
           } catch (e) {
             console.warn("Failed to fetch profile:", e);
@@ -133,7 +133,7 @@ export function useLiveGeolocation({
       const existing = mapStore.getUserById(data.userId);
       if (!existing) {
         try {
-          const profile = await api.client.findById(data.userId);
+          const profile = await api.user.findById(data.userId);
           mapStore.addUser(profile);
         } catch (e) {
           console.warn("❌ Failed retrieving user", e);
@@ -144,7 +144,7 @@ export function useLiveGeolocation({
     await updateLocation(socket);
     intervalRef.current = setInterval(
       () => updateLocation(socket),
-      updateInterval * 1000
+      updateInterval * 1000,
     );
   };
 

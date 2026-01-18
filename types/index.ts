@@ -1,6 +1,6 @@
 export * from "./auth";
 export * from "./chat";
-export * from "./client";
+export * from "./user-management";
 export * from "./geolocation";
 export * from "./notifications";
 export * from "./reference-types";

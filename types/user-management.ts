@@ -1,7 +1,9 @@
 import { Upload } from "./upload";
 import { DatabaseEntity } from "./utils/database-entity";
 
-export interface ResponseClientDto extends DatabaseEntity {
+//abstract user dtos *****************************************************************************
+
+interface ResponseAbstractUsertDto extends DatabaseEntity {
   id: string;
   firstName?: string;
   lastName?: string;
@@ -10,33 +12,30 @@ export interface ResponseClientDto extends DatabaseEntity {
   username: string;
   email: string;
   emailVerified?: Date;
-  profile: ResponseProfileDto;
-  profileId: string;
 }
 
-export interface UpdateClientDto {
+interface CreateAbstractUserDto {
   firstName?: string;
   lastName?: string;
   dateOfBirth?: Date;
   isActive?: boolean;
   password?: string;
+  username: string;
   email: string;
-  profile?: UpdateProfileDto;
+  roleId?: string;
 }
 
-export enum Gender {
-  Male = "Male",
-  Female = "Female",
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+interface UpdateAbstractUserDto extends Partial<CreateAbstractUserDto> {}
 
-export interface ResponseProfileDto extends DatabaseEntity {
-  id: number;
+// user dtos ************************************************************************************
+
+export interface ResponseUserDto extends ResponseAbstractUsertDto {
   phone?: string;
   cin?: string;
   bio?: string;
   gender?: Gender;
   isPrivate?: boolean;
-  user: ResponseClientDto;
   pictureId?: number;
   picture?: Upload;
   experiences?: Experience[] | null;
@@ -44,22 +43,24 @@ export interface ResponseProfileDto extends DatabaseEntity {
   skills?: Skill[] | null;
 }
 
-export class UpdateProfileDto {
+export interface CreateUserDto extends CreateAbstractUserDto {
   phone?: string;
   cin?: string;
   bio?: string;
   gender?: Gender;
   isPrivate?: boolean;
   pictureId?: number;
+  officialDocumentId?: number;
+  driverLicenseDocumentId?: number;
+  uploads?: Upload[];
 }
 
-export interface ResponseFollowDto extends DatabaseEntity {
-  id: string;
-  follower: ResponseClientDto;
-  followerId: string;
-  following: ResponseClientDto;
-  followingId: string;
-  isFollowing: boolean;
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface UpdateUserDto extends Partial<CreateUserDto> {}
+
+export enum Gender {
+  Male = "Male",
+  Female = "Female",
 }
 
 export interface ResponseFollowCountsDto {

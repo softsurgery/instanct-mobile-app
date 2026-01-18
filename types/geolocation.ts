@@ -1,4 +1,4 @@
-import { ResponseClientDto } from "./client";
+import { ResponseClientDto } from "./user-management";
 import { DatabaseEntity } from "./utils";
 
 export interface CreateGeolocationDto {

@@ -1,4 +1,4 @@
-import { ResponseClientDto } from "./client";
+import { ResponseClientDto } from "./user-management";
 
 export interface ResponseClientSigninDto {
   access_token: string;

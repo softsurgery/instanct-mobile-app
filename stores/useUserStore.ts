@@ -1,37 +1,32 @@
 import { setDeepValue } from "@/lib/object";
 import { create } from "zustand";
 import {
-  ResponseClientDto,
   ResponseFollowCountsDto,
-  ResponseFollowDto,
-  UpdateClientDto,
+  ResponseUserDto,
+  UpdateUserDto,
 } from "~/types";
 
-interface ClientData {
-  response?: ResponseClientDto;
+interface UserData {
+  response?: ResponseUserDto;
   responseFollowCountsDto: ResponseFollowCountsDto;
-  followers: ResponseFollowDto[];
-  followings: ResponseFollowDto[];
-  updateDto: UpdateClientDto;
+  updateDto: UpdateUserDto;
   picture?: string;
   progress: number;
   errors: Record<string, string[]>;
 }
 
-export interface ClientStore extends ClientData {
-  set: <K extends keyof ClientData>(name: K, value: ClientData[K]) => void;
+export interface UserStore extends UserData {
+  set: <K extends keyof UserData>(name: K, value: UserData[K]) => void;
   setNested: <T>(path: string, value: T) => void;
   reset: () => void;
 }
 
-const initialState: ClientData = {
+const initialState: UserData = {
   response: undefined,
   responseFollowCountsDto: {
     followers: 0,
     following: 0,
   },
-  followers: [],
-  followings: [],
   updateDto: {
     firstName: "",
     lastName: "",
@@ -39,20 +34,18 @@ const initialState: ClientData = {
     isActive: true,
     password: "",
     email: "",
-    profile: {
-      phone: "",
-      cin: "",
-      bio: "",
-      gender: undefined,
-      isPrivate: true,
-    },
+    phone: "",
+    cin: "",
+    bio: "",
+    gender: undefined,
+    isPrivate: true,
   },
   picture: undefined,
   progress: 0,
   errors: {},
 };
 
-export const useClientStore = create<ClientStore>((set, get) => ({
+export const useUserStore = create<UserStore>((set, get) => ({
   ...initialState,
   set: (name, value) => {
     set((state) => ({
@@ -75,7 +68,7 @@ export const useClientStore = create<ClientStore>((set, get) => ({
     const nestedPath = restPath.join(".");
 
     set((state) => {
-      const rootValue = state[rootKey as keyof ClientData];
+      const rootValue = state[rootKey as keyof UserData];
       if (typeof rootValue !== "object" || rootValue === null) {
         throw new Error(`Cannot set nested path on non-object: ${rootKey}`);
       }
@@ -83,7 +76,7 @@ export const useClientStore = create<ClientStore>((set, get) => ({
       const updatedRoot = setDeepValue(
         { ...(rootValue as object) },
         nestedPath,
-        value
+        value,
       );
 
       return {
@@ -98,7 +91,7 @@ export const useClientStore = create<ClientStore>((set, get) => ({
 }));
 
 export const createClientStore = () =>
-  create<ClientStore>((set) => ({
+  create<UserStore>((set) => ({
     ...initialState,
     set: (name, value) =>
       set((state) => ({
@@ -118,7 +111,7 @@ export const createClientStore = () =>
       const nestedPath = restPath.join(".");
 
       set((state) => {
-        const rootValue = state[rootKey as keyof ClientData];
+        const rootValue = state[rootKey as keyof UserData];
         if (typeof rootValue !== "object" || rootValue === null) {
           throw new Error(`Cannot set nested path on non-object: ${rootKey}`);
         }
@@ -126,7 +119,7 @@ export const createClientStore = () =>
         const updatedRoot = setDeepValue(
           { ...(rootValue as object) },
           nestedPath,
-          value
+          value,
         );
 
         return {

@@ -1,12 +1,12 @@
 import { setDeepValue } from "@/lib/object";
-import { Cluster, NearbyUser, ResponseClientDto } from "@/types";
+import { Cluster, NearbyUser, ResponseUserDto } from "@/types";
 import * as Location from "expo-location";
 import { create } from "zustand";
 
 interface MapData {
   connected: boolean;
   location: Location.LocationObject | null;
-  users: ResponseClientDto[];
+  users: ResponseUserDto[];
   nearbyUsers: NearbyUser[];
   clusters: Cluster[];
   reconnection: {
@@ -24,13 +24,13 @@ interface MapStore extends MapData {
   reset: () => void;
   //additional
   addNearbyUser: (user: NearbyUser) => void;
-  addUser: (user: ResponseClientDto) => void;
+  addUser: (user: ResponseUserDto) => void;
 
   setNearbyUsers: (prev: NearbyUser[]) => void;
-  setUsers: (prev: ResponseClientDto[]) => void;
+  setUsers: (prev: ResponseUserDto[]) => void;
   updateNearbyUser: (data: NearbyUser) => void;
 
-  getUserById: (id: string) => ResponseClientDto | null;
+  getUserById: (id: string) => ResponseUserDto | null;
   getNearbyUserById: (id: string) => NearbyUser | null;
 
   restart: () => void;
@@ -79,7 +79,7 @@ export const useMapStore = create<MapStore>((set, get) => ({
       const updatedRoot = setDeepValue(
         { ...(rootValue as object) },
         nestedPath,
-        value
+        value,
       );
 
       return {
@@ -97,7 +97,7 @@ export const useMapStore = create<MapStore>((set, get) => ({
       return { ...state, nearbyUsers: updated };
     });
   },
-  addUser: (user: ResponseClientDto) => {
+  addUser: (user: ResponseUserDto) => {
     set((state) => {
       const existing = state.users.find((u) => u.id === user.id);
       if (existing) return state;
@@ -106,7 +106,7 @@ export const useMapStore = create<MapStore>((set, get) => ({
       return { ...state, users: updated };
     });
   },
-  setUsers: (users: ResponseClientDto[]) => {
+  setUsers: (users: ResponseUserDto[]) => {
     set((state) => {
       const updated = [...state.users];
 

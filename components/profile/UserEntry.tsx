@@ -1,80 +1,30 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
-import { Star, UserPlus } from "lucide-react-native";
+import { Star } from "lucide-react-native";
 import React from "react";
 import { View } from "react-native";
-import { showToastable } from "react-native-toastable";
 import { StablePressable } from "~/components/shared/StablePressable";
-import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { cn } from "~/lib/utils";
-import { ResponseClientDto, ServerErrorResponse } from "~/types";
-
-import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
-import { useFollowSystem } from "@/hooks/content/users/useFollowSystem";
+import { ResponseUserDto } from "~/types";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
-import { ClientStore } from "@/stores/useClientStore";
-import { Icon } from "~/components/ui/icon";
 import { useServerImage } from "~/hooks/content/useServerImage";
+import { UserStore } from "@/stores/useUserStore";
 
 interface UserEntryProps {
   className?: string;
-  user: ResponseClientDto;
-  clientStore: ClientStore;
+  user: ResponseUserDto;
+  useStore: UserStore;
   closeDialog?: () => void;
 }
 
 export const UserEntry = ({
   className,
   user,
-  clientStore,
+  useStore,
   closeDialog,
 }: UserEntryProps) => {
-  const { currentUser } = useCurrentUser();
-  const queryClient = useQueryClient();
-
-  const {
-    isFollowing,
-    refetchIsFollowing,
-    followUser,
-    unfollowUser,
-    isFollowPending,
-    isUnfollowPending,
-  } = useFollowSystem({
-    id: user?.id,
-    follow: {
-      onSuccess: () => {
-        refetchIsFollowing();
-        queryClient.invalidateQueries({
-          queryKey: ["follow-data-count", clientStore?.response?.id],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ["followings", clientStore?.response?.id],
-        });
-      },
-      onError: (err: ServerErrorResponse) => {
-        showToastable({ message: err.response?.data.message });
-      },
-    },
-    unfollow: {
-      onSuccess: () => {
-        refetchIsFollowing();
-        queryClient.invalidateQueries({
-          queryKey: ["follow-data-count", clientStore?.response?.id],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ["followers", clientStore?.response?.id],
-        });
-      },
-      onError: (err: ServerErrorResponse) => {
-        showToastable({ message: err.response?.data.message });
-      },
-    },
-    use: ["is-following"],
-  });
-
   const { jsx: profilePicture } = useServerImage({
-    id: user?.profile?.pictureId,
+    id: user?.pictureId,
     fallback: identifyUserAvatar(user),
     size: { width: 40, height: 40 },
   });
@@ -110,18 +60,6 @@ export const UserEntry = ({
             </View>
           </View>
         </View>
-        {currentUser?.id !== user.id && (
-          <Button
-            size="sm"
-            onPress={() => (isFollowing ? unfollowUser() : followUser())}
-            variant={isFollowing ? "outline" : "default"}
-            className="flex flex-row gap-2"
-            disabled={isFollowPending || isUnfollowPending}
-          >
-            {!isFollowing && <Icon as={UserPlus} size={20} />}
-            <Text>{isFollowing ? "Following" : "Follow"}</Text>
-          </Button>
-        )}
       </View>
     </StablePressable>
   );

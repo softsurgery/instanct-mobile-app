@@ -1,7 +1,6 @@
 import { auth } from "./auth";
 import { chat } from "./chat";
-import { client } from "./client";
-import { follow } from "./follow";
+import { user } from "./user";
 import { notifications } from "./notifications";
 import { refImpl } from "./ref-impl";
 import { upload } from "./upload";
@@ -9,8 +8,7 @@ import { upload } from "./upload";
 export const api = {
   auth,
   chat,
-  client,
-  follow,
+  user,
   notifications,
   refImpl,
   upload,

@@ -9,9 +9,10 @@ import {
   TextareaFieldProps,
   TextFieldProps,
 } from "../shared/form-builder/types";
+import { UserStore } from "@/stores/useUserStore";
 
 interface useUpdateProfileFormStructureProps {
-  store?: any;
+  store: UserStore;
 }
 
 export const useUpdateProfileFormStructure = ({
@@ -110,9 +111,9 @@ export const useUpdateProfileFormStructure = ({
     description: "Tell us a little bit about yourself.",
     error: store?.errors?.bio?.[0],
     props: {
-      value: store?.updateDto?.profile?.bio,
+      value: store?.updateDto?.bio,
       onChangeText: (value: string) => {
-        store.setNested("updateDto.profile.bio", value);
+        store.setNested("updateDto.bio", value);
         store.setNested("errors.bio", []);
       },
     },
@@ -127,9 +128,9 @@ export const useUpdateProfileFormStructure = ({
     description: "Specifying your gender helps us personalize your experience.",
     error: store?.errors?.gender?.[0],
     props: {
-      value: store?.updateDto?.profile?.gender?.toString(),
+      value: store?.updateDto?.gender?.toString(),
       onSelect: (value: string) => {
-        store.setNested("updateDto.profile.gender", value);
+        store.setNested("updateDt.gender", value);
         store.setNested("errors.gender", []);
       },
       options: Object.entries(Gender).map(([value, label]) => ({
