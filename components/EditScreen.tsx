@@ -4,8 +4,8 @@ import { View } from "react-native";
 import { StablePressable } from "./shared/StablePressable";
 import { StableSafeAreaView } from "./shared/StableSafeAreaView";
 import { SceneBuilder } from "./shared/scene-builder/SceneBuilder";
-import { useSceneContext } from "./shared/scene-builder/SceneContext";
 import { Text } from "./ui/text";
+import { useSceneBuilderStore } from "./shared/scene-builder/useSceneBuilderStore";
 
 interface EditScreenProps {
   className?: string;
@@ -13,7 +13,7 @@ interface EditScreenProps {
 }
 
 export const EditScreen = ({ className, id }: EditScreenProps) => {
-  const { scenes } = useSceneContext();
+  const { scenes } = useSceneBuilderStore();
   return (
     <StableSafeAreaView className={cn("flex-1 bg-background", className)}>
       {scenes?.[id] ? (

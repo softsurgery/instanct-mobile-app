@@ -16,6 +16,8 @@ import { StablePressable } from "../shared/StablePressable";
 import { StableScrollView } from "../shared/StableScrollView";
 import { Separator } from "../ui/separator";
 import { ProfileStat } from "./ProfileStat";
+import { useEditProfileRecipes } from "./useUpdateProfileRecipe";
+import { useSceneBuilderStore } from "../shared/scene-builder/useSceneBuilderStore";
 
 interface ProfileSection<T = unknown> {
   key: string;
@@ -36,10 +38,13 @@ export const InspectBaseProfile = ({
   id,
   coverExtra,
 }: InspectBaseProfileProps) => {
+  const sceneBuilderStore = useSceneBuilderStore();
+  const userStore = useUserStore();
+  const { experienceRecipe } = useEditProfileRecipes({ store: userStore });
+
   const navigation = useNavigation();
   const storeRef = React.useRef(createClientStore());
   const { currentUser } = useCurrentUser();
-  const clientStore = useUserStore();
 
   const { user } = useIdentifiedUser({ id });
 
@@ -54,7 +59,7 @@ export const InspectBaseProfile = ({
   });
 
   React.useEffect(() => {
-    if (user) clientStore.set("response", user);
+    if (user) userStore.set("response", user);
     navigation.setOptions({
       title: user?.username ?? "Profile",
     });
@@ -62,7 +67,7 @@ export const InspectBaseProfile = ({
 
   React.useEffect(() => {
     return () => {
-      clientStore.reset();
+      userStore.reset();
       storeRef.current = null as any;
     };
   }, []);
@@ -146,7 +151,13 @@ export const InspectBaseProfile = ({
 
             <StablePressable
               className="p-2"
-              onPress={() => router.push("/main/edit-screen")}
+              onPress={() => {
+                sceneBuilderStore.push("update-profile", experienceRecipe);
+                router.push({
+                  pathname: "/main/scene-screen",
+                  params: { id: "update-profile" },
+                });
+              }}
               onPressClassname="bg-primary/25 rounded-full"
             >
               <Icon as={Pen} size={18} className="text-muted-foreground" />
