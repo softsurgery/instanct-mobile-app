@@ -92,45 +92,49 @@ interface SettingsPortalProps {
 
 export const SettingsPortal = ({ className }: SettingsPortalProps) => {
   const { t } = useTranslation("common");
+  const { toggleColorScheme } = useColorScheme();
+  const queryClient = useQueryClient();
+  const mapStore = useMapStore();
   const authPersistStore = useAuthPersistStore();
   const { currentUser } = useCurrentUser();
+
   const {
     language,
     theme,
     toggleTheme: persistToggleTheme,
   } = usePreferencePersistStore();
-  const { toggleColorScheme } = useColorScheme();
-  const queryClient = useQueryClient();
-  const mapStore = useMapStore();
+
   const logout = () => {
     authPersistStore.logout?.();
     mapStore.reset();
     queryClient.clear();
     router.replace("/");
   };
+
   const toggleTheme = React.useCallback(() => {
     persistToggleTheme();
     setAndroidNavigationBar(theme);
     toggleColorScheme();
   }, [persistToggleTheme, theme, toggleColorScheme]);
+
   return (
     <StableSafeAreaView className={cn("flex flex-1", className)}>
-      <StableScrollView>
-        <ApplicationHeader
-          className="border-b border-border pb-2 bg-transparent"
-          title={t("screens.settings")}
-          titleVariant="large"
-          reverse
-          shortcuts={[
-            {
-              key: "back",
-              icon: ArrowLeft,
-              onPress: () => {
-                router.back();
-              },
+      <ApplicationHeader
+        className="border-b border-border pb-2 bg-transparent"
+        title={t("screens.settings")}
+        titleVariant="large"
+        reverse
+        shortcuts={[
+          {
+            key: "back",
+            icon: ArrowLeft,
+            onPress: () => {
+              router.back();
             },
-          ]}
-        />
+          },
+        ]}
+      />
+      <StableScrollView>
         <View className="flex flex-col gap-4 p-4 pb-10">
           <Card className="border-primary/10 bg-primary/5">
             <CardContent className="flex flex-col justify-between px-4 gap-2">
@@ -230,8 +234,8 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
                   Alert.alert("Delete account", "Coming soon!");
                 }}
               >
-                <Icon as={Trash2} size={18} className="text-white" />
-                <Text className="text-white">Delete Account</Text>
+                <Icon as={Trash2} size={18} color={"white"} />
+                <Text>Delete Account</Text>
               </Button>
             </CardContent>
           </Card>

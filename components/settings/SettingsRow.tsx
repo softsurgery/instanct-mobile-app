@@ -6,7 +6,6 @@ import { Button } from "../ui/button";
 import { Icon } from "../ui/icon";
 import { Text } from "../ui/text";
 
-
 interface SettingRowProps {
   icon?: LucideIcon;
   title: string;
@@ -35,7 +34,7 @@ export const SettingRow = ({
       className={cn(
         "flex flex-row items-center justify-between rounded-xl px-2 h-fit",
         isPressable && "active:bg-accent/60",
-        !isPressable && "opacity-50"
+        !isPressable && "opacity-50",
       )}
     >
       {/* Left content */}
