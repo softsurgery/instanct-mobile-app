@@ -27,7 +27,7 @@ export const UserCarouselEntry = ({
   );
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
   const { jsx: profilePicture } = useServerImage({
-    id: user?.profile?.pictureId,
+    id: user?.pictureId,
     fallback,
     className: "rounded-full",
     size: { width: 50, height: 50 },
