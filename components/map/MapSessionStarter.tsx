@@ -3,25 +3,31 @@ import { Text } from "@/components/ui/text";
 import { BlurView } from "expo-blur";
 import { MapPinned } from "lucide-react-native";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Icon } from "../ui/icon";
+import { useColorScheme } from "nativewind";
+import { cn } from "@/lib/utils";
 
 interface MapSessionStarterProps {
+  className?: string;
   onStart: () => void;
 }
 
-export const MapSessionStarter = ({ onStart }: MapSessionStarterProps) => {
+export const MapSessionStarter = ({
+  className,
+  onStart,
+}: MapSessionStarterProps) => {
+  const { colorScheme } = useColorScheme();
   return (
     <BlurView
-      intensity={35}
-      className="absolute inset-0 z-50 flex-1"
-      style={StyleSheet.absoluteFill}
-      tint="dark"
+      intensity={40}
+      tint={colorScheme}
+      className={cn("flex-1 absolute inset-0 z-50", className)}
     >
       <SafeAreaView className="flex-1 items-center justify-center p-6">
-        <View className="bg-card w-full max-w-sm items-center gap-6 rounded-3xl border border-border p-8 shadow-xl">
-          <View className="bg-primary/10 h-20 w-20 items-center justify-center rounded-full">
+        <View className="bg-card/80 w-full max-w-sm items-center gap-6 rounded-3xl border border-border p-8 shadow-xl">
+          <View className="bg-primary/20 h-20 w-20 items-center justify-center rounded-full">
             <Icon as={MapPinned} size={40} />
           </View>
 

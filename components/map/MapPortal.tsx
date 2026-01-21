@@ -47,60 +47,55 @@ export const MapPortal = ({ className }: MapPortalProps) => {
   ];
   return (
     <View className={cn("flex-1 bg-background", className)}>
-      <View className="flex-1 relative">
-        <View className="absolute inset-0 border-y border-border top-0">
-          {mapStore.loading ||
-          !mapStore.location ||
-          !mapStore.location.coords ? (
-            <View className="flex-1 items-center justify-center">
-              <ActivityIndicator size="large" />
-            </View>
-          ) : (
-            <MapRenderer
-              className="flex-1"
-              latitude={latitude}
-              longitude={longitude}
-              nearbyUsers={mapStore.nearbyUsers}
-            />
-          )}
-        </View>
-
-        <StableSafeAreaView className="absolute top-0 left-0 right-0 z-20 px-2">
-          <ApplicationHeader
-            title="Map"
-            shortcuts={[
-              {
-                icon: RefreshCcw,
-                onPress: () => {
-                  mapStore.set("nearbyUsers", []);
-                  restartSocket();
-                },
-              },
-              {
-                icon: Bell,
-                onPress: () => {
-                  router.push("/main/notifications");
-                  resetCount();
-                },
-                badgeText: newCount > 0 ? `${newCount}` : undefined,
-              },
-              {
-                icon: IconMessageChatbot,
-                onPress: () => {
-                  router.push("/main/chat");
-                },
-              },
-            ]}
-          />
-          <MapStatus />
-        </StableSafeAreaView>
-        {sessionStarted && (
-          <View className="flex flex-col bg-background/40 absolute top-32 right-3 z-50 h-auto px-3 py-4 gap-4 items-center justify-center rounded-b-full rounded-t-full">
-            {sideIcons.map(({ key, icon, onPress }) => (
-              <Icon key={key} as={icon} size={20} onPress={onPress} />
-            ))}
+      <View className="absolute inset-0 border-y border-border top-0 ">
+        {mapStore.loading || !mapStore.location || !mapStore.location.coords ? (
+          <View className="flex-1 items-center justify-center">
+            <ActivityIndicator size="large" />
           </View>
+        ) : (
+          <MapRenderer
+            className="flex-1"
+            latitude={latitude}
+            longitude={longitude}
+            nearbyUsers={mapStore.nearbyUsers}
+          />
         )}
+      </View>
+
+      <StableSafeAreaView className="absolute top-0 left-0 right-0 z-20 px-2">
+        <ApplicationHeader
+          title="Map"
+          shortcuts={[
+            {
+              icon: RefreshCcw,
+              onPress: () => {
+                mapStore.set("nearbyUsers", []);
+                restartSocket();
+              },
+            },
+            {
+              icon: Bell,
+              onPress: () => {
+                router.push("/main/notifications");
+                resetCount();
+              },
+              badgeText: newCount > 0 ? `${newCount}` : undefined,
+            },
+            {
+              icon: IconMessageChatbot,
+              onPress: () => {
+                router.push("/main/chat");
+              },
+            },
+          ]}
+        />
+        <MapStatus />
+      </StableSafeAreaView>
+      {/* Navigation Mode */}
+      <View className="flex flex-col bg-background/40 absolute top-32 right-3 z-50 h-auto px-3 py-4 gap-4 items-center justify-center rounded-b-full rounded-t-full">
+        {sideIcons.map(({ key, icon, onPress }) => (
+          <Icon key={key} as={icon} size={20} onPress={onPress} />
+        ))}
       </View>
       {!sessionStarted && (
         <MapSessionStarter onStart={() => setSessionStarted(true)} />
