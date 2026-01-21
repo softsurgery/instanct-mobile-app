@@ -3,21 +3,44 @@ import { FormBuilder } from "../shared/form-builder/FormBuilder";
 import { StableKeyboardAwareScrollView } from "../shared/StableKeyboardAwareScrollView";
 import { useUpdateProfileFormStructure } from "./useUpdateProfileFormStructure";
 import { useUserStore } from "@/stores/useUserStore";
+import { ApplicationHeader } from "../shared/AppHeader";
+import { ArrowLeft } from "lucide-react-native";
+import { router } from "expo-router";
+import { useTranslation } from "react-i18next";
+import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 
 interface UpdateProfileProps {
   className?: string;
 }
 
 export const UpdateProfile = ({ className }: UpdateProfileProps) => {
+  const { t } = useTranslation("common");
   const userStore = useUserStore();
   const { structure } = useUpdateProfileFormStructure({
     store: userStore,
   });
   return (
-    <StableKeyboardAwareScrollView
-      className={cn("flex flex-col flex-1 p-4", className)}
-    >
-      <FormBuilder structure={structure} className="mb-10 " />
-    </StableKeyboardAwareScrollView>
+    <StableSafeAreaView className={cn("flex flex-1", className)}>
+      <ApplicationHeader
+        className="border-b border-border pb-2 bg-transparent"
+        title={t("screens.profile")}
+        titleVariant="large"
+        reverse
+        shortcuts={[
+          {
+            key: "back",
+            icon: ArrowLeft,
+            onPress: () => {
+              router.back();
+            },
+          },
+        ]}
+      />
+      <StableKeyboardAwareScrollView
+        className={cn("flex flex-col flex-1 p-4", className)}
+      >
+        <FormBuilder structure={structure} className="mb-10 " />
+      </StableKeyboardAwareScrollView>
+    </StableSafeAreaView>
   );
 };

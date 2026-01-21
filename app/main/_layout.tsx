@@ -42,6 +42,7 @@ export default function MainLayout() {
           name="notifications"
           options={{
             title: "Notification",
+            headerShown: false,
           }}
         />
         {/* Profile */}
@@ -56,6 +57,7 @@ export default function MainLayout() {
           name="update-profile"
           options={{
             title: "My Profile",
+            headerShown: false,
           }}
         />
         <Stack.Screen
