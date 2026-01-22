@@ -38,10 +38,10 @@ export const MapRenderer = ({
 
   //states
   const [selectedUser, setSelectedUser] = React.useState<NearbyUser | null>(
-    null
+    null,
   );
   const [clusterUsers, setClusterUsers] = React.useState<NearbyUser[] | null>(
-    null
+    null,
   );
   const [currentRegion, setCurrentRegion] = React.useState<Region | null>(null);
   const [prevRegion, setPrevRegion] = React.useState<Region | null>(null);
@@ -64,7 +64,7 @@ export const MapRenderer = ({
   const handleMarkerPress = (
     latitude: number,
     longitude: number,
-    userId: string
+    userId: string,
   ) => {
     if (currentRegion) {
       setPrevRegion(currentRegion);
@@ -79,7 +79,7 @@ export const MapRenderer = ({
           latitudeDelta: 0.0002,
           longitudeDelta: 0.0002,
         },
-        500
+        500,
       );
     }
 
@@ -93,14 +93,14 @@ export const MapRenderer = ({
     if (!nearbyUser || nearbyUser.length === 0) return;
 
     const unique = Array.from(
-      new Map(nearbyUser.map((u) => [u.userId, u])).values()
+      new Map(nearbyUser.map((u) => [u.userId, u])).values(),
     );
 
     if (unique.length === 1 && unique[0].userId !== currentUser?.id) {
       handleMarkerPress(
         unique[0].latitude,
         unique[0].longitude,
-        unique[0].userId
+        unique[0].userId,
       );
       return;
     }
@@ -108,7 +108,7 @@ export const MapRenderer = ({
     setClusterUsers(
       unique
         .filter((u) => u.userId !== currentUser?.id)
-        .sort((a, b) => (a?.distance ?? 0) - (b?.distance ?? 0))
+        .sort((a, b) => (a?.distance ?? 0) - (b?.distance ?? 0)),
     );
     setModalVisible(true);
   };
@@ -128,13 +128,14 @@ export const MapRenderer = ({
     _.throttle((region: Region) => {
       setCurrentRegion(region);
     }, 250),
-    []
+    [],
   );
 
   if (!currentUser) return <ActivityIndicator />;
   return (
     <View className={cn("flex-1", className)}>
       <MapView
+        key={`${colorScheme}`}
         ref={mapRef}
         superClusterRef={superCluster}
         style={{ flex: 1, ...style }}
@@ -150,6 +151,7 @@ export const MapRenderer = ({
         onRegionChange={handleRegionChange}
         showsCompass={false}
         clusteringEnabled={true}
+        // mapType="satellite"
         renderCluster={(cluster) => {
           const { geometry, properties } = cluster;
           const latitude = geometry.coordinates[1];
@@ -162,7 +164,7 @@ export const MapRenderer = ({
 
           const nearbyUsers = nearbyUsersAndMyself
             .filter((u) =>
-              clusterIds.map((c: any) => c.properties?.id).includes(u.userId)
+              clusterIds.map((c: any) => c.properties?.id).includes(u.userId),
             )
             .map((nearbyUser) => ({
               ...nearbyUser,
@@ -175,7 +177,7 @@ export const MapRenderer = ({
               nearbyUsers={nearbyUsers}
               currentUserIncluded={
                 !!nearbyUsers.find(
-                  (u) => u.userId === (currentUser?.id as string)
+                  (u) => u.userId === (currentUser?.id as string),
                 )
               }
               latitude={latitude}

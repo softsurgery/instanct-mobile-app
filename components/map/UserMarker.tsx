@@ -21,8 +21,8 @@ export const UserMarker = ({
   isOnline,
   isCurrentUser = false,
 }: UserMarkerProps) => {
-  const width = 30;
-  const height = 30;
+  const width = 40;
+  const height = 40;
   const activeBackgroundColor = "rgba(34,197,94,0.8)";
 
   const mapStore = useMapStore();

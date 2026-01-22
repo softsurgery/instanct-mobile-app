@@ -4,15 +4,15 @@ import { cn } from "@/lib/utils";
 import { useMapStore } from "@/stores/useMapStore";
 import { IconMessageChatbot } from "@tabler/icons-react-native";
 import { router } from "expo-router";
-import { Bell, Eye, Globe, RefreshCcw, User } from "lucide-react-native";
+import { Bell, RefreshCcw } from "lucide-react-native";
 import React from "react";
 import { ActivityIndicator, View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
-import { Icon } from "../ui/icon";
 import { MapRenderer } from "./MapRenderer";
 import { MapSessionStarter } from "./MapSessionStarter";
 import { MapStatus } from "./MapStatus";
+import { MapModes } from "./MapModes";
 
 interface MapPortalProps {
   className?: string;
@@ -29,22 +29,6 @@ export const MapPortal = ({ className }: MapPortalProps) => {
     longitude: 0,
   };
 
-  const sideIcons = [
-    {
-      key: "session",
-      icon: Eye,
-      onPress: () => setSessionStarted(false),
-    },
-    {
-      key: "globe",
-      icon: Globe,
-    },
-    {
-      key: "profile",
-      icon: User,
-      onPress: () => router.push("/main/update-profile"),
-    },
-  ];
   return (
     <View className={cn("flex-1 bg-background", className)}>
       <View className="absolute inset-0 border-y border-border top-0 ">
@@ -92,11 +76,7 @@ export const MapPortal = ({ className }: MapPortalProps) => {
         <MapStatus />
       </StableSafeAreaView>
       {/* Navigation Mode */}
-      <View className="flex flex-col bg-background/40 absolute top-32 right-3 z-50 h-auto px-3 py-4 gap-4 items-center justify-center rounded-b-full rounded-t-full">
-        {sideIcons.map(({ key, icon, onPress }) => (
-          <Icon key={key} as={icon} size={20} onPress={onPress} />
-        ))}
-      </View>
+      <MapModes setSessionStarted={setSessionStarted} />
       {!sessionStarted && (
         <MapSessionStarter onStart={() => setSessionStarted(true)} />
       )}
