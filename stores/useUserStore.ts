@@ -1,17 +1,20 @@
 import { setDeepValue } from "@/lib/object";
 import { create } from "zustand";
-import {
-  ResponseFollowCountsDto,
-  ResponseUserDto,
-  UpdateUserDto,
-} from "~/types";
+import { ResponseExperienceDto, ResponseUserDto, UpdateUserDto } from "~/types";
 
 interface UserData {
   response?: ResponseUserDto;
-  responseFollowCountsDto: ResponseFollowCountsDto;
   updateDto: UpdateUserDto;
+
+  //experiences
+  experiences?: ResponseExperienceDto[];
+  updateExperienceDto?: UpdateUserDto;
+
+  //utils
   picture?: string;
   progress: number;
+
+  //errors
   errors: Record<string, string[]>;
 }
 
@@ -23,10 +26,6 @@ export interface UserStore extends UserData {
 
 const initialState: UserData = {
   response: undefined,
-  responseFollowCountsDto: {
-    followers: 0,
-    following: 0,
-  },
   updateDto: {
     firstName: "",
     lastName: "",

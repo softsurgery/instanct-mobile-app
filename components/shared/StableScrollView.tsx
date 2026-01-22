@@ -41,11 +41,13 @@ export const StableScrollView = ({
   className,
   children,
   style,
+  bounces = false,
+  refreshControl,
   ...props
 }: StableScrollViewProps) => {
   return (
     <ScrollView
-      bounces={false}
+      bounces={bounces}
       alwaysBounceHorizontal={false}
       alwaysBounceVertical={false}
       showsVerticalScrollIndicator={false}
@@ -53,6 +55,7 @@ export const StableScrollView = ({
       overScrollMode="never"
       style={style}
       className={className}
+      refreshControl={refreshControl}
       {...props}
     >
       {wrapChildren(children)}

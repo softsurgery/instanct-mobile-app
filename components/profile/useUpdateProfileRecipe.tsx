@@ -7,9 +7,9 @@ import { useMemo } from "react";
 import { View } from "react-native";
 import { Text } from "../ui/text";
 import { router } from "expo-router";
-import { Experience } from "~/types";
 import { UserStore } from "@/stores/useUserStore";
 import { useSceneBuilderStore } from "../shared/scene-builder/useSceneBuilderStore";
+import { ResponseExperienceDto } from "@/types";
 
 interface useEditProfileRecipesProps {
   store: UserStore | null;
@@ -19,7 +19,7 @@ export const useEditProfileRecipes = ({
   store,
 }: useEditProfileRecipesProps) => {
   const { push } = useSceneBuilderStore();
-  const experiences = store?.response?.experiences;
+  const experiences = store?.experiences;
 
   const experienceRecipe = useMemo(() => {
     if (!experiences) {
@@ -113,7 +113,7 @@ export const useEditProfileRecipes = ({
 
     const singleExperienceRecipe = (
       index: number,
-      exp: Experience,
+      exp: ResponseExperienceDto,
     ): DynamicScene => {
       return {
         name: "Edit Experience",

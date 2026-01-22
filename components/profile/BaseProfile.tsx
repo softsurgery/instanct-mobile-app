@@ -7,17 +7,20 @@ import { useServerImage } from "@/hooks/content/useServerImage";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import { cn } from "@/lib/utils";
 import { createClientStore, useUserStore } from "@/stores/useUserStore";
-import { Education, Experience, Skill } from "@/types";
 import { router, useNavigation } from "expo-router";
 import { Pen, Plus } from "lucide-react-native";
 import React from "react";
-import { Image, View } from "react-native";
+import { Image, RefreshControl, View } from "react-native";
 import { StablePressable } from "../shared/StablePressable";
 import { StableScrollView } from "../shared/StableScrollView";
 import { Separator } from "../ui/separator";
 import { ProfileStat } from "./ProfileStat";
 import { useEditProfileRecipes } from "./useUpdateProfileRecipe";
 import { useSceneBuilderStore } from "../shared/scene-builder/useSceneBuilderStore";
+import { useExperiences } from "@/hooks/content/users/useExperiences";
+import { ResponseExperienceDto } from "@/types";
+import { toDateOnly } from "@/lib/date";
+import { SeeMoreText } from "../shared/SeeMoreText";
 
 interface ProfileSection<T = unknown> {
   key: string;
@@ -38,15 +41,18 @@ export const InspectBaseProfile = ({
   id,
   coverExtra,
 }: InspectBaseProfileProps) => {
-  const sceneBuilderStore = useSceneBuilderStore();
-  const userStore = useUserStore();
-  const { experienceRecipe } = useEditProfileRecipes({ store: userStore });
-
   const navigation = useNavigation();
-  const storeRef = React.useRef(createClientStore());
-  const { currentUser } = useCurrentUser();
 
-  const { user } = useIdentifiedUser({ id });
+  const storeRef = React.useRef(createClientStore());
+  const userStore = useUserStore(); // TODO: use the store ref instead
+
+  const { currentUser } = useCurrentUser();
+  const { user, isUserPending, refetchUser } = useIdentifiedUser({ id });
+  const { experiences, isExperiencesPending, refetchExperiences } =
+    useExperiences({ id, enabled: !!user });
+
+  const sceneBuilderStore = useSceneBuilderStore();
+  const { experienceRecipe } = useEditProfileRecipes({ store: userStore });
 
   const identity = React.useMemo(() => identifyUser(user), [user]);
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
@@ -60,8 +66,9 @@ export const InspectBaseProfile = ({
 
   React.useEffect(() => {
     if (user) userStore.set("response", user);
+    if (experiences) userStore.set("experiences", experiences);
     navigation.setOptions({
-      title: user?.username ?? "Profile",
+      title: user?.username,
     });
   }, [user]);
 
@@ -72,6 +79,13 @@ export const InspectBaseProfile = ({
     };
   }, []);
 
+  const onRefresh = () => {
+    refetchUser();
+    refetchExperiences();
+  };
+
+  const refreshing = isExperiencesPending || isUserPending;
+
   // ---------------------------------------------------------------
   //  PROFILE SECTIONS CONFIG
   // ---------------------------------------------------------------
@@ -79,54 +93,57 @@ export const InspectBaseProfile = ({
     {
       key: "experience",
       title: "Experience",
-      data: user?.experiences as unknown[],
+      data: experiences as unknown[],
       editable: currentUser?.id === user?.id,
-      renderItem: (experience: Experience) => (
-        <View className="flex flex-col">
+      renderItem: (experience: ResponseExperienceDto) => (
+        <View className="flex flex-col mb-4">
           <Text className="font-semibold">{experience.title}</Text>
-          <Text className="text-sm text-muted-foreground">
+          <Text className="text-sm text-muted-foreground font-bold">
             {experience.company}
           </Text>
-          <Text className="text-xs text-muted-foreground">
-            {experience.startDate} — {experience.endDate}
+          <Text className="text-xs text-muted-foreground mt-2">
+            {toDateOnly(new Date(experience.startDate))} —{" "}
+            {toDateOnly(new Date(experience.endDate))}
           </Text>
-          <Text className="text-sm mt-1">{experience.description}</Text>
+          <SeeMoreText textClassname="text-sm" numberOfLines={1}>
+            {experience.description}
+          </SeeMoreText>
         </View>
       ),
     },
-    {
-      key: "education",
-      title: "Education",
-      data: user?.educations as unknown[],
-      editable: currentUser?.id === user?.id,
-      renderItem: (edu: Education) => (
-        <View className="flex flex-col">
-          <Text className="font-semibold">{edu.school}</Text>
-          <Text className="text-sm text-muted-foreground">{edu.degree}</Text>
-          <Text className="text-xs text-muted-foreground">
-            {edu.startYear} — {edu.endYear}
-          </Text>
-        </View>
-      ),
-    },
-    {
-      key: "skills",
-      title: "Skills",
-      data: user?.skills as unknown[],
-      editable: currentUser?.id === user?.id,
-      renderItem: (skill: Skill) => (
-        <Text className="text-sm font-bold">{skill.name}</Text>
-      ),
-    },
-    {
-      key: "objectives",
-      title: "Objectives",
-      data: user?.skills ? [user?.skills] : [],
-      editable: currentUser?.id === user?.id,
-      renderItem: (objective: string) => (
-        <Text className="text-sm">{objective}</Text>
-      ),
-    },
+    // {
+    //   key: "education",
+    //   title: "Education",
+    //   data: user?.educations as unknown[],
+    //   editable: currentUser?.id === user?.id,
+    //   renderItem: (edu: Education) => (
+    //     <View className="flex flex-col">
+    //       <Text className="font-semibold">{edu.school}</Text>
+    //       <Text className="text-sm text-muted-foreground">{edu.degree}</Text>
+    //       <Text className="text-xs text-muted-foreground">
+    //         {edu.startYear} — {edu.endYear}
+    //       </Text>
+    //     </View>
+    //   ),
+    // },
+    // {
+    //   key: "skills",
+    //   title: "Skills",
+    //   data: user?.skills as unknown[],
+    //   editable: currentUser?.id === user?.id,
+    //   renderItem: (skill: Skill) => (
+    //     <Text className="text-sm font-bold">{skill.name}</Text>
+    //   ),
+    // },
+    // {
+    //   key: "objectives",
+    //   title: "Objectives",
+    //   data: user?.skills ? [user?.skills] : [],
+    //   editable: currentUser?.id === user?.id,
+    //   renderItem: (objective: string) => (
+    //     <Text className="text-sm">{objective}</Text>
+    //   ),
+    // },
   ];
 
   // ---------------------------------------------------------------
@@ -181,7 +198,20 @@ export const InspectBaseProfile = ({
   //  UI LAYOUT
   // ---------------------------------------------------------------
   return (
-    <StableScrollView className={cn("flex-1 bg-background", className)}>
+    <StableScrollView
+      className={cn("flex-1 bg-background", className)}
+      bounces={true}
+      refreshControl={
+        <RefreshControl
+          tintColor={"white"}
+          colors={["white"]}
+          progressBackgroundColor={"#333"}
+          progressViewOffset={50}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+        />
+      }
+    >
       {/* Cover */}
       <View className="relative w-full h-48 bg-card">
         {coverExtra}
@@ -208,7 +238,6 @@ export const InspectBaseProfile = ({
                 </Text>
               )}
             </View>
-
             <ProfileStat className="flex flex-row gap-4" />
           </View>
         </View>
