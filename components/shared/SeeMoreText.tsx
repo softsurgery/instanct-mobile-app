@@ -18,23 +18,35 @@ export const SeeMoreText = ({
   pressableClassname,
 }: SeeMoreTextProps) => {
   const [expanded, setExpanded] = useState(false);
+  const [showButton, setShowButton] = useState(false);
+  const [measured, setMeasured] = useState(false);
 
   return (
     <View className={className}>
       <Text
         className={textClassname}
-        numberOfLines={expanded ? undefined : numberOfLines}
+        numberOfLines={measured && !expanded ? numberOfLines : undefined}
+        onTextLayout={(e) => {
+          if (measured) return;
+          if (e.nativeEvent.lines.length > numberOfLines) {
+            setShowButton(true);
+          }
+          setMeasured(true);
+        }}
+        style={{ opacity: measured ? 1 : 0 }}
       >
         {children}
       </Text>
-      <Pressable
-        className={pressableClassname}
-        onPress={() => setExpanded(!expanded)}
-      >
-        <Text className="text-primary text-sm">
-          {expanded ? "See less" : "See more"}
-        </Text>
-      </Pressable>
+      {showButton && (
+        <Pressable
+          className={pressableClassname}
+          onPress={() => setExpanded(!expanded)}
+        >
+          <Text className="text-primary text-sm">
+            {expanded ? "See less" : "See more"}
+          </Text>
+        </Pressable>
+      )}
     </View>
   );
 };
