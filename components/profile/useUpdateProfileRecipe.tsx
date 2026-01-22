@@ -8,8 +8,10 @@ import { View } from "react-native";
 import { Text } from "../ui/text";
 import { router } from "expo-router";
 import { UserStore } from "@/stores/useUserStore";
-import { useSceneBuilderStore } from "../shared/scene-builder/useSceneBuilderStore";
 import { ResponseExperienceDto } from "@/types";
+import { format } from "date-fns";
+import { SceneBuilder } from "../shared/scene-builder/SceneBuilder";
+import { useSceneBuilderStore } from "../shared/scene-builder/useSceneBuilderStore";
 
 interface useEditProfileRecipesProps {
   store: UserStore | null;
@@ -18,24 +20,16 @@ interface useEditProfileRecipesProps {
 export const useEditProfileRecipes = ({
   store,
 }: useEditProfileRecipesProps) => {
-  const { push } = useSceneBuilderStore();
-  const experiences = store?.experiences;
+  const sceneBuilderStore = useSceneBuilderStore();
 
   const experienceRecipe = useMemo(() => {
-    if (!experiences) {
-      return {
-        name: "Edit Experiences",
-        content: {},
-      };
-    }
-
     const experienceSections: Record<string, DynamicSceneSection> = {};
 
-    experiences.forEach((exp, index) => {
+    store?.experiences?.forEach((exp, index) => {
       const key = `experience_${exp.title}`;
 
       experienceSections[key] = {
-        name: `Experience ${index + 1}`,
+        title: `Experience ${index + 1}`,
         rows: [
           {
             label: "",
@@ -44,45 +38,22 @@ export const useEditProfileRecipes = ({
               render: () => (
                 <View className="flex flex-col">
                   {/* Job Title */}
-                  <Text>
-                    <Text className="text-sm text-muted-foreground">
-                      Job Title:
-                    </Text>{" "}
-                    <Text className="text-sm">{exp.title}</Text>
-                  </Text>
-
+                  <Text className="text-lg font-bold">{exp.title}</Text>
                   {/* Company */}
-                  <Text>
-                    <Text className="text-sm text-muted-foreground">
-                      Company:
-                    </Text>{" "}
-                    <Text className="text-sm">{exp.company}</Text>
-                  </Text>
 
+                  <Text className="text-sm text-muted-foreground">
+                    {exp.company}
+                  </Text>
                   {/* Start Date */}
-                  <Text>
-                    <Text className="text-sm text-muted-foreground">
-                      Start Date:
-                    </Text>{" "}
-                    <Text className="text-sm">{exp.startDate}</Text>
+                  <Text className="text-sm">
+                    {format(new Date(exp.startDate), "MMM yyyy")} -{" "}
+                    {exp.endDate
+                      ? format(new Date(exp.endDate), "MMM yyyy")
+                      : "Present"}
                   </Text>
-
-                  {/* End Date */}
-                  <Text>
-                    <Text className="text-sm text-muted-foreground">
-                      End Date:
-                    </Text>{" "}
-                    <Text className="text-sm">{exp.endDate}</Text>
-                  </Text>
-
                   {/* Description */}
-                  <View className="flex-col items-start gap-2">
-                    <Text>
-                      <Text className="text-sm text-muted-foreground">
-                        Description:
-                      </Text>{" "}
-                      <Text className="text-sm">{exp.description}</Text>
-                    </Text>
+                  <View className="flex-col items-start gap-2 mt-2">
+                    <Text className="text-sm">{exp.description}</Text>
                   </View>
                 </View>
               ),
@@ -90,11 +61,15 @@ export const useEditProfileRecipes = ({
           },
           {
             label: "Edit Experience",
-            labelClassName: "text-blue-500 font-bold",
+            className: "",
+            labelClassName: "font-bold",
             variant: DynamicSceneRowVariant.TAPPABLE,
             props: {
               onPress: () => {
-                push?.(`exp-${index}`, singleExperienceRecipe(index, exp));
+                sceneBuilderStore.push?.(
+                  `exp-${index}`,
+                  singleExperienceRecipe(index, exp),
+                );
                 router.push({
                   pathname: "/main/scene-screen",
                   params: { id: `exp-${index}` },
@@ -104,7 +79,7 @@ export const useEditProfileRecipes = ({
           },
           {
             label: "Delete Experience",
-            labelClassName: "text-red-500 font-bold",
+            labelClassName: "text-red-700 font-bold",
             variant: DynamicSceneRowVariant.TAPPABLE,
           },
         ],
@@ -116,68 +91,76 @@ export const useEditProfileRecipes = ({
       exp: ResponseExperienceDto,
     ): DynamicScene => {
       return {
-        name: "Edit Experience",
-        content: {
-          "0": {
-            name: `Experience ${index + 1}`,
-            rows: [
-              {
-                label: "Job Title",
-                variant: DynamicSceneRowVariant.TEXT,
-                props: {
-                  value: exp.title,
-                  onChangeText: (text: string) => {
-                    store?.setNested(
-                      `updateDto.profile.experiences.${index}.title`,
-                      text,
-                    );
+        title: "Edit Experience",
+        component: SceneBuilder,
+        props: {
+          title: `Edit ${exp.title}`,
+          scenes: {
+            "0": {
+              title: `Experience ${index + 1}`,
+              rows: [
+                {
+                  label: "Job Title",
+                  variant: DynamicSceneRowVariant.TEXT,
+                  props: {
+                    value: exp.title,
+                    onChangeText: (text: string) => {
+                      store?.setNested(
+                        `updateDto.profile.experiences.${index}.title`,
+                        text,
+                      );
+                    },
                   },
                 },
-              },
-              {
-                label: "Start Date",
-                variant: DynamicSceneRowVariant.DATE,
-                props: {
-                  date: exp.startDate,
-                  onChangeDate: (date: Date) => {
-                    store?.setNested(
-                      `updateDto.profile.experiences.${index}.startDate`,
-                      date,
-                    );
+                {
+                  label: "Start Date",
+                  variant: DynamicSceneRowVariant.DATE,
+                  props: {
+                    date: exp.startDate,
+                    onChangeDate: (date: Date) => {
+                      store?.setNested(
+                        `updateDto.profile.experiences.${index}.startDate`,
+                        date,
+                      );
+                    },
                   },
                 },
-              },
-              {
-                label: "End Date",
-                variant: DynamicSceneRowVariant.DATE,
-                props: {
-                  date: exp.endDate,
-                  onChangeDate: (date: Date) => {
-                    store?.setNested(
-                      `updateDto.profile.experiences.${index}.endDate`,
-                      date,
-                    );
+                {
+                  label: "End Date",
+                  variant: DynamicSceneRowVariant.DATE,
+                  props: {
+                    date: exp.endDate,
+                    onChangeDate: (date: Date) => {
+                      store?.setNested(
+                        `updateDto.profile.experiences.${index}.endDate`,
+                        date,
+                      );
+                    },
                   },
                 },
-              },
-              {
-                label: "Description",
-                variant: DynamicSceneRowVariant.TEXTAREA,
-                props: {
-                  text: exp.description,
+                {
+                  label: "Description",
+                  variant: DynamicSceneRowVariant.TEXTAREA,
+                  props: {
+                    text: exp.description,
+                  },
                 },
-              },
-            ],
+              ],
+            } satisfies DynamicSceneSection,
           },
         },
       };
     };
 
     return {
-      name: "Edit Experiences",
-      content: experienceSections,
-    };
-  }, [experiences?.length]);
+      title: "Edit Experiences",
+      component: SceneBuilder,
+      props: {
+        title: "Edit Experiences",
+        scenes: experienceSections,
+      },
+    } satisfies DynamicScene;
+  }, [store?.experiences?.length]);
 
   return { experienceRecipe };
 };

@@ -61,7 +61,10 @@ export enum Gender {
   Female = "Female",
 }
 
+//experience dtos *****************************************************************************
+
 export interface ResponseExperienceDto extends DatabaseEntity {
+  id: number;
   title: string;
   startDate: string;
   endDate: string;
@@ -81,3 +84,27 @@ export interface CreateExperienceDto extends ResponseExperienceDto {
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface UpdateExperienceDto extends Partial<CreateExperienceDto> {}
+
+//education dtos *****************************************************************************
+
+export interface ResponseEducationDto extends DatabaseEntity {
+  id: number;
+  title: string;
+  startDate: string;
+  endDate: string;
+  institution: string;
+  description: string;
+  user: ResponseUserDto;
+  userId: string;
+}
+
+export interface CreateEducationDto extends ResponseEducationDto {
+  title: string;
+  startDate: string;
+  endDate: string;
+  institution: string;
+  description: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface UpdateEducationDto extends Partial<CreateEducationDto> {}

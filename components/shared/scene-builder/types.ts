@@ -1,10 +1,11 @@
-export interface DynamicScene {
-  name: string;
-  content: Record<string, DynamicSceneSection>;
+export interface DynamicScene<P = any> {
+  title: string;
+  component: React.ComponentType<P>;
+  props: P;
 }
 
 export interface DynamicSceneSection {
-  name: string;
+  title: string;
   description?: string;
   rows: DynamicSceneRow[];
 }
