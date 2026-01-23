@@ -18,7 +18,13 @@ const updateCurrent = async (
   return response.data;
 };
 
+const findAll = async (): Promise<ResponseUserDto[]> => {
+  const response = await axios.get<ResponseUserDto[]>(`/admin/user/all`);
+  return response.data;
+};
+
 export const user = {
+  findAll,
   findCurrent,
   findById,
   updateCurrent,
