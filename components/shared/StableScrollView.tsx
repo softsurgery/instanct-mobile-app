@@ -41,18 +41,22 @@ export const StableScrollView = ({
   className,
   children,
   style,
+  bounces = false,
+  refreshControl,
   ...props
 }: StableScrollViewProps) => {
   return (
     <ScrollView
-      bounces={false}
+      bounces={refreshControl ? true : bounces}
       alwaysBounceHorizontal={false}
-      alwaysBounceVertical={false}
+      alwaysBounceVertical={refreshControl ? true : false}
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
-      overScrollMode="never"
+      overScrollMode={refreshControl ? "always" : "never"}
       style={style}
       className={className}
+      refreshControl={refreshControl}
+      contentContainerStyle={{ flexGrow: 1 }}
       {...props}
     >
       {wrapChildren(children)}

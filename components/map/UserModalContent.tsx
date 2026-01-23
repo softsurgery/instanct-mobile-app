@@ -30,15 +30,15 @@ export const UserModalContent = ({
 
   const identification = React.useMemo(
     () => identifyUser(nearbyUser.user),
-    [nearbyUser.user]
+    [nearbyUser.user],
   );
 
   const fallback = React.useMemo(
     () => identifyUserAvatar(nearbyUser.user),
-    [nearbyUser.user]
+    [nearbyUser.user],
   );
   const { jsx: profilePicture } = useServerImage({
-    id: nearbyUser?.user?.profile?.pictureId,
+    id: nearbyUser?.user?.pictureId,
     fallback,
     className: "rounded-full",
     size: { width: 50, height: 50 },

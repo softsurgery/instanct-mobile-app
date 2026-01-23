@@ -41,7 +41,7 @@ export const SceneRowBuilder = ({ className, row }: SceneRowBuilderProps) => {
     case DynamicSceneRowVariant.TEXT:
       content = (
         <Input
-          className={cn("text-sm w-[60vw] h-10 -my-3", row.className)}
+          className={cn("border-transparent w-[60vw] -my-2")}
           defaultValue={row.props?.value}
           onChangeText={(text) => {
             row.props?.onChangeText?.(text);

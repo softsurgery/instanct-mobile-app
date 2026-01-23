@@ -25,7 +25,7 @@ interface CreateAbstractUserDto {
   roleId?: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type, @typescript-eslint/no-unused-vars
 interface UpdateAbstractUserDto extends Partial<CreateAbstractUserDto> {}
 
 // user dtos ************************************************************************************
@@ -38,9 +38,7 @@ export interface ResponseUserDto extends ResponseAbstractUsertDto {
   isPrivate?: boolean;
   pictureId?: number;
   picture?: Upload;
-  experiences?: Experience[] | null;
-  educations?: Education[] | null;
-  skills?: Skill[] | null;
+  experiences?: ResponseExperienceDto[];
 }
 
 export interface CreateUserDto extends CreateAbstractUserDto {
@@ -63,32 +61,50 @@ export enum Gender {
   Female = "Female",
 }
 
-export interface ResponseFollowCountsDto {
-  followers: number;
-  following: number;
-}
+//experience dtos *****************************************************************************
 
-export interface ResponseIsFollowingDto {
-  userId?: string;
-  targetId?: string;
-  isFollowing?: boolean;
-}
-
-export interface Experience {
+export interface ResponseExperienceDto extends DatabaseEntity {
+  id: number;
   title: string;
-  company: string;
   startDate: string;
   endDate: string;
+  company: string;
+  description: string;
+  user: ResponseUserDto;
+  userId: string;
+}
+
+export interface CreateExperienceDto extends ResponseExperienceDto {
+  title: string;
+  startDate: string;
+  endDate: string;
+  company: string;
   description: string;
 }
 
-export interface Education {
-  school: string;
-  degree: string;
-  startYear: number;
-  endYear: number;
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface UpdateExperienceDto extends Partial<CreateExperienceDto> {}
+
+//education dtos *****************************************************************************
+
+export interface ResponseEducationDto extends DatabaseEntity {
+  id: number;
+  title: string;
+  startDate: string;
+  endDate: string;
+  institution: string;
+  description: string;
+  user: ResponseUserDto;
+  userId: string;
 }
 
-export interface Skill {
-  name: string;
+export interface CreateEducationDto extends ResponseEducationDto {
+  title: string;
+  startDate: string;
+  endDate: string;
+  institution: string;
+  description: string;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface UpdateEducationDto extends Partial<CreateEducationDto> {}

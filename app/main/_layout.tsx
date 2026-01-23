@@ -60,13 +60,6 @@ export default function MainLayout() {
             headerShown: false,
           }}
         />
-        <Stack.Screen
-          name="edit-screen"
-          options={{
-            title: "Edit Screen",
-            headerShown: false,
-          }}
-        />
         {/* chat */}
         <Stack.Screen
           name="chat"

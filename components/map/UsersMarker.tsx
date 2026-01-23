@@ -1,9 +1,9 @@
+import React from "react";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { identifyUserAvatar } from "@/lib/user";
 import { useMapStore } from "@/stores/useMapStore";
 import { NearbyUser } from "@/types";
-import React from "react";
 import { View } from "react-native";
 import { Marker } from "react-native-maps";
 import { Text } from "../ui/text";
@@ -33,7 +33,7 @@ export const UsersMarker = ({
   }, [nearbyUsers, mapStore.users, currentUser]);
 
   const { jsxArray: userPictures } = useServerImages({
-    ids: nearbyUsers.map((u) => u?.user?.profile?.pictureId),
+    ids: nearbyUsers.map((u) => u?.user?.pictureId),
     className: "rounded-full",
     fallbackClassName: "text-xs",
     size: { width, height },

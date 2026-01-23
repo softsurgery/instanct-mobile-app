@@ -1,5 +1,6 @@
-import { MapPortal } from "@/components/map/MapPortal";
+import React from "react";
+import { View } from "react-native";
 
 export default function Screen() {
-  return <MapPortal />;
+  return <View className="flex-1"></View>;
 }
