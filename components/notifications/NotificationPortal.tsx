@@ -7,8 +7,18 @@ import { cn } from "~/lib/utils";
 import { ResponseNotificationDto } from "~/types/notifications";
 import { Text } from "../ui/text";
 import { NotificationEntry } from "./NotificationEntry";
+import { ApplicationHeader } from "../shared/AppHeader";
+import { useTranslation } from "react-i18next";
+import { ArrowLeft } from "lucide-react-native";
+import { router } from "expo-router";
+import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 
-export const NotificationsPortal = () => {
+interface NotificationPortalProps {
+  className?: string;
+}
+
+export const NotificationsPortal = ({ className }: NotificationPortalProps) => {
+  const { t } = useTranslation("common");
   const {
     data,
     fetchNextPage,
@@ -46,10 +56,25 @@ export const NotificationsPortal = () => {
         />
       );
     },
-    []
+    [],
   );
   return (
-    <View className="flex-1 px-2">
+    <StableSafeAreaView className={cn("flex flex-1", className)}>
+      <ApplicationHeader
+        className="border-b border-border pb-2 bg-transparent"
+        title={t("screens.notifications")}
+        titleVariant="large"
+        reverse
+        shortcuts={[
+          {
+            key: "back",
+            icon: ArrowLeft,
+            onPress: () => {
+              router.back();
+            },
+          },
+        ]}
+      />
       <LegendList
         className={cn("flex-1")}
         data={notifications}
@@ -106,6 +131,6 @@ export const NotificationsPortal = () => {
           </View>
         }
       />
-    </View>
+    </StableSafeAreaView>
   );
 };
