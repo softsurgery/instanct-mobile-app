@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
+import { useEducations } from "@/hooks/content/users/useEducations";
 import { useExperiences } from "@/hooks/content/users/useExperiences";
 import { useIdentifiedUser } from "@/hooks/content/users/useIdentifiedUser";
 import { useServerImage } from "@/hooks/content/useServerImage";
@@ -21,7 +22,6 @@ import { StableScrollView } from "../shared/StableScrollView";
 import { Separator } from "../ui/separator";
 import { ProfileStat } from "./ProfileStat";
 import { useEditProfileRecipes } from "./useUpdateProfileRecipe";
-import { useEducations } from "@/hooks/content/users/useEducations";
 
 interface ProfileSection<T = unknown> {
   key: string;
@@ -145,50 +145,60 @@ export const InspectBaseProfile = ({
   // ---------------------------------------------------------------
   //  SECTION RENDERER
   // ---------------------------------------------------------------
-  const renderSection = (section: ProfileSection) => (
-    <Card key={section.key} className="m-0 pt-1">
-      <CardHeader className="flex flex-row items-center justify-between mt-2 -mb-2">
-        <CardTitle>
-          <Text variant="h4">{section.title}</Text>
-        </CardTitle>
+  const renderSection = (section: ProfileSection) => {
+    return (
+      <Card key={section.key} className="m-0 pt-1">
+        <CardHeader className="flex flex-row items-center justify-between mt-2 -mb-2">
+          <CardTitle>
+            <Text variant="h4">{section.title}</Text>
+          </CardTitle>
 
-        {section.editable && (
-          <View className="flex flex-row gap-1 items-center -mx-2">
-            <StablePressable
-              className="p-2"
-              onPress={() => router.push("/main/scene-screen")}
-              onPressClassname="bg-primary/25 rounded-full"
-            >
-              <Icon as={Plus} size={20} className="text-muted-foreground" />
-            </StablePressable>
+          {section.editable && (
+            <View className="flex flex-row gap-1 items-center -mx-2">
+              <StablePressable
+                className="p-2"
+                onPress={() => router.push("/main/scene-screen")}
+                onPressClassname="bg-primary/25 rounded-full"
+              >
+                <Icon as={Plus} size={20} className="text-muted-foreground" />
+              </StablePressable>
 
-            <StablePressable
-              className="p-2"
-              onPress={() => {
-                sceneBuilderStore.push("update-profile", experienceRecipe);
-                router.push({
-                  pathname: "/main/scene-screen",
-                  params: { id: "update-profile" },
-                });
-              }}
-              onPressClassname="bg-primary/25 rounded-full"
-            >
-              <Icon as={Pen} size={18} className="text-muted-foreground" />
-            </StablePressable>
-          </View>
-        )}
-      </CardHeader>
+              <StablePressable
+                className="p-2"
+                onPress={() => {
+                  sceneBuilderStore.push("update-profile", experienceRecipe);
+                  router.push({
+                    pathname: "/main/scene-screen",
+                    params: { id: "update-profile" },
+                  });
+                }}
+                onPressClassname="bg-primary/25 rounded-full"
+              >
+                <Icon as={Pen} size={18} className="text-muted-foreground" />
+              </StablePressable>
+            </View>
+          )}
+        </CardHeader>
 
-      <Separator />
+        <Separator />
 
-      <CardContent className="flex flex-col gap-2 px-4">
-        {Array.isArray(section.data) &&
-          section.data.map((item, idx) => (
-            <View key={idx}>{section.renderItem(item)}</View>
-          ))}
-      </CardContent>
-    </Card>
-  );
+        <CardContent className="flex flex-col gap-2 px-4">
+          {section.data?.length === 0 ? (
+            <View className="" key={section.key}>
+              <Text className="text-sm text-muted-foreground italic text-center">
+                No {section.title} added yet
+              </Text>
+            </View>
+          ) : (
+            Array.isArray(section.data) &&
+            section.data.map((item, idx) => (
+              <View key={idx}>{section.renderItem(item)}</View>
+            ))
+          )}
+        </CardContent>
+      </Card>
+    );
+  };
 
   // ---------------------------------------------------------------
   //  UI LAYOUT
