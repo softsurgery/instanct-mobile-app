@@ -70,10 +70,10 @@ export const useEditProfileRecipes = ({
                   `exp-${index}`,
                   singleExperienceRecipe(index, exp),
                 );
-                router.push({
-                  pathname: "/main/scene-screen",
-                  params: { id: `exp-${index}` },
-                });
+                // router.push({
+                //   pathname: "/main/scene-screen",
+                //   params: { id: `exp-${index}` },
+                // });
               },
             },
           },

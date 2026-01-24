@@ -34,7 +34,7 @@ export default function MainLayout() {
             animationDuration: 200,
           }}
         />
-        {/* Notification */}
+        {/* Notification  ************************************************************************************* */}
         <Stack.Screen
           name="notifications"
           options={{
@@ -42,22 +42,45 @@ export default function MainLayout() {
             headerShown: false,
           }}
         />
-        {/* Profile */}
+        {/* *************************************************************************************************** */}
+        {/* Profile ********************************************************************************************* */}
         <Stack.Screen
-          name="inspect-profile"
+          name="profile/inspect-profile"
           options={{
             title: "",
             headerShown: false,
           }}
         />
         <Stack.Screen
-          name="update-profile"
+          name="profile/update-profile"
           options={{
             title: "My Profile",
             headerShown: false,
           }}
         />
-        {/* chat */}
+        <Stack.Screen
+          name="profile/update-experiences"
+          options={{
+            title: "Experiences",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="profile/edit-experiences"
+          options={{
+            title: "Edit Experiences",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="profile/update-educations"
+          options={{
+            title: "Educations",
+            headerShown: false,
+          }}
+        />
+        {/* *************************************************************************************************** */}
+        {/* Chat  ********************************************************************************************* */}
         <Stack.Screen
           name="chat"
           options={{
@@ -72,8 +95,8 @@ export default function MainLayout() {
             headerShown: false,
           }}
         />
-
-        {/* Settings */}
+        {/* *************************************************************************************************** */}
+        {/* Settings  ****************************************************************************************** */}
         <Stack.Screen
           name="settings"
           options={{
@@ -83,14 +106,14 @@ export default function MainLayout() {
             animationDuration: 200,
           }}
         />
-
-        {/* Scene */}
+        {/* *************************************************************************************************** */}
+        {/* Test  ********************************************************************************************* */}
         <Stack.Screen
-          name="scene-screen"
+          name="test"
           options={{
-            title: "",
-            headerShown: false,
-            animation: "slide_from_right",
+            title: "Try Anything",
+            animation: "fade_from_bottom",
+            animationDuration: 200,
           }}
         />
       </Stack>

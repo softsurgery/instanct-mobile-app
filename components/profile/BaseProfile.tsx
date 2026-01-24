@@ -165,7 +165,7 @@ export const InspectBaseProfile = ({
             <View className="flex flex-row gap-1 items-center -mx-2">
               <StablePressable
                 className="p-2"
-                onPress={() => router.push("/main/scene-screen")}
+                onPress={() => {}}
                 onPressClassname="bg-primary/25 rounded-full"
               >
                 <Icon as={Plus} size={20} className="text-muted-foreground" />
@@ -174,10 +174,8 @@ export const InspectBaseProfile = ({
               <StablePressable
                 className="p-2"
                 onPress={() => {
-                  sceneBuilderStore.push("update-profile", experienceRecipe);
                   router.push({
-                    pathname: "/main/scene-screen",
-                    params: { id: "update-profile" },
+                    pathname: "/main/profile/update-experiences",
                   });
                 }}
                 onPressClassname="bg-primary/25 rounded-full"
