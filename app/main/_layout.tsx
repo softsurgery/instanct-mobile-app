@@ -4,10 +4,7 @@ import { Stack } from "expo-router";
 import React from "react";
 
 export default function MainLayout() {
-  const { restartSocket } = useLiveGeolocation({
-    updateInterval: 5,
-    radiusKm: 4,
-  });
+  const { restartSocket } = useLiveGeolocation({});
 
   return (
     <MapContext.Provider value={{ restartSocket }}>
