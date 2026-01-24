@@ -4,7 +4,7 @@ import { StableSafeAreaView } from "@/components/shared/StableSafeAreaView";
 import { StableScrollView } from "@/components/shared/StableScrollView";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { DeleteExperienceDialog } from "./DeleteExperinceDialog";
+import { DeleteExperienceDialog } from "./DeleteExperienceDialog";
 import { getExperienceYears } from "@/lib/date";
 import { cn } from "@/lib/utils";
 import { useUserStore } from "@/stores/useUserStore";
