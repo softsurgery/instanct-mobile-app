@@ -6,19 +6,21 @@ import { IconMessageChatbot } from "@tabler/icons-react-native";
 import { router } from "expo-router";
 import { Bell, RefreshCcw } from "lucide-react-native";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { ActivityIndicator, View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
+import { MapModes } from "./MapModes";
 import { MapRenderer } from "./MapRenderer";
 import { MapSessionStarter } from "./MapSessionStarter";
 import { MapStatus } from "./MapStatus";
-import { MapModes } from "./MapModes";
 
 interface MapPortalProps {
   className?: string;
 }
 
 export const MapPortal = ({ className }: MapPortalProps) => {
+  const { t } = useTranslation("common");
   const [sessionStarted, setSessionStarted] = React.useState(false);
   const mapStore = useMapStore();
   const { newCount, resetCount } = useNotificationContext();
@@ -46,9 +48,9 @@ export const MapPortal = ({ className }: MapPortalProps) => {
         )}
       </View>
 
-      <StableSafeAreaView className="absolute top-0 left-0 right-0 z-20 px-2">
+      <StableSafeAreaView className="absolute top-0 left-0 right-0 z-20">
         <ApplicationHeader
-          title="Map"
+          title={t("screens.map")}
           shortcuts={[
             {
               icon: RefreshCcw,

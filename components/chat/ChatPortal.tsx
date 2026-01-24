@@ -16,7 +16,6 @@ import { ResponseConversationDto } from "~/types";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StablePressable } from "../shared/StablePressable";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
-import { Separator } from "../ui/separator";
 import { Text } from "../ui/text";
 import { UserEntry } from "./UserEntry";
 
@@ -91,20 +90,20 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
         </StablePressable>
       );
     },
-    []
+    [],
   );
 
   const [dragging, setDragging] = React.useState(false);
   const { value: debouncedDragging, loading: isDragging } = useDebounce(
     dragging,
-    1000
+    1000,
   );
 
   return (
     <StableSafeAreaView className={cn("flex flex-1", className)}>
       <ApplicationHeader
         className="border-b border-border pb-2 bg-transparent"
-        title={t("screens.chat")}
+        title={t("screens.messages")}
         titleVariant="large"
         reverse
         shortcuts={[

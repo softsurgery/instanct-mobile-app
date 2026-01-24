@@ -7,8 +7,9 @@ import { LegendList } from "@legendapp/list";
 import { IconMessageChatbot } from "@tabler/icons-react-native";
 import { useQuery } from "@tanstack/react-query";
 import { router } from "expo-router";
-import { Bell } from "lucide-react-native";
+import { ArrowDownNarrowWide, Bell } from "lucide-react-native";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -32,6 +33,7 @@ interface ExplorePortalProps {
 }
 
 export const ExplorePortal = ({ className }: ExplorePortalProps) => {
+  const { t } = useTranslation("common");
   const { newCount, resetCount } = useNotificationContext();
   const [dragging, setDragging] = React.useState(false);
 
@@ -113,8 +115,12 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
     >
       <Animated.View style={animatedHeaderStyle}>
         <ApplicationHeader
-          title="Explore"
+          title={t("screens.explore")}
           shortcuts={[
+            {
+              icon: ArrowDownNarrowWide,
+              onPress: () => {},
+            },
             {
               icon: Bell,
               onPress: handleNotificationsPress,

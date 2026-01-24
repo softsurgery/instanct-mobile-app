@@ -3,6 +3,7 @@ import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { cn } from "@/lib/utils";
 import { router } from "expo-router";
 import { Bell, FlaskConical, Settings } from "lucide-react-native";
+import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { InspectBaseProfile } from "../profile/BaseProfile";
 import { ApplicationHeader } from "../shared/AppHeader";
@@ -13,6 +14,7 @@ interface MenuPortalProps {
 }
 
 export const MenuPortal = ({ className }: MenuPortalProps) => {
+  const { t } = useTranslation("common");
   const { currentUser } = useCurrentUser();
   const { newCount, resetCount } = useNotificationContext();
   return (
@@ -25,7 +27,7 @@ export const MenuPortal = ({ className }: MenuPortalProps) => {
             pointerEvents="box-none"
           >
             <ApplicationHeader
-              title="Menu"
+              title={t("screens.menu")}
               shortcuts={[
                 {
                   icon: Bell,
