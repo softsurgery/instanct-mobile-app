@@ -20,8 +20,8 @@ import { SeeMoreText } from "../shared/SeeMoreText";
 import { StablePressable } from "../shared/StablePressable";
 import { StableScrollView } from "../shared/StableScrollView";
 import { Separator } from "../ui/separator";
+import { useEditProfileRecipes } from "./forms/useUpdateProfileRecipe";
 import { ProfileStat } from "./ProfileStat";
-import { useEditProfileRecipes } from "./useUpdateProfileRecipe";
 
 interface ProfileSection<T = unknown> {
   key: string;

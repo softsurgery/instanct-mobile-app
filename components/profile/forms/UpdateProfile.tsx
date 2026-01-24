@@ -1,13 +1,13 @@
 import { cn } from "@/lib/utils";
-import { FormBuilder } from "../shared/form-builder/FormBuilder";
-import { StableKeyboardAwareScrollView } from "../shared/StableKeyboardAwareScrollView";
-import { useUpdateProfileFormStructure } from "./useUpdateProfileFormStructure";
 import { useUserStore } from "@/stores/useUserStore";
-import { ApplicationHeader } from "../shared/AppHeader";
-import { ArrowLeft } from "lucide-react-native";
 import { router } from "expo-router";
+import { ArrowLeft } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
-import { StableSafeAreaView } from "../shared/StableSafeAreaView";
+import { ApplicationHeader } from "../../shared/AppHeader";
+import { FormBuilder } from "../../shared/form-builder/FormBuilder";
+import { StableKeyboardAwareScrollView } from "../../shared/StableKeyboardAwareScrollView";
+import { StableSafeAreaView } from "../../shared/StableSafeAreaView";
+import { useUpdateProfileFormStructure } from "./useUpdateProfileFormStructure";
 
 interface UpdateProfileProps {
   className?: string;

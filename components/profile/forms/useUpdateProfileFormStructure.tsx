@@ -8,7 +8,7 @@ import {
   SelectFieldProps,
   TextareaFieldProps,
   TextFieldProps,
-} from "../shared/form-builder/types";
+} from "../../shared/form-builder/types";
 import { UserStore } from "@/stores/useUserStore";
 
 interface useUpdateProfileFormStructureProps {

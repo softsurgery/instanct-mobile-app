@@ -1,17 +1,17 @@
+import { UserStore } from "@/stores/useUserStore";
+import { ResponseExperienceDto } from "@/types";
+import { format } from "date-fns";
+import { router } from "expo-router";
+import { useMemo } from "react";
+import { View } from "react-native";
+import { SceneBuilder } from "../../shared/scene-builder/SceneBuilder";
 import {
   DynamicScene,
   DynamicSceneRowVariant,
   DynamicSceneSection,
-} from "../shared/scene-builder/types";
-import { useMemo } from "react";
-import { View } from "react-native";
-import { Text } from "../ui/text";
-import { router } from "expo-router";
-import { UserStore } from "@/stores/useUserStore";
-import { ResponseExperienceDto } from "@/types";
-import { format } from "date-fns";
-import { SceneBuilder } from "../shared/scene-builder/SceneBuilder";
-import { useSceneBuilderStore } from "../shared/scene-builder/useSceneBuilderStore";
+} from "../../shared/scene-builder/types";
+import { useSceneBuilderStore } from "../../shared/scene-builder/useSceneBuilderStore";
+import { Text } from "../../ui/text";
 
 interface useEditProfileRecipesProps {
   store: UserStore | null;

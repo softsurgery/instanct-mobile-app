@@ -1,4 +1,4 @@
-import { UpdateProfile } from "@/components/profile/UpdateProfile";
+import { UpdateProfile } from "@/components/profile/forms/UpdateProfile";
 
 export default function Screen() {
   return <UpdateProfile />;
