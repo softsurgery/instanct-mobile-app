@@ -15,12 +15,10 @@ import { router, useNavigation } from "expo-router";
 import { Pen, Plus } from "lucide-react-native";
 import React from "react";
 import { Image, RefreshControl, View } from "react-native";
-import { useSceneBuilderStore } from "../shared/scene-builder/useSceneBuilderStore";
 import { SeeMoreText } from "../shared/SeeMoreText";
 import { StablePressable } from "../shared/StablePressable";
 import { StableScrollView } from "../shared/StableScrollView";
 import { Separator } from "../ui/separator";
-import { useEditProfileRecipes } from "./forms/useUpdateProfileRecipe";
 import { ProfileStat } from "./ProfileStat";
 
 interface ProfileSection<T = unknown> {
@@ -73,8 +71,6 @@ export const InspectBaseProfile = ({
     if (educations) userStore.set("educations", educations);
   }, [educations]);
 
-  const sceneBuilderStore = useSceneBuilderStore();
-  const { experienceRecipe } = useEditProfileRecipes({ store: userStore });
 
   const identity = React.useMemo(() => identifyUser(user), [user]);
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
@@ -140,7 +136,9 @@ export const InspectBaseProfile = ({
           </Text>
           <Text className="text-xs text-muted-foreground my-1">
             {format(new Date(education.startDate), "MMM yyyy")} —{" "}
-            {format(new Date(education.endDate), "MMM yyyy")}
+            {education.endDate
+              ? format(new Date(education.endDate), "MMM yyyy")
+              : "Present"}
           </Text>
           <SeeMoreText textClassname="text-sm" numberOfLines={2}>
             {education.description}
