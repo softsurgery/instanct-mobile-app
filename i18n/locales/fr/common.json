@@ -8,5 +8,12 @@
     "settings": "Paramètres",
     "notifications": "Notifications",
     "profile": "Mon Profile"
+  },
+  "language": {
+    "select": {
+      "title": "Sélectionnez la langue",
+      "description": "Sélectionnez la langue que vous souhaitez utiliser dans l'application",
+      "placeholder": "Sélectionnez la langue"
+    }
   }
 }

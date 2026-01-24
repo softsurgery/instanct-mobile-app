@@ -1,27 +1,16 @@
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
-import { setAndroidNavigationBar } from "@/lib/android-navigation-bar";
 import { identifyUser } from "@/lib/user";
 import { cn } from "@/lib/utils";
 import { useMapStore } from "@/stores/useMapStore";
-import { usePreferencePersistStore } from "@/stores/usePreferencePersistStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
-import {
-  ArrowLeft,
-  Bell,
-  Globe2,
-  LogOut,
-  MoonStar,
-  ShieldCheck,
-  Trash2,
-  UserRound,
-} from "lucide-react-native";
-import { useColorScheme } from "nativewind";
+import { ArrowLeft, LogOut, Trash2 } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
+import { LanguageSwitcher } from "../shared/LanguageSwitcher";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { StableScrollView } from "../shared/StableScrollView";
 import { ThemeToggle } from "../ThemeToggle";
@@ -39,70 +28,89 @@ import { Separator } from "../ui/separator";
 import { Text } from "../ui/text";
 import { SettingRow } from "./SettingsRow";
 
-const settingsRows = [
-  {
-    key: "account",
-    title: "Account",
-    description: "Keep your profile and security details up to date.",
-    rows: [
-      {
-        icon: UserRound,
-        title: "Profile",
-        description: "Update your bio, avatar and socials",
-        route: "/main/update-profile",
-      },
-      {
-        icon: ShieldCheck,
-        title: "Privacy",
-        description: "Manage who can find you",
-        comingSoon: true,
-      },
-    ],
-  },
-  {
-    key: "preferences",
-    title: "Preferences",
-    description: "Tailor Instanct to your daily habits.",
-    rows: [
-      {
-        icon: Globe2,
-        title: "Language",
-        description: "Set your preferred language",
-        type: "language",
-      },
-      {
-        icon: Bell,
-        title: "Notifications",
-        description: "Control alerts and reminders",
-        route: "/main/notifications",
-      },
-      {
-        icon: MoonStar,
-        title: "Appearance",
-        description: "Switch between light and dark mode",
-        type: "theme",
-      },
-    ],
-  },
-];
-
 interface SettingsPortalProps {
   className?: string;
 }
 
 export const SettingsPortal = ({ className }: SettingsPortalProps) => {
+  const settingsRows = [
+    {
+      key: "account",
+      title: "Account",
+      description: "Keep your profile and security details up to date.",
+      rows: [
+        {
+          component: () => (
+            <View className="flex flex-row justify-between items-center w-full">
+              <View>
+                <Text className="font-semibold text-base">Profile</Text>
+                <Text className="text-xs text-muted-foreground">
+                  Update your bio, avatar and socials
+                </Text>
+              </View>
+              <Badge variant="outline">
+                <Text className="text-xs font-medium">Soon</Text>
+              </Badge>
+            </View>
+          ),
+        },
+        {
+          component: () => (
+            <View className="flex flex-row justify-between items-center w-full">
+              <View>
+                <Text className="font-semibold text-base">Privacy</Text>
+                <Text className="text-xs text-muted-foreground">
+                  Set your preferred language
+                </Text>
+              </View>
+              <Badge variant="outline">
+                <Text className="text-xs font-medium">Soon</Text>
+              </Badge>
+            </View>
+          ),
+        },
+      ],
+    },
+    {
+      key: "preferences",
+      title: "Preferences",
+      description: "Tailor Instanct to your daily habits.",
+      rows: [
+        {
+          component: () => (
+            <View className="flex flex-col justify-between gap-4">
+              <View>
+                <Text className="font-semibold text-base">Language</Text>
+                <Text className="text-xs text-muted-foreground">
+                  Set your preferred language
+                </Text>
+              </View>
+              <LanguageSwitcher />
+            </View>
+          ),
+        },
+        {
+          component: () => (
+            <View className="flex flex-row justify-between items-center w-full">
+              <View>
+                <Text className="font-semibold text-base">Appearance</Text>
+                <Text className="text-xs text-muted-foreground">
+                  Switch between light and dark mode
+                </Text>
+              </View>
+              <ThemeToggle className="mx-0" />
+            </View>
+          ),
+        },
+      ],
+    },
+  ];
+
   const { t } = useTranslation("common");
-  const { toggleColorScheme } = useColorScheme();
   const queryClient = useQueryClient();
   const mapStore = useMapStore();
   const authPersistStore = useAuthPersistStore();
   const { currentUser } = useCurrentUser();
-
-  const {
-    language,
-    theme,
-    toggleTheme: persistToggleTheme,
-  } = usePreferencePersistStore();
 
   const logout = () => {
     authPersistStore.logout?.();
@@ -110,12 +118,6 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
     queryClient.clear();
     router.replace("/");
   };
-
-  const toggleTheme = React.useCallback(() => {
-    persistToggleTheme();
-    setAndroidNavigationBar(theme);
-    toggleColorScheme();
-  }, [persistToggleTheme, theme, toggleColorScheme]);
 
   return (
     <StableSafeAreaView className={cn("flex flex-1", className)}>
@@ -128,9 +130,7 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
           {
             key: "back",
             icon: ArrowLeft,
-            onPress: () => {
-              router.back();
-            },
+            onPress: () => router.back(),
           },
         ]}
       />
@@ -167,43 +167,12 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
                 {section.rows.map((row, index) => {
                   const isLast = index === section.rows.length - 1;
                   return (
-                    <View key={row.title}>
+                    <View key={index} className="flex flex-col gap-4">
                       <SettingRow
-                        icon={row.icon}
-                        title={row.title}
-                        description={
-                          row.type === "language"
-                            ? `Currently set to ${language.toUpperCase()}`
-                            : row.type === "theme"
-                              ? theme === "dark"
-                                ? "Dark mode is on"
-                                : "Light mode is on"
-                              : row.description
-                        }
-                        trailing={
-                          row.type === "language" ? (
-                            <Badge variant="outline">
-                              <Text className="text-xs font-medium">
-                                {language.toUpperCase()}
-                              </Text>
-                            </Badge>
-                          ) : row.type === "theme" ? (
-                            <ThemeToggle className="mx-0" />
-                          ) : row.comingSoon ? (
-                            <Badge variant="outline">
-                              <Text className="text-xs font-medium">Soon</Text>
-                            </Badge>
-                          ) : undefined
-                        }
-                        onPress={() => {
-                          if (row.route) {
-                            router.push(row.route);
-                          } else if (row.type === "theme") {
-                            toggleTheme();
-                          }
-                        }}
+                        className="mt-2"
+                        component={row.component && row.component()}
                       />
-                      {!isLast && <Separator className="my-1" />}
+                      {!isLast && <Separator />}
                     </View>
                   );
                 })}
@@ -230,9 +199,7 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
               <Button
                 variant={"destructive"}
                 className="flex flex-row items-center justify-center gap-2"
-                onPress={() => {
-                  Alert.alert("Delete account", "Coming soon!");
-                }}
+                onPress={() => Alert.alert("Delete account", "Coming soon!")}
               >
                 <Icon as={Trash2} size={18} color={"white"} />
                 <Text>Delete Account</Text>

@@ -8,5 +8,12 @@
     "settings": "الإعدادات",
     "notifications": "الإشعارات",
     "profile": "ملفي"
+  },
+  "language": {
+    "select": {
+      "title": "اختر اللغة",
+      "description": "اختر اللغة التي تريد استخدامها في التطبيق",
+      "placeholder": "اختر اللغة"
+    }
   }
 }
