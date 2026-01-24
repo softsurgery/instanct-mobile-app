@@ -1,6 +1,13 @@
 import { setDeepValue } from "@/lib/object";
 import { create } from "zustand";
-import { ResponseExperienceDto, ResponseUserDto, UpdateUserDto } from "~/types";
+import {
+  ResponseEducationDto,
+  ResponseExperienceDto,
+  ResponseUserDto,
+  UpdateEducationDto,
+  UpdateExperienceDto,
+  UpdateUserDto,
+} from "~/types";
 
 interface UserData {
   response?: ResponseUserDto;
@@ -8,7 +15,11 @@ interface UserData {
 
   //experiences
   experiences?: ResponseExperienceDto[];
-  updateExperienceDto?: UpdateUserDto;
+  updateExperienceDto: UpdateExperienceDto;
+
+  //educations
+  educations?: ResponseEducationDto[];
+  updateEducationDto: UpdateEducationDto;
 
   //utils
   picture?: string;
@@ -38,6 +49,20 @@ const initialState: UserData = {
     bio: "",
     gender: undefined,
     isPrivate: true,
+  },
+  updateExperienceDto: {
+    title: "",
+    company: "",
+    startDate: new Date(),
+    endDate: new Date(),
+    description: "",
+  },
+  updateEducationDto: {
+    title: "",
+    institution: "",
+    startDate: new Date(),
+    endDate: new Date(),
+    description: "",
   },
   picture: undefined,
   progress: 0,

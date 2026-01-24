@@ -47,15 +47,31 @@ export const InspectBaseProfile = ({
   const storeRef = React.useRef(createClientStore());
   const userStore = useUserStore(); // TODO: use the store ref instead
 
+  // user side-effects
   const { currentUser } = useCurrentUser();
   const { user, isUserPending, refetchUser } = useIdentifiedUser({ id });
+  React.useEffect(() => {
+    if (user) userStore.set("response", user);
+    navigation.setOptions({
+      title: user?.username,
+    });
+  }, [user]);
+
+  // experience side-effects
   const { experiences, isExperiencesPending, refetchExperiences } =
     useExperiences({ id, enabled: !!user });
+  React.useEffect(() => {
+    if (experiences) userStore.set("experiences", experiences);
+  }, [experiences]);
 
+  // education side-effects
   const { educations, isEducationsPending, refetchEducations } = useEducations({
     id,
     enabled: !!user,
   });
+  React.useEffect(() => {
+    if (educations) userStore.set("educations", educations);
+  }, [educations]);
 
   const sceneBuilderStore = useSceneBuilderStore();
   const { experienceRecipe } = useEditProfileRecipes({ store: userStore });
@@ -69,14 +85,6 @@ export const InspectBaseProfile = ({
       "border border-border bg-background rounded-full shadow-md",
     size: { width: 100, height: 100 },
   });
-
-  React.useEffect(() => {
-    if (user) userStore.set("response", user);
-    if (experiences) userStore.set("experiences", experiences);
-    navigation.setOptions({
-      title: user?.username,
-    });
-  }, [user]);
 
   React.useEffect(() => {
     return () => {

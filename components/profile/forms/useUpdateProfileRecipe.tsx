@@ -160,7 +160,7 @@ export const useEditProfileRecipes = ({
         scenes: experienceSections,
       },
     } satisfies DynamicScene;
-  }, [store?.experiences?.length]);
+  }, [store?.experiences]);
 
   return { experienceRecipe };
 };

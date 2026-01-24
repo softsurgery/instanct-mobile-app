@@ -74,10 +74,10 @@ export interface ResponseExperienceDto extends DatabaseEntity {
   userId: string;
 }
 
-export interface CreateExperienceDto extends ResponseExperienceDto {
+export interface CreateExperienceDto {
   title: string;
-  startDate: string;
-  endDate: string;
+  startDate: Date;
+  endDate: Date;
   company: string;
   description: string;
 }
@@ -90,18 +90,18 @@ export interface UpdateExperienceDto extends Partial<CreateExperienceDto> {}
 export interface ResponseEducationDto extends DatabaseEntity {
   id: number;
   title: string;
-  startDate: string;
-  endDate: string;
+  startDate: Date;
+  endDate: Date;
   institution: string;
   description: string;
   user: ResponseUserDto;
   userId: string;
 }
 
-export interface CreateEducationDto extends ResponseEducationDto {
+export interface CreateEducationDto {
   title: string;
-  startDate: string;
-  endDate: string;
+  startDate: Date;
+  endDate: Date;
   institution: string;
   description: string;
 }
