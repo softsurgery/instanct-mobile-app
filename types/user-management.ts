@@ -77,7 +77,7 @@ export interface ResponseExperienceDto extends DatabaseEntity {
 export interface CreateExperienceDto {
   title: string;
   startDate: Date;
-  endDate: Date;
+  endDate: Date | null;
   company: string;
   description: string;
 }
@@ -91,7 +91,7 @@ export interface ResponseEducationDto extends DatabaseEntity {
   id: number;
   title: string;
   startDate: Date;
-  endDate: Date;
+  endDate: Date | null;
   institution: string;
   description: string;
   user: ResponseUserDto;

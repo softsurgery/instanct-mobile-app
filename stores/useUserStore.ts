@@ -15,10 +15,12 @@ interface UserData {
 
   //experiences
   experiences?: ResponseExperienceDto[];
+  responseExperience?: ResponseExperienceDto;
   updateExperienceDto: UpdateExperienceDto;
 
   //educations
   educations?: ResponseEducationDto[];
+  responseEducation?: ResponseEducationDto;
   updateEducationDto: UpdateEducationDto;
 
   //utils
@@ -27,6 +29,8 @@ interface UserData {
 
   //errors
   errors: Record<string, string[]>;
+  experienceErrors: Record<string, string[]>;
+  educationErrors: Record<string, string[]>;
 }
 
 export interface UserStore extends UserData {
@@ -66,7 +70,10 @@ const initialState: UserData = {
   },
   picture: undefined,
   progress: 0,
+
   errors: {},
+  experienceErrors: {},
+  educationErrors: {},
 };
 
 export const useUserStore = create<UserStore>((set, get) => ({
@@ -97,11 +104,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
         throw new Error(`Cannot set nested path on non-object: ${rootKey}`);
       }
 
-      const updatedRoot = setDeepValue(
-        { ...(rootValue as object) },
-        nestedPath,
-        value,
-      );
+      const updatedRoot = setDeepValue(rootValue, nestedPath, value);
 
       return {
         ...state,

@@ -29,3 +29,13 @@ export function timeAgo(input: Date | string): string {
     return `${diffHours} hour${diffHours !== 1 ? "s" : ""} ago`;
   return `${diffDays} day${diffDays !== 1 ? "s" : ""} ago`;
 }
+
+export function getExperienceYears(
+  startDate: string | Date,
+  endDate?: string | Date | null,
+): number {
+  const start = new Date(startDate).getTime();
+  const end = endDate ? new Date(endDate).getTime() : Date.now();
+
+  return Math.round((end - start) / (1000 * 60 * 60 * 24 * 365.25));
+}
