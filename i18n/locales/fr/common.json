@@ -1,7 +1,7 @@
 {
   "screens": {
     "explore": "Explorer",
-    "chat": "Chat",
+    "messages": "Messages",
     "like": "Aimer",
     "map": "Carte",
     "menu": "Menu",
