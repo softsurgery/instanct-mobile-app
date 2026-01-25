@@ -1,10 +1,22 @@
-import { ResponseExperienceDto, UpdateExperienceDto } from "@/types";
+import {
+  CreateExperienceDto,
+  ResponseExperienceDto,
+  UpdateExperienceDto,
+} from "@/types";
 import axios from "./axios";
 
 const findByUserId = async (
   userId: string,
 ): Promise<ResponseExperienceDto[]> => {
   const response = await axios.get(`/experience/user/${userId}`);
+  return response.data;
+};
+
+const create = async (
+  userId: string,
+  experience: CreateExperienceDto,
+): Promise<ResponseExperienceDto> => {
+  const response = await axios.post(`/experience/user/${userId}`, experience);
   return response.data;
 };
 
@@ -24,6 +36,7 @@ const remove = async (id: number): Promise<ResponseExperienceDto> => {
 
 export const experience = {
   findByUserId,
+  create,
   update,
   remove,
 };

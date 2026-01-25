@@ -59,6 +59,13 @@ export default function MainLayout() {
           }}
         />
         <Stack.Screen
+          name="profile/create-experience"
+          options={{
+            title: "Experiences",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
           name="profile/update-experiences"
           options={{
             title: "Experiences",
