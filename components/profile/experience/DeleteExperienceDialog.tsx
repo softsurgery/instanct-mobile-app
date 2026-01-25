@@ -1,6 +1,3 @@
-import { UserStore } from "@/stores/useUserStore";
-import React from "react";
-import { View } from "react-native";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,6 +7,9 @@ import {
 } from "@/components/ui/dialog";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
+import { UserStore } from "@/stores/useUserStore";
+import React from "react";
+import { View } from "react-native";
 
 interface DeleteExperienceDialogProps {
   userStore?: UserStore;
@@ -41,7 +41,7 @@ export const DeleteExperienceDialog = ({
           </Text>
         </DialogTitle>
 
-        <View className="flex flex-col gap-3 py-4">
+        <View className="flex flex-col gap-2">
           <Text className="text-sm text-muted-foreground">
             Are you sure you want to delete this experience? This action cannot
             be undone.
@@ -49,14 +49,6 @@ export const DeleteExperienceDialog = ({
         </View>
 
         <View className="flex flex-row gap-3 justify-end">
-          <Button
-            variant="outline"
-            onPress={() => setVisible(false)}
-            disabled={loading}
-            className="flex-1"
-          >
-            <Text>Cancel</Text>
-          </Button>
           <Button
             variant="destructive"
             onPress={() => {
@@ -67,6 +59,14 @@ export const DeleteExperienceDialog = ({
             className="flex-1"
           >
             <Text>{loading ? "Deleting..." : "Delete"}</Text>
+          </Button>
+          <Button
+            variant="outline"
+            onPress={() => setVisible(false)}
+            disabled={loading}
+            className="flex-1"
+          >
+            <Text>Cancel</Text>
           </Button>
         </View>
       </DialogContent>

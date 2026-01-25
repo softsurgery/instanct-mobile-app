@@ -1,20 +1,20 @@
+import { api } from "@/api";
 import { ApplicationHeader } from "@/components/shared/AppHeader";
 import { FormBuilder } from "@/components/shared/form-builder/FormBuilder";
 import { StableKeyboardAwareScrollView } from "@/components/shared/StableKeyboardAwareScrollView";
 import { StableSafeAreaView } from "@/components/shared/StableSafeAreaView";
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import { useUserStore } from "@/stores/useUserStore";
+import { ServerErrorResponse, UpdateExperienceDto } from "@/types";
+import { updateExperienceSchema } from "@/types/validations/experience.validation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { ArrowLeft } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
-import { useUpdateExperienceFormStructure } from "./useUpdateExperienceFormStructure";
-import { ServerErrorResponse, UpdateExperienceDto } from "@/types";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/api";
 import { showToastable } from "react-native-toastable";
-import { updateExperienceSchema } from "@/types/validations/experience.validation";
-import { Button } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
+import { useUpdateExperienceFormStructure } from "./useUpdateExperienceFormStructure";
 
 interface UpdateExperienceProps {
   className?: string;
@@ -80,7 +80,7 @@ export const UpdateExperience = ({ className }: UpdateExperienceProps) => {
         ]}
       />
       <StableKeyboardAwareScrollView
-        className={cn("flex flex-col flex-1 py-2", className)}
+        className={cn("flex flex-col flex-1 py-2 bg-background", className)}
       >
         <FormBuilder structure={structure} className="mb-6" />
         <Button className="mx-6 rounded-md mb-6" onPress={handleUpdateSubmit}>
