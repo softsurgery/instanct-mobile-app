@@ -1,16 +1,18 @@
+import { api } from "@/api";
 import { ApplicationHeader } from "@/components/shared/AppHeader";
 import { Tappable } from "@/components/shared/scene-builder/Tappable";
+import { StablePressable } from "@/components/shared/StablePressable";
 import { StableSafeAreaView } from "@/components/shared/StableSafeAreaView";
 import { StableScrollView } from "@/components/shared/StableScrollView";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { DeleteExperienceDialog } from "./DeleteExperienceDialog";
 import { getExperienceYears } from "@/lib/date";
 import { cn } from "@/lib/utils";
 import { useUserStore } from "@/stores/useUserStore";
 import { ResponseExperienceDto, ServerErrorResponse } from "@/types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import {
   ArrowLeft,
   Briefcase,
@@ -19,9 +21,8 @@ import {
   FileText,
 } from "lucide-react-native";
 import { View } from "react-native";
-import { api } from "@/api";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { showToastable } from "react-native-toastable";
+import { DeleteExperienceDialog } from "./DeleteExperienceDialog";
 
 interface UpdateExperiencesProps {
   className?: string;
@@ -77,17 +78,17 @@ export const UpdateExperiences = ({ className }: UpdateExperiencesProps) => {
         ]}
       />
       <StableScrollView className="bg-background flex-1">
-        <View className="flex flex-col flex-1 py-4 px-3 pb-10">
+        <View className="flex flex-col flex-1 pb-10">
           {userStore.experiences && userStore.experiences.length > 0 ? (
-            <View className="gap-3">
+            <View className="gap-5">
               {userStore.experiences.map((exp, index) => {
                 return (
                   <View
                     key={exp.id}
-                    className="bg-card rounded-2xl border border-border overflow-hidden shadow-sm"
+                    className="bg-card border border-border overflow-hidden shadow-sm"
                   >
                     {/* Header with index badge */}
-                    <View className="flex flex-row items-center justify-between px-4 pt-4 pb-3 border-b border-border/50">
+                    <View className="flex flex-row items-center justify-between px-4 pt-4 pb-3 border-b border-border">
                       <View className="flex flex-row items-center gap-2">
                         <View className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                           <Icon as={Briefcase} size={16} />
@@ -98,9 +99,7 @@ export const UpdateExperiences = ({ className }: UpdateExperiencesProps) => {
                       </View>
                       {exp.endDate === null && (
                         <View className="bg-green-500/20 px-2.5 py-1 rounded-full">
-                          <Text className="text-xs font-medium text-black dark:text-white">
-                            Current
-                          </Text>
+                          <Text className="text-xs font-medium">Current</Text>
                         </View>
                       )}
                     </View>
@@ -154,9 +153,9 @@ export const UpdateExperiences = ({ className }: UpdateExperiencesProps) => {
                     </View>
 
                     {/* Action Buttons */}
-                    <View className="flex flex-col gap-2 px-4 py-3 border-t border-border/50 ">
+                    <View className="flex flex-col border-t border-border">
                       <Tappable
-                        className="py-2.5 flex flex-row"
+                        className="p-4 flex flex-row border-b border-border"
                         classNames={{
                           content: "font-semibold text-sm",
                           pressable: "bg-primary/20",
@@ -170,7 +169,7 @@ export const UpdateExperiences = ({ className }: UpdateExperiencesProps) => {
                         loading={isDeletePending}
                         trigger={
                           <Tappable
-                            className="py-2.5 flex flex-row"
+                            className="p-4 flex flex-row"
                             classNames={{
                               content: "font-semibold text-sm",
                               pressable: "bg-destructive/50",
@@ -201,12 +200,12 @@ export const UpdateExperiences = ({ className }: UpdateExperiencesProps) => {
 
           {/* Add Experience Button */}
           {userStore.experiences && userStore.experiences.length >= 0 && (
-            <Link
-              href="/main/settings"
-              className="text-center mt-6 underline text-lg font-medium text-black dark:text-white"
+            <StablePressable
+              className="text-center mt-4 underline font-medium w-fit mx-auto rounded-lg"
+              onPress={() => router.push("/main/profile/create-experience")}
             >
-              Add Experience
-            </Link>
+              <Text className="text-sm underline p-2">New Experience ?</Text>
+            </StablePressable>
           )}
         </View>
       </StableScrollView>
