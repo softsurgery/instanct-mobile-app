@@ -1,19 +1,22 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Icon } from "@/components/ui/icon";
-
 import { Text } from "@/components/ui/text";
 import { toLongDateString } from "@/lib/date";
 import { cn } from "@/lib/utils";
+import dayjs from "dayjs";
 import { X } from "lucide-react-native";
 import React from "react";
 import { View } from "react-native";
 import DatePickerUI, { useDefaultClassNames } from "react-native-ui-datepicker";
-import dayjs from "dayjs";
-import Modal from "react-native-modal";
+import { StablePressable } from "../StablePressable";
 
 interface DatePickerProps {
   className?: string;
+  classNames?: {
+    trigger: string;
+    content: string;
+  };
   date: Date | null;
   onChange: (date: Date | null) => void;
   disabled?: boolean;
@@ -22,10 +25,11 @@ interface DatePickerProps {
 
 export const DatePicker = ({
   className,
+  classNames,
   disabled,
   date,
   onChange,
-  nullable = false,
+  nullable = true,
 }: DatePickerProps) => {
   const defaultClassNames = useDefaultClassNames();
   const [visible, setVisible] = React.useState(false);
@@ -37,25 +41,45 @@ export const DatePicker = ({
   };
 
   return (
-    <View className="flex flex-row items-center gap-2 w-full">
-      <Button
-        disabled={disabled}
-        variant="outline"
-        className={cn("w-full", className)}
-        onPress={() => setVisible(true)}
+    <Dialog
+      open={visible}
+      onOpenChange={setVisible}
+      className={cn("rounded-lg", className)}
+    >
+      <DialogTrigger
+        onPress={() => !disabled && setVisible(true)}
+        className="flex-row"
       >
-        <Text>{displayText}</Text>
-      </Button>
+        <Button
+          disabled={disabled}
+          variant="outline"
+          className={cn("w-full", className)}
+          onPress={() => setVisible(true)}
+        >
+          <Text>{displayText}</Text>
+        </Button>
+      </DialogTrigger>
 
-      <Modal
-        isVisible={visible}
-        backdropOpacity={0.2}
-        onBackdropPress={() => setVisible(false)}
-        onBackButtonPress={() => setVisible(false)}
-        style={{ justifyContent: "flex-end", margin: 0 }}
-        avoidKeyboard
-        onBlur={() => setVisible(false)}
+      <DialogContent
+        className={cn("w-[90vw] p-0 pt-4 pb-6 px-2", classNames?.content)}
       >
+        <View className="flex flex-row justify-between items-start p-2">
+          <View>
+            <Text className="font-bold">Pick a date</Text>
+            <Text className="text-xs text-muted-foreground">
+              Please select a date from the calendar below.
+            </Text>
+          </View>
+          <StablePressable
+            className="p-2 rounded-md"
+            onPress={() => {
+              setVisible(false);
+            }}
+          >
+            <Icon as={X} size={20} color={"gray"} />
+          </StablePressable>
+        </View>
+
         <DatePickerUI
           mode="single"
           date={date ? dayjs(date) : undefined}
@@ -68,10 +92,11 @@ export const DatePicker = ({
             } else if (typeof value === "string" || typeof value === "number") {
               onChange(new Date(value));
             } else {
-              // Dayjs
               onChange(value.toDate());
             }
           }}
+          showOutsideDays
+          className="rounded-lg h-fit px-4"
           classNames={{
             ...defaultClassNames,
             today: "border-primary",
@@ -79,30 +104,30 @@ export const DatePicker = ({
             selected_label: "text-foreground",
             day: `${defaultClassNames.day} hover:bg-primary/20`,
             disabled: "opacity-70",
+            header: "pb-5",
           }}
         />
-      </Modal>
-      {nullable && date && (
-        <Button
-          variant="ghost"
-          className="mt-2"
-          onPress={clearDate}
-          disabled={disabled}
-        >
-          <Text className="text-red-500">Clear</Text>
-        </Button>
-      )}
 
-      {nullable && (
-        <Button
-          variant="ghost"
-          onPress={clearDate}
-          size="icon"
-          disabled={disabled}
-        >
-          <Icon as={X} size={24} />
-        </Button>
-      )}
-    </View>
+        <View className="flex flex-row justify-between items-center gap-2 px-4">
+          <Button
+            size={"sm"}
+            onPress={() => setVisible(false)}
+            disabled={disabled}
+            className="flex-1"
+          >
+            <Text>Confirm</Text>
+          </Button>
+          <Button
+            size={"sm"}
+            variant="outline"
+            onPress={clearDate}
+            disabled={disabled}
+            className="flex-1"
+          >
+            <Text>Clear</Text>
+          </Button>
+        </View>
+      </DialogContent>
+    </Dialog>
   );
 };
