@@ -22,7 +22,7 @@ export const useUpdateExperienceFormStructure = ({
     required: true,
     placeholder: "Enter your job title",
     description: "The title of your position (e.g., Software Engineer).",
-    error: store.errors?.title?.[0],
+    error: store.experienceErrors?.title?.[0],
     props: {
       value: store.updateExperienceDto.title,
       onChangeText: (value) => {
@@ -40,7 +40,7 @@ export const useUpdateExperienceFormStructure = ({
     required: true,
     placeholder: "Enter the company name",
     description: "The name of the company you worked for.",
-    error: store.errors?.company?.[0],
+    error: store.experienceErrors?.company?.[0],
     props: {
       value: store.updateExperienceDto?.company,
       onChangeText: (value) => {
@@ -58,7 +58,7 @@ export const useUpdateExperienceFormStructure = ({
     placeholder: "Describe your role and responsibilities",
     description:
       "A brief description of your role, responsibilities, and achievements.",
-    error: store.errors?.description?.[0],
+    error: store.experienceErrors?.description?.[0],
     props: {
       value: store.updateExperienceDto?.description,
       onChangeText: (value) => {
@@ -74,7 +74,7 @@ export const useUpdateExperienceFormStructure = ({
     variant: FieldVariant.DATE,
     required: true,
     description: "The date you started this position.",
-    error: store.errors?.startDate?.[0],
+    error: store.experienceErrors?.startDate?.[0],
     props: {
       value: store.updateExperienceDto?.startDate
         ? new Date(store.updateExperienceDto.startDate)
@@ -96,7 +96,7 @@ export const useUpdateExperienceFormStructure = ({
     required: false,
     description:
       "The date you ended this position. Leave blank if it's your current role.",
-    error: store.errors?.endDate?.[0],
+    error: store.experienceErrors?.endDate?.[0],
     props: {
       value: store.updateExperienceDto?.endDate
         ? new Date(store.updateExperienceDto.endDate)
