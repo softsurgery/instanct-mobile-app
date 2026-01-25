@@ -4,25 +4,27 @@ const baseExperienceSchema = z.object({
   title: z
     .string()
     .min(2, {
-      message: "experience.validation.titleTooShort",
+      message: "Title must be at least 2 characters long.",
     })
     .max(100, {
-      message: "experience.validation.titleTooLong",
+      message: "Title cannot exceed 100 characters.",
     }),
+
   company: z
     .string()
     .min(2, {
-      message: "experience.validation.companyTooShort",
+      message: "Company name must be at least 2 characters long.",
     })
     .max(100, {
-      message: "experience.validation.companyTooLong",
+      message: "Company name cannot exceed 100 characters.",
     }),
+
   startDate: z
     .preprocess(
       (value) =>
         value === null || value === "" ? null : new Date(value as string),
       z.date({
-        message: "experience.validation.startDateRequired",
+        message: "Start date is required.",
       }),
     )
     .refine(
@@ -31,9 +33,10 @@ const baseExperienceSchema = z.object({
         return date <= new Date();
       },
       {
-        message: "experience.validation.startDateFuture",
+        message: "Start date cannot be in the future.",
       },
     ),
+
   endDate: z
     .preprocess(
       (value) =>
@@ -41,10 +44,11 @@ const baseExperienceSchema = z.object({
       z.union([z.date(), z.null()]),
     )
     .optional(),
+
   description: z
     .string()
     .max(500, {
-      message: "experience.validation.descriptionTooLong",
+      message: "Description cannot exceed 500 characters.",
     })
     .optional(),
 });
@@ -58,7 +62,7 @@ const createExperienceSchema = baseExperienceSchema
       return true;
     },
     {
-      message: "experience.validation.endDateBeforeStart",
+      message: "End date must be after the start date.",
       path: ["endDate"],
     },
   )
@@ -70,7 +74,7 @@ const createExperienceSchema = baseExperienceSchema
       return true;
     },
     {
-      message: "experience.validation.endDateFuture",
+      message: "End date cannot be in the future.",
       path: ["endDate"],
     },
   );
@@ -84,7 +88,7 @@ const updateExperienceSchema = baseExperienceSchema
       return true;
     },
     {
-      message: "experience.validation.endDateBeforeStart",
+      message: "End date must be after the start date.",
       path: ["endDate"],
     },
   )
@@ -96,7 +100,7 @@ const updateExperienceSchema = baseExperienceSchema
       return true;
     },
     {
-      message: "experience.validation.endDateFuture",
+      message: "End date cannot be in the future.",
       path: ["endDate"],
     },
   );
