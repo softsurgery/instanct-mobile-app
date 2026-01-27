@@ -87,9 +87,30 @@ export default function MainLayout() {
           }}
         />
         <Stack.Screen
+          name="profile/create-education"
+          options={{
+            title: "Create Education",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="profile/update-education"
+          options={{
+            title: "Edit Education",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
           name="profile/update-educations"
           options={{
             title: "Educations",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="profile/delete-education"
+          options={{
+            title: "Delete Educations",
             headerShown: false,
           }}
         />

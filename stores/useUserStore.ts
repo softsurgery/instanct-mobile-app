@@ -1,6 +1,7 @@
 import { setDeepValue } from "@/lib/object";
 import { create } from "zustand";
 import {
+  CreateEducationDto,
   CreateExperienceDto,
   ResponseEducationDto,
   ResponseExperienceDto,
@@ -23,6 +24,7 @@ interface UserData {
   //educations
   educations?: ResponseEducationDto[];
   responseEducation?: ResponseEducationDto;
+  createEducationDto: CreateEducationDto;
   updateEducationDto: UpdateEducationDto;
 
   //utils
@@ -66,6 +68,13 @@ const initialState: UserData = {
   updateExperienceDto: {
     title: "",
     company: "",
+    startDate: new Date(),
+    endDate: new Date(),
+    description: "",
+  },
+  createEducationDto: {
+    title: "",
+    institution: "",
     startDate: new Date(),
     endDate: new Date(),
     description: "",

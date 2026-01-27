@@ -71,7 +71,6 @@ export const InspectBaseProfile = ({
     if (educations) userStore.set("educations", educations);
   }, [educations]);
 
-
   const identity = React.useMemo(() => identifyUser(user), [user]);
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
   const { jsx: profilePicture } = useServerImage({
@@ -164,9 +163,11 @@ export const InspectBaseProfile = ({
               <StablePressable
                 className="p-2"
                 onPress={() => {
-                  router.push({
-                    pathname: "/main/profile/create-experience",
-                  });
+                  if (section.key === "experience") {
+                    router.push("/main/profile/create-experience");
+                  } else {
+                    router.push("/main/profile/create-education");
+                  }
                 }}
                 onPressClassname="bg-primary/25 rounded-full"
               >
@@ -176,9 +177,11 @@ export const InspectBaseProfile = ({
               <StablePressable
                 className="p-2"
                 onPress={() => {
-                  router.push({
-                    pathname: "/main/profile/update-experiences",
-                  });
+                  if (section.key === "experience") {
+                    router.push("/main/profile/update-experiences");
+                  } else {
+                    router.push("/main/profile/update-educations");
+                  }
                 }}
                 onPressClassname="bg-primary/25 rounded-full"
               >

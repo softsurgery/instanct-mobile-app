@@ -1,0 +1,75 @@
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Text } from "@/components/ui/text";
+import { cn } from "@/lib/utils";
+import { UserStore } from "@/stores/useUserStore";
+import React from "react";
+import { View } from "react-native";
+
+interface DeleteEducationDialogProps {
+  userStore?: UserStore;
+  trigger?: React.ReactNode;
+  loading?: boolean;
+  setLoading?: (loading: boolean) => void;
+  handleDelete?: () => void;
+}
+
+export const DeleteEducationDialog = ({
+  trigger,
+  loading,
+  handleDelete,
+}: DeleteEducationDialogProps) => {
+  const [visible, setVisible] = React.useState(false);
+
+  return (
+    <Dialog open={visible} onOpenChange={setVisible}>
+      <DialogTrigger asChild>
+        {trigger || (
+          <Text className="text-red-500 text-sm font-semibold">Delete</Text>
+        )}
+      </DialogTrigger>
+
+      <DialogContent className={cn("w-[90vw] rounded-lg")}>
+        <DialogTitle>
+          <Text className="text-lg font-semibold text-foreground">
+            Delete Education
+          </Text>
+        </DialogTitle>
+
+        <View className="flex flex-col gap-2">
+          <Text className="text-sm text-muted-foreground">
+            Are you sure you want to delete this education? This action cannot
+            be undone.
+          </Text>
+        </View>
+
+        <View className="flex flex-row gap-3 justify-end">
+          <Button
+            variant="destructive"
+            onPress={() => {
+              handleDelete?.();
+              setVisible(false);
+            }}
+            disabled={loading}
+            className="flex-1"
+          >
+            <Text>{loading ? "Deleting..." : "Delete"}</Text>
+          </Button>
+          <Button
+            variant="outline"
+            onPress={() => setVisible(false)}
+            disabled={loading}
+            className="flex-1"
+          >
+            <Text>Cancel</Text>
+          </Button>
+        </View>
+      </DialogContent>
+    </Dialog>
+  );
+};

@@ -1,4 +1,3 @@
-import { api } from "@/api";
 import { ApplicationHeader } from "@/components/shared/AppHeader";
 import { FormBuilder } from "@/components/shared/form-builder/FormBuilder";
 import { StableKeyboardAwareScrollView } from "@/components/shared/StableKeyboardAwareScrollView";
@@ -7,38 +6,39 @@ import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import { useUserStore } from "@/stores/useUserStore";
-import { ServerErrorResponse, UpdateExperienceDto } from "@/types";
-import { updateExperienceSchema } from "@/types/validations/experience.validation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { ArrowLeft } from "lucide-react-native";
-import { useTranslation } from "react-i18next";
+import { useCreateEducationFormStructure } from "./useCreateEducationFormStructure";
+import { CreateEducationDto, ServerErrorResponse } from "@/types";
 import { showToastable } from "react-native-toastable";
-import { useUpdateExperienceFormStructure } from "./useUpdateExperienceFormStructure";
+import { api } from "@/api";
+import { useTranslation } from "react-i18next";
+import { createEducationSchema } from "@/types/validations/education.validation";
 
-interface UpdateExperienceProps {
+interface CreateEducationProps {
   className?: string;
 }
 
-export const UpdateExperience = ({ className }: UpdateExperienceProps) => {
+export const CreateEducation = ({ className }: CreateEducationProps) => {
   const { t } = useTranslation("common");
   const userStore = useUserStore();
   const queryClient = useQueryClient();
 
-  const { structure } = useUpdateExperienceFormStructure({
+  const { structure } = useCreateEducationFormStructure({
     store: userStore,
   });
 
-  const { mutate: updateExperience } = useMutation({
-    mutationFn: (data: { id: number; experience: UpdateExperienceDto }) =>
-      api.experience.update(data.id, data.experience),
+  const { mutate: createEducation } = useMutation({
+    mutationFn: (data: { id: string; education: CreateEducationDto }) =>
+      api.education.create(data.id, data.education),
     onSuccess: () => {
       showToastable({
-        message: "Experience updated successfully",
+        message: "Education created successfully",
         status: "success",
       });
       queryClient.invalidateQueries({
-        queryKey: ["experiences", userStore.response?.id],
+        queryKey: ["educations", userStore.response?.id],
       });
       router.back();
     },
@@ -47,16 +47,16 @@ export const UpdateExperience = ({ className }: UpdateExperienceProps) => {
     },
   });
 
-  const handleUpdateSubmit = () => {
-    const data = userStore.updateExperienceDto;
-    const result = updateExperienceSchema.safeParse(data);
+  const handleCreateSubmit = () => {
+    const data = userStore.createEducationDto;
+    const result = createEducationSchema.safeParse(data);
     if (!result.success) {
-      userStore.set("experienceErrors", result.error.flatten().fieldErrors);
+      userStore.set("educationErrors", result.error.flatten().fieldErrors);
     } else {
-      if (userStore.responseExperience?.id) {
-        updateExperience({
-          id: userStore.responseExperience.id,
-          experience: data,
+      if (userStore.response?.id) {
+        createEducation({
+          id: userStore.response?.id!,
+          education: data,
         });
       }
     }
@@ -66,7 +66,7 @@ export const UpdateExperience = ({ className }: UpdateExperienceProps) => {
     <StableSafeAreaView className={cn("flex flex-1", className)}>
       <ApplicationHeader
         className="border-b border-border pb-2 bg-transparent"
-        title={t("screens.experience")}
+        title={t("screens.education")}
         titleVariant="large"
         reverse
         shortcuts={[
@@ -80,13 +80,13 @@ export const UpdateExperience = ({ className }: UpdateExperienceProps) => {
         ]}
       />
       <StableKeyboardAwareScrollView
-        className={cn("flex flex-col flex-1 py-2 bg-background", className)}
+        className={cn("flex flex-col flex-1 py-2", className)}
       >
         <FormBuilder structure={structure} className="mb-6" />
+        <Button className="mx-6 rounded-md mb-6" onPress={handleCreateSubmit}>
+          <Text>Create Education</Text>
+        </Button>
       </StableKeyboardAwareScrollView>
-      <Button className="mx-6 rounded-md mb-6" onPress={handleUpdateSubmit}>
-        <Text>Update Experience</Text>
-      </Button>
     </StableSafeAreaView>
   );
 };

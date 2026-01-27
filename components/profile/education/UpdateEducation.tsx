@@ -7,38 +7,38 @@ import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import { useUserStore } from "@/stores/useUserStore";
-import { ServerErrorResponse, UpdateExperienceDto } from "@/types";
-import { updateExperienceSchema } from "@/types/validations/experience.validation";
+import { ServerErrorResponse, UpdateEducationDto } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { ArrowLeft } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { showToastable } from "react-native-toastable";
-import { useUpdateExperienceFormStructure } from "./useUpdateExperienceFormStructure";
+import { useUpdateEducationFormStructure } from "./useUpdateEducationFormStructure";
+import { updateEducationSchema } from "@/types/validations/education.validation";
 
-interface UpdateExperienceProps {
+interface UpdateEducationProps {
   className?: string;
 }
 
-export const UpdateExperience = ({ className }: UpdateExperienceProps) => {
+export const UpdateEducation = ({ className }: UpdateEducationProps) => {
   const { t } = useTranslation("common");
   const userStore = useUserStore();
   const queryClient = useQueryClient();
 
-  const { structure } = useUpdateExperienceFormStructure({
+  const { structure } = useUpdateEducationFormStructure({
     store: userStore,
   });
 
-  const { mutate: updateExperience } = useMutation({
-    mutationFn: (data: { id: number; experience: UpdateExperienceDto }) =>
-      api.experience.update(data.id, data.experience),
+  const { mutate: updateEducation } = useMutation({
+    mutationFn: (data: { id: number; education: UpdateEducationDto }) =>
+      api.education.update(data.id, data.education),
     onSuccess: () => {
       showToastable({
-        message: "Experience updated successfully",
+        message: "Education updated successfully",
         status: "success",
       });
       queryClient.invalidateQueries({
-        queryKey: ["experiences", userStore.response?.id],
+        queryKey: ["educations", userStore.response?.id],
       });
       router.back();
     },
@@ -48,15 +48,15 @@ export const UpdateExperience = ({ className }: UpdateExperienceProps) => {
   });
 
   const handleUpdateSubmit = () => {
-    const data = userStore.updateExperienceDto;
-    const result = updateExperienceSchema.safeParse(data);
+    const data = userStore.updateEducationDto;
+    const result = updateEducationSchema.safeParse(data);
     if (!result.success) {
-      userStore.set("experienceErrors", result.error.flatten().fieldErrors);
+      userStore.set("educationErrors", result.error.flatten().fieldErrors);
     } else {
-      if (userStore.responseExperience?.id) {
-        updateExperience({
-          id: userStore.responseExperience.id,
-          experience: data,
+      if (userStore.responseEducation?.id) {
+        updateEducation({
+          id: userStore.responseEducation.id,
+          education: data,
         });
       }
     }
@@ -66,7 +66,7 @@ export const UpdateExperience = ({ className }: UpdateExperienceProps) => {
     <StableSafeAreaView className={cn("flex flex-1", className)}>
       <ApplicationHeader
         className="border-b border-border pb-2 bg-transparent"
-        title={t("screens.experience")}
+        title={t("screens.education")}
         titleVariant="large"
         reverse
         shortcuts={[
@@ -84,9 +84,9 @@ export const UpdateExperience = ({ className }: UpdateExperienceProps) => {
       >
         <FormBuilder structure={structure} className="mb-6" />
       </StableKeyboardAwareScrollView>
-      <Button className="mx-6 rounded-md mb-6" onPress={handleUpdateSubmit}>
-        <Text>Update Experience</Text>
-      </Button>
+        <Button className="mx-6 rounded-md mb-6" onPress={handleUpdateSubmit}>
+          <Text>Update Education</Text>
+        </Button>
     </StableSafeAreaView>
   );
 };
