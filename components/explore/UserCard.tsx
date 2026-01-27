@@ -53,7 +53,7 @@ export const UserCard = ({ user, className }: UserCardProps) => {
         className="flex flex-row items-center gap-2 p-4"
         onPress={() =>
           router.push({
-            pathname: "/main/inspect-profile",
+            pathname: "/main/profile/inspect-profile",
             params: {
               id: user.id,
             },
