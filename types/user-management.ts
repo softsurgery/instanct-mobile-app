@@ -101,7 +101,7 @@ export interface ResponseEducationDto extends DatabaseEntity {
 export interface CreateEducationDto {
   title: string;
   startDate: Date;
-  endDate: Date;
+  endDate: Date | null;
   institution: string;
   description: string;
 }
