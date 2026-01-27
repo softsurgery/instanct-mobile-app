@@ -13,6 +13,7 @@ import { Text } from "~/components/ui/text";
 import { THEME } from "~/lib/theme";
 import { cn } from "~/lib/utils";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
+import { SSOButtons } from "./SSOButtons";
 
 const data = [...new Array(3).keys()];
 const width = Dimensions.get("window").width;
@@ -79,29 +80,7 @@ export default function OnBoarding({ className }: OnBoardingProps) {
           />
         </View>
 
-        <View className="flex flex-col gap-4 px-6 mb-2">
-          <Button
-            size="lg"
-            className="w-full rounded-lg"
-            onPress={() => router.navigate("/auth/sign-in")}
-          >
-            <Text className="text-lg font-bold">Get Started</Text>
-          </Button>
-
-          <Button
-            size="lg"
-            variant="secondary"
-            className="w-full gap-3 rounded-lg border-border"
-            onPress={() => router.navigate("/auth/sign-in")}
-          >
-            <Image
-              source={require("~/assets/images/google.png")}
-              style={{ width: 22, height: 22 }}
-              contentFit="contain"
-            />
-            <Text className="text-lg font-bold">Continue with Google</Text>
-          </Button>
-        </View>
+        <SSOButtons className="mx-4 mb-4" isSignInPending={false} classic />
       </View>
     </StableSafeAreaView>
   );
