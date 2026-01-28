@@ -7,15 +7,9 @@ import * as Location from "expo-location";
 import React from "react";
 import { Socket } from "socket.io-client";
 
-interface UseLiveGeolocationOptions {
-  updateInterval?: number;
-  radiusKm?: number;
-}
+interface UseLiveGeolocationOptions {}
 
-export function useLiveGeolocation({
-  updateInterval = 5,
-  radiusKm = 5,
-}: UseLiveGeolocationOptions) {
+export function useLiveGeolocation({}: UseLiveGeolocationOptions) {
   const apiUrl =
     process.env.EXPO_PUBLIC_API_SOCKET_URL || "http://localhost:8080";
   const { accessToken } = useAuthPersistStore();
@@ -37,13 +31,13 @@ export function useLiveGeolocation({
         (socket ?? socketRef.current)?.emit("update_location", {
           latitude: pos.coords.latitude,
           longitude: pos.coords.longitude,
-          radius: radiusKm,
+          radius: mapStore.paramaters.radiusKm,
         });
       } catch (err) {
         console.warn("⚠️ Failed to fetch location:", err);
       }
     },
-    [radiusKm],
+    [mapStore.paramaters.radiusKm],
   );
 
   const initializeSocket = async () => {
@@ -144,7 +138,7 @@ export function useLiveGeolocation({
     await updateLocation(socket);
     intervalRef.current = setInterval(
       () => updateLocation(socket),
-      updateInterval * 1000,
+      mapStore.paramaters.updateInterval * 1000,
     );
   };
 
@@ -155,7 +149,14 @@ export function useLiveGeolocation({
       disconnectSocket("geolocation");
       socketRef.current = null;
     };
-  }, [accessToken, apiUrl, updateInterval, updateLocation, restartCount]);
+  }, [
+    accessToken,
+    apiUrl,
+    mapStore.paramaters.updateInterval,
+    ,
+    updateLocation,
+    restartCount,
+  ]);
 
   const restartSocket = React.useCallback(() => {
     setRestartCount((c) => c + 1);

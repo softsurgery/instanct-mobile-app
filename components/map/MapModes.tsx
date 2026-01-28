@@ -1,8 +1,7 @@
+import { cn } from "@/lib/utils";
+import { Cog } from "lucide-react-native";
 import { View } from "react-native";
 import { Icon } from "../ui/icon";
-import { router } from "expo-router";
-import { ChevronDownCircle, Eye, Globe, User } from "lucide-react-native";
-import { cn } from "@/lib/utils";
 
 interface MapModesProps {
   className?: string;
@@ -11,24 +10,29 @@ interface MapModesProps {
 
 export const MapModes = ({ className, setSessionStarted }: MapModesProps) => {
   const modes = [
+    // {
+    //   key: "session",
+    //   icon: Eye,
+    //   onPress: () => setSessionStarted?.(false),
+    // },
+    // {
+    //   key: "globe",
+    //   icon: Globe,
+    // },
+    // {
+    //   key: "profile",
+    //   icon: User,
+    //   onPress: () => router.push("/main/profile/update-profile"),
+    // },
+    // {
+    //   key: "more",
+    //   icon: ChevronDownCircle,
+    //   onPress: () => {},
+    // },
     {
-      key: "session",
-      icon: Eye,
+      key: "settings",
+      icon: Cog,
       onPress: () => setSessionStarted?.(false),
-    },
-    {
-      key: "globe",
-      icon: Globe,
-    },
-    {
-      key: "profile",
-      icon: User,
-      onPress: () => router.push("/main/update-profile"),
-    },
-    {
-      key: "more",
-      icon: ChevronDownCircle,
-      onPress: () => {},
     },
   ];
 
@@ -40,7 +44,7 @@ export const MapModes = ({ className, setSessionStarted }: MapModesProps) => {
       )}
     >
       {modes.map(({ key, icon, onPress }) => (
-        <Icon key={key} as={icon} size={20} onPress={onPress} />
+        <Icon key={key} as={icon} size={24} onPress={onPress} />
       ))}
     </View>
   );
