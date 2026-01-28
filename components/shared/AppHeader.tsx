@@ -12,6 +12,7 @@ type Shortcut =
       icon: LucideIcon;
       onPress: () => void;
       badgeText?: string;
+      hidden?: boolean;
     }
   | React.ReactNode;
 
@@ -36,7 +37,7 @@ export const ApplicationHeader = ({
       className={cn(
         "flex flex-row justify-between items-center gap-2 px-2",
         isRTL || reverse ? "flex-row-reverse" : "flex-row",
-        className
+        className,
       )}
     >
       <Text variant={titleVariant} className="mx-2">
@@ -54,7 +55,7 @@ export const ApplicationHeader = ({
             return (
               <StablePressable
                 key={index}
-                className="p-1"
+                className={cn("p-1", shortcut.hidden && "hidden")}
                 onPress={shortcut.onPress}
               >
                 {shortcut.badgeText ? (
