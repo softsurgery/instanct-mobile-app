@@ -1,15 +1,17 @@
 import { auth } from "./auth";
 import { chat } from "./chat";
-import { user } from "./user";
-import { notifications } from "./notifications";
-import { experience } from "./experience";
+import { configuration } from "./configuration";
 import { education } from "./education";
+import { experience } from "./experience";
+import { notifications } from "./notifications";
 import { refImpl } from "./ref-impl";
 import { upload } from "./upload";
+import { user } from "./user";
 
 export const api = {
   auth,
   chat,
+  configuration,
   experience,
   education,
   notifications,
