@@ -6,7 +6,7 @@ import axios from "./axios";
 export const uploadFiles = async (
   files: File[],
   onProgress?: (percent: number) => void,
-  temporary: boolean = true
+  temporary: boolean = true,
 ): Promise<Upload[]> => {
   const formData = new FormData();
   files.forEach((file) => {
@@ -14,7 +14,7 @@ export const uploadFiles = async (
   });
 
   const response = await axios.post<Upload[]>(
-    temporary ? "/upload/multiple/temporary" : "/upload/multiple",
+    temporary ? "/storage/multiple/temporary" : "/storage/multiple",
     formData,
     {
       headers: {
@@ -26,13 +26,13 @@ export const uploadFiles = async (
           onProgress(percent);
         }
       },
-    }
+    },
   );
   return response.data;
 };
 
 export const getUploadById = async (id: number) => {
-  const url = `/upload/view/id/${id}`;
+  const url = `/storage/view/id/${id}`;
   const { data, headers } = await axios.get(url, {
     responseType: "arraybuffer",
   });
@@ -49,7 +49,7 @@ export const getUploadById = async (id: number) => {
 };
 
 export const getUploadBySlug = async (slug: string) => {
-  const url = `/upload/view/slug/${slug}`;
+  const url = `/storage/view/slug/${slug}`;
   const { data, headers } = await axios.get(url, {
     responseType: "arraybuffer",
   });
