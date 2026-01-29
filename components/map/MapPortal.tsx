@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { useMapStore } from "@/stores/useMapStore";
 import { IconMessageChatbot } from "@tabler/icons-react-native";
 import { router } from "expo-router";
-import { Bell, RefreshCcw } from "lucide-react-native";
+import { Bell, RefreshCcw, Settings } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, View } from "react-native";
@@ -52,6 +52,10 @@ export const MapPortal = ({ className }: MapPortalProps) => {
         <ApplicationHeader
           title={t("screens.map")}
           shortcuts={[
+            {
+              icon: Settings,
+              onPress: () => router.push("/main/maps/map-settings"),
+            },
             {
               icon: RefreshCcw,
               onPress: () => {

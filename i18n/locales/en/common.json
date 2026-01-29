@@ -9,7 +9,8 @@
     "notifications": "Notifications",
     "profile": "My Profile",
     "experience": "Experience",
-    "education": "Education"
+    "education": "Education",
+    "mapSettings": "Map Settings"
   },
   "language": {
     "select": {
