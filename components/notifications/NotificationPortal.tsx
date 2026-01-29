@@ -1,17 +1,17 @@
 import { LegendList } from "@legendapp/list";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { router } from "expo-router";
+import { ArrowLeft } from "lucide-react-native";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { ActivityIndicator, RefreshControl, View } from "react-native";
 import { api } from "~/api";
 import { cn } from "~/lib/utils";
 import { ResponseNotificationDto } from "~/types/notifications";
+import { ApplicationHeader } from "../shared/AppHeader";
+import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { Text } from "../ui/text";
 import { NotificationEntry } from "./NotificationEntry";
-import { ApplicationHeader } from "../shared/AppHeader";
-import { useTranslation } from "react-i18next";
-import { ArrowLeft } from "lucide-react-native";
-import { router } from "expo-router";
-import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 
 interface NotificationPortalProps {
   className?: string;
@@ -49,11 +49,7 @@ export const NotificationsPortal = ({ className }: NotificationPortalProps) => {
   const renderItem = React.useCallback(
     ({ item }: { item: ResponseNotificationDto }) => {
       return (
-        <NotificationEntry
-          className="flex flex-col gap-4 py-2"
-          key={item.id}
-          notification={item}
-        />
+        <NotificationEntry className="" key={item.id} notification={item} />
       );
     },
     [],
@@ -109,7 +105,7 @@ export const NotificationsPortal = ({ className }: NotificationPortalProps) => {
           !isPending ? (
             <View className="p-6 items-center">
               <Text className="text-muted-foreground">
-                No conversations available
+                No Notification available
               </Text>
             </View>
           ) : null
