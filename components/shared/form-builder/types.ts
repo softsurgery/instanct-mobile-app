@@ -62,7 +62,6 @@ export interface TextareaFieldProps {
   value?: string;
   onChangeText?: (text: string) => void;
   editable?: boolean;
-  cols?: number;
   rows?: number;
 }
 

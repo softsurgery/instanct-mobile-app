@@ -64,6 +64,7 @@ export const useCreateExperienceFormStructure = ({
         store.setNested("createExperienceDto.description", value);
         store.setNested("experienceErrors.description", []);
       },
+      rows: 50,
     },
   };
 

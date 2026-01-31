@@ -35,7 +35,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
             placeholder={field.placeholder}
             value={field?.props?.value?.toString() || ""}
             onChangeText={(text) => field?.props?.onChangeText?.(text)}
-            className={cn("p-3 rounded-md", field?.error && "border-red-500")}
+            className={cn("rounded-md", field?.error && "border-red-500")}
           />
         </View>
       );
@@ -49,7 +49,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
             placeholder={field.placeholder}
             value={field?.props?.value}
             onChangeText={(text) => field?.props?.onChangeText?.(Number(text))}
-            className={cn("p-3 rounded-md", field?.error && "border-red-500")}
+            className={cn("rounded-md", field?.error && "border-red-500")}
           />
         </View>
       );
@@ -62,7 +62,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           placeholder={field.placeholder}
           value={field?.props?.value?.toString() || ""}
           onChangeText={(text) => field?.props?.onChangeText?.(text)}
-          className={cn("p-3 rounded-md", field?.error && "border-red-500")}
+          className={cn("rounded-md", field?.error && "border-red-500")}
           style={field?.error ? { borderColor: "red" } : {}}
           {...field.props?.other}
         />
@@ -149,7 +149,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
         <View className="flex flex-col gap-2 w-full">
           <Textarea
             {...field?.props}
-            className={cn("h-52", field?.error && "border-red-500")}
+            className={cn("h-32", field?.error && "border-red-500")}
             editable={field?.props?.other}
             placeholder={field.placeholder}
             value={field?.props?.value?.toString() || ""}

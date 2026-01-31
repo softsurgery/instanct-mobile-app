@@ -1,3 +1,4 @@
+import { api } from "@/api";
 import { ApplicationHeader } from "@/components/shared/AppHeader";
 import { FormBuilder } from "@/components/shared/form-builder/FormBuilder";
 import { StableKeyboardAwareScrollView } from "@/components/shared/StableKeyboardAwareScrollView";
@@ -6,15 +7,15 @@ import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import { useUserStore } from "@/stores/useUserStore";
+import { CreateExperienceDto, ServerErrorResponse } from "@/types";
+import { createExperienceSchema } from "@/types/validations/experience.validation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { ArrowLeft } from "lucide-react-native";
-import { useCreateExperienceFormStructure } from "./useCreateExperienceFormStructure";
-import { CreateExperienceDto, ServerErrorResponse } from "@/types";
-import { showToastable } from "react-native-toastable";
-import { api } from "@/api";
 import { useTranslation } from "react-i18next";
-import { createExperienceSchema } from "@/types/validations/experience.validation";
+import { View } from "react-native";
+import { showToastable } from "react-native-toastable";
+import { useCreateExperienceFormStructure } from "./useCreateExperienceFormStructure";
 
 interface CreateExperienceProps {
   className?: string;
@@ -63,7 +64,7 @@ export const CreateExperience = ({ className }: CreateExperienceProps) => {
   };
 
   return (
-    <StableSafeAreaView className={cn("flex flex-1", className)}>
+    <StableSafeAreaView className={cn("flex-1", className)}>
       <ApplicationHeader
         className="border-b border-border pb-2 bg-transparent"
         title={t("screens.experience")}
@@ -73,20 +74,26 @@ export const CreateExperience = ({ className }: CreateExperienceProps) => {
           {
             key: "back",
             icon: ArrowLeft,
-            onPress: () => {
-              router.back();
-            },
+            onPress: () => router.back(),
           },
         ]}
       />
-      <StableKeyboardAwareScrollView
-        className={cn("flex flex-col flex-1 py-2", className)}
-      >
-        <FormBuilder structure={structure} className="mb-6" />
-        <Button className="mx-6 rounded-md mb-6" onPress={handleCreateSubmit}>
+
+      {/* Scrollable content */}
+      <StableKeyboardAwareScrollView className="flex-1 bg-background">
+        <FormBuilder structure={structure} className="mt-4 px-2" />
+      </StableKeyboardAwareScrollView>
+
+      {/* Sticky bottom button */}
+      <View className="py-6 border-t border-border">
+        <Button
+          size="sm"
+          className="mx-6 mb-4 rounded-full"
+          onPress={handleCreateSubmit}
+        >
           <Text>Create Experience</Text>
         </Button>
-      </StableKeyboardAwareScrollView>
+      </View>
     </StableSafeAreaView>
   );
 };
