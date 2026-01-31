@@ -5,9 +5,9 @@ import { Text } from "@/components/ui/text";
 import { toLongDateString } from "@/lib/date";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
-import { X } from "lucide-react-native";
+import { Calendar, X } from "lucide-react-native";
 import React from "react";
-import { View } from "react-native";
+import { Keyboard, View } from "react-native";
 import DatePickerUI, { useDefaultClassNames } from "react-native-ui-datepicker";
 import { StablePressable } from "../StablePressable";
 
@@ -53,10 +53,16 @@ export const DatePicker = ({
         <Button
           disabled={disabled}
           variant="outline"
-          className={cn("w-full", className)}
-          onPress={() => setVisible(true)}
+          className={cn("w-full h-8 p-0 px-2", className)}
+          onPress={() => {
+            setVisible(true);
+            Keyboard.dismiss();
+          }}
         >
-          <Text>{displayText}</Text>
+          <View className="flex flex-row items-center justify-between w-full">
+            <Text className="text-xs">{displayText}</Text>
+            <Icon as={Calendar} size={16} color={"gray"} />
+          </View>
         </Button>
       </DialogTrigger>
 
@@ -100,7 +106,7 @@ export const DatePicker = ({
           classNames={{
             ...defaultClassNames,
             today: "border-primary",
-            selected: "bg-primary border-primary",
+            selected: "bg-primary border-border rounded-full",
             selected_label: "text-foreground",
             day: `${defaultClassNames.day} hover:bg-primary/20`,
             disabled: "opacity-70",
@@ -111,20 +117,20 @@ export const DatePicker = ({
         <View className="flex flex-row justify-between items-center gap-2 px-4">
           <Button
             size={"sm"}
-            onPress={() => setVisible(false)}
-            disabled={disabled}
-            className="flex-1"
-          >
-            <Text>Confirm</Text>
-          </Button>
-          <Button
-            size={"sm"}
             variant="outline"
             onPress={clearDate}
             disabled={disabled}
             className="flex-1"
           >
             <Text>Clear</Text>
+          </Button>
+          <Button
+            size={"sm"}
+            onPress={() => setVisible(false)}
+            disabled={disabled}
+            className="flex-1"
+          >
+            <Text>Done</Text>
           </Button>
         </View>
       </DialogContent>
