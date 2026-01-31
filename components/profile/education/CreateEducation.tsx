@@ -15,6 +15,7 @@ import { showToastable } from "react-native-toastable";
 import { api } from "@/api";
 import { useTranslation } from "react-i18next";
 import { createEducationSchema } from "@/types/validations/education.validation";
+import { View } from "react-native";
 
 interface CreateEducationProps {
   className?: string;
@@ -63,7 +64,7 @@ export const CreateEducation = ({ className }: CreateEducationProps) => {
   };
 
   return (
-    <StableSafeAreaView className={cn("flex flex-1", className)}>
+    <StableSafeAreaView className={cn("flex-1", className)}>
       <ApplicationHeader
         className="border-b border-border pb-2 bg-transparent"
         title={t("screens.education")}
@@ -73,20 +74,23 @@ export const CreateEducation = ({ className }: CreateEducationProps) => {
           {
             key: "back",
             icon: ArrowLeft,
-            onPress: () => {
-              router.back();
-            },
+            onPress: () => router.back(),
           },
         ]}
       />
-      <StableKeyboardAwareScrollView
-        className={cn("flex flex-col flex-1 py-2", className)}
-      >
+      <StableKeyboardAwareScrollView className="flex-1 bg-background">
         <FormBuilder structure={structure} className="mb-6" />
-        <Button className="mx-6 rounded-md mb-6" onPress={handleCreateSubmit}>
+      </StableKeyboardAwareScrollView>
+
+      <View className="py-6 border-t border-border">
+        <Button
+          size="sm"
+          className="mx-6 mb-4 rounded-full"
+          onPress={handleCreateSubmit}
+        >
           <Text>Create Education</Text>
         </Button>
-      </StableKeyboardAwareScrollView>
+      </View>
     </StableSafeAreaView>
   );
 };
