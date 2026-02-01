@@ -1,5 +1,4 @@
 import { Image } from "expo-image";
-import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import * as React from "react";
 import { Dimensions, View } from "react-native";
@@ -8,7 +7,6 @@ import Carousel, {
   ICarouselInstance,
   Pagination,
 } from "react-native-reanimated-carousel";
-import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { THEME } from "~/lib/theme";
 import { cn } from "~/lib/utils";
@@ -17,6 +15,7 @@ import { SSOButtons } from "./SSOButtons";
 
 const data = [...new Array(3).keys()];
 const width = Dimensions.get("window").width;
+const eWidth = width * 0.8;
 
 interface OnBoardingProps {
   className?: string;
@@ -38,26 +37,25 @@ export default function OnBoarding({ className }: OnBoardingProps) {
       className={cn("flex-1 justify-between mb-8", className)}
     >
       <View className="flex-1 flex flex-col justify-between">
-        <View className="flex flex-row gap-2 px-4 items-center mt-5">
+        <View className="flex flex-row gap-2 px-4 items-center">
           <Image
             source={require("~/assets/images/logo.png")}
             style={{ width: 60, height: 60 }}
           />
           <Text className="text-[22px] font-bold italic">Instanct</Text>
         </View>
-
         <View>
           <Carousel
             width={width}
             ref={ref}
-            style={{ width, height: width }}
+            style={{ width: width, height: eWidth }}
             data={data}
             onProgressChange={progress}
             renderItem={({ index }) => (
               <View className="justify-center items-center">
                 <Image
                   source={require("~/assets/images/logo.png")}
-                  style={{ width, height: width }}
+                  style={{ width: eWidth, height: eWidth }}
                 />
               </View>
             )}
@@ -70,17 +68,21 @@ export default function OnBoarding({ className }: OnBoardingProps) {
             data={data}
             dotStyle={{
               backgroundColor:
-                colorScheme == "dark"
-                  ? THEME.dark.primary
-                  : THEME.light.primary,
+                colorScheme === "dark"
+                  ? THEME.dark.foreground
+                  : THEME.light.foreground,
               borderRadius: 50,
             }}
-            containerStyle={{ gap: 5, marginTop: 10 }}
+            containerStyle={{ gap: 5 }}
             onPress={onPressPagination}
           />
         </View>
 
-        <SSOButtons className="mx-4 mb-4" isSignInPending={false} classic />
+        <SSOButtons
+          className="mx-4 mb-4 flex-1"
+          isSignInPending={false}
+          classic
+        />
       </View>
     </StableSafeAreaView>
   );
