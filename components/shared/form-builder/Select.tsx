@@ -82,7 +82,7 @@ export default function Select({
             pointerEvents="none"
             value={selectedOption?.label || ""}
             placeholder={placeholder || "Select an option"}
-            className={cn("text-sm pb-2", classNames?.trigger)}
+            className={cn(classNames?.trigger)}
           />
           <View className="absolute right-3 text-muted-foreground">
             <Icon as={ChevronDown} size={18} />

@@ -7,6 +7,7 @@ interface MapData {
   paramaters: {
     radiusKm: number;
     updateInterval: number;
+    mode: "sattelite" | "map";
   };
   connected: boolean;
   location: Location.LocationObject | null;
@@ -44,6 +45,7 @@ const initialState: MapData = {
   paramaters: {
     radiusKm: 70,
     updateInterval: 5,
+    mode: "map",
   },
   connected: false,
   location: null,
