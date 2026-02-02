@@ -26,7 +26,6 @@ export const useUpdateExperienceFormStructure = ({
     props: {
       value: store.updateExperienceDto.title,
       onChangeText: (value) => {
-        console.log("Updating title to:", value);
         store.setNested("updateExperienceDto.title", value);
         store.setNested("experienceErrors.title", []);
       },
