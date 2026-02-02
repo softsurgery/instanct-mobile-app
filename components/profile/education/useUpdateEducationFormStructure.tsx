@@ -66,6 +66,7 @@ export const useUpdateEducationFormStructure = ({
         store.setNested("updateEducationDto.description", value);
         store.setNested("educationErrors.description", []);
       },
+      rows: 50,
     },
   };
 

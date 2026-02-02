@@ -65,6 +65,7 @@ export const useUpdateExperienceFormStructure = ({
         store.setNested("updateExperienceDto.description", value);
         store.setNested("experienceErrors.description", []);
       },
+      rows: 50,
     },
   };
 

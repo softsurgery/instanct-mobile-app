@@ -15,6 +15,7 @@ import { ArrowLeft } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { showToastable } from "react-native-toastable";
 import { useUpdateExperienceFormStructure } from "./useUpdateExperienceFormStructure";
+import { View } from "react-native";
 
 interface UpdateExperienceProps {
   className?: string;
@@ -63,7 +64,7 @@ export const UpdateExperience = ({ className }: UpdateExperienceProps) => {
   };
 
   return (
-    <StableSafeAreaView className={cn("flex flex-1", className)}>
+    <StableSafeAreaView className={cn("flex-1", className)}>
       <ApplicationHeader
         className="border-b border-border pb-2 bg-transparent"
         title={t("screens.experience")}
@@ -73,20 +74,23 @@ export const UpdateExperience = ({ className }: UpdateExperienceProps) => {
           {
             key: "back",
             icon: ArrowLeft,
-            onPress: () => {
-              router.back();
-            },
+            onPress: () => router.back(),
           },
         ]}
       />
-      <StableKeyboardAwareScrollView
-        className={cn("flex flex-col flex-1 py-2 bg-background", className)}
-      >
-        <FormBuilder structure={structure} className="mb-6" />
+      <StableKeyboardAwareScrollView className="flex-1 bg-background">
+        <FormBuilder structure={structure} className="mt-4 px-2" />
       </StableKeyboardAwareScrollView>
-      <Button className="mx-6 rounded-md mb-6" onPress={handleUpdateSubmit}>
-        <Text>Update Experience</Text>
-      </Button>
+
+      <View className="py-6 border-t border-border">
+        <Button
+          size="sm"
+          className="mx-6 mb-4 rounded-full"
+          onPress={handleUpdateSubmit}
+        >
+          <Text>Update Experience</Text>
+        </Button>
+      </View>
     </StableSafeAreaView>
   );
 };
