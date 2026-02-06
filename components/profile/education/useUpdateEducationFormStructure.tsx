@@ -26,8 +26,7 @@ export const useUpdateEducationFormStructure = ({
     error: store.educationErrors?.title?.[0],
     props: {
       value: store.updateEducationDto.title,
-      onChangeText: (value) => {
-        console.log("Updating title to:", value);
+      onChangeText: (value) => { 
         store.setNested("updateEducationDto.title", value);
         store.setNested("educationErrors.title", []);
       },

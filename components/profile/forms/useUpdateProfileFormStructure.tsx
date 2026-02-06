@@ -130,13 +130,31 @@ export const useUpdateProfileFormStructure = ({
     props: {
       value: store?.updateDto?.gender?.toString(),
       onSelect: (value: string) => {
-        store.setNested("updateDt.gender", value);
+        store.setNested("updateDto.gender", value);
         store.setNested("errors.gender", []);
       },
       options: Object.entries(Gender).map(([value, label]) => ({
         label: label as string,
         value,
       })),
+    },
+  };
+
+  const cinField: Field<TextFieldProps> = {
+    id: "cin",
+    label: "CIN",
+    variant: FieldVariant.TEXT,
+    required: false,
+    placeholder: "Enter your CIN",
+    disabled: true,
+    description: "Your national identification number.",
+    error: store?.errors?.cin?.[0],
+    props: {
+      value: store?.updateDto?.cin,
+      onChangeText: (value: string) => {
+        store.setNested("updateDto.cin", value);
+        store.setNested("errors.cin", []);
+      },
     },
   };
 
@@ -166,6 +184,10 @@ export const useUpdateProfileFormStructure = ({
           {
             id: 5,
             fields: [genderField],
+          },
+          {
+            id: 6,
+            fields: [cinField],
           },
         ],
       },
