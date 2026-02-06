@@ -15,6 +15,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import Toastable from "react-native-toastable";
 import "../global.css";
 import "../i18n";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -41,40 +42,42 @@ export default function RootLayout() {
           <NotificationContext.Provider
             value={{ newCount, notifications, resetCount }}
           >
-            <View className={cn("flex-1 light dark:dark")}>
-              <Toastable position="top" />
-              <StatusBar
-                style={colorScheme === "dark" ? "light" : "dark"}
-                translucent
-              />
-              <Stack
-                screenOptions={{
-                  headerShown: false,
-                  contentStyle: {
-                    flex: 1,
-                    backgroundColor: isDarkColorScheme
-                      ? NAV_THEME.dark.colors.background
-                      : NAV_THEME.light.colors.background,
-                  },
-                  keyboardHandlingEnabled: true,
-                  headerStyle: {
-                    backgroundColor: isDarkColorScheme
-                      ? NAV_THEME.dark.colors.card
-                      : NAV_THEME.light.colors.card,
-                  },
-                  headerTintColor: isDarkColorScheme
-                    ? NAV_THEME.dark.colors.text
-                    : NAV_THEME.light.colors.text,
-                  headerTitleStyle: {
-                    fontSize: 20,
-                    color: isDarkColorScheme
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <View className={cn("flex-1 light dark:dark")}>
+                <Toastable position="top" />
+                <StatusBar
+                  style={colorScheme === "dark" ? "light" : "dark"}
+                  translucent
+                />
+                <Stack
+                  screenOptions={{
+                    headerShown: false,
+                    contentStyle: {
+                      flex: 1,
+                      backgroundColor: isDarkColorScheme
+                        ? NAV_THEME.dark.colors.background
+                        : NAV_THEME.light.colors.background,
+                    },
+                    keyboardHandlingEnabled: true,
+                    headerStyle: {
+                      backgroundColor: isDarkColorScheme
+                        ? NAV_THEME.dark.colors.card
+                        : NAV_THEME.light.colors.card,
+                    },
+                    headerTintColor: isDarkColorScheme
                       ? NAV_THEME.dark.colors.text
                       : NAV_THEME.light.colors.text,
-                  },
-                }}
-              />
-              <PortalHost />
-            </View>
+                    headerTitleStyle: {
+                      fontSize: 20,
+                      color: isDarkColorScheme
+                        ? NAV_THEME.dark.colors.text
+                        : NAV_THEME.light.colors.text,
+                    },
+                  }}
+                />
+                <PortalHost />
+              </View>
+            </GestureHandlerRootView>
           </NotificationContext.Provider>
         </QueryClientProvider>
       </SafeAreaProvider>
