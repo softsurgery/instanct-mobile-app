@@ -141,6 +141,33 @@ export default function MainLayout() {
             animationDuration: 200,
           }}
         />
+        <Stack.Screen
+          name="terms"
+          options={{
+            title: "Terms & Conditions",
+            headerShown: false,
+            animation: "fade_from_bottom",
+            animationDuration: 200,
+          }}
+        />
+        <Stack.Screen
+          name="privacy-policy"
+          options={{
+            title: "Privacy Policy",
+            headerShown: false,
+            animation: "fade_from_bottom",
+            animationDuration: 200,
+          }}
+        />
+        <Stack.Screen
+          name="about"
+          options={{
+            title: "About Instanct",
+            headerShown: false,
+            animation: "fade_from_bottom",
+            animationDuration: 200,
+          }}
+        />
         {/* *************************************************************************************************** */}
         {/* Map  ****************************************************************************************** */}
         <Stack.Screen

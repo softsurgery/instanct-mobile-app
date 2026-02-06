@@ -1,12 +1,12 @@
+import React from "react";
+import { cn } from "@/lib/utils";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
 import { identifyUser } from "@/lib/user";
-import { cn } from "@/lib/utils";
 import { useMapStore } from "@/stores/useMapStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
-import { ArrowLeft, LogOut, Trash2 } from "lucide-react-native";
-import React from "react";
+import { ArrowLeft, ChevronRight, LogOut, Trash2 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { Alert, View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
@@ -26,49 +26,42 @@ import {
 import { Icon } from "../ui/icon";
 import { Separator } from "../ui/separator";
 import { Text } from "../ui/text";
-import { SettingRow } from "./SettingsRow";
+import { createSettingRow, SettingRow } from "./SettingsRow";
+import type { SettingRowConfig } from "./SettingsRow";
 
 interface SettingsPortalProps {
   className?: string;
 }
 
+interface SettingsSection {
+  key: string;
+  title: string;
+  description: string;
+  rows: SettingRowConfig[];
+}
+
 export const SettingsPortal = ({ className }: SettingsPortalProps) => {
-  const settingsRows = [
+  const settingsRows: SettingsSection[] = [
     {
       key: "account",
       title: "Account",
       description: "Keep your profile and security details up to date.",
       rows: [
-        {
-          component: () => (
-            <View className="flex flex-row justify-between items-center w-full">
-              <View>
-                <Text className="font-semibold text-base">Profile</Text>
-                <Text className="text-xs text-muted-foreground">
-                  Update your bio, avatar and socials
-                </Text>
-              </View>
-              <Badge variant="outline">
-                <Text className="text-xs font-medium">Soon</Text>
-              </Badge>
-            </View>
+        createSettingRow({
+          title: "Profile",
+          description: "Update your bio, avatar and socials",
+          rightIcon: ChevronRight,
+          onPress: () => router.push("/main/profile/update-profile"),
+        }),
+        createSettingRow({
+          title: "Privacy & Security",
+          description: "Set your preferred privacy and security options",
+          rightComponent: (
+            <Badge variant="outline">
+              <Text className="text-xs font-medium">Soon</Text>
+            </Badge>
           ),
-        },
-        {
-          component: () => (
-            <View className="flex flex-row justify-between items-center w-full">
-              <View>
-                <Text className="font-semibold text-base">Privacy</Text>
-                <Text className="text-xs text-muted-foreground">
-                  Set your preferred language
-                </Text>
-              </View>
-              <Badge variant="outline">
-                <Text className="text-xs font-medium">Soon</Text>
-              </Badge>
-            </View>
-          ),
-        },
+        }),
       ],
     },
     {
@@ -76,7 +69,7 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
       title: "Preferences",
       description: "Tailor Instanct to your daily habits.",
       rows: [
-        {
+        createSettingRow({
           component: () => (
             <View className="flex flex-col justify-between gap-4">
               <View>
@@ -88,20 +81,37 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
               <LanguageSwitcher />
             </View>
           ),
-        },
-        {
-          component: () => (
-            <View className="flex flex-row justify-between items-center w-full">
-              <View>
-                <Text className="font-semibold text-base">Appearance</Text>
-                <Text className="text-xs text-muted-foreground">
-                  Switch between light and dark mode
-                </Text>
-              </View>
-              <ThemeToggle className="mx-0" />
-            </View>
-          ),
-        },
+        }),
+        createSettingRow({
+          title: "Appearance",
+          description: "Switch between light and dark mode",
+          rightComponent: <ThemeToggle className="mx-0" />,
+        }),
+      ],
+    },
+    {
+      key: "info",
+      title: "Info & Legal",
+      description: "Learn more about Instanct and our policies.",
+      rows: [
+        createSettingRow({
+          title: "Terms & Conditions",
+          description: "Rules for using Instanct",
+          rightIcon: ChevronRight,
+          onPress: () => router.push("/main/terms"),
+        }),
+        createSettingRow({
+          title: "Privacy Policy",
+          description: "How we handle your data",
+          rightIcon: ChevronRight,
+          onPress: () => router.push("/main/privacy-policy"),
+        }),
+        createSettingRow({
+          title: "About Instanct",
+          description: "What we stand for",
+          rightIcon: ChevronRight,
+          onPress: () => router.push("/main/about"),
+        }),
       ],
     },
   ];
@@ -168,10 +178,7 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
                   const isLast = index === section.rows.length - 1;
                   return (
                     <View key={index} className="flex flex-col gap-4">
-                      <SettingRow
-                        className="mt-2"
-                        component={row.component && row.component()}
-                      />
+                      <SettingRow className="mt-2" {...row} />
                       {!isLast && <Separator />}
                     </View>
                   );
