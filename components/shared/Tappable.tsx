@@ -2,7 +2,7 @@ import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react-native";
-import { StablePressable } from "../StablePressable";
+import { StablePressable } from "./StablePressable";
 
 interface TappableProps {
   className?: string;
