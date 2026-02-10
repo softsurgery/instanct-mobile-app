@@ -3,21 +3,17 @@ import { useServerImage } from "@/hooks/content/useServerImage";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import { cn } from "@/lib/utils";
 import { ResponseUserDto } from "@/types";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import {
-  Heart,
-  Lock,
-  Mars,
-  MessageCircle,
-  Phone,
-  Unlock,
-  Venus,
-} from "lucide-react-native";
+import { Heart, MapPin, MessageCircle } from "lucide-react-native";
 import React from "react";
-import { View } from "react-native";
-import { StablePressable } from "../shared/StablePressable";
+import { Dimensions, View } from "react-native";
 import { Icon } from "../ui/icon";
 import { Text } from "../ui/text";
+import { ImageBackground } from "expo-image";
+import { ObjectivesBadgeList } from "./ObjectivesBadgeList";
+
+const { width } = Dimensions.get("window");
 
 interface UserCardProps {
   className?: string;
@@ -26,149 +22,118 @@ interface UserCardProps {
 
 export const UserCard = ({ user, className }: UserCardProps) => {
   const [isLiked, setIsLiked] = React.useState(false);
-  const [isExpanded, setIsExpanded] = React.useState(false);
 
   const identity = React.useMemo(() => identifyUser(user), [user]);
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
 
-  const { jsx: profilePicture } = useServerImage({
-    id: user?.pictureId,
-    fallback,
-    wrapperClassName:
-      "border border-border bg-background rounded-full shadow-md",
-    size: { width: 80, height: 80 },
-  });
+  const { jsx: profilePicture, upload: uploadedProfilePicture } =
+    useServerImage({
+      id: user?.pictureId,
+      fallback,
+      wrapperClassName: "border-4 border-white bg-white rounded-full shadow-lg",
+      size: { width: 90, height: 90 },
+    });
 
   const router = useRouter();
 
+  const experiences = React.useMemo(() => {
+    return user.experiences?.map((exp) => exp.title) ?? [];
+  }, [user.experiences]);
+
+  const tags = React.useMemo(() => {
+    if (experiences.length > 0) return experiences.slice(0, 5);
+    return ["Artboard", "CEO", "UX", "Co-Founder"];
+  }, [experiences]);
+
+  const tagColors = [
+    "bg-purple-500",
+    "bg-pink-500",
+    "bg-blue-500",
+    "bg-orange-500",
+    "bg-green-500",
+  ];
+
   return (
     <View
-      className={cn(
-        "border border-border rounded-xl overflow-hidden",
-        className,
-      )}
+      className={cn("flex-1 px-4 py-4 my-2 h-[75vh]", className)}
+      style={{ width: width }}
     >
-      {/* Header */}
-      <StablePressable
-        className="flex flex-row items-center gap-2 p-4"
-        onPress={() =>
-          router.push({
-            pathname: "/main/profile/inspect-profile",
-            params: {
-              id: user.id,
-            },
-          })
-        }
-      >
-        <View className="relative">
-          {profilePicture}
+      <View className="flex-1 bg-background rounded-3xl overflow-hidden border-2 border-purple-200 shadow-xl">
+        <ImageBackground
+          source={{ uri: uploadedProfilePicture as string }}
+          style={{ height: 200, width: "100%" }}
+          blurRadius={10} // 👈 crank this up for more blur
+        >
+          {/* Optional gradient overlay for readability */}
+          <LinearGradient
+            colors={["rgba(168,85,247,0.6)", "rgba(236,72,153,0.6)"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{ flex: 1 }}
+            className="items-center justify-end"
+          >
+            <View className="flex flex-row items-center justify-center my-auto px-5">
+              <View className="flex-1">{profilePicture}</View>
 
-          {/* Private / Public icon */}
-          <View className="absolute -bottom-1 left-1 rounded-full p-1.5 border border-border bg-background">
-            <Icon
-              as={user.isPrivate ? Lock : Unlock}
-              size={12}
-              className="text-secondary-foreground"
-            />
-          </View>
+              <View className="flex flex-col items-end flex-[4]">
+                <Text className="text-2xl font-bold text-foreground text-center">
+                  {identity}
+                </Text>
 
-          {/* Active status */}
-          <View className="absolute -bottom-1 right-1 bg-green-500 rounded-full p-1.5 border border-background" />
-        </View>
+                <View className="flex-row items-center gap-1 mt-1">
+                  <Icon
+                    as={MapPin}
+                    size={14}
+                    className="text-muted-foreground"
+                  />
+                  <Text className="text-sm">Brooklyn, NY</Text>
+                </View>
 
-        <View>
-          <Text className="text-xl font-bold line-clamp-1">{identity}</Text>
-          <Text className="text-sm text-muted-foreground">
-            @{user.username}
-          </Text>
-        </View>
-      </StablePressable>
-
-      {/* Meta */}
-      <View className="px-4 mt-3">
-        {(user.gender || user.phone) && (
-          <View className="flex-row gap-3 mb-3 flex-wrap">
-            {user.gender && (
-              <View className="bg-secondary px-3 py-1.5 rounded-lg">
-                <View className="flex-row items-center gap-1.5">
-                  <Icon as={user.gender === "Male" ? Mars : Venus} size={14} />
-                  <Text className="text-xs font-semibold text-secondary-foreground">
-                    {user.gender}
-                  </Text>
+                <View className="flex-row flex-wrap justify-end gap-2 mt-5">
+                  {tags.map((tag, idx) => (
+                    <View
+                      key={idx}
+                      className={cn(
+                        "rounded-full px-4 py-1.5",
+                        tagColors[idx % tagColors.length],
+                      )}
+                    >
+                      <Text className="text-xs font-semibold">{tag}</Text>
+                    </View>
+                  ))}
                 </View>
               </View>
-            )}
-
-            {user.phone && (
-              <View className="flex-row gap-1 items-center bg-secondary px-3 py-1.5 rounded-lg">
-                <Icon as={Phone} size={14} />
-                <Text className="text-xs font-semibold text-secondary-foreground">
-                  {user.phone}
-                </Text>
-              </View>
-            )}
-
-            <View className="bg-secondary px-3 py-1.5 rounded-lg">
-              <Text className="text-xs font-semibold text-secondary-foreground">
-                {user.isPrivate ? "Private" : "Public"}
-              </Text>
             </View>
-          </View>
-        )}
-      </View>
-
-      {/* Bio */}
-      {user.bio && (
-        <View className="px-4 mb-4">
-          <Text
-            className="text-sm text-foreground/80 leading-5"
-            numberOfLines={isExpanded ? undefined : 3}
-          >
-            {user.bio}
-          </Text>
-
-          {user.bio.length > 120 && (
-            <Button
-              variant="link"
-              size="sm"
-              onPress={() => setIsExpanded((v) => !v)}
-              className="self-start px-0 mt-2 h-auto"
-            >
-              <Text className="text-primary text-sm font-semibold">
-                {isExpanded ? "Show less" : "Show more"}
-              </Text>
-            </Button>
-          )}
+          </LinearGradient>
+        </ImageBackground>
+        {/* Content Section */}
+        <View className="flex-1 items-center">
+          <ObjectivesBadgeList />
         </View>
-      )}
-
-      {/* Actions */}
-      <View className="flex-row gap-2 justify-between px-4 py-3 border-t border-border/50">
-        <Button
-          variant="ghost"
-          size="sm"
-          onPress={() => setIsLiked((v) => !v)}
-          className="flex-row gap-2"
-        >
-          <Icon
-            as={Heart}
-            size={20}
-            className={isLiked ? "text-red-500" : "text-muted-foreground"}
-          />
-          <Text className={isLiked ? "text-red-500" : "text-muted-foreground"}>
-            Like
-          </Text>
-        </Button>
-
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex-row gap-2"
-          onPress={() => router.push("/main/chat")}
-        >
-          <Icon as={MessageCircle} size={20} />
-          <Text className="text-muted-foreground">Message</Text>
-        </Button>
+        {/* Fixed Footer Actions */}
+        <View className="flex-row gap-3 px-5 py-5">
+          <Button
+            variant="outline"
+            className="flex-1 h-12 rounded-xl flex-row gap-2 border-purple-300"
+            onPress={() => setIsLiked((v) => !v)}
+          >
+            <Icon
+              as={Heart}
+              size={18}
+              className={isLiked ? "text-red-500" : "text-purple-500"}
+            />
+            <Text className={isLiked ? "text-red-500" : "text-purple-500"}>
+              Like
+            </Text>
+          </Button>
+          <Button
+            className="flex-1 h-12 rounded-xl flex-row gap-2 bg-purple-500"
+            onPress={() => router.push("/main/chat")}
+          >
+            <Icon as={MessageCircle} size={18} className="text-white" />
+            <Text className="text-white font-semibold">Message</Text>
+          </Button>
+        </View>
       </View>
     </View>
   );

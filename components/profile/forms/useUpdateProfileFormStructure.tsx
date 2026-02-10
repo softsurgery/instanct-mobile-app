@@ -93,7 +93,7 @@ export const useUpdateProfileFormStructure = ({
     description: "Let us know when you celebrate!",
     error: store?.errors?.dateOfBirth?.[0],
     props: {
-      value: store?.updateDto?.dateOfBirth || undefined,
+      value: store?.updateDto?.dateOfBirth,
       onDateChange: (value: Date) => {
         store.setNested("updateDto.dateOfBirth", value);
         store.setNested("errors.dateOfBirth", []);

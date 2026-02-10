@@ -187,7 +187,7 @@ export const UpdateEducations = ({ className }: UpdateEducationsProps) => {
           ) : (
             <View className="flex-1 items-center justify-center py-12">
               <View className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
-                <GraduationCap size={32} className="text-muted-foreground" />
+                <Icon as={GraduationCap} size={32} />
               </View>
               <Text className="text-lg font-semibold mb-2">
                 No Education Yet

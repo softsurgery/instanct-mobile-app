@@ -1,3 +1,4 @@
+//Deprecated
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { useServerImage } from "@/hooks/content/useServerImage";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
@@ -27,7 +28,7 @@ export const ProfileEntry = ({ className }: ProfileEntryProps) => {
   }, [currentUser]);
 
   const { jsx: profilePicture } = useServerImage({
-    id: currentUser?.profile?.pictureId,
+    id: currentUser?.pictureId,
     fallback,
     className: "border-2 border-border",
     size: { width: 80, height: 80 },
@@ -47,7 +48,7 @@ export const ProfileEntry = ({ className }: ProfileEntryProps) => {
           <Button
             size={"sm"}
             variant={"secondary"}
-            onPress={() => router.push("/main/update-profile")}
+            onPress={() => router.push("/main/profile/update-profile")}
           >
             <Icon as={Edit} />
             <Text>Complete Profile</Text>

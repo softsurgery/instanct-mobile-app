@@ -71,62 +71,64 @@ export const NotificationsPortal = ({ className }: NotificationPortalProps) => {
           },
         ]}
       />
-      <LegendList
-        className={cn("flex-1")}
-        data={notifications}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-        showsVerticalScrollIndicator={false}
-        recycleItems={true}
-        maintainVisibleContentPosition
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefetching}
-            onRefresh={refetch}
-            tintColor="transparent"
-            colors={["transparent"]}
-          />
-        }
-        onEndReached={() => {
-          if (hasNextPage && !isFetchingNextPage) {
-            fetchNextPage();
-          }
-        }}
-        onEndReachedThreshold={0.5}
-        ListHeaderComponent={
-          isNotificationsPending || isFetchingNextPage ? (
-            <ActivityIndicator
-              size="small"
-              className="flex items-center h-fit"
+      <View className="flex-1 bg-background">
+        <LegendList
+          className={cn("flex-1 py-4")}
+          data={notifications}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+          showsVerticalScrollIndicator={false}
+          recycleItems={true}
+          maintainVisibleContentPosition
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefetching}
+              onRefresh={refetch}
+              tintColor="transparent"
+              colors={["transparent"]}
             />
-          ) : null
-        }
-        ListEmptyComponent={
-          !isPending ? (
-            <View className="p-6 items-center">
-              <Text className="text-muted-foreground">
-                No Notification available
-              </Text>
-            </View>
-          ) : null
-        }
-        ListFooterComponent={
-          <View className="items-center">
-            {isPending ? (
+          }
+          onEndReached={() => {
+            if (hasNextPage && !isFetchingNextPage) {
+              fetchNextPage();
+            }
+          }}
+          onEndReachedThreshold={0.5}
+          ListHeaderComponent={
+            isNotificationsPending || isFetchingNextPage ? (
               <ActivityIndicator
                 size="small"
                 className="flex items-center h-fit"
               />
-            ) : hasNextPage ? null : (
-              <View className="flex flex-row items-center justify-center gap-2 p-6">
-                <Text variant={"p"} className="text-muted-foreground">
-                  You have catched up with all notifications
+            ) : null
+          }
+          ListEmptyComponent={
+            !isPending ? (
+              <View className="p-6 items-center">
+                <Text className="text-muted-foreground">
+                  No Notification available
                 </Text>
               </View>
-            )}
-          </View>
-        }
-      />
+            ) : null
+          }
+          ListFooterComponent={
+            <View className="items-center">
+              {isPending ? (
+                <ActivityIndicator
+                  size="small"
+                  className="flex items-center h-fit"
+                />
+              ) : hasNextPage ? null : (
+                <View className="flex flex-row items-center justify-center gap-2 p-6">
+                  <Text variant={"p"} className="text-muted-foreground">
+                    You have catched up with all notifications
+                  </Text>
+                </View>
+              )}
+            </View>
+          }
+        />
+      </View>
     </StableSafeAreaView>
   );
 };
