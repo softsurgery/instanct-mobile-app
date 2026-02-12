@@ -32,11 +32,6 @@ export default ({ config }) => ({
     predictiveBackGestureEnabled: false,
     package: "com.softsurgery.instanctmobileapp",
   },
-  web: {
-    bundler: "metro",
-    output: "static",
-    favicon: "./assets/images/favicon.png",
-  },
   plugins: [
     "expo-font",
     "expo-localization",
