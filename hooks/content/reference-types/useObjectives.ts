@@ -28,6 +28,6 @@ export const useObjectives = (
   return {
     objectives,
     isObjectivesPending,
-    refetch: refetchObjectives,
+    refetchObjectives,
   };
 };

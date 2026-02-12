@@ -28,6 +28,6 @@ export const useIndustries = (
   return {
     industries,
     isIndustriesPending,
-    refetch: refetchIndustries,
+    refetchIndustries,
   };
 };

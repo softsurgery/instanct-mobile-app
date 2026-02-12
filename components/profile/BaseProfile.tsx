@@ -5,14 +5,6 @@ import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { useEducations } from "@/hooks/content/users/useEducations";
 import { useExperiences } from "@/hooks/content/users/useExperiences";
 import { useIdentifiedUser } from "@/hooks/content/users/useIdentifiedUser";
-import {
-  useResolvedUserIndustries,
-  ResolvedIndustry,
-} from "@/hooks/content/users/useResolvedUserIndustries";
-import {
-  useResolvedUserObjectives,
-  ResolvedObjective,
-} from "@/hooks/content/users/useResolvedUserObjectives";
 import { useServerImage } from "@/hooks/content/useServerImage";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import { cn } from "@/lib/utils";
@@ -33,6 +25,10 @@ import { Objectives } from "./user-params/Objectives";
 import StableScrollView from "../shared/StableScrollView";
 import { useColorScheme } from "nativewind";
 import { THEME } from "@/lib/theme";
+import { useUserIndustries } from "@/hooks/content/users/useUserIndustries";
+import { useUserObjectives } from "@/hooks/content/users/useUserObjectives";
+import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
+import { useObjectives } from "@/hooks/content/reference-types/useObjectives";
 
 interface ProfileSection<T = unknown> {
   key: string;
@@ -87,18 +83,18 @@ export const InspectBaseProfile = ({
   }, [educations]);
 
   // industries side-effects
-  const {
-    resolvedIndustries,
-    isResolvedIndustriesPending,
-    refetchResolvedIndustries,
-  } = useResolvedUserIndustries({ userId: id, enabled: !!user });
+  const { userIndustries, isUserIndustriesPending, refetchUserIndustries } =
+    useUserIndustries({ userId: id, enabled: !!user });
 
   // objectives side-effects
-  const {
-    resolvedObjectives,
-    isResolvedObjectivesPending,
-    refetchResolvedObjectives,
-  } = useResolvedUserObjectives({ userId: id, enabled: !!user });
+  const { userObjectives, isUserObjectivesPending, refetchUserObjectives } =
+    useUserObjectives({ userId: id, enabled: !!user });
+
+  const { industries, isIndustriesPending, refetchIndustries } =
+    useIndustries();
+
+  const { objectives, isObjectivesPending, refetchObjectives } =
+    useObjectives();
 
   const identity = React.useMemo(() => identifyUser(user), [user]);
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
@@ -121,16 +117,20 @@ export const InspectBaseProfile = ({
     refetchUser();
     refetchExperiences();
     refetchEducations();
-    refetchResolvedIndustries();
-    refetchResolvedObjectives();
+    refetchUserIndustries();
+    refetchUserObjectives();
+    refetchIndustries();
+    refetchObjectives();
   };
 
   const refreshing =
     isUserPending ||
     isExperiencesPending ||
     isEducationsPending ||
-    isResolvedIndustriesPending ||
-    isResolvedObjectivesPending;
+    isUserIndustriesPending ||
+    isUserObjectivesPending ||
+    isIndustriesPending ||
+    isObjectivesPending;
 
   // ---------------------------------------------------------------
   //  PROFILE SECTIONS CONFIG
@@ -187,9 +187,11 @@ export const InspectBaseProfile = ({
     {
       key: "industries",
       title: "Industries",
-      data: resolvedIndustries as unknown[],
+      data: industries.filter((industry) =>
+        userIndustries?.some((id) => id === industry.id),
+      ) as unknown[],
       editable: currentUser?.id === user?.id,
-      renderItem: (industry: ResolvedIndustry) => (
+      renderItem: (industry) => (
         <Badge className={cn("px-2 py-1")}>
           <Text className="text-xs">{industry.label}</Text>
         </Badge>
@@ -198,9 +200,11 @@ export const InspectBaseProfile = ({
     {
       key: "objectives",
       title: "Objectives",
-      data: resolvedObjectives as unknown[],
+      data: objectives.filter((objective) =>
+        userObjectives?.some((id) => id === objective.id),
+      ) as unknown[],
       editable: currentUser?.id === user?.id,
-      renderItem: (objective: ResolvedObjective) => (
+      renderItem: (objective) => (
         <Badge className={cn("px-2 py-1")}>
           <Text className="text-xs">{objective.label}</Text>
         </Badge>

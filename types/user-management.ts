@@ -1,3 +1,4 @@
+import { ResponseRefParamDto } from "./reference-types";
 import { Upload } from "./upload";
 import { DatabaseEntity } from "./utils/database-entity";
 
@@ -39,6 +40,9 @@ export interface ResponseUserDto extends ResponseAbstractUsertDto {
   pictureId?: number;
   picture?: Upload;
   experiences?: ResponseExperienceDto[];
+  educations?: ResponseEducationDto[];
+  objectives?: ResponseRefParamDto[];
+  industries?: ResponseRefParamDto[];
 }
 
 export interface CreateUserDto extends CreateAbstractUserDto {
