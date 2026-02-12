@@ -14,10 +14,27 @@ export function useLiveGeolocation({}: UseLiveGeolocationOptions) {
     process.env.EXPO_PUBLIC_API_SOCKET_URL || "http://localhost:8080";
   const { accessToken } = useAuthPersistStore();
   const [restartCount, setRestartCount] = React.useState(0);
-  const mapStore = useMapStore();
+
+  // Use selectors to avoid re-renders when unrelated store parts change
+  const radiusKm = useMapStore((state) => state.paramaters.radiusKm);
+  const updateInterval = useMapStore(
+    (state) => state.paramaters.updateInterval,
+  );
+  const setLocation = useMapStore((state) => state.set);
+  const setNearbyUsers = useMapStore((state) => state.setNearbyUsers);
+  const updateNearbyUser = useMapStore((state) => state.updateNearbyUser);
+  const getUserById = useMapStore((state) => state.getUserById);
+  const addUser = useMapStore((state) => state.addUser);
+  const setNested = useMapStore((state) => state.setNested);
 
   const socketRef = React.useRef<Socket | null>(null);
   const intervalRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
+  const radiusKmRef = React.useRef(radiusKm);
+
+  // Keep ref in sync for use in callbacks without triggering re-renders
+  React.useEffect(() => {
+    radiusKmRef.current = radiusKm;
+  }, [radiusKm]);
 
   const updateLocation = React.useCallback(
     async (socket?: Socket) => {
@@ -26,21 +43,21 @@ export function useLiveGeolocation({}: UseLiveGeolocationOptions) {
           accuracy: Location.Accuracy.High,
         });
 
-        mapStore.set("location", pos);
+        setLocation("location", pos);
 
         (socket ?? socketRef.current)?.emit("update_location", {
           latitude: pos.coords.latitude,
           longitude: pos.coords.longitude,
-          radius: mapStore.paramaters.radiusKm,
+          radius: radiusKmRef.current,
         });
       } catch (err) {
         console.warn("⚠️ Failed to fetch location:", err);
       }
     },
-    [mapStore.paramaters.radiusKm],
+    [setLocation],
   );
 
-  const initializeSocket = async () => {
+  const initializeSocket = React.useCallback(async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
       console.warn("❌ Location permission denied");
@@ -60,9 +77,9 @@ export function useLiveGeolocation({}: UseLiveGeolocationOptions) {
     /** 🟢 Connected */
     socket.on("connect", async () => {
       socket.emit("identify");
-      mapStore.set("connected", true);
-      mapStore.set("loading", false);
-      mapStore.set("reconnection", {
+      setLocation("connected", true);
+      setLocation("loading", false);
+      setLocation("reconnection", {
         reconnecting: false,
         reconnectAttempt: 0,
         reconnectDelay: 0,
@@ -77,7 +94,7 @@ export function useLiveGeolocation({}: UseLiveGeolocationOptions) {
     socket.io.on("reconnect_attempt", (attempt: number) => {
       const delay = Math.min(2000 * Math.pow(1.5, attempt - 1), 10000);
       // console.log(`🔁 Reconnect attempt #${attempt} (next in ~${delay}ms)`);
-      mapStore.set("reconnection", {
+      setLocation("reconnection", {
         reconnecting: true,
         reconnectAttempt: attempt,
         reconnectDelay: delay,
@@ -90,13 +107,13 @@ export function useLiveGeolocation({}: UseLiveGeolocationOptions) {
 
     socket.io.on("reconnect_failed", () => {
       console.warn("❌ Reconnect failed — will retry automatically");
-      mapStore.setNested("reconnection.reconnecting", false);
+      setNested("reconnection.reconnecting", false);
     });
 
     socket.io.on("reconnect", async (attempt: number) => {
       // console.log(`✅ Successfully reconnected after ${attempt} attempts`);
-      mapStore.set("connected", true);
-      mapStore.set("reconnection", {
+      setLocation("connected", true);
+      setLocation("reconnection", {
         reconnecting: false,
         reconnectAttempt: attempt,
         reconnectDelay: 0,
@@ -105,15 +122,15 @@ export function useLiveGeolocation({}: UseLiveGeolocationOptions) {
     });
 
     socket.on("nearby_users", async (nearbyList: NearbyUser[]) => {
-      mapStore.setNearbyUsers(nearbyList);
+      setNearbyUsers(nearbyList);
 
       // fetch profiles for all nearby users (lazy)
       for (const n of nearbyList) {
-        const existing = mapStore.getUserById(n.userId);
+        const existing = getUserById(n.userId);
         if (!existing) {
           try {
             const profile = await api.user.findById(n.userId);
-            mapStore.addUser(profile); // prevents duplicates
+            addUser(profile); // prevents duplicates
           } catch (e) {
             console.warn("Failed to fetch profile:", e);
           }
@@ -122,13 +139,13 @@ export function useLiveGeolocation({}: UseLiveGeolocationOptions) {
     });
 
     socket.on("user_moved", async (data: NearbyUser) => {
-      mapStore.updateNearbyUser(data);
+      updateNearbyUser(data);
 
-      const existing = mapStore.getUserById(data.userId);
+      const existing = getUserById(data.userId);
       if (!existing) {
         try {
           const profile = await api.user.findById(data.userId);
-          mapStore.addUser(profile);
+          addUser(profile);
         } catch (e) {
           console.warn("❌ Failed retrieving user", e);
         }
@@ -138,9 +155,28 @@ export function useLiveGeolocation({}: UseLiveGeolocationOptions) {
     await updateLocation(socket);
     intervalRef.current = setInterval(
       () => updateLocation(socket),
-      mapStore.paramaters.updateInterval * 1000,
+      updateInterval * 1000,
     );
-  };
+  }, [
+    accessToken,
+    apiUrl,
+    updateLocation,
+    setLocation,
+    setNested,
+    setNearbyUsers,
+    getUserById,
+    addUser,
+    updateNearbyUser,
+    updateInterval,
+  ]);
+
+  // Use selectors for return values to avoid re-renders
+  const connected = useMapStore((state) => state.connected);
+  const loading = useMapStore((state) => state.loading);
+  const reconnection = useMapStore((state) => state.reconnection);
+  const nearbyUsers = useMapStore((state) => state.nearbyUsers);
+  const users = useMapStore((state) => state.users);
+  const location = useMapStore((state) => state.location);
 
   React.useEffect(() => {
     initializeSocket();
@@ -149,26 +185,19 @@ export function useLiveGeolocation({}: UseLiveGeolocationOptions) {
       disconnectSocket("geolocation");
       socketRef.current = null;
     };
-  }, [
-    accessToken,
-    apiUrl,
-    mapStore.paramaters.updateInterval,
-    ,
-    updateLocation,
-    restartCount,
-  ]);
+  }, [initializeSocket, restartCount]);
 
   const restartSocket = React.useCallback(() => {
     setRestartCount((c) => c + 1);
-  }, [initializeSocket]);
+  }, []);
 
   return {
-    connected: mapStore.connected,
-    loading: mapStore.loading,
-    reconnection: mapStore.reconnection,
-    nearbyUsers: mapStore.nearbyUsers,
-    users: mapStore.users,
-    location: mapStore.location,
+    connected,
+    loading,
+    reconnection,
+    nearbyUsers,
+    users,
+    location,
     restartSocket,
   };
 }

@@ -5,6 +5,13 @@ import { ArrowLeft, MapPin, RefreshCw } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
+import { Slider } from "react-native-awesome-slider";
+import { useSharedValue } from "react-native-reanimated";
+import {
+  createSettingRow,
+  SettingRow,
+  SettingRowConfig,
+} from "../settings/SettingsRow";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { StableScrollView } from "../shared/StableScrollView";
@@ -19,13 +26,11 @@ import {
 import { Separator } from "../ui/separator";
 import { Switch } from "../ui/switch";
 import { Text } from "../ui/text";
-import {
-  createSettingRow,
-  SettingRow,
-  SettingRowConfig,
-} from "../settings/SettingsRow";
-import { Slider } from "react-native-awesome-slider";
-import { runOnJS, useSharedValue } from "react-native-reanimated";
+
+// Constants
+const RADIUS_MIN = 0;
+const RADIUS_MAX = 100;
+const INTERVAL_STEPS = [5, 10, 15, 30, 60];
 
 interface MapSettingsProps {
   className?: string;
@@ -38,6 +43,106 @@ interface MapSettingsSection {
   rows: SettingRowConfig[];
 }
 
+// Sub-components
+interface RadiusSliderProps {
+  radiusKm: number;
+  onValueChange: (value: number) => void;
+}
+
+const RadiusSlider = ({ radiusKm, onValueChange }: RadiusSliderProps) => {
+  const radiusProgress = useSharedValue(radiusKm);
+  const radiusMin = useSharedValue(RADIUS_MIN);
+  const radiusMax = useSharedValue(RADIUS_MAX);
+
+  const handleSlidingComplete = (value: number) => {
+    onValueChange(value);
+  };
+
+  return (
+    <View className="flex flex-col gap-4">
+      <View className="flex flex-row justify-between items-center">
+        <View>
+          <Text className="font-semibold text-base">Search Radius</Text>
+          <Text className="text-xs text-muted-foreground">
+            Current: {radiusKm} km
+          </Text>
+        </View>
+        <Badge variant="outline">
+          <Text className="text-xs font-medium">{radiusKm} km</Text>
+        </Badge>
+      </View>
+
+      <View className="flex flex-col gap-3">
+        <Slider
+          progress={radiusProgress}
+          minimumValue={radiusMin}
+          maximumValue={radiusMax}
+          onSlidingComplete={handleSlidingComplete}
+          forceSnapToStep
+          steps={10}
+        />
+        <View className="flex flex-row justify-between">
+          <Text className="text-xs text-muted-foreground">{RADIUS_MIN} km</Text>
+          <Text className="text-xs text-muted-foreground">{RADIUS_MAX} km</Text>
+        </View>
+      </View>
+    </View>
+  );
+};
+
+interface IntervalSliderProps {
+  updateInterval: number;
+  onValueChange: (value: number) => void;
+}
+
+const IntervalSlider = ({
+  updateInterval,
+  onValueChange,
+}: IntervalSliderProps) => {
+  const sliderProgress = useSharedValue(INTERVAL_STEPS.indexOf(updateInterval));
+  const sliderMin = useSharedValue(0);
+  const sliderMax = useSharedValue(INTERVAL_STEPS.length - 1);
+
+  const handleSlidingComplete = (value: number) => {
+    onValueChange(INTERVAL_STEPS[value]);
+  };
+
+  return (
+    <View className="flex flex-col gap-4">
+      <View className="flex flex-row justify-between items-center">
+        <View>
+          <Text className="font-semibold text-base">Update Interval</Text>
+          <Text className="text-xs text-muted-foreground">
+            Refresh every {updateInterval} seconds
+          </Text>
+        </View>
+        <Badge variant="outline">
+          <Text className="text-xs font-medium">{updateInterval}s</Text>
+        </Badge>
+      </View>
+
+      <View className="flex flex-col gap-3">
+        <Slider
+          progress={sliderProgress}
+          minimumValue={sliderMin}
+          maximumValue={sliderMax}
+          style={{ width: "100%" }}
+          onSlidingComplete={handleSlidingComplete}
+          forceSnapToStep
+        />
+        <View className="flex flex-row justify-between">
+          <Text className="text-xs text-muted-foreground">
+            {INTERVAL_STEPS[0]}s
+          </Text>
+          <Text className="text-xs text-muted-foreground">
+            {INTERVAL_STEPS[INTERVAL_STEPS.length - 1]}s
+          </Text>
+        </View>
+      </View>
+    </View>
+  );
+};
+
 export const MapSettings = ({ className }: MapSettingsProps) => {
   const { t } = useTranslation("common");
   const mapStore = useMapStore();
@@ -46,192 +151,117 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
   const [showClusters, setShowClusters] = React.useState(true);
   const [showUsernames, setShowUsernames] = React.useState(true);
 
-  const radiusKm = mapStore.paramaters.radiusKm;
-  const updateInterval = mapStore.paramaters.updateInterval;
+  const { radiusKm, updateInterval } = mapStore.paramaters;
 
-  const intervalSteps = [5, 10, 15, 30, 60];
-
-  // Shared values
-  const sliderProgress = useSharedValue(intervalSteps.indexOf(updateInterval));
-
-  const sliderMin = useSharedValue(0);
-  const sliderMax = useSharedValue(intervalSteps.length - 1);
-
-  // Radius limits
-  const RADIUS_MIN = 10;
-  const RADIUS_MAX = 100;
-  const RADIUS_STEP = 5;
-
-  // Shared values
-  const radiusProgress = useSharedValue(radiusKm);
-  const radiusMin = useSharedValue(RADIUS_MIN);
-  const radiusMax = useSharedValue(RADIUS_MAX);
-
-  React.useEffect(() => {
-    const index = intervalSteps.indexOf(updateInterval);
-
-    if (index !== -1) {
-      sliderProgress.value = index;
-    }
-  }, [updateInterval]);
-
-  React.useEffect(() => {
-    radiusProgress.value = radiusKm;
-  }, [radiusKm]);
-
-  const settingsSections: MapSettingsSection[] = [
-    {
-      key: "display",
-      title: "Display Preferences",
-      description: "Customize how the map looks and feels.",
-      rows: [
-        createSettingRow({
-          title: "Show User Clusters",
-          description: "Group nearby users into clusters",
-          rightComponent: (
-            <Switch checked={showClusters} onCheckedChange={setShowClusters} />
-          ),
-        }),
-        createSettingRow({
-          title: "Show Usernames",
-          description: "Display usernames on map markers",
-          rightComponent: (
-            <Switch
-              checked={showUsernames}
-              onCheckedChange={setShowUsernames}
-            />
-          ),
-        }),
-      ],
+  const handleRadiusChange = React.useCallback(
+    (value: number) => {
+      mapStore.setNested("paramaters.radiusKm", value);
     },
-    {
-      key: "range",
-      title: "Discovery Range",
-      description: "Control how far you can see other users.",
-      rows: [
-        createSettingRow({
-          component: () => (
-            <View className="flex flex-col gap-4">
-              {/* Header */}
-              <View className="flex flex-row justify-between items-center">
-                <View>
-                  <Text className="font-semibold text-base">Search Radius</Text>
-                  <Text className="text-xs text-muted-foreground">
-                    Current: {radiusKm} km
-                  </Text>
-                </View>
+    [mapStore],
+  );
 
-                <Badge variant="outline">
-                  <Text className="text-xs font-medium">{radiusKm} km</Text>
-                </Badge>
-              </View>
-
-              {/* Slider */}
-              <View className="flex flex-col gap-3">
-                <Slider
-                  progress={radiusProgress}
-                  minimumValue={radiusMin}
-                  maximumValue={radiusMax}
-                  step={RADIUS_STEP}
-                  hapticMode="step"
-                  onValueChange={(value) => {
-                    "worklet";
-
-                    runOnJS(mapStore.setNested)(
-                      "paramaters.radiusKm",
-                      Math.round(value / RADIUS_STEP) * RADIUS_STEP,
-                    );
-                  }}
-                />
-
-                {/* Labels */}
-                <View className="flex flex-row justify-between">
-                  <Text className="text-xs text-muted-foreground">10 km</Text>
-                  <Text className="text-xs text-muted-foreground">100 km</Text>
-                </View>
-              </View>
-            </View>
-          ),
-        }),
-      ],
+  const handleIntervalChange = React.useCallback(
+    (value: number) => {
+      mapStore.setNested("paramaters.updateInterval", value);
     },
-    {
-      key: "updates",
-      title: "Location Updates",
-      description: "Manage how often your location is shared.",
-      rows: [
-        createSettingRow({
-          title: "Auto Refresh",
-          description: "Automatically update nearby users",
-          leftIcon: RefreshCw,
-          rightComponent: (
-            <Switch checked={autoRefresh} onCheckedChange={setAutoRefresh} />
-          ),
-        }),
-        createSettingRow({
-          component: () => (
-            <View className="flex flex-col gap-4">
-              <View className="flex flex-row justify-between items-center">
-                <View>
-                  <Text className="font-semibold text-base">
-                    Update Interval
-                  </Text>
-                  <Text className="text-xs text-muted-foreground">
-                    Refresh every {updateInterval} seconds
-                  </Text>
-                </View>
-                <Badge variant="outline">
-                  <Text className="text-xs font-medium">{updateInterval}s</Text>
-                </Badge>
-              </View>
-              <View className="flex flex-col gap-3">
-                <Slider
-                  progress={sliderProgress}
-                  minimumValue={sliderMin}
-                  maximumValue={sliderMax}
-                  step={1}
-                  hapticMode="step"
-                  style={{ width: "100%" }}
-                  onValueChange={(value) => {
-                    "worklet";
+    [mapStore],
+  );
 
-                    // Jump back to JS thread
-                    runOnJS(mapStore.setNested)(
-                      "paramaters.updateInterval",
-                      intervalSteps[Math.round(value)],
-                    );
-                  }}
-                />
-
-                {/* Labels */}
-                <View className="flex flex-row justify-between">
-                  <Text className="text-xs text-muted-foreground">5s</Text>
-                  <Text className="text-xs text-muted-foreground">60s</Text>
-                </View>
-              </View>
-            </View>
-          ),
-        }),
-      ],
-    },
-    {
-      key: "privacy",
-      title: "Privacy & Visibility",
-      description: "Control who can see you on the map.",
-      rows: [
-        createSettingRow({
-          title: "Location Sharing",
-          description: "Currently visible to everyone",
-          leftIcon: MapPin,
-          rightComponent: (
-            <Badge variant="default">
-              <Text className="text-xs font-medium">Active</Text>
-            </Badge>
-          ),
-        }),
-      ],
-    },
-  ];
+  const settingsSections: MapSettingsSection[] = React.useMemo(
+    () => [
+      {
+        key: "display",
+        title: "Display Preferences",
+        description: "Customize how the map looks and feels.",
+        rows: [
+          createSettingRow({
+            title: "Show User Clusters",
+            description: "Group nearby users into clusters",
+            rightComponent: (
+              <Switch
+                checked={showClusters}
+                onCheckedChange={setShowClusters}
+              />
+            ),
+          }),
+          createSettingRow({
+            title: "Show Usernames",
+            description: "Display usernames on map markers",
+            rightComponent: (
+              <Switch
+                checked={showUsernames}
+                onCheckedChange={setShowUsernames}
+              />
+            ),
+          }),
+        ],
+      },
+      {
+        key: "range",
+        title: "Discovery Range",
+        description: "Control how far you can see other users.",
+        rows: [
+          createSettingRow({
+            component: () => (
+              <RadiusSlider
+                radiusKm={radiusKm}
+                onValueChange={handleRadiusChange}
+              />
+            ),
+          }),
+        ],
+      },
+      {
+        key: "updates",
+        title: "Location Updates",
+        description: "Manage how often your location is shared.",
+        rows: [
+          createSettingRow({
+            title: "Auto Refresh",
+            description: "Automatically update nearby users",
+            leftIcon: RefreshCw,
+            rightComponent: (
+              <Switch checked={autoRefresh} onCheckedChange={setAutoRefresh} />
+            ),
+          }),
+          createSettingRow({
+            component: () => (
+              <IntervalSlider
+                updateInterval={updateInterval}
+                onValueChange={handleIntervalChange}
+              />
+            ),
+          }),
+        ],
+      },
+      {
+        key: "privacy",
+        title: "Privacy & Visibility",
+        description: "Control who can see you on the map.",
+        rows: [
+          createSettingRow({
+            title: "Location Sharing",
+            description: "Currently visible to everyone",
+            leftIcon: MapPin,
+            rightComponent: (
+              <Badge variant="default">
+                <Text className="text-xs font-medium">Active</Text>
+              </Badge>
+            ),
+          }),
+        ],
+      },
+    ],
+    [
+      showClusters,
+      showUsernames,
+      radiusKm,
+      handleRadiusChange,
+      autoRefresh,
+      updateInterval,
+      handleIntervalChange,
+    ],
+  );
 
   return (
     <StableSafeAreaView className={cn("flex flex-1", className)}>
