@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { StablePressable } from "@/components/shared/StablePressable";
 import { cn } from "@/lib/utils";
 import { X, Search, Save, Loader2 } from "lucide-react-native";
+import * as Haptics from "expo-haptics";
 
 export interface SelectOption {
   label: string;
@@ -16,7 +17,7 @@ export interface SelectOption {
 
 interface SelectBoxProps {
   className?: string;
-  params: SelectOption[];
+  params: (SelectOption & { color?: string })[];
   selected: (string | number)[];
   isPending?: boolean;
   onSelectParam: (id: string | number) => void;
@@ -39,10 +40,10 @@ export function SelectBox({
 
   const selectedSet = React.useMemo(() => new Set(selected), [selected]);
 
-  const selectedOptions = React.useMemo(
-    () => params.filter((p) => selectedSet.has(p.value)),
-    [params, selectedSet],
-  );
+  const selectedOptions = React.useMemo(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    return params.filter((p) => selectedSet.has(p.value));
+  }, [params, selectedSet]);
 
   const filteredParams = React.useMemo(
     () =>
@@ -70,33 +71,33 @@ export function SelectBox({
       )}
 
       {/* Search */}
-      <View className="relative flex-row items-center">
-        <Icon
-          as={Search}
-          size={16}
-          className="absolute left-3 text-muted-foreground z-10"
-        />
+      <View className="flex flex-row items-center justify-between w-full">
         <Input
           placeholder="Search..."
           value={searchQuery}
           onChangeText={setSearchQuery}
           editable={!isPending}
-          className="flex-1 pl-9"
+          className="flex-1"
         />
+        <View className="absolute right-2">
+          <Icon as={Search} size={16} color={"gray"} />
+        </View>
       </View>
 
       {/* Selected Params */}
       {selectedOptions.length > 0 && (
         <View className="gap-2">
-          <Text className="text-sm font-medium text-foreground">
+          <Text className="text-xs font-bold text-foreground">
             Selected ({selectedOptions.length})
           </Text>
           <View className="flex-row flex-wrap gap-2">
             {selectedOptions.map((param) => (
               <Badge
                 key={param.value}
-                variant="secondary"
-                className="flex-row items-center gap-1 px-3 py-1.5"
+                className={cn("px-2 py-1")}
+                style={
+                  param.color ? { backgroundColor: param.color } : undefined
+                }
               >
                 <Text className="text-xs">{param.label}</Text>
                 <StablePressable
@@ -105,7 +106,7 @@ export function SelectBox({
                   className="ml-1"
                   hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 >
-                  <Icon as={X} size={12} className="text-foreground" />
+                  <Icon as={X} size={12} />
                 </StablePressable>
               </Badge>
             ))}
@@ -115,11 +116,10 @@ export function SelectBox({
 
       {/* Available Params */}
       <View className="gap-2">
-        <Text className="text-sm font-medium text-foreground">Available</Text>
+        <Text className="text-xs font-bold">Available</Text>
         <ScrollView
-          className="max-h-40 rounded-lg border border-input bg-background p-3"
+          className="max-h-48 rounded-lg border border-input bg-background p-3"
           contentContainerClassName="flex-row flex-wrap gap-2"
-          showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
           {filteredParams.length > 0 ? (
@@ -132,8 +132,11 @@ export function SelectBox({
               >
                 <Badge
                   variant="outline"
-                  className="px-3 py-1.5"
                   pointerEvents="none"
+                  className="px-2 py-1"
+                  style={
+                    param.color ? { backgroundColor: param.color } : undefined
+                  }
                 >
                   <Text className="text-xs">{param.label}</Text>
                 </Badge>
@@ -155,7 +158,9 @@ export function SelectBox({
       <Button
         onPress={onSave}
         disabled={isPending}
-        className="flex-row items-center justify-center gap-2"
+        size={"icon"}
+        variant={"outline"}
+        className="flex-row items-center justify-center gap-2 ml-auto"
       >
         {isPending ? (
           <Icon
@@ -166,7 +171,6 @@ export function SelectBox({
         ) : (
           <Icon as={Save} size={16} className="text-primary-foreground" />
         )}
-        <Text className="text-primary-foreground font-medium">Save</Text>
       </Button>
     </View>
   );

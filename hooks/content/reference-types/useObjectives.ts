@@ -1,4 +1,5 @@
 import { api } from "@/api";
+import { ResponseRefParamDto } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
@@ -21,7 +22,7 @@ export const useObjectives = (
 
   const objectives = React.useMemo(() => {
     if (!objectivesResp) return [];
-    return objectivesResp;
+    return objectivesResp as ResponseRefParamDto<{ color: string }>[];
   }, [objectivesResp]);
 
   return {

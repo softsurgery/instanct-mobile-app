@@ -1,4 +1,5 @@
 import { api } from "@/api";
+import { ResponseRefParamDto } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
@@ -21,7 +22,7 @@ export const useIndustries = (
 
   const industries = React.useMemo(() => {
     if (!industriesResp) return [];
-    return industriesResp;
+    return industriesResp as ResponseRefParamDto<{ color: string }>[];
   }, [industriesResp]);
 
   return {

@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useObjectives } from "@/hooks/content/reference-types/useObjectives";
 import { useUserObjectives } from "@/hooks/content/users/useUserObjectives";
-import { SelectBox, SelectOption } from "@/components/shared/SelectBox";
+import { SelectBox } from "@/components/shared/SelectBox";
 import { api } from "@/api";
 import { cn } from "@/lib/utils";
 import { showToastable } from "react-native-toastable";
@@ -73,7 +73,7 @@ export const Objectives = ({
   const isPending =
     isObjectivesPending || isUserObjectivesPending || isMutationPending;
 
-  const options: SelectOption[] = React.useMemo(
+  const options = React.useMemo(
     () =>
       objectives.map((objective) => ({
         label: objective.label,

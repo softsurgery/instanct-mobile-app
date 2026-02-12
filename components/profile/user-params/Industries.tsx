@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
 import { useUserIndustries } from "@/hooks/content/users/useUserIndustries";
-import { SelectBox, SelectOption } from "@/components/shared/SelectBox";
+import { SelectBox } from "@/components/shared/SelectBox";
 import { api } from "@/api";
 import { cn } from "@/lib/utils";
 import { showToastable } from "react-native-toastable";
@@ -73,7 +73,7 @@ export const Industries = ({
   const isPending =
     isIndustriesPending || isUserIndustriesPending || isMutationPending;
 
-  const options: SelectOption[] = React.useMemo(
+  const options = React.useMemo(
     () =>
       industries.map((industry) => ({
         label: industry.label,

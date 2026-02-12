@@ -31,6 +31,8 @@ import { ProfileStat } from "./ProfileStat";
 import { Industries } from "./user-params/Industries";
 import { Objectives } from "./user-params/Objectives";
 import StableScrollView from "../shared/StableScrollView";
+import { useColorScheme } from "nativewind";
+import { THEME } from "@/lib/theme";
 
 interface ProfileSection<T = unknown> {
   key: string;
@@ -52,6 +54,7 @@ export const InspectBaseProfile = ({
   id,
   coverExtra,
 }: InspectBaseProfileProps) => {
+  const { colorScheme } = useColorScheme();
   const navigation = useNavigation();
 
   const storeRef = React.useRef(createClientStore());
@@ -142,7 +145,6 @@ export const InspectBaseProfile = ({
       title: "Experience",
       data: experiences as unknown[],
       editable: currentUser?.id === user?.id,
-      color: "border-l-blue-500",
       renderItem: (experience: ResponseExperienceDto) => (
         <View className="flex flex-col mb-4">
           <Text className="font-semibold">{experience.title}</Text>
@@ -164,7 +166,6 @@ export const InspectBaseProfile = ({
       title: "Education",
       data: educations as unknown[],
       editable: currentUser?.id === user?.id,
-      color: "border-l-green-500",
       renderItem: (education: ResponseEducationDto) => (
         <View className="flex flex-col mb-4">
           <Text className="font-semibold">{education.title}</Text>
@@ -188,9 +189,8 @@ export const InspectBaseProfile = ({
       title: "Industries",
       data: resolvedIndustries as unknown[],
       editable: currentUser?.id === user?.id,
-      color: "border-l-purple-500",
       renderItem: (industry: ResolvedIndustry) => (
-        <Badge variant="secondary" className="px-3 py-1.5">
+        <Badge className={cn("px-2 py-1")}>
           <Text className="text-xs">{industry.label}</Text>
         </Badge>
       ),
@@ -200,9 +200,8 @@ export const InspectBaseProfile = ({
       title: "Objectives",
       data: resolvedObjectives as unknown[],
       editable: currentUser?.id === user?.id,
-      color: "border-l-orange-500",
       renderItem: (objective: ResolvedObjective) => (
-        <Badge variant="secondary" className="px-3 py-1.5">
+        <Badge className={cn("px-2 py-1")}>
           <Text className="text-xs">{objective.label}</Text>
         </Badge>
       ),
@@ -250,7 +249,7 @@ export const InspectBaseProfile = ({
           sectionOffsets.current[section.key] = y;
         }}
       >
-        <Card className={cn("m-0 pt-1 border-l-4", section.color)}>
+        <Card className={cn("m-0 pt-1")}>
           <CardHeader className="flex flex-row items-center justify-between mt-2 -mb-2">
             <CardTitle>
               <Text variant="h4">{section.title}</Text>
@@ -291,7 +290,18 @@ export const InspectBaseProfile = ({
                   }}
                   onPressClassname="bg-primary/25 rounded-full"
                 >
-                  <Icon as={Pen} size={18} className="text-muted-foreground" />
+                  <Icon
+                    as={Pen}
+                    size={18}
+                    color={
+                      isEditing
+                        ? colorScheme === "dark"
+                          ? THEME.dark.primary
+                          : THEME.light.primary
+                        : "gray"
+                    }
+                    strokeWidth={isEditing ? 3 : 2}
+                  />
                 </StablePressable>
               </View>
             )}
@@ -299,7 +309,7 @@ export const InspectBaseProfile = ({
 
           <Separator />
 
-          <CardContent className={cn("px-4", isBadge && "py-3")}>
+          <CardContent>
             {isEditing && user?.id ? (
               section.key === "industries" ? (
                 <Industries
@@ -358,7 +368,7 @@ export const InspectBaseProfile = ({
         />
       }
     >
-      {/* Cover */}
+      s {/* Cover */}
       <View className="relative w-full h-48 bg-card">
         {coverExtra}
         <Image
@@ -367,7 +377,6 @@ export const InspectBaseProfile = ({
           resizeMode="cover"
         />
       </View>
-
       {/* Header */}
       <View className="flex-row items-center px-5 -mt-12">
         <View>{profilePicture}</View>
@@ -388,7 +397,6 @@ export const InspectBaseProfile = ({
           </View>
         </View>
       </View>
-
       {/* Bio + Sections */}
       <View className="flex flex-col gap-4 flex-1 px-2 mt-6 pb-8">
         <Text className="italic text-xs">{user?.bio}</Text>
