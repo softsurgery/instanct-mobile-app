@@ -28,7 +28,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
     refetch: refrech,
   } = useQuery({
     queryKey: ["users"],
-    queryFn: () => api.user.findAll(),
+    queryFn: () => api.user.findAll({ join: "objectives,industries" }),
   });
 
   const users = React.useMemo(() => usersResponse ?? [], [usersResponse]);

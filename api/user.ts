@@ -1,4 +1,4 @@
-import { ResponseUserDto, UpdateUserDto } from "@/types";
+import { QueryParams, ResponseUserDto, UpdateUserDto } from "@/types";
 import axios from "./axios";
 
 const findCurrent = async (): Promise<ResponseUserDto> => {
@@ -18,8 +18,14 @@ const updateCurrent = async (
   return response.data;
 };
 
-const findAll = async (): Promise<ResponseUserDto[]> => {
-  const response = await axios.get<ResponseUserDto[]>(`/admin/user/all`);
+const findAll = async ({
+  join = "",
+}: Pick<QueryParams, "join">): Promise<ResponseUserDto[]> => {
+  const response = await axios.get<ResponseUserDto[]>(`/admin/user/all`, {
+    params: {
+      join,
+    },
+  });
   return response.data;
 };
 
