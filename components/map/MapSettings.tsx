@@ -14,7 +14,7 @@ import {
 } from "../settings/SettingsRow";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
-import { StableScrollView } from "../shared/StableScrollView";
+import StableScrollView from "../shared/StableScrollView";
 import { Badge } from "../ui/badge";
 import {
   Card,

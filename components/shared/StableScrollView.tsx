@@ -37,29 +37,33 @@ const wrapChildren = (children: React.ReactNode): React.ReactNode => {
   });
 };
 
-export const StableScrollView = ({
-  className,
-  children,
-  style,
-  bounces = false,
-  refreshControl,
-  ...props
-}: StableScrollViewProps) => {
-  return (
-    <ScrollView
-      bounces={refreshControl ? true : bounces}
-      alwaysBounceHorizontal={false}
-      alwaysBounceVertical={refreshControl ? true : false}
-      showsVerticalScrollIndicator={false}
-      showsHorizontalScrollIndicator={false}
-      overScrollMode={refreshControl ? "always" : "never"}
-      style={style}
-      className={className}
-      refreshControl={refreshControl}
-      contentContainerStyle={{ flexGrow: 1 }}
-      {...props}
-    >
-      {wrapChildren(children)}
-    </ScrollView>
-  );
-};
+const StableScrollView = React.forwardRef<ScrollView, StableScrollViewProps>(
+  (
+    { className, children, style, bounces = false, refreshControl, ...props },
+    ref,
+  ) => {
+    return (
+      <ScrollView
+        ref={ref}
+        bounces={refreshControl ? true : bounces}
+        alwaysBounceHorizontal={false}
+        alwaysBounceVertical={refreshControl ? true : false}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        overScrollMode={refreshControl ? "always" : "never"}
+        keyboardShouldPersistTaps="handled"
+        style={style}
+        className={className}
+        refreshControl={refreshControl}
+        contentContainerStyle={{ flexGrow: 1 }}
+        {...props}
+      >
+        {wrapChildren(children)}
+      </ScrollView>
+    );
+  },
+);
+
+StableScrollView.displayName = "StableScrollView";
+
+export default StableScrollView;

@@ -12,7 +12,7 @@ import { Alert, View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { LanguageSwitcher } from "../shared/LanguageSwitcher";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
-import { StableScrollView } from "../shared/StableScrollView";
+import StableScrollView from "../shared/StableScrollView";
 import { ThemeToggle } from "../ThemeToggle";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";

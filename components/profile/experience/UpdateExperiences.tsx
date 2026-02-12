@@ -3,7 +3,7 @@ import { ApplicationHeader } from "@/components/shared/AppHeader";
 import { Tappable } from "@/components/shared/Tappable";
 import { StablePressable } from "@/components/shared/StablePressable";
 import { StableSafeAreaView } from "@/components/shared/StableSafeAreaView";
-import { StableScrollView } from "@/components/shared/StableScrollView";
+import StableScrollView from "@/components/shared/StableScrollView";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { getExperienceYears } from "@/lib/date";

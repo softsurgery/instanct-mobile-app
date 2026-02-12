@@ -5,6 +5,14 @@ import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { useEducations } from "@/hooks/content/users/useEducations";
 import { useExperiences } from "@/hooks/content/users/useExperiences";
 import { useIdentifiedUser } from "@/hooks/content/users/useIdentifiedUser";
+import {
+  useResolvedUserIndustries,
+  ResolvedIndustry,
+} from "@/hooks/content/users/useResolvedUserIndustries";
+import {
+  useResolvedUserObjectives,
+  ResolvedObjective,
+} from "@/hooks/content/users/useResolvedUserObjectives";
 import { useServerImage } from "@/hooks/content/useServerImage";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import { cn } from "@/lib/utils";
@@ -14,18 +22,22 @@ import { format } from "date-fns";
 import { router, useNavigation } from "expo-router";
 import { Pen, Plus } from "lucide-react-native";
 import React from "react";
-import { Image, RefreshControl, View } from "react-native";
+import { Image, RefreshControl, View, ScrollView } from "react-native";
 import { SeeMoreText } from "../shared/SeeMoreText";
 import { StablePressable } from "../shared/StablePressable";
-import { StableScrollView } from "../shared/StableScrollView";
 import { Separator } from "../ui/separator";
+import { Badge } from "../ui/badge";
 import { ProfileStat } from "./ProfileStat";
+import { Industries } from "./user-params/Industries";
+import { Objectives } from "./user-params/Objectives";
+import StableScrollView from "../shared/StableScrollView";
 
 interface ProfileSection<T = unknown> {
   key: string;
   title: string;
   data: T[];
   editable: boolean;
+  color?: string;
   renderItem: (item: any) => React.ReactNode;
 }
 
@@ -71,6 +83,20 @@ export const InspectBaseProfile = ({
     if (educations) userStore.set("educations", educations);
   }, [educations]);
 
+  // industries side-effects
+  const {
+    resolvedIndustries,
+    isResolvedIndustriesPending,
+    refetchResolvedIndustries,
+  } = useResolvedUserIndustries({ userId: id, enabled: !!user });
+
+  // objectives side-effects
+  const {
+    resolvedObjectives,
+    isResolvedObjectivesPending,
+    refetchResolvedObjectives,
+  } = useResolvedUserObjectives({ userId: id, enabled: !!user });
+
   const identity = React.useMemo(() => identifyUser(user), [user]);
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
   const { jsx: profilePicture } = useServerImage({
@@ -92,20 +118,31 @@ export const InspectBaseProfile = ({
     refetchUser();
     refetchExperiences();
     refetchEducations();
+    refetchResolvedIndustries();
+    refetchResolvedObjectives();
   };
 
   const refreshing =
-    isUserPending || isExperiencesPending || isEducationsPending;
+    isUserPending ||
+    isExperiencesPending ||
+    isEducationsPending ||
+    isResolvedIndustriesPending ||
+    isResolvedObjectivesPending;
 
   // ---------------------------------------------------------------
   //  PROFILE SECTIONS CONFIG
   // ---------------------------------------------------------------
+  const scrollViewRef = React.useRef<ScrollView>(null);
+  const sectionRefs = React.useRef<{ [key: string]: View | null }>({});
+  const sectionOffsets = React.useRef<{ [key: string]: number }>({});
+
   const profileSections: ProfileSection[] = [
     {
       key: "experience",
       title: "Experience",
       data: experiences as unknown[],
       editable: currentUser?.id === user?.id,
+      color: "border-l-blue-500",
       renderItem: (experience: ResponseExperienceDto) => (
         <View className="flex flex-col mb-4">
           <Text className="font-semibold">{experience.title}</Text>
@@ -127,6 +164,7 @@ export const InspectBaseProfile = ({
       title: "Education",
       data: educations as unknown[],
       editable: currentUser?.id === user?.id,
+      color: "border-l-green-500",
       renderItem: (education: ResponseEducationDto) => (
         <View className="flex flex-col mb-4">
           <Text className="font-semibold">{education.title}</Text>
@@ -145,69 +183,163 @@ export const InspectBaseProfile = ({
         </View>
       ),
     },
+    {
+      key: "industries",
+      title: "Industries",
+      data: resolvedIndustries as unknown[],
+      editable: currentUser?.id === user?.id,
+      color: "border-l-purple-500",
+      renderItem: (industry: ResolvedIndustry) => (
+        <Badge variant="secondary" className="px-3 py-1.5">
+          <Text className="text-xs">{industry.label}</Text>
+        </Badge>
+      ),
+    },
+    {
+      key: "objectives",
+      title: "Objectives",
+      data: resolvedObjectives as unknown[],
+      editable: currentUser?.id === user?.id,
+      color: "border-l-orange-500",
+      renderItem: (objective: ResolvedObjective) => (
+        <Badge variant="secondary" className="px-3 py-1.5">
+          <Text className="text-xs">{objective.label}</Text>
+        </Badge>
+      ),
+    },
   ];
 
   // ---------------------------------------------------------------
   //  SECTION RENDERER
   // ---------------------------------------------------------------
+  const isBadgeSection = (key: string) =>
+    key === "industries" || key === "objectives";
+
+  const [editingSection, setEditingSection] = React.useState<string | null>(
+    null,
+  );
+
+  const scrollToSection = (key: string) => {
+    const offset = sectionOffsets.current[key];
+    if (scrollViewRef.current && offset !== undefined) {
+      // Offset includes the container margins, add ~300 for cover + header
+      scrollViewRef.current.scrollTo({ y: offset + 280, animated: true });
+    }
+  };
+
+  const handleToggleEdit = (sectionKey: string) => {
+    const newEditingSection = editingSection === sectionKey ? null : sectionKey;
+    setEditingSection(newEditingSection);
+    if (newEditingSection) {
+      setTimeout(() => scrollToSection(sectionKey), 150);
+    }
+  };
+
   const renderSection = (section: ProfileSection) => {
+    const isBadge = isBadgeSection(section.key);
+    const isEditing = editingSection === section.key;
+
     return (
-      <Card key={section.key} className="m-0 pt-1">
-        <CardHeader className="flex flex-row items-center justify-between mt-2 -mb-2">
-          <CardTitle>
-            <Text variant="h4">{section.title}</Text>
-          </CardTitle>
+      <View
+        key={section.key}
+        ref={(ref) => {
+          sectionRefs.current[section.key] = ref;
+        }}
+        onLayout={(event) => {
+          const { y } = event.nativeEvent.layout;
+          sectionOffsets.current[section.key] = y;
+        }}
+      >
+        <Card className={cn("m-0 pt-1 border-l-4", section.color)}>
+          <CardHeader className="flex flex-row items-center justify-between mt-2 -mb-2">
+            <CardTitle>
+              <Text variant="h4">{section.title}</Text>
+            </CardTitle>
 
-          {section.editable && (
-            <View className="flex flex-row gap-1 items-center -mx-2">
-              <StablePressable
-                className="p-2"
-                onPress={() => {
-                  if (section.key === "experience") {
-                    router.push("/main/profile/create-experience");
-                  } else {
-                    router.push("/main/profile/create-education");
-                  }
-                }}
-                onPressClassname="bg-primary/25 rounded-full"
-              >
-                <Icon as={Plus} size={20} className="text-muted-foreground" />
-              </StablePressable>
+            {section.editable && (
+              <View className="flex flex-row gap-1 items-center -mx-2">
+                {!isBadge && (
+                  <StablePressable
+                    className="p-2"
+                    onPress={() => {
+                      if (section.key === "experience") {
+                        router.push("/main/profile/create-experience");
+                      } else if (section.key === "education") {
+                        router.push("/main/profile/create-education");
+                      }
+                    }}
+                    onPressClassname="bg-primary/25 rounded-full"
+                  >
+                    <Icon
+                      as={Plus}
+                      size={20}
+                      className="text-muted-foreground"
+                    />
+                  </StablePressable>
+                )}
 
-              <StablePressable
-                className="p-2"
-                onPress={() => {
-                  if (section.key === "experience") {
-                    router.push("/main/profile/update-experiences");
-                  } else {
-                    router.push("/main/profile/update-educations");
-                  }
-                }}
-                onPressClassname="bg-primary/25 rounded-full"
-              >
-                <Icon as={Pen} size={18} className="text-muted-foreground" />
-              </StablePressable>
-            </View>
-          )}
-        </CardHeader>
+                <StablePressable
+                  className="p-2"
+                  onPress={() => {
+                    if (section.key === "experience") {
+                      router.push("/main/profile/update-experiences");
+                    } else if (section.key === "education") {
+                      router.push("/main/profile/update-educations");
+                    } else if (isBadge) {
+                      handleToggleEdit(section.key);
+                    }
+                  }}
+                  onPressClassname="bg-primary/25 rounded-full"
+                >
+                  <Icon as={Pen} size={18} className="text-muted-foreground" />
+                </StablePressable>
+              </View>
+            )}
+          </CardHeader>
 
-        <Separator />
+          <Separator />
 
-        <CardContent className="flex flex-col gap-2 px-4">
-          {section.data?.length === 0 ? (
-            <View className="" key={section.key}>
-              <Text className="text-sm text-muted-foreground italic text-center">
-                No {section.title} added yet
-              </Text>
-            </View>
-          ) : (
-            Array.isArray(section.data) &&
-            section.data.map((item, idx) => (
-              <View key={idx}>{section.renderItem(item)}</View>
-            ))
-          )}
-        </CardContent>
-      </Card>
+          <CardContent className={cn("px-4", isBadge && "py-3")}>
+            {isEditing && user?.id ? (
+              section.key === "industries" ? (
+                <Industries
+                  userId={user.id}
+                  editable={true}
+                  showTitle={false}
+                  className="w-full"
+                />
+              ) : (
+                <Objectives
+                  userId={user.id}
+                  editable={true}
+                  showTitle={false}
+                  className="w-full"
+                />
+              )
+            ) : section.data?.length === 0 ? (
+              <View key={section.key}>
+                <Text className="text-sm text-muted-foreground italic text-center">
+                  No {section.title} added yet
+                </Text>
+              </View>
+            ) : isBadge ? (
+              <View className="flex-row flex-wrap gap-2">
+                {Array.isArray(section.data) &&
+                  section.data.map((item, idx) => (
+                    <View key={idx}>{section.renderItem(item)}</View>
+                  ))}
+              </View>
+            ) : (
+              <View className="flex flex-col gap-2">
+                {Array.isArray(section.data) &&
+                  section.data.map((item, idx) => (
+                    <View key={idx}>{section.renderItem(item)}</View>
+                  ))}
+              </View>
+            )}
+          </CardContent>
+        </Card>
+      </View>
     );
   };
 
@@ -216,6 +348,7 @@ export const InspectBaseProfile = ({
   // ---------------------------------------------------------------
   return (
     <StableScrollView
+      ref={scrollViewRef}
       className={cn("flex-1 bg-background", className)}
       refreshControl={
         <RefreshControl

@@ -10,7 +10,7 @@ import Animated, {
   FadeOut,
   LinearTransition,
 } from "react-native-reanimated";
-import { StableScrollView } from "../shared/StableScrollView";
+import StableScrollView from "../shared/StableScrollView";
 import { Text } from "../ui/text";
 
 interface ObjectivesBadgeListProps {

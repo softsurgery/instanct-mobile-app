@@ -12,6 +12,7 @@ import { Icon } from "../ui/icon";
 import { Text } from "../ui/text";
 import { ImageBackground } from "expo-image";
 import { ObjectivesBadgeList } from "./ObjectivesBadgeList";
+import { StablePressable } from "../shared/StablePressable";
 
 const { width } = Dimensions.get("window");
 
@@ -73,7 +74,17 @@ export const UserCard = ({ user, className }: UserCardProps) => {
             className="items-center justify-end"
           >
             <View className="flex flex-row items-center justify-center my-auto px-5">
-              <View className="flex-1">{profilePicture}</View>
+              <StablePressable
+                className="p-1 rounded-full"
+                onPress={() =>
+                  router.push({
+                    pathname: "/main/profile/inspect-profile",
+                    params: { id: user?.id },
+                  })
+                }
+              >
+                {profilePicture}
+              </StablePressable>
 
               <View className="flex flex-col items-end flex-[4]">
                 <Text className="text-2xl font-bold text-foreground text-center">
