@@ -9,10 +9,11 @@ import { router } from "expo-router";
 import { ArrowDownNarrowWide, Bell } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { RefreshControl } from "react-native";
+import { RefreshControl, View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { UserCard } from "./UserCard";
+import { Text } from "../ui/text";
 
 interface ExplorePortalProps {
   className?: string;
@@ -21,6 +22,7 @@ interface ExplorePortalProps {
 export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   const { t } = useTranslation("common");
   const { newCount, resetCount } = useNotificationContext();
+  const [currentIndex, setCurrentIndex] = React.useState(0);
 
   const {
     data: usersResponse,
@@ -40,6 +42,13 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
 
   const handleChatPress = React.useCallback(() => {
     router.push("/main/chat");
+  }, []);
+
+  const handleScroll = React.useCallback((event: any) => {
+    const contentOffsetX = event.nativeEvent.contentOffset.x;
+    const screenWidth = event.nativeEvent.layoutMeasurement.width;
+    const newIndex = Math.round(contentOffsetX / screenWidth);
+    setCurrentIndex(newIndex);
   }, []);
 
   const renderItem = React.useCallback(
@@ -69,30 +78,36 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
           },
         ]}
       />
-      <LegendList
-        className={cn("flex-1")}
-        data={users}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        pagingEnabled
-        recycleItems={true}
-        bounces={false}
-        alwaysBounceVertical={false}
-        alwaysBounceHorizontal={false}
-        keyExtractor={(item) => item.id.toString()}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreching}
-            onRefresh={refrech}
-            progressViewOffset={0}
-            enabled={true}
-          />
-        }
-        renderItem={renderItem}
-        contentContainerStyle={{
-          paddingHorizontal: 0,
-        }}
-      />
+      <View className="flex-1 bg-transparent">
+        <LegendList
+          data={users}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          pagingEnabled
+          recycleItems={true}
+          bounces={false}
+          alwaysBounceVertical={false}
+          alwaysBounceHorizontal={false}
+          keyExtractor={(item) => item.id.toString()}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreching}
+              onRefresh={refrech}
+              progressViewOffset={0}
+              enabled={true}
+            />
+          }
+          renderItem={renderItem}
+          onScroll={handleScroll}
+          contentContainerStyle={{
+            paddingHorizontal: 0,
+          }}
+        />
+
+        <Text className="font-bold mx-auto my-4">
+          {currentIndex + 1} / {users.length}
+        </Text>
+      </View>
     </StableSafeAreaView>
   );
 };
