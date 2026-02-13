@@ -3,11 +3,11 @@ import { View, ScrollView } from "react-native";
 import { Badge } from "@/components/ui/badge";
 import { Text } from "@/components/ui/text";
 import { Icon } from "@/components/ui/icon";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StablePressable } from "@/components/shared/StablePressable";
+import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { X, Search, Save, Loader2 } from "lucide-react-native";
+import { X, Search, Loader2, CheckCircle2 } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 
 export interface SelectOption {
@@ -64,13 +64,20 @@ export function SelectBox({
   }
 
   return (
-    <View className={cn("w-full gap-4", className)}>
-      {/* Title */}
+    <View className={cn("w-full gap-4 px-1", className)}>
+      {/* Title Section */}
       {title && (
-        <Text className="text-base font-semibold text-foreground">{title}</Text>
+        <View className="gap-2">
+          <Text className="text-2xl font-bold text-foreground">{title}</Text>
+          <Text className="text-sm text-muted-foreground">
+            {selected.length > 0
+              ? `${selected.length} selected`
+              : "Select items from the available options below"}
+          </Text>
+        </View>
       )}
 
-      {/* Search */}
+      {/* Search Input */}
       <View className="flex flex-row items-center justify-between w-full">
         <Input
           placeholder="Search..."
@@ -84,94 +91,94 @@ export function SelectBox({
         </View>
       </View>
 
-      {/* Selected Params */}
+      {/* Selected Items Section */}
       {selectedOptions.length > 0 && (
-        <View className="gap-2">
-          <Text className="text-xs font-bold text-foreground">
-            Selected ({selectedOptions.length})
-          </Text>
-          <View className="flex-row flex-wrap gap-2">
-            {selectedOptions.map((param) => (
-              <Badge
-                key={param.value}
-                className={cn("px-2 py-1")}
-                style={
-                  param.color ? { backgroundColor: param.color } : undefined
-                }
-              >
-                <Text className="text-xs">{param.label}</Text>
-                <StablePressable
-                  onPress={() => onRemoveParam(param.value)}
-                  disabled={isPending}
-                  className="ml-1"
-                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                >
-                  <Icon as={X} size={12} />
-                </StablePressable>
-              </Badge>
-            ))}
+        <View className="gap-3">
+          <View className="flex-row items-center gap-2">
+            <Icon as={CheckCircle2} size={18} className="text-primary" />
+            <Text className="text-sm font-semibold text-foreground">
+              Selected Items ({selectedOptions.length})
+            </Text>
           </View>
-        </View>
-      )}
-
-      {/* Available Params */}
-      <View className="gap-2">
-        <Text className="text-xs font-bold">Available</Text>
-        <ScrollView
-          className="max-h-48 rounded-lg border border-input bg-background p-3"
-          contentContainerClassName="flex-row flex-wrap gap-2"
-          keyboardShouldPersistTaps="handled"
-        >
-          {filteredParams.length > 0 ? (
-            filteredParams.map((param) => (
-              <StablePressable
-                key={param.value}
-                onPress={() => onSelectParam(param.value)}
-                disabled={isPending}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              >
+          <View className="bg-card rounded-xl border border-input p-4 gap-3">
+            <View className="flex-row flex-wrap gap-2">
+              {selectedOptions.map((param) => (
                 <Badge
-                  variant="outline"
-                  pointerEvents="none"
-                  className="px-2 py-1"
+                  key={param.value}
+                  className={cn("px-3 py-2 flex-row items-center gap-1.5")}
                   style={
                     param.color ? { backgroundColor: param.color } : undefined
                   }
                 >
-                  <Text className="text-xs">{param.label}</Text>
+                  <Text className="text-xs font-medium">{param.label}</Text>
+                  <StablePressable
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      onRemoveParam(param.value);
+                    }}
+                    disabled={isPending}
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  >
+                    <Icon as={X} size={14} className="opacity-70" />
+                  </StablePressable>
                 </Badge>
-              </StablePressable>
-            ))
-          ) : (
-            <Text className="text-sm text-muted-foreground w-full text-center py-4">
-              {searchQuery
-                ? "No items match your search"
-                : params.length === 0
-                  ? "No items available"
-                  : "All items are selected"}
-            </Text>
-          )}
-        </ScrollView>
-      </View>
+              ))}
+            </View>
+          </View>
+        </View>
+      )}
 
-      {/* Save Button */}
-      <Button
-        onPress={onSave}
-        disabled={isPending}
-        size={"icon"}
-        variant={"outline"}
-        className="flex-row items-center justify-center gap-2 ml-auto"
-      >
-        {isPending ? (
-          <Icon
-            as={Loader2}
-            size={16}
-            className="text-primary-foreground animate-spin"
-          />
-        ) : (
-          <Icon as={Save} size={16} className="text-primary-foreground" />
-        )}
-      </Button>
+      {/* Available Items Section */}
+      <View className="gap-3">
+        <Text className="text-sm font-semibold text-foreground">
+          Available{" "}
+          {filteredParams.length === params.length
+            ? ""
+            : `(${filteredParams.length})`}
+        </Text>
+        <View className="bg-card rounded-xl border border-input overflow-hidden">
+          <ScrollView
+            className="max-h-64"
+            contentContainerClassName="gap-0"
+            keyboardShouldPersistTaps="handled"
+          >
+            {filteredParams.length > 0 ? (
+              filteredParams.map((param, index) => (
+                <View key={param.value}>
+                  <StablePressable
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      onSelectParam(param.value);
+                    }}
+                    disabled={isPending}
+                    className="px-4 py-3 flex-row items-center gap-3 active:bg-muted/50"
+                  >
+                    <View className="flex-1">
+                      <Text className="text-sm font-medium text-foreground">
+                        {param.label}
+                      </Text>
+                    </View>
+                    <View className="w-5 h-5 rounded-full border-2 border-input bg-background" />
+                  </StablePressable>
+                  {index < filteredParams.length - 1 && (
+                    <Separator className="mx-0" />
+                  )}
+                </View>
+              ))
+            ) : (
+              <View className="px-4 py-8 flex items-center justify-center">
+                <Text className="text-sm text-muted-foreground text-center">
+                  {searchQuery
+                    ? "No items match your search"
+                    : params.length === 0
+                      ? "No items available"
+                      : "All items are selected"}
+                </Text>
+              </View>
+            )}
+          </ScrollView>
+        </View>
+      </View>
     </View>
   );
 }
