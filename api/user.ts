@@ -3,6 +3,7 @@ import {
   ResponseConfigurationNamespaceDto,
   ResponseUserDto,
   UpdateUserDto,
+  UpdateUserMapConfigurationDto,
 } from "@/types";
 import axios from "./axios";
 
@@ -70,6 +71,16 @@ const getIndustries = async (id: string): Promise<number[] | null> => {
   return response.data;
 };
 
+const updateMapConfiguration = async (
+  mapConfiguration: UpdateUserMapConfigurationDto,
+): Promise<ResponseConfigurationNamespaceDto> => {
+  const response = await axios.put(
+    `/admin/user/configuration/maps/current`,
+    mapConfiguration,
+  );
+  return response.data;
+};
+
 export const user = {
   findAll,
   findCurrent,
@@ -80,4 +91,5 @@ export const user = {
   getIndustries,
   getObjectives,
   getCurrentMapConfiguration,
+  updateMapConfiguration,
 };

@@ -29,6 +29,9 @@ import { Button } from "../../ui/button";
 import { Icon } from "../../ui/icon";
 import { useGlobalMapConfiguration } from "@/hooks/content/configurations/useGlobalMapConfiguration";
 import { RadiusSlider } from "./RadiusSlider";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/api";
+import { showToastable } from "react-native-toastable";
 
 interface MapSettingsProps {
   className?: string;
@@ -54,9 +57,9 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
 
   React.useEffect(() => {
     if (userMapConfiguration) {
-      mapStore.setNested("parameters.radius", userMapConfiguration.radius || 0);
+      mapStore.setNested("parameters.radius", userMapConfiguration.radius);
     }
-  }, [userMapConfiguration?.radius]);
+  }, [userMapConfiguration]);
 
   const [autoRefresh, setAutoRefresh] = React.useState(true);
   const [showClusters, setShowClusters] = React.useState(true);
@@ -75,6 +78,31 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
     },
     [mapStore],
   );
+
+  const {
+    mutate: updateMapConfiguration,
+    isPending: isUpdateMapConfigurationPending,
+  } = useMutation({
+    mutationFn: async () => {
+      await api.user.updateMapConfiguration({
+        radius: mapStore.parameters.radius,
+      });
+    },
+    onSuccess: () => {
+      refetchUserMapConfiguration();
+      refetchMapConfiguration();
+    },
+  });
+
+  const handleMapConfigurationUpdate = () => {
+    updateMapConfiguration();
+    showToastable({
+      title: "Map configuration updated",
+      status: "success",
+      message: "Your map configuration has been successfully updated.",
+    });
+    router.push("/main/(tabs)/map");
+  };
 
   const isPending = isMapConfigurationPending || isUserMapConfigurationPending;
 
@@ -242,7 +270,7 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
         <Button
           size="sm"
           className="mx-6 mb-4 rounded-full"
-          onPress={() => alert(JSON.stringify(userMapConfiguration, null, 2))}
+          onPress={handleMapConfigurationUpdate}
         >
           <Icon as={Save} size={16} />
           <Text>Update Configuration</Text>

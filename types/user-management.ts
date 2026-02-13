@@ -112,3 +112,8 @@ export interface CreateEducationDto {
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface UpdateEducationDto extends Partial<CreateEducationDto> {}
+
+// user configuration dtos *****************************************************************************
+export interface UpdateUserMapConfigurationDto {
+  radius: number;
+}
