@@ -147,11 +147,11 @@ export const InspectBaseProfile = ({
             {experience.company}
           </Text>
           <Text className="text-xs text-muted-foreground my-1">
-            {format(new Date(experience.startDate), "MMM yyyy")} —{" "}
-            {format(new Date(experience.endDate), "MMM yyyy")}
+            {format(new Date(experience.startDate!), "MMM yyyy")} —{" "}
+            {format(new Date(experience.endDate!), "MMM yyyy")}
           </Text>
           <SeeMoreText textClassname="text-sm" numberOfLines={2}>
-            {experience.description}
+            {experience.description || "No description provided."}
           </SeeMoreText>
         </View>
       ),
@@ -174,7 +174,7 @@ export const InspectBaseProfile = ({
               : "Present"}
           </Text>
           <SeeMoreText textClassname="text-sm" numberOfLines={2}>
-            {education.description}
+            {education.description || "No description provided."}
           </SeeMoreText>
         </View>
       ),

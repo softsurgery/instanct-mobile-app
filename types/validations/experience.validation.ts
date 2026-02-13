@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { LocationTypes, WorkTypes } from "../user-management";
 
 const baseExperienceSchema = z.object({
   title: z
@@ -36,6 +37,19 @@ const baseExperienceSchema = z.object({
         message: "Start date cannot be in the future.",
       },
     ),
+  location: z
+    .string()
+    .min(2, {
+      message: "Location must be at least 2 characters long.",
+    })
+    .max(100, {
+      message: "Location cannot exceed 100 characters.",
+    })
+    .optional(),
+
+  workType: z.enum(WorkTypes).optional(),
+
+  locationType: z.enum(LocationTypes).optional(),
 
   endDate: z
     .preprocess(

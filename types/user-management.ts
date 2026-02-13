@@ -67,23 +67,45 @@ export enum Gender {
 
 //experience dtos *****************************************************************************
 
+export enum WorkTypes {
+  FULL_TIME = "Full-Time",
+  PART_TIME = "Part-Time",
+  TEMPORARY = "Temporary",
+  INTERN = "Internship",
+  FREELANCE = "Freelance",
+  VOLUNTEER = "Volunteer",
+  APPRENTICESHIP = "Apprenticeship",
+}
+
+export enum LocationTypes {
+  REMOTE = "Remote",
+  ON_SITE = "On-Site",
+  HYBRID = "Hybrid",
+}
+
 export interface ResponseExperienceDto extends DatabaseEntity {
   id: number;
-  title: string;
-  startDate: string;
-  endDate: string;
-  company: string;
-  description: string;
-  user: ResponseUserDto;
+  title?: string;
+  company?: string;
+  startDate?: Date;
+  endDate?: Date;
+  description?: string;
+  location?: string;
+  locationType?: LocationTypes;
+  workType?: WorkTypes;
+  user?: ResponseUserDto;
   userId: string;
 }
 
 export interface CreateExperienceDto {
-  title: string;
-  startDate: Date;
-  endDate: Date | null;
-  company: string;
-  description: string;
+  title?: string;
+  company?: string;
+  startDate?: Date;
+  endDate?: Date;
+  description?: string;
+  location?: string;
+  locationType?: LocationTypes;
+  workType?: WorkTypes;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type

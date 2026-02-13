@@ -37,8 +37,11 @@ export const UpdateExperiences = ({ className }: UpdateExperiencesProps) => {
     userStore.set("updateExperienceDto", {
       title: exp.title,
       company: exp.company,
-      startDate: new Date(exp.startDate),
-      endDate: exp.endDate ? new Date(exp.endDate) : null,
+      location: exp.location,
+      workType: exp.workType,
+      locationType: exp.locationType,
+      startDate: new Date(exp.startDate!),
+      endDate: exp.endDate ? new Date(exp.endDate) : undefined,
       description: exp.description,
     });
     router.push("/main/profile/update-experience");
@@ -129,13 +132,13 @@ export const UpdateExperiences = ({ className }: UpdateExperiencesProps) => {
                         <Icon as={Calendar} size={18} />
                         <View>
                           <Text className="text-sm text-foreground font-medium">
-                            {format(new Date(exp.startDate), "MMM yyyy")} -{" "}
+                            {format(new Date(exp.startDate!), "MMM yyyy")} -{" "}
                             {exp.endDate
                               ? format(new Date(exp.endDate), "MMM yyyy")
                               : "Present"}
                           </Text>
                           <Text className="text-xs text-muted-foreground">
-                            {getExperienceYears(exp.startDate, exp.endDate)}{" "}
+                            {getExperienceYears(exp.startDate!, exp.endDate)}{" "}
                             years
                           </Text>
                         </View>

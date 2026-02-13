@@ -3,10 +3,12 @@ import {
   Field,
   FieldVariant,
   FormStructure,
+  SelectFieldProps,
   TextareaFieldProps,
   TextFieldProps,
 } from "@/components/shared/form-builder/types";
 import { UserStore } from "@/stores/useUserStore";
+import { LocationTypes, WorkTypes } from "@/types";
 
 interface UseCreateExperienceFormStructureProps {
   store: UserStore;
@@ -65,6 +67,63 @@ export const useCreateExperienceFormStructure = ({
         store.setNested("experienceErrors.description", []);
       },
       rows: 50,
+    },
+  };
+
+  const location: Field<TextFieldProps> = {
+    id: "location",
+    label: "Location",
+    variant: FieldVariant.TEXT,
+    required: false,
+    placeholder: "Enter the location of your job",
+    description: "The location where you worked (e.g., New York).",
+    error: store.experienceErrors?.location?.[0],
+    props: {
+      value: store.createExperienceDto?.location,
+      onChangeText: (value) => {
+        store.setNested("createExperienceDto.location", value);
+        store.setNested("experienceErrors.location", []);
+      },
+    },
+  };
+
+  const workType: Field<SelectFieldProps> = {
+    id: "workType",
+    label: "Work Type",
+    variant: FieldVariant.SELECT,
+    required: true,
+    description: "The type of work arrangement for this position.",
+    error: store.experienceErrors?.workType?.[0],
+    props: {
+      value: store.createExperienceDto?.workType || undefined,
+      onSelect: (value) => {
+        store.setNested("createExperienceDto.workType", value);
+        store.setNested("experienceErrors.workType", []);
+      },
+      options: Object.values(WorkTypes).map((type) => ({
+        label: type,
+        value: type,
+      })),
+    },
+  };
+
+  const locationType: Field<SelectFieldProps> = {
+    id: "locationType",
+    label: "Location Type",
+    variant: FieldVariant.SELECT,
+    required: false,
+    description: "The location type for this position (e.g., Remote).",
+    error: store.experienceErrors?.locationType?.[0],
+    props: {
+      value: store.createExperienceDto?.locationType || undefined,
+      onSelect: (value) => {
+        store.setNested("createExperienceDto.locationType", value);
+        store.setNested("experienceErrors.locationType", []);
+      },
+      options: Object.values(LocationTypes).map((type) => ({
+        label: type,
+        value: type,
+      })),
     },
   };
 
@@ -131,6 +190,14 @@ export const useCreateExperienceFormStructure = ({
           },
           {
             id: 4,
+            fields: [location],
+          },
+          {
+            id: 5,
+            fields: [workType, locationType],
+          },
+          {
+            id: 6,
             fields: [startDate, endDate],
           },
         ],

@@ -61,6 +61,9 @@ const initialState: UserData = {
   createExperienceDto: {
     title: "",
     company: "",
+    location: "",
+    workType: undefined,
+    locationType: undefined,
     startDate: new Date(),
     endDate: new Date(),
     description: "",
@@ -68,6 +71,9 @@ const initialState: UserData = {
   updateExperienceDto: {
     title: "",
     company: "",
+    location: "",
+    workType: undefined,
+    locationType: undefined,
     startDate: new Date(),
     endDate: new Date(),
     description: "",
