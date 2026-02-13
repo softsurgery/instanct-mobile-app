@@ -1,3 +1,4 @@
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
@@ -13,18 +14,13 @@ import { ResponseEducationDto, ResponseExperienceDto } from "@/types";
 import { format } from "date-fns";
 import { router, useNavigation } from "expo-router";
 import { Pen, Plus } from "lucide-react-native";
-import React from "react";
 import { Image, RefreshControl, View, ScrollView } from "react-native";
 import { SeeMoreText } from "../shared/SeeMoreText";
 import { StablePressable } from "../shared/StablePressable";
 import { Separator } from "../ui/separator";
 import { Badge } from "../ui/badge";
 import { ProfileStat } from "./ProfileStat";
-import { Industries } from "./user-params/Industries";
-import { Objectives } from "./user-params/Objectives";
 import StableScrollView from "../shared/StableScrollView";
-import { useColorScheme } from "nativewind";
-import { THEME } from "@/lib/theme";
 import { useUserIndustries } from "@/hooks/content/users/useUserIndustries";
 import { useUserObjectives } from "@/hooks/content/users/useUserObjectives";
 import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
@@ -50,7 +46,6 @@ export const InspectBaseProfile = ({
   id,
   coverExtra,
 }: InspectBaseProfileProps) => {
-  const { colorScheme } = useColorScheme();
   const navigation = useNavigation();
 
   const storeRef = React.useRef(createClientStore());
@@ -218,10 +213,6 @@ export const InspectBaseProfile = ({
   const isBadgeSection = (key: string) =>
     key === "industries" || key === "objectives";
 
-  const [editingSection, setEditingSection] = React.useState<string | null>(
-    null,
-  );
-
   const scrollToSection = (key: string) => {
     const offset = sectionOffsets.current[key];
     if (scrollViewRef.current && offset !== undefined) {
@@ -230,17 +221,8 @@ export const InspectBaseProfile = ({
     }
   };
 
-  const handleToggleEdit = (sectionKey: string) => {
-    const newEditingSection = editingSection === sectionKey ? null : sectionKey;
-    setEditingSection(newEditingSection);
-    if (newEditingSection) {
-      setTimeout(() => scrollToSection(sectionKey), 150);
-    }
-  };
-
   const renderSection = (section: ProfileSection) => {
     const isBadge = isBadgeSection(section.key);
-    const isEditing = editingSection === section.key;
 
     return (
       <View
@@ -265,10 +247,13 @@ export const InspectBaseProfile = ({
                   <StablePressable
                     className="p-2"
                     onPress={() => {
-                      if (section.key === "experience") {
-                        router.push("/main/profile/create-experience");
-                      } else if (section.key === "education") {
-                        router.push("/main/profile/create-education");
+                      switch (section.key) {
+                        case "experience":
+                          router.push("/main/profile/create-experience");
+                          break;
+                        case "education":
+                          router.push("/main/profile/create-education");
+                          break;
                       }
                     }}
                     onPressClassname="bg-primary/25 rounded-full"
@@ -284,28 +269,30 @@ export const InspectBaseProfile = ({
                 <StablePressable
                   className="p-2"
                   onPress={() => {
-                    if (section.key === "experience") {
-                      router.push("/main/profile/update-experiences");
-                    } else if (section.key === "education") {
-                      router.push("/main/profile/update-educations");
-                    } else if (isBadge) {
-                      handleToggleEdit(section.key);
+                    switch (section.key) {
+                      case "experience":
+                        router.push("/main/profile/update-experiences");
+                        break;
+                      case "education":
+                        router.push("/main/profile/update-educations");
+                        break;
+                      case "industries":
+                        router.push({
+                          pathname: "/main/profile/industries",
+                          params: { userId: id },
+                        });
+                        break;
+                      case "objectives":
+                        router.push({
+                          pathname: "/main/profile/objectives",
+                          params: { userId: id },
+                        });
+                        break;
                     }
                   }}
                   onPressClassname="bg-primary/25 rounded-full"
                 >
-                  <Icon
-                    as={Pen}
-                    size={18}
-                    color={
-                      isEditing
-                        ? colorScheme === "dark"
-                          ? THEME.dark.primary
-                          : THEME.light.primary
-                        : "gray"
-                    }
-                    strokeWidth={isEditing ? 3 : 2}
-                  />
+                  <Icon as={Pen} size={18} className="text-muted-foreground" />
                 </StablePressable>
               </View>
             )}
@@ -314,23 +301,7 @@ export const InspectBaseProfile = ({
           <Separator />
 
           <CardContent>
-            {isEditing && user?.id ? (
-              section.key === "industries" ? (
-                <Industries
-                  userId={user.id}
-                  editable={true}
-                  showTitle={false}
-                  className="w-full"
-                />
-              ) : (
-                <Objectives
-                  userId={user.id}
-                  editable={true}
-                  showTitle={false}
-                  className="w-full"
-                />
-              )
-            ) : section.data?.length === 0 ? (
+            {section.data?.length === 0 ? (
               <View key={section.key}>
                 <Text className="text-sm text-muted-foreground italic text-center">
                   No {section.title} added yet

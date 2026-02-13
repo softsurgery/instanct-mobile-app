@@ -114,6 +114,20 @@ export default function MainLayout() {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="profile/industries"
+          options={{
+            title: "Industries",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="profile/objectives"
+          options={{
+            title: "Objectives",
+            headerShown: false,
+          }}
+        />
         {/* *************************************************************************************************** */}
         {/* Chat  ********************************************************************************************* */}
         <Stack.Screen
