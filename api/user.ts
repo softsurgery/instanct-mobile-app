@@ -1,4 +1,9 @@
-import { QueryParams, ResponseUserDto, UpdateUserDto } from "@/types";
+import {
+  QueryParams,
+  ResponseConfigurationNamespaceDto,
+  ResponseUserDto,
+  UpdateUserDto,
+} from "@/types";
 import axios from "./axios";
 
 const findCurrent = async (): Promise<ResponseUserDto> => {
@@ -49,6 +54,12 @@ const updateIndustries = async (
   return response.data;
 };
 
+const getCurrentMapConfiguration =
+  async (): Promise<ResponseConfigurationNamespaceDto> => {
+    const response = await axios.get(`/admin/user/configurations/maps/current`);
+    return response.data;
+  };
+
 const getObjectives = async (id: string): Promise<number[] | null> => {
   const response = await axios.get(`/admin/user/objectives/${id}`);
   return response.data;
@@ -68,4 +79,5 @@ export const user = {
   updateObjectives,
   getIndustries,
   getObjectives,
+  getCurrentMapConfiguration,
 };

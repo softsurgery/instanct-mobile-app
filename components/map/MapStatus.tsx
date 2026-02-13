@@ -38,8 +38,7 @@ export const MapStatus = ({ className }: MapStatusProps) => {
         </Text>
       </Text>
       <Text className="mx-4 bg-transparent text-xs font-bold">
-        Range:{" "}
-        <Text className="text-xs">{mapStore.paramaters.radiusKm} KM</Text>
+        Range: <Text className="text-xs">{mapStore.parameters.radius} KM</Text>
       </Text>
     </View>
   );

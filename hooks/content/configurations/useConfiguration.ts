@@ -3,18 +3,18 @@ import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
 interface useConfigurationProps {
-  id: string;
+  name: string;
   enabled?: boolean;
 }
 
-export const useConfiguration = ({ id, enabled }: useConfigurationProps) => {
+export const useConfiguration = ({ name, enabled }: useConfigurationProps) => {
   const {
     data: configurationResponse,
     isPending: isConfigurationPending,
     refetch: refetchConfiguration,
   } = useQuery({
-    queryKey: ["configuration", id],
-    queryFn: () => api.configuration.findOneById(id),
+    queryKey: ["global-configuration", name],
+    queryFn: () => api.configuration.findGlobalOneByName(name),
     enabled,
   });
 

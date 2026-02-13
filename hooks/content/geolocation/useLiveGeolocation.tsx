@@ -16,9 +16,9 @@ export function useLiveGeolocation({}: UseLiveGeolocationOptions) {
   const [restartCount, setRestartCount] = React.useState(0);
 
   // Use selectors to avoid re-renders when unrelated store parts change
-  const radiusKm = useMapStore((state) => state.paramaters.radiusKm);
+  const radiusKm = useMapStore((state) => state.parameters.radius);
   const updateInterval = useMapStore(
-    (state) => state.paramaters.updateInterval,
+    (state) => state.parameters.updateInterval,
   );
   const setLocation = useMapStore((state) => state.set);
   const setNearbyUsers = useMapStore((state) => state.setNearbyUsers);

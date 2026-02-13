@@ -4,10 +4,10 @@ import * as Location from "expo-location";
 import { create } from "zustand";
 
 interface MapData {
-  paramaters: {
-    radiusKm: number;
-    updateInterval: number;
+  parameters: {
+    radius: number;
     mode: "sattelite" | "map";
+    updateInterval: number;
   };
   connected: boolean;
   location: Location.LocationObject | null;
@@ -42,8 +42,8 @@ interface MapStore extends MapData {
 }
 
 const initialState: MapData = {
-  paramaters: {
-    radiusKm: 70,
+  parameters: {
+    radius: 0,
     updateInterval: 5,
     mode: "map",
   },

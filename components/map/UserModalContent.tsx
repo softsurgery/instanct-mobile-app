@@ -47,7 +47,7 @@ export const UserModalContent = ({
   const inspectProfile = () => {
     closeModal?.();
     router.push({
-      pathname: "/main/inspect-profile",
+      pathname: "/main/profile/inspect-profile",
       params: { id: nearbyUser?.user?.id },
     });
   };

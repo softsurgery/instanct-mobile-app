@@ -15,6 +15,12 @@ export interface ResponseConfigurationNamespaceDto {
   params?: ResponseConfigurationParamDto[];
 }
 
+export enum ConfigurationNamespaces {
+  MAPS = "maps",
+  PERSONAL_MAP = "personalMap",
+  CORE = "core",
+}
+
 export enum ParamVariant {
   STRING = "string",
   NUMBER = "number",
