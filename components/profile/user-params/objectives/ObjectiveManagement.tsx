@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import * as Haptics from "expo-haptics";
 import { Icon } from "@/components/ui/icon";
+import StableScrollView from "@/components/shared/StableScrollView";
 
 interface ObjectivesManagementProps {
   className?: string;
@@ -96,9 +97,9 @@ export const ObjectivesManagement = ({
   );
 
   return (
-    <StableSafeAreaView className={cn("flex flex-1 bg-background", className)}>
+    <StableSafeAreaView className={cn("flex-1", className)}>
       <ApplicationHeader
-        className="border-b border-border pb-3 bg-transparent px-4 pt-2"
+        className="border-b border-border pb-2 bg-transparent"
         title="Objectives"
         titleVariant="large"
         reverse
@@ -106,14 +107,12 @@ export const ObjectivesManagement = ({
           {
             key: "back",
             icon: ArrowLeft,
-            onPress: () => {
-              router.back();
-            },
+            onPress: () => router.back(),
           },
         ]}
       />
-      <ScrollView
-        className="flex-1"
+      <StableScrollView
+        className="flex-1 bg-background"
         contentContainerClassName="gap-6 px-4 py-6 pb-8"
         keyboardShouldPersistTaps="handled"
       >
@@ -134,7 +133,7 @@ export const ObjectivesManagement = ({
           onSave={handleSave}
           className="pb-4"
         />
-      </ScrollView>
+      </StableScrollView>
       <View className="py-6 border-t border-border">
         <Button
           className="mx-6 mb-4 rounded-full"

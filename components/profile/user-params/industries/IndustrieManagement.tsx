@@ -107,9 +107,7 @@ export const IndustriesManagement = ({
           {
             key: "back",
             icon: ArrowLeft,
-            onPress: () => {
-              router.back();
-            },
+            onPress: () => router.back(),
           },
         ]}
       />
