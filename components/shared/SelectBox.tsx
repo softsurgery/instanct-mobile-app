@@ -1,5 +1,5 @@
 import React from "react";
-import { View, ScrollView } from "react-native";
+import { View } from "react-native";
 import { Badge } from "@/components/ui/badge";
 import { Text } from "@/components/ui/text";
 import { Icon } from "@/components/ui/icon";
@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { X, Search, Loader2, CheckCircle2 } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
+import StableScrollView from "./StableScrollView";
 
 export interface SelectOption {
   label: string;
@@ -22,7 +23,6 @@ interface SelectBoxProps {
   isPending?: boolean;
   onSelectParam: (id: string | number) => void;
   onRemoveParam: (id: string | number) => void;
-  onSave: () => void;
   title?: string;
 }
 
@@ -32,7 +32,6 @@ export function SelectBox({
   isPending = false,
   onSelectParam,
   onRemoveParam,
-  onSave,
   className,
   title,
 }: SelectBoxProps) {
@@ -137,7 +136,7 @@ export function SelectBox({
             : `(${filteredParams.length})`}
         </Text>
         <View className="bg-card rounded-xl border border-input overflow-hidden">
-          <ScrollView
+          <StableScrollView
             className="max-h-64"
             contentContainerClassName="gap-0"
             keyboardShouldPersistTaps="handled"
@@ -176,7 +175,7 @@ export function SelectBox({
                 </Text>
               </View>
             )}
-          </ScrollView>
+          </StableScrollView>
         </View>
       </View>
     </View>
