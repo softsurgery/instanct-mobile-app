@@ -8,7 +8,7 @@ import {
 import axios from "./axios";
 
 const findCurrent = async (): Promise<ResponseUserDto> => {
-  const response = await axios.get<ResponseUserDto>(`/admin/user/current`);
+  const response = await axios.get<ResponseUserDto>(`/current-user/current`);
   return response.data;
 };
 
@@ -20,7 +20,7 @@ const findById = async (id: string): Promise<ResponseUserDto> => {
 const updateCurrent = async (
   updateUserDto: UpdateUserDto,
 ): Promise<ResponseUserDto> => {
-  const response = await axios.put(`/admin/user/current`, updateUserDto);
+  const response = await axios.put(`/current-user/current`, updateUserDto);
   return response.data;
 };
 
@@ -57,7 +57,9 @@ const updateIndustries = async (
 
 const getCurrentMapConfiguration =
   async (): Promise<ResponseConfigurationNamespaceDto> => {
-    const response = await axios.get(`/admin/user/configurations/maps/current`);
+    const response = await axios.get(
+      `/current-user/configurations/maps/current`,
+    );
     return response.data;
   };
 
@@ -75,7 +77,7 @@ const updateMapConfiguration = async (
   mapConfiguration: UpdateUserMapConfigurationDto,
 ): Promise<ResponseConfigurationNamespaceDto> => {
   const response = await axios.put(
-    `/admin/user/configuration/maps/current`,
+    `/current-user/configuration/maps/current`,
     mapConfiguration,
   );
   return response.data;
