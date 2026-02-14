@@ -130,7 +130,6 @@ export const IndustriesManagement = ({
           isPending={isPending}
           onSelectParam={handleSelectIndustry}
           onRemoveParam={handleRemoveIndustry}
-          onSave={handleSave}
           className="pb-4"
         />
       </StableScrollView>

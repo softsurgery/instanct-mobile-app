@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { View, ScrollView } from "react-native";
+import { View } from "react-native";
 import { showToastable } from "react-native-toastable";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api";
@@ -130,7 +130,6 @@ export const ObjectivesManagement = ({
           isPending={isPending}
           onSelectParam={handleSelectObjective}
           onRemoveParam={handleRemoveObjective}
-          onSave={handleSave}
           className="pb-4"
         />
       </StableScrollView>

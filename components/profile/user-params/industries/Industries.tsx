@@ -2,14 +2,11 @@ import { Pen } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
-
 import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
 import { useUserIndustries } from "@/hooks/content/users/useUserIndustries";
-
 import { Badge } from "@/components/ui/badge";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-
 import { cn } from "@/lib/utils";
 
 interface IndustriesProps {
