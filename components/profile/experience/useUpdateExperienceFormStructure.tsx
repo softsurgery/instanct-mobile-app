@@ -78,6 +78,7 @@ export const useUpdateExperienceFormStructure = ({
     placeholder: "Enter the location of your job (e.g., New York, NY)",
     description: "The location where you worked for this position.",
     error: store.experienceErrors?.location?.[0],
+    hidden: store.updateExperienceDto?.locationType === LocationTypes.REMOTE,
     props: {
       value: store.updateExperienceDto?.location,
       onChangeText: (value) => {

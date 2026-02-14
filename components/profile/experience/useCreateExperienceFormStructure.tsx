@@ -77,6 +77,7 @@ export const useCreateExperienceFormStructure = ({
     required: false,
     placeholder: "Enter the location of your job",
     description: "The location where you worked (e.g., New York).",
+    hidden: store.createExperienceDto?.locationType === LocationTypes.REMOTE,
     error: store.experienceErrors?.location?.[0],
     props: {
       value: store.createExperienceDto?.location,
@@ -190,11 +191,11 @@ export const useCreateExperienceFormStructure = ({
           },
           {
             id: 4,
-            fields: [location],
+            fields: [workType],
           },
           {
             id: 5,
-            fields: [workType, locationType],
+            fields: [locationType, location],
           },
           {
             id: 6,
