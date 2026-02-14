@@ -15,7 +15,6 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import * as Haptics from "expo-haptics";
 import { Icon } from "@/components/ui/icon";
-import StableScrollView from "@/components/shared/StableScrollView";
 
 interface ObjectivesManagementProps {
   className?: string;
@@ -111,12 +110,8 @@ export const ObjectivesManagement = ({
           },
         ]}
       />
-      <StableScrollView
-        className="flex-1 bg-background"
-        contentContainerClassName="gap-6 px-4 py-6 pb-8"
-        keyboardShouldPersistTaps="handled"
-      >
-        <View className="gap-2">
+      <View className="flex-1 bg-background">
+        <View className="px-5 pt-4 pb-2">
           <Text className="text-sm text-muted-foreground leading-relaxed">
             Select one or more objectives that align with your professional
             goals and aspirations. This helps you connect with like-minded
@@ -124,15 +119,14 @@ export const ObjectivesManagement = ({
           </Text>
         </View>
         <SelectBox
-          title="Choose your objectives"
           params={options}
           selected={selectedObjectives}
           isPending={isPending}
           onSelectParam={handleSelectObjective}
           onRemoveParam={handleRemoveObjective}
-          className="pb-4"
+          className="flex-1"
         />
-      </StableScrollView>
+      </View>
       <View className="py-6 border-t border-border">
         <Button
           className="mx-6 mb-4 rounded-full"

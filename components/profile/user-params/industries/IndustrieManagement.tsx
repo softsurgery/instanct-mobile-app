@@ -15,7 +15,6 @@ import { ArrowLeft, Save, Loader2 } from "lucide-react-native";
 import { Icon } from "@/components/ui/icon";
 import * as Haptics from "expo-haptics";
 import { Button } from "@/components/ui/button";
-import StableScrollView from "@/components/shared/StableScrollView";
 
 interface IndustriesManagementProps {
   className?: string;
@@ -111,28 +110,23 @@ export const IndustriesManagement = ({
           },
         ]}
       />
-      <StableScrollView
-        className="flex-1 bg-background"
-        contentContainerClassName="gap-6 px-4 py-6 pb-8"
-        keyboardShouldPersistTaps="handled"
-      >
-        <View className="gap-2">
+      <View className="flex-1 bg-background">
+        <View className="px-5 pt-4 pb-2">
           <Text className="text-sm text-muted-foreground leading-relaxed">
-            Select one or more industries that match your professional
-            background and interests. This helps others discover you and find
-            relevant connections.
+            Select one or more industries that align with your professional
+            goals and aspirations. This helps you connect with like-minded
+            professionals and opportunities.
           </Text>
         </View>
         <SelectBox
-          title="Choose your industries"
           params={options}
           selected={selectedIndustries}
           isPending={isPending}
           onSelectParam={handleSelectIndustry}
           onRemoveParam={handleRemoveIndustry}
-          className="pb-4"
+          className="flex-1"
         />
-      </StableScrollView>
+      </View>
       <View className="py-6 border-t border-border">
         <Button
           className="mx-6 mb-4 rounded-full"
