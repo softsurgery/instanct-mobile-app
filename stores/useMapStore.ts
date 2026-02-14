@@ -5,6 +5,8 @@ import { create } from "zustand";
 
 interface MapData {
   parameters: {
+    rangeMin: number;
+    rangeMax: number;
     radius: number;
     mode: "sattelite" | "map";
     updateInterval: number;
@@ -43,6 +45,8 @@ interface MapStore extends MapData {
 
 const initialState: MapData = {
   parameters: {
+    rangeMax: 100,
+    rangeMin: 0,
     radius: 0,
     updateInterval: 5,
     mode: "map",

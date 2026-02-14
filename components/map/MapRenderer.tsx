@@ -15,6 +15,8 @@ import { UserModalContent } from "./UserModalContent";
 import { UsersMarker } from "./UsersMarker";
 import { UsersModalContent } from "./UsersModalContent";
 import { AndroidDarkMapStyle } from "./utils/AndroidDarkMapStyle";
+import { useGlobalMapConfiguration } from "@/hooks/content/configurations/useGlobalMapConfiguration";
+import { useCurrentMapConfiguration } from "@/hooks/content/users/useCurrentMapConfiguration";
 
 interface MapRendererProps {
   className?: string;
@@ -35,6 +37,24 @@ export const MapRenderer = ({
   const mapRef = React.useRef<MapView>(null);
   const superCluster = React.useRef<any>(null);
   const mapStore = useMapStore();
+
+  //global configuration
+  const { mapConfiguration, isMapConfigurationPending } =
+    useGlobalMapConfiguration();
+
+  //user map configuration
+  const {
+    mapConfiguration: userMapConfiguration,
+    isMapConfigurationPending: isUserMapConfigurationPending,
+  } = useCurrentMapConfiguration();
+
+  React.useEffect(() => {
+    if (userMapConfiguration) {
+      mapStore.setNested("parameters.radius", userMapConfiguration.radius);
+      mapStore.setNested("parameters.rangeMin", mapConfiguration?.rangeMin);
+      mapStore.setNested("parameters.rangeMax", mapConfiguration?.rangeMax);
+    }
+  }, [userMapConfiguration]);
 
   //states
   const [selectedUser, setSelectedUser] = React.useState<NearbyUser | null>(
@@ -131,7 +151,12 @@ export const MapRenderer = ({
     [],
   );
 
-  if (!currentUser) return <ActivityIndicator />;
+  if (
+    !currentUser ||
+    isMapConfigurationPending ||
+    isUserMapConfigurationPending
+  )
+    return <ActivityIndicator />;
   return (
     <View className={cn("flex-1", className)}>
       <MapView

@@ -8,22 +8,22 @@ import { useSharedValue } from "react-native-reanimated";
 
 interface RadiusSliderProps {
   onValueChange: (value: number) => void;
-  radiusMinValue?: number;
-  radiusMaxValue?: number;
+  rangeMaxValue?: number;
+  rangeMinValue?: number;
   step?: number;
 }
 
 export const RadiusSlider = ({
   onValueChange,
-  radiusMinValue = 0,
-  radiusMaxValue = 100,
+  rangeMinValue = 0,
+  rangeMaxValue = 100,
   step = 10,
 }: RadiusSliderProps) => {
   const mapStore = useMapStore();
 
   const radiusProgress = useSharedValue(mapStore.parameters.radius);
-  const radiusMin = useSharedValue(radiusMinValue);
-  const radiusMax = useSharedValue(radiusMaxValue);
+  const radiusMin = useSharedValue(rangeMinValue);
+  const radiusMax = useSharedValue(rangeMaxValue);
 
   const handleSlidingComplete = (value: number) => {
     onValueChange(value);
@@ -53,10 +53,10 @@ export const RadiusSlider = ({
         />
         <View className="flex flex-row justify-between">
           <Text className="text-xs text-muted-foreground">
-            {radiusMinValue} km
+            {rangeMinValue} km
           </Text>
           <Text className="text-xs text-muted-foreground">
-            {radiusMaxValue} km
+            {rangeMaxValue} km
           </Text>
         </View>
       </View>

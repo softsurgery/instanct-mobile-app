@@ -5,11 +5,7 @@ import { ArrowLeft, MapPin, RefreshCw, Save } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import {
-  createSettingRow,
-  SettingRow,
-  SettingRowConfig,
-} from "../../settings/SettingsRow";
+import { createSettingRow, SettingRow } from "../../settings/SettingsRow";
 import { ApplicationHeader } from "../../shared/AppHeader";
 import { StableSafeAreaView } from "../../shared/StableSafeAreaView";
 import StableScrollView from "../../shared/StableScrollView";
@@ -24,10 +20,8 @@ import {
 import { Separator } from "../../ui/separator";
 import { Switch } from "../../ui/switch";
 import { Text } from "../../ui/text";
-import { useCurrentMapConfiguration } from "@/hooks/content/users/useCurrentMapConfiguration";
 import { Button } from "../../ui/button";
 import { Icon } from "../../ui/icon";
-import { useGlobalMapConfiguration } from "@/hooks/content/configurations/useGlobalMapConfiguration";
 import { RadiusSlider } from "./RadiusSlider";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/api";
@@ -40,26 +34,6 @@ interface MapSettingsProps {
 export const MapSettings = ({ className }: MapSettingsProps) => {
   const { t } = useTranslation("common");
   const mapStore = useMapStore();
-
-  //global configuration
-  const {
-    mapConfiguration,
-    isMapConfigurationPending,
-    refetchMapConfiguration,
-  } = useGlobalMapConfiguration();
-
-  //user map configuration
-  const {
-    mapConfiguration: userMapConfiguration,
-    isMapConfigurationPending: isUserMapConfigurationPending,
-    refetchMapConfiguration: refetchUserMapConfiguration,
-  } = useCurrentMapConfiguration();
-
-  React.useEffect(() => {
-    if (userMapConfiguration) {
-      mapStore.setNested("parameters.radius", userMapConfiguration.radius);
-    }
-  }, [userMapConfiguration]);
 
   const [autoRefresh, setAutoRefresh] = React.useState(true);
   const [showClusters, setShowClusters] = React.useState(true);
@@ -89,8 +63,7 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
       });
     },
     onSuccess: () => {
-      refetchUserMapConfiguration();
-      refetchMapConfiguration();
+      router.replace("/main/(tabs)/map");
     },
   });
 
@@ -101,10 +74,9 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
       status: "success",
       message: "Your map configuration has been successfully updated.",
     });
-    router.push("/main/(tabs)/map");
   };
 
-  const isPending = isMapConfigurationPending || isUserMapConfigurationPending;
+  const isPending = isUpdateMapConfigurationPending;
 
   if (isPending) return null;
   return (
@@ -199,8 +171,8 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
                   {...createSettingRow({
                     component: () => (
                       <RadiusSlider
-                        radiusMaxValue={mapConfiguration.rangeMax}
-                        radiusMinValue={mapConfiguration.rangeMin}
+                        rangeMaxValue={mapStore.parameters.rangeMax}
+                        rangeMinValue={mapStore.parameters.rangeMin}
                         onValueChange={handleRadiusChange}
                       />
                     ),
