@@ -130,9 +130,6 @@ export const InspectBaseProfile = ({
   // ---------------------------------------------------------------
   //  PROFILE SECTIONS CONFIG
   // ---------------------------------------------------------------
-  const scrollViewRef = React.useRef<ScrollView>(null);
-  const sectionRefs = React.useRef<{ [key: string]: View | null }>({});
-  const sectionOffsets = React.useRef<{ [key: string]: number }>({});
 
   const profileSections: ProfileSection[] = [
     {
@@ -213,28 +210,11 @@ export const InspectBaseProfile = ({
   const isBadgeSection = (key: string) =>
     key === "industries" || key === "objectives";
 
-  const scrollToSection = (key: string) => {
-    const offset = sectionOffsets.current[key];
-    if (scrollViewRef.current && offset !== undefined) {
-      // Offset includes the container margins, add ~300 for cover + header
-      scrollViewRef.current.scrollTo({ y: offset + 280, animated: true });
-    }
-  };
-
   const renderSection = (section: ProfileSection) => {
     const isBadge = isBadgeSection(section.key);
 
     return (
-      <View
-        key={section.key}
-        ref={(ref) => {
-          sectionRefs.current[section.key] = ref;
-        }}
-        onLayout={(event) => {
-          const { y } = event.nativeEvent.layout;
-          sectionOffsets.current[section.key] = y;
-        }}
-      >
+      <View key={section.key}>
         <Card className={cn("m-0 pt-1")}>
           <CardHeader className="flex flex-row items-center justify-between mt-2 -mb-2">
             <CardTitle>
@@ -333,7 +313,6 @@ export const InspectBaseProfile = ({
   // ---------------------------------------------------------------
   return (
     <StableScrollView
-      ref={scrollViewRef}
       className={cn("flex-1 bg-background", className)}
       refreshControl={
         <RefreshControl
@@ -343,7 +322,7 @@ export const InspectBaseProfile = ({
         />
       }
     >
-      s {/* Cover */}
+      {/* Cover */}
       <View className="relative w-full h-48 bg-card">
         {coverExtra}
         <Image

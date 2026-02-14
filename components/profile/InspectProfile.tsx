@@ -18,7 +18,7 @@ export const InspectProfile = ({ className, id }: InspectProfileProps) => {
         id={id}
         coverExtra={
           <StableSafeAreaView
-            className="absolute top-0 left-0 right-0 z-30 px-2"
+            className="absolute top-0 left-0 right-0 z-30"
             pointerEvents="box-none"
           >
             <ApplicationHeader

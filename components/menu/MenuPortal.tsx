@@ -23,7 +23,7 @@ export const MenuPortal = ({ className }: MenuPortalProps) => {
         id={currentUser?.id as string}
         coverExtra={
           <StableSafeAreaView
-            className="absolute top-0 left-0 right-0 z-30 px-2"
+            className="absolute top-0 left-0 right-0 z-30"
             pointerEvents="box-none"
           >
             <ApplicationHeader
