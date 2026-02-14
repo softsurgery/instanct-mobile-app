@@ -26,6 +26,7 @@ import { RadiusSlider } from "./RadiusSlider";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/api";
 import { showToastable } from "react-native-toastable";
+import { useMapContext } from "@/contexts/MapContext";
 
 interface MapSettingsProps {
   className?: string;
@@ -34,6 +35,7 @@ interface MapSettingsProps {
 export const MapSettings = ({ className }: MapSettingsProps) => {
   const { t } = useTranslation("common");
   const mapStore = useMapStore();
+  const { restartSocket } = useMapContext();
 
   const [autoRefresh, setAutoRefresh] = React.useState(true);
   const [showClusters, setShowClusters] = React.useState(true);
@@ -63,7 +65,8 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
       });
     },
     onSuccess: () => {
-      router.replace("/main/(tabs)/map");
+      restartSocket();
+      router.push("/main/(tabs)/map");
     },
   });
 
