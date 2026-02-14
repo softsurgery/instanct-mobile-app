@@ -7,13 +7,13 @@ import Animated, {
 } from "react-native-reanimated";
 
 interface LoaderProps {
-  isPending: boolean;
+  isPending?: boolean;
   size?: "small" | "large" | number;
   className?: string;
 }
 
 export const Loader: React.FC<LoaderProps> = ({
-  isPending,
+  isPending = true,
   size = "large",
   className,
 }) => {
