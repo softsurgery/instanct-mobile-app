@@ -8,7 +8,7 @@ import {
 import axios from "./axios";
 
 const findCurrent = async (): Promise<ResponseUserDto> => {
-  const response = await axios.get<ResponseUserDto>(`/current-user/current`);
+  const response = await axios.get<ResponseUserDto>(`/current-user`);
   return response.data;
 };
 
@@ -20,7 +20,7 @@ const findById = async (id: string): Promise<ResponseUserDto> => {
 const updateCurrent = async (
   updateUserDto: UpdateUserDto,
 ): Promise<ResponseUserDto> => {
-  const response = await axios.put(`/current-user/current`, updateUserDto);
+  const response = await axios.put(`/current-user`, updateUserDto);
   return response.data;
 };
 

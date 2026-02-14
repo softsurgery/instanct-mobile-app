@@ -14,7 +14,7 @@ import { ResponseEducationDto, ResponseExperienceDto } from "@/types";
 import { format } from "date-fns";
 import { router, useNavigation } from "expo-router";
 import { Pen, Plus } from "lucide-react-native";
-import { Image, RefreshControl, View, ScrollView } from "react-native";
+import { Image, RefreshControl, View } from "react-native";
 import { SeeMoreText } from "../shared/SeeMoreText";
 import { StablePressable } from "../shared/StablePressable";
 import { Separator } from "../ui/separator";

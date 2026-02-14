@@ -13,7 +13,8 @@ import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { MapModes } from "./MapModes";
 import { MapRenderer } from "./MapRenderer";
 import { MapSessionStarter } from "./MapSessionStarter";
-import { MapStatus } from "./MapStatus";
+import { MapStatus } from "./MapDebugging/MapStatus";
+import { MapDebugDialog } from "./MapDebugging/MapDebugDialog";
 
 interface MapPortalProps {
   className?: string;
@@ -80,6 +81,7 @@ export const MapPortal = ({ className }: MapPortalProps) => {
           ]}
         />
         <MapStatus />
+        <MapDebugDialog className="m-4" />
       </StableSafeAreaView>
       {/* Navigation Mode */}
       <MapModes setSessionStarted={setSessionStarted} />

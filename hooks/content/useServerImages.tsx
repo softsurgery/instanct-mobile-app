@@ -13,7 +13,7 @@ import { Skeleton } from "~/components/ui/skeleton";
 import { Text } from "~/components/ui/text";
 
 interface UseServerImagesProps {
-  ids: (number | undefined)[];
+  ids: number[];
   fallbacks?: (string | React.ReactNode | ImageSource | undefined)[];
   size: { width: number; height: number };
   wrapperClassName?: string;
@@ -31,24 +31,44 @@ export const useServerImages = ({
   fallbackClassName,
   enabled = true,
 }: UseServerImagesProps) => {
+  const uniqueIds = React.useMemo(
+    () =>
+      Array.from(
+        new Set(ids.filter((id) => typeof id === "number")),
+      ) as number[],
+    [ids],
+  );
+
   const queries = useQueries({
-    queries: ids.map((id) => ({
+    queries: uniqueIds.map((id) => ({
       queryKey: ["server-image", id],
-      queryFn: async () => (id ? api.upload.getUploadById(id) : null),
-      enabled: !!id && enabled,
+      queryFn: async () => {
+        api.upload.getUploadById(id);
+      },
+      enabled: enabled,
     })),
   });
 
-  const uploads = queries.map((q) => q.data ?? null);
+  // Build a map from ID to query result for O(1) lookups
+  const queryMap = React.useMemo(() => {
+    const map = new Map<number, (typeof queries)[0]>();
+    uniqueIds.forEach((id, index) => {
+      map.set(id, queries[index]);
+    });
+    return map;
+  }, [uniqueIds, queries]);
+
+  const uploads = ids.map((id) =>
+    id ? (queryMap.get(id)?.data ?? null) : null,
+  );
   const isPending = queries.some((q) => q.isPending);
 
   const jsxArray = React.useMemo(() => {
-    return queries.map((q, index) => {
-      const upload = q.data;
-      const id = ids[index];
+    return ids.map((id, index) => {
+      const upload = queryMap.get(id)?.data;
       const fallback = fallbacks[index];
 
-      if (upload && !q.isPending) {
+      if (upload && !queryMap.get(id)?.isPending) {
         return (
           <View
             key={id}
@@ -73,7 +93,7 @@ export const useServerImages = ({
         );
       }
 
-      if (q.isFetching && id) {
+      if (queryMap.get(id)?.isFetching && id) {
         return (
           <Skeleton
             key={id}
@@ -151,7 +171,15 @@ export const useServerImages = ({
         />
       );
     });
-  }, [queries, ids, fallbacks, size, className]);
+  }, [
+    queryMap,
+    ids,
+    fallbacks,
+    size,
+    className,
+    wrapperClassName,
+    fallbackClassName,
+  ]);
 
   return { uploads, isPending, jsxArray };
 };
