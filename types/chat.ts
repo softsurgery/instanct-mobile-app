@@ -1,9 +1,9 @@
-import { ResponseClientDto } from "./user-management";
+import { ResponseUserDto } from "./user-management";
 import { DatabaseEntity } from "./utils";
 
 export interface ResponseConversationDto extends DatabaseEntity {
   id: number;
-  participants: ResponseClientDto[];
+  participants: ResponseUserDto[];
   messages: ResponseMessageDto[];
 }
 
@@ -13,7 +13,11 @@ export interface ResponseMessageDto extends DatabaseEntity {
   conversationId: number;
   conversation: ResponseConversationDto;
   userId: string;
-  user: ResponseClientDto;
+  user: ResponseUserDto;
+}
+
+export interface CreateConversationDto {
+  users: string[];
 }
 
 export interface GroupedMessages {

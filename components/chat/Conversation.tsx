@@ -24,7 +24,6 @@ import { ChatHeaderLeft } from "./conversation/ChatHeaderLeft";
 import { ChatHeaderRight } from "./conversation/ChatHeaderRight";
 
 import { api } from "~/api";
-import { useServerImage } from "~/hooks/content/useServerImage";
 
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
@@ -33,6 +32,7 @@ import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import { usePreferencePersistStore } from "@/stores/usePreferencePersistStore";
 import { ResponseMessageDto } from "~/types";
 import { ConversationInput } from "./conversation/ConversationInput";
+import { useServerImages } from "@/hooks/content/useServerImages";
 
 interface ConversationProps {
   id: number;
@@ -67,15 +67,15 @@ export const Conversation = ({ id }: ConversationProps) => {
   const user = React.useMemo(() => {
     if (!conversation || !currentUser) return null;
     return conversation.participants.find(
-      (participant) => participant.id !== currentUser.id
+      (participant) => participant.id !== currentUser.id,
     );
   }, [conversation, currentUser]);
 
-  const { jsx: profilePicture } = useServerImage({
-    id: user?.profile?.pictureId,
-    fallback: identifyUserAvatar(user),
+  const { jsxArray: profilePictures } = useServerImages({
+    ids: [user?.pictureId],
+    fallbacks: [identifyUserAvatar(user)],
     size: { width: 40, height: 40 },
-    enabled: !!user?.profile?.pictureId,
+    enabled: !!user?.pictureId,
   });
 
   // -----------------------------
@@ -86,7 +86,7 @@ export const Conversation = ({ id }: ConversationProps) => {
       // Sort messages descending
       const sorted = [...msgs].sort(
         (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       );
 
       const grouped: Record<string, ResponseMessageDto[]> = {};
@@ -115,12 +115,12 @@ export const Conversation = ({ id }: ConversationProps) => {
         ];
       });
     },
-    []
+    [],
   );
 
   const flattenedMessages = React.useMemo(
     () => groupMessagesByDay(messages),
-    [messages, groupMessagesByDay]
+    [messages, groupMessagesByDay],
   );
 
   // -----------------------------
@@ -136,7 +136,7 @@ export const Conversation = ({ id }: ConversationProps) => {
         before: before instanceof Date ? before.toISOString() : before,
       });
     },
-    [socket, id]
+    [socket, id],
   );
 
   // -----------------------------
@@ -214,7 +214,7 @@ export const Conversation = ({ id }: ConversationProps) => {
           {/* Header */}
           <View className="flex flex-row bg-background justify-between items-center">
             <ChatHeaderLeft
-              profilePicture={profilePicture}
+              profilePicture={profilePictures[0]}
               identifier={identifyUser(user)}
               lastSeen={format(new Date(), "hh:mm a")}
             />
