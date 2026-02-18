@@ -138,4 +138,6 @@ export interface UpdateEducationDto extends Partial<CreateEducationDto> {}
 // user configuration dtos *****************************************************************************
 export interface UpdateUserMapConfigurationDto {
   radius: number;
+  clusters: boolean;
+  showUsernames: boolean;
 }

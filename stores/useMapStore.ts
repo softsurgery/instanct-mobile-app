@@ -8,6 +8,8 @@ interface MapData {
     rangeMin: number;
     rangeMax: number;
     radius: number;
+    clusters: boolean;
+    showUsernames: boolean;
     mode: "sattelite" | "map";
     updateInterval: number;
   };
@@ -48,6 +50,8 @@ const initialState: MapData = {
     rangeMax: 100,
     rangeMin: 0,
     radius: 0,
+    clusters: true,
+    showUsernames: true,
     updateInterval: 5,
     mode: "map",
   },

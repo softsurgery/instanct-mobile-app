@@ -26,8 +26,17 @@ export const useCurrentMapConfiguration = (
 
   return {
     mapConfiguration: {
-      radius: mapConfiguration?.params?.find((param) => param.name === "radius")
-        ?.value,
+      radius: Number(
+        mapConfiguration?.params?.find((param) => param.name === "radius")
+          ?.value,
+      ),
+      clusters:
+        mapConfiguration?.params?.find((param) => param.name === "clusters")
+          ?.value === "true",
+      showUsernames:
+        mapConfiguration?.params?.find(
+          (param) => param.name === "showUsernames",
+        )?.value === "true",
     },
     isMapConfigurationPending,
     refetchMapConfiguration,

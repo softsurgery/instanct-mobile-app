@@ -86,9 +86,11 @@ export const UserMarker = ({
       </View>
 
       {/* Username */}
-      <Text className="mt-1 text-xs font-extrabold bg-background/50 p-1 rounded-lg text-center">
-        {!isCurrentUser ? user?.username : "You"}
-      </Text>
+      {mapStore.parameters.showUsernames && (
+        <Text className="mt-1 text-xs font-extrabold bg-background/50 p-1 rounded-lg text-center">
+          {!isCurrentUser ? user?.username : "You"}
+        </Text>
+      )}
     </View>
   );
 };

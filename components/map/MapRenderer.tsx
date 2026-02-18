@@ -53,6 +53,11 @@ export const MapRenderer = ({
       mapStore.setNested("parameters.radius", userMapConfiguration.radius);
       mapStore.setNested("parameters.rangeMin", mapConfiguration?.rangeMin);
       mapStore.setNested("parameters.rangeMax", mapConfiguration?.rangeMax);
+      mapStore.setNested("parameters.clusters", userMapConfiguration.clusters);
+      mapStore.setNested(
+        "parameters.showUsernames",
+        userMapConfiguration.showUsernames,
+      );
     }
   }, [userMapConfiguration]);
 

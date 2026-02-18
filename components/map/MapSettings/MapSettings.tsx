@@ -38,8 +38,6 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
   const { restartSocket } = useMapContext();
 
   const [autoRefresh, setAutoRefresh] = React.useState(true);
-  const [showClusters, setShowClusters] = React.useState(true);
-  const [showUsernames, setShowUsernames] = React.useState(true);
 
   const handleRadiusChange = React.useCallback(
     (value: number) => {
@@ -62,6 +60,8 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
     mutationFn: async () => {
       await api.user.updateMapConfiguration({
         radius: mapStore.parameters.radius,
+        clusters: mapStore.parameters.clusters,
+        showUsernames: mapStore.parameters.showUsernames,
       });
     },
     onSuccess: () => {
@@ -133,8 +133,10 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
                     description: "Group nearby users into clusters",
                     rightComponent: (
                       <Switch
-                        checked={showClusters}
-                        onCheckedChange={setShowClusters}
+                        checked={mapStore.parameters.clusters}
+                        onCheckedChange={(value) =>
+                          mapStore.setNested("parameters.clusters", value)
+                        }
                       />
                     ),
                   })}
@@ -149,8 +151,10 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
                     description: "Display usernames on map markers",
                     rightComponent: (
                       <Switch
-                        checked={showUsernames}
-                        onCheckedChange={setShowUsernames}
+                        checked={mapStore.parameters.showUsernames}
+                        onCheckedChange={(value) =>
+                          mapStore.setNested("parameters.showUsernames", value)
+                        }
                       />
                     ),
                   })}
