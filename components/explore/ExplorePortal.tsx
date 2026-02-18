@@ -14,6 +14,7 @@ import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { UserCard } from "./UserCard";
 import { Text } from "../ui/text";
+import { UsersFilter } from "./users-filter/UsersFilter";
 
 interface ExplorePortalProps {
   className?: string;
@@ -23,6 +24,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   const { t } = useTranslation("common");
   const { newCount, resetCount } = useNotificationContext();
   const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [openUserFilters, setOpenUserFilters] = React.useState(false);
 
   const {
     data: usersResponse,
@@ -65,7 +67,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
         shortcuts={[
           {
             icon: ArrowDownNarrowWide,
-            onPress: () => {},
+            onPress: () => setOpenUserFilters(true),
           },
           {
             icon: Bell,
@@ -103,11 +105,15 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
             paddingHorizontal: 0,
           }}
         />
-
         <Text className="font-bold mx-auto my-4">
           {currentIndex + 1} / {users.length}
         </Text>
       </View>
+      <UsersFilter
+        className="h-[45vh] min-w-[90vw]"
+        open={openUserFilters}
+        onOpenChange={setOpenUserFilters}
+      />
     </StableSafeAreaView>
   );
 };
