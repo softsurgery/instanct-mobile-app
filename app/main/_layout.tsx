@@ -128,6 +128,13 @@ export default function MainLayout() {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="profile/user-calendar"
+          options={{
+            title: "Calendar",
+            headerShown: false,
+          }}
+        />
         {/* *************************************************************************************************** */}
         {/* Chat  ********************************************************************************************* */}
         <Stack.Screen

@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { ResponseConversationDto, ResponseUserDto } from "@/types";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { Heart, MessageCircle } from "lucide-react-native";
+import { Heart, MessageCircle, CalendarDays } from "lucide-react-native";
 import React from "react";
 import { Dimensions, View } from "react-native";
 import { Icon } from "../ui/icon";
@@ -124,6 +124,21 @@ export const UserCard = ({ user, className }: UserCardProps) => {
               Like
             </Text>
           </Button>
+          <Button
+            variant="outline"
+            className="flex-1 h-12 rounded-xl flex-row gap-2 border-purple-300"
+            onPress={() =>
+              router.push({
+                pathname: "/main/profile/user-calendar",
+                params: { id: user?.id },
+              })
+            }
+          >
+            <Icon as={CalendarDays} size={18} className="text-purple-500" />
+            <Text className="text-purple-500">Calendar</Text>
+          </Button>
+        </View>
+        <View className="flex-row gap-3 px-5 pb-5">
           <Button
             className="flex-1 h-12 rounded-xl flex-row gap-2 bg-purple-500"
             onPress={() => {
