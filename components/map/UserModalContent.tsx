@@ -1,4 +1,3 @@
-import { useServerImage } from "@/hooks/content/useServerImage";
 import { usePanResponder } from "@/hooks/usePanResponder";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import { cn } from "@/lib/utils";
@@ -12,6 +11,7 @@ import { StablePressable } from "../shared/StablePressable";
 import { Button } from "../ui/button";
 import { Icon } from "../ui/icon";
 import { Text } from "../ui/text";
+import { useServerImages } from "@/hooks/content/useServerImages";
 
 interface UserModalContentProps {
   className?: string;
@@ -37,9 +37,9 @@ export const UserModalContent = ({
     () => identifyUserAvatar(nearbyUser.user),
     [nearbyUser.user],
   );
-  const { jsx: profilePicture } = useServerImage({
-    id: nearbyUser?.user?.pictureId,
-    fallback,
+  const { jsxArray: profilePictures } = useServerImages({
+    ids: [nearbyUser?.user?.pictureId],
+    fallbacks: [fallback],
     className: "rounded-full",
     size: { width: 50, height: 50 },
   });
@@ -58,7 +58,7 @@ export const UserModalContent = ({
         <View className="flex flex-row justify-between items-center my-4">
           <View className="flex-row items-center gap-3">
             <StablePressable onPress={inspectProfile}>
-              {profilePicture}
+              {profilePictures[0]}
             </StablePressable>
             <View className="flex flex-col gap-1">
               <Text className="text-md font-semibold">{identification}</Text>
@@ -94,7 +94,7 @@ export const UserModalContent = ({
         <View className="flex flex-row justify-between items-center my-4">
           <View className="flex-row items-center gap-3">
             <StablePressable onPress={inspectProfile}>
-              {profilePicture}
+              {profilePictures[0]}
             </StablePressable>
             <View className="flex flex-col gap-1">
               <Text className="text-md font-semibold">{identification}</Text>

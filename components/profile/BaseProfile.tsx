@@ -6,7 +6,6 @@ import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { useEducations } from "@/hooks/content/users/useEducations";
 import { useExperiences } from "@/hooks/content/users/useExperiences";
 import { useIdentifiedUser } from "@/hooks/content/users/useIdentifiedUser";
-import { useServerImage } from "@/hooks/content/useServerImage";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import { cn } from "@/lib/utils";
 import { createClientStore, useUserStore } from "@/stores/useUserStore";
@@ -25,6 +24,7 @@ import { useUserIndustries } from "@/hooks/content/users/useUserIndustries";
 import { useUserObjectives } from "@/hooks/content/users/useUserObjectives";
 import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
 import { useObjectives } from "@/hooks/content/reference-types/useObjectives";
+import { useServerImages } from "@/hooks/content/useServerImages";
 
 interface ProfileSection<T = unknown> {
   key: string;
@@ -85,20 +85,24 @@ export const InspectBaseProfile = ({
   const { userObjectives, isUserObjectivesPending, refetchUserObjectives } =
     useUserObjectives({ userId: id, enabled: !!user });
 
-  const { industries, isIndustriesPending, refetchIndustries } =
-    useIndustries();
+  const { industries, isIndustriesPending, refetchIndustries } = useIndustries({
+    enabled: !!user,
+  });
 
-  const { objectives, isObjectivesPending, refetchObjectives } =
-    useObjectives();
+  const { objectives, isObjectivesPending, refetchObjectives } = useObjectives({
+    enabled: !!user,
+  });
 
   const identity = React.useMemo(() => identifyUser(user), [user]);
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
-  const { jsx: profilePicture } = useServerImage({
-    id: user?.pictureId,
-    fallback,
+
+  const { jsxArray: profilePictures } = useServerImages({
+    ids: [user?.pictureId],
+    fallbacks: [fallback],
     wrapperClassName:
       "border border-border bg-background rounded-full shadow-md",
     size: { width: 100, height: 100 },
+    enabled: !!user,
   });
 
   React.useEffect(() => {
@@ -333,7 +337,7 @@ export const InspectBaseProfile = ({
       </View>
       {/* Header */}
       <View className="flex-row items-center px-5 -mt-12">
-        <View>{profilePicture}</View>
+        <View>{profilePictures[0]}</View>
 
         <View className="flex-1 mt-16">
           <View className="flex-row items-center justify-between mx-2">

@@ -1,5 +1,5 @@
 import { StablePressable } from "@/components/shared/StablePressable";
-import { useServerImage } from "@/hooks/content/useServerImage";
+import { useServerImages } from "@/hooks/content/useServerImages";
 import { identifyUserAvatar } from "@/lib/user";
 import { cn } from "@/lib/utils";
 import { useMapStore } from "@/stores/useMapStore";
@@ -19,16 +19,16 @@ export const UserCarouselEntry = ({
   const mapStore = useMapStore();
   const user = React.useMemo(
     () => mapStore.getUserById(userId),
-    [userId, mapStore.users]
+    [userId, mapStore.users],
   );
   const nearbyUser = React.useMemo(
     () => mapStore.getNearbyUserById(userId),
-    [userId]
+    [userId],
   );
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
-  const { jsx: profilePicture } = useServerImage({
-    id: user?.pictureId,
-    fallback,
+  const { jsxArray: profilePictures } = useServerImages({
+    ids: [user?.pictureId],
+    fallbacks: [fallback],
     className: "rounded-full",
     size: { width: 50, height: 50 },
   });
@@ -38,7 +38,7 @@ export const UserCarouselEntry = ({
       className={cn(className)}
       onPress={() => onPress?.({ ...nearbyUser, user })}
     >
-      {profilePicture}
+      {profilePictures[0]}
     </StablePressable>
   );
 };

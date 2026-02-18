@@ -7,8 +7,8 @@ import { Text } from "~/components/ui/text";
 import { cn } from "~/lib/utils";
 import { ResponseUserDto } from "~/types";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
-import { useServerImage } from "~/hooks/content/useServerImage";
 import { UserStore } from "@/stores/useUserStore";
+import { useServerImages } from "@/hooks/content/useServerImages";
 
 interface UserEntryProps {
   className?: string;
@@ -23,9 +23,9 @@ export const UserEntry = ({
   useStore,
   closeDialog,
 }: UserEntryProps) => {
-  const { jsx: profilePicture } = useServerImage({
-    id: user?.pictureId,
-    fallback: identifyUserAvatar(user),
+  const { jsxArray: profilePictures } = useServerImages({
+    ids: [user?.pictureId],
+    fallbacks: [identifyUserAvatar(user)],
     size: { width: 40, height: 40 },
   });
 
@@ -34,7 +34,7 @@ export const UserEntry = ({
       className={cn("p-2", className)}
       onPress={() => {
         router.push({
-          pathname: "/main/inspect-profile",
+          pathname: "/main/profile/inspect-profile",
           params: { id: user.id },
         });
         closeDialog?.();
@@ -44,7 +44,7 @@ export const UserEntry = ({
       <View className="flex-row items-center justify-between">
         <View className="flex flex-row justify-between items-center gap-3">
           <View className="w-10 h-10 bg-accent/20 rounded-full items-center justify-center">
-            {profilePicture}
+            {profilePictures[0]}
           </View>
           <View>
             <Text className="text-base font-medium text-card-foreground">

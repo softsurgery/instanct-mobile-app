@@ -13,7 +13,7 @@ import { Skeleton } from "~/components/ui/skeleton";
 import { Text } from "~/components/ui/text";
 
 interface UseServerImagesProps {
-  ids: number[];
+  ids: (number | undefined)[];
   fallbacks?: (string | React.ReactNode | ImageSource | undefined)[];
   size: { width: number; height: number };
   wrapperClassName?: string;
@@ -42,9 +42,7 @@ export const useServerImages = ({
   const queries = useQueries({
     queries: uniqueIds.map((id) => ({
       queryKey: ["server-image", id],
-      queryFn: async () => {
-        api.upload.getUploadById(id);
-      },
+      queryFn: () => api.upload.getUploadById(id),
       enabled: enabled,
     })),
   });
@@ -58,20 +56,21 @@ export const useServerImages = ({
     return map;
   }, [uniqueIds, queries]);
 
-  const uploads = ids.map((id) =>
-    id ? (queryMap.get(id)?.data ?? null) : null,
+  const uploads = uniqueIds.map(
+    (id) => queryMap.get(id)?.data as ImageSource | undefined,
   );
   const isPending = queries.some((q) => q.isPending);
 
   const jsxArray = React.useMemo(() => {
     return ids.map((id, index) => {
-      const upload = queryMap.get(id)?.data;
+      const upload = id !== undefined ? queryMap.get(id)?.data : undefined;
+      const query = id !== undefined ? queryMap.get(id) : undefined;
       const fallback = fallbacks[index];
 
-      if (upload && !queryMap.get(id)?.isPending) {
+      if (upload && !query?.isPending) {
         return (
           <View
-            key={id}
+            key={index}
             className={cn(wrapperClassName, "flex items-center justify-center")}
             style={{
               width: size.width * 1.05,
@@ -93,10 +92,10 @@ export const useServerImages = ({
         );
       }
 
-      if (queryMap.get(id)?.isFetching && id) {
+      if (query?.isFetching && id !== undefined) {
         return (
           <Skeleton
-            key={id}
+            key={index}
             style={{
               width: size.width,
               height: size.height,
@@ -113,7 +112,7 @@ export const useServerImages = ({
       ) {
         return (
           <View
-            key={id}
+            key={index}
             className={cn(wrapperClassName, "flex items-center justify-center")}
             style={{
               width: size.width * 1.05,
@@ -138,7 +137,7 @@ export const useServerImages = ({
       if (typeof fallback === "string") {
         return (
           <Avatar
-            key={id}
+            key={index}
             className={cn(className)}
             style={{
               width: size.width,
@@ -157,12 +156,12 @@ export const useServerImages = ({
       }
 
       if (React.isValidElement(fallback)) {
-        return React.cloneElement(fallback, { key: id });
+        return React.cloneElement(fallback, { key: index });
       }
 
       return (
         <Skeleton
-          key={id}
+          key={index}
           style={{
             width: size.width,
             height: size.height,

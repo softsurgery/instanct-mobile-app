@@ -1,5 +1,4 @@
 import { useIdentifiedUser } from "@/hooks/content/users/useIdentifiedUser";
-import { useServerImage } from "@/hooks/content/useServerImage";
 import { usePulseAnimation } from "@/hooks/usePulseAnimation";
 import { identifyUserAvatar } from "@/lib/user";
 import { cn } from "@/lib/utils";
@@ -7,6 +6,7 @@ import { useMapStore } from "@/stores/useMapStore";
 import React from "react";
 import { Animated, View } from "react-native";
 import { Text } from "../ui/text";
+import { useServerImages } from "@/hooks/content/useServerImages";
 
 interface UserMarkerProps {
   className?: string;
@@ -34,9 +34,9 @@ export const UserMarker = ({
 
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
 
-  const { jsx: profilePicture } = useServerImage({
-    id: user?.pictureId,
-    fallback,
+  const { jsxArray: profilePictures } = useServerImages({
+    ids: [user?.pictureId],
+    fallbacks: [fallback],
     className: "rounded-full",
     wrapperClassName: "bg-foreground/25",
     fallbackClassName: "text-xs",
@@ -81,7 +81,7 @@ export const UserMarker = ({
             alignItems: "center",
           }}
         >
-          {profilePicture}
+          {profilePictures[0]}
         </View>
       </View>
 

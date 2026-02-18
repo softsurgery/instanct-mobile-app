@@ -1,8 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { useServerImage } from "@/hooks/content/useServerImage";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import { cn } from "@/lib/utils";
-import { ResponseUserDto } from "@/types";
+import { ResponseConversationDto, ResponseUserDto } from "@/types";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { Heart, MessageCircle } from "lucide-react-native";
@@ -13,6 +12,8 @@ import { Text } from "../ui/text";
 import { ImageBackground } from "expo-image";
 import { StablePressable } from "../shared/StablePressable";
 import { Badge } from "../ui/badge";
+import { useStartConversation } from "@/hooks/content/chat/useStartConversation";
+import { useServerImages } from "@/hooks/content/useServerImages";
 
 const { width } = Dimensions.get("window");
 
@@ -27,19 +28,24 @@ export const UserCard = ({ user, className }: UserCardProps) => {
   const identity = React.useMemo(() => identifyUser(user), [user]);
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
 
-  const { jsx: profilePicture, upload: uploadedProfilePicture } =
-    useServerImage({
-      id: user?.pictureId,
-      fallback,
+  const { jsxArray: profilePictures, uploads: uploadedProfilePicture } =
+    useServerImages({
+      ids: [user?.pictureId],
+      fallbacks: [fallback],
       wrapperClassName: "border-4 border-white bg-white rounded-full shadow-lg",
       size: { width: 100, height: 100 },
     });
 
   const router = useRouter();
 
-  const experiences = React.useMemo(() => {
-    return user.experiences?.map((exp) => exp.title) ?? [];
-  }, [user.experiences]);
+  const { startConversation, isStartingConversation } = useStartConversation({
+    onSuccess: (conversation: ResponseConversationDto) => {
+      router.push({
+        pathname: "/main/chat/conversation",
+        params: { id: conversation.id },
+      });
+    },
+  });
 
   return (
     <View
@@ -48,7 +54,7 @@ export const UserCard = ({ user, className }: UserCardProps) => {
     >
       <View className="flex-1 bg-background rounded-3xl overflow-hidden border-2 border-purple-200 shadow-xl">
         <ImageBackground
-          source={{ uri: uploadedProfilePicture as string }}
+          source={{ uri: uploadedProfilePicture[0] as string }}
           style={{ height: 250, width: "100%" }}
           blurRadius={10}
         >
@@ -70,7 +76,7 @@ export const UserCard = ({ user, className }: UserCardProps) => {
                   })
                 }
               >
-                {profilePicture}
+                {profilePictures[0]}
               </StablePressable>
 
               <View className="flex flex-col items-end flex-[4]">
@@ -120,7 +126,9 @@ export const UserCard = ({ user, className }: UserCardProps) => {
           </Button>
           <Button
             className="flex-1 h-12 rounded-xl flex-row gap-2 bg-purple-500"
-            onPress={() => router.push("/main/chat")}
+            onPress={() => {
+              startConversation({ users: [user.id] });
+            }}
           >
             <Icon as={MessageCircle} size={18} className="text-white" />
             <Text className="text-white font-semibold">Message</Text>
