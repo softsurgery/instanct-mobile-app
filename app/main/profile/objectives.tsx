@@ -1,4 +1,4 @@
-import { ObjectivesManagement } from "@/components/profile/user-params/objectives/ObjectiveManagement";
+import { ObjectivesManagement } from "@/components/profile/forms/ObjectiveManagement";
 
 export default function Screen() {
   return <ObjectivesManagement />;

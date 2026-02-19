@@ -1,4 +1,4 @@
-import { IndustriesManagement } from "@/components/profile/user-params/industries/IndustrieManagement";
+import { IndustriesManagement } from "@/components/profile/forms/IndustrieManagement";
 
 export default function Screen() {
   return <IndustriesManagement />;
