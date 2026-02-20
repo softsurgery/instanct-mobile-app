@@ -4,13 +4,12 @@ import { StyleProp, ViewStyle } from "react-native";
 import {
   KeyboardAwareScrollView,
   KeyboardAwareScrollViewProps,
-} from "react-native-keyboard-aware-scroll-view";
+} from "@react-native-ohos/react-native-keyboard-aware-scroll-view";
 
-interface StableKeyboardAwareScrollViewProps
-  extends Omit<
-    KeyboardAwareScrollViewProps,
-    "style" | "contentContainerStyle"
-  > {
+interface StableKeyboardAwareScrollViewProps extends Omit<
+  KeyboardAwareScrollViewProps,
+  "style" | "contentContainerStyle"
+> {
   className?: string;
   children?: ReactNode;
   style?: StyleProp<ViewStyle>;
@@ -21,16 +20,24 @@ export const StableKeyboardAwareScrollView = forwardRef<
   KeyboardAwareScrollView,
   StableKeyboardAwareScrollViewProps
 >((props, ref) => {
-  const { className, children, style, contentContainerStyle, ...rest } = props;
+  const {
+    className,
+    children,
+    style,
+    contentContainerStyle,
+    showsHorizontalScrollIndicator = false,
+    showsVerticalScrollIndicator = false,
+    bounces = true,
+    ...rest
+  } = props;
 
   return (
     <KeyboardAwareScrollView
       className={cn(className)}
       ref={ref}
-      keyboardShouldPersistTaps="handled"
-      showsHorizontalScrollIndicator={false}
-      showsVerticalScrollIndicator={false}
-      bounces={false}
+      showsHorizontalScrollIndicator={showsHorizontalScrollIndicator}
+      showsVerticalScrollIndicator={showsVerticalScrollIndicator}
+      bounces={bounces}
       style={style}
       contentContainerStyle={contentContainerStyle}
       enableOnAndroid={true}
