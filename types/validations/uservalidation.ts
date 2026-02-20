@@ -1,18 +1,6 @@
 import { z } from "zod";
 
 const baseUserSchema = z.object({
-  username: z
-    .string()
-    .regex(/^[a-zA-Z0-9_]+$/, {
-      message: "userManagement.validation.invalidUsernameFormat",
-    })
-    .min(3, {
-      message: "userManagement.validation.invalidUsernameLength",
-    }),
-  email: z
-    .string()
-    .email({ message: "userManagement.validation.invalidEmail" }),
-
   firstName: z
     .string()
     .min(3, {
@@ -57,11 +45,7 @@ const baseUserSchema = z.object({
 });
 
 function updateUserSchema() {
-  return baseUserSchema.extend({
-    roleId: z.string({
-      message: "userManagement.validation.roleRequired",
-    }),
-  });
+  return baseUserSchema;
 }
 
 export { updateUserSchema };

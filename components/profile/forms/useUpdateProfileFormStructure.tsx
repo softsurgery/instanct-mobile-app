@@ -13,10 +13,15 @@ import { UserStore } from "@/stores/useUserStore";
 
 interface useUpdateProfileFormStructureProps {
   store: UserStore;
+  uploadPicture: (options: {
+    files: File[];
+    onProgress: (progress: number) => void;
+  }) => void;
 }
 
 export const useUpdateProfileFormStructure = ({
   store,
+  uploadPicture,
 }: useUpdateProfileFormStructureProps) => {
   // picture
   const pictureField: Field<PictureFieldProps> = {
@@ -35,13 +40,13 @@ export const useUpdateProfileFormStructure = ({
       },
       onUpload: (file, onProgress) => {
         store.set("progress", 0);
-        // uploadPicture({
-        //   files: [file],
-        //   onProgress: (progress: number) => {
-        //     store.set("progress", progress);
-        //     onProgress(progress);
-        //   },
-        // });
+        uploadPicture({
+          files: [file],
+          onProgress: (progress: number) => {
+            store.set("progress", progress);
+            onProgress(progress);
+          },
+        });
       },
     },
   };
@@ -140,30 +145,11 @@ export const useUpdateProfileFormStructure = ({
     },
   };
 
-  const cinField: Field<TextFieldProps> = {
-    id: "cin",
-    label: "CIN",
-    variant: FieldVariant.TEXT,
-    required: false,
-    placeholder: "Enter your CIN",
-    disabled: true,
-    description: "Your national identification number.",
-    error: store?.errors?.cin?.[0],
-    props: {
-      value: store?.updateDto?.cin,
-      onChangeText: (value: string) => {
-        store.setNested("updateDto.cin", value);
-        store.setNested("errors.cin", []);
-      },
-    },
-  };
-
   const structure: FormStructure = {
     title: "Update Profile",
     fieldsets: [
       {
         title: "Personal Information",
-        isHeaderVisible: true,
         rows: [
           {
             id: 1,
@@ -184,10 +170,6 @@ export const useUpdateProfileFormStructure = ({
           {
             id: 5,
             fields: [genderField],
-          },
-          {
-            id: 6,
-            fields: [cinField],
           },
         ],
       },

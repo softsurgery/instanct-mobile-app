@@ -29,6 +29,7 @@ interface UserData {
 
   //utils
   picture?: string;
+  hasInitializedPicture?: boolean;
   progress: number;
 
   //errors
@@ -93,6 +94,7 @@ const initialState: UserData = {
     description: "",
   },
   picture: undefined,
+  hasInitializedPicture: false,
   progress: 0,
 
   errors: {},
