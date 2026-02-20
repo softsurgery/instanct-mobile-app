@@ -49,7 +49,7 @@ export const MapRenderer = ({
   } = useCurrentMapConfiguration();
 
   React.useEffect(() => {
-    if (userMapConfiguration) {
+    if (userMapConfiguration && !mapStore.hasInitializedParameters) {
       mapStore.setNested("parameters.radius", userMapConfiguration.radius);
       mapStore.setNested("parameters.rangeMin", mapConfiguration?.rangeMin);
       mapStore.setNested("parameters.rangeMax", mapConfiguration?.rangeMax);
@@ -58,6 +58,7 @@ export const MapRenderer = ({
         "parameters.showUsernames",
         userMapConfiguration.showUsernames,
       );
+      mapStore.set("hasInitializedParameters", true);
     }
   }, [userMapConfiguration]);
 

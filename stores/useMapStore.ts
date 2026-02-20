@@ -13,6 +13,7 @@ interface MapData {
     mode: "sattelite" | "map";
     updateInterval: number;
   };
+  hasInitializedParameters: boolean;
   connected: boolean;
   location: Location.LocationObject | null;
   users: ResponseUserDto[];
@@ -55,6 +56,7 @@ const initialState: MapData = {
     updateInterval: 5,
     mode: "map",
   },
+  hasInitializedParameters: false,
   connected: false,
   location: null,
   users: [],
