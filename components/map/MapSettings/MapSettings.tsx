@@ -23,7 +23,7 @@ import { Text } from "../../ui/text";
 import { Button } from "../../ui/button";
 import { Icon } from "../../ui/icon";
 import { RadiusSlider } from "./RadiusSlider";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api";
 import { showToastable } from "react-native-toastable";
 import { useMapContext } from "@/contexts/MapContext";
@@ -36,6 +36,7 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
   const { t } = useTranslation("common");
   const mapStore = useMapStore();
   const { restartSocket } = useMapContext();
+  const queryClient = useQueryClient();
 
   const [autoRefresh, setAutoRefresh] = React.useState(true);
 
@@ -66,6 +67,9 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
     },
     onSuccess: () => {
       restartSocket();
+      queryClient.invalidateQueries({
+        queryKey: ["current-map-configuration"],
+      });
       router.push("/main/(tabs)/map");
     },
   });

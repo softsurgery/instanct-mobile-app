@@ -15,14 +15,16 @@ export const useGlobalMapConfiguration = (
     });
 
   return {
-    mapConfiguration: {
-      rangeMax: Number(
-        configuration?.params?.find((p) => p.name === "range.max")?.value,
-      ),
-      rangeMin: Number(
-        configuration?.params?.find((p) => p.name === "range.min")?.value,
-      ),
-    },
+    mapConfiguration: configuration
+      ? {
+          rangeMax: Number(
+            configuration?.params?.find((p) => p.name === "range.max")?.value,
+          ),
+          rangeMin: Number(
+            configuration?.params?.find((p) => p.name === "range.min")?.value,
+          ),
+        }
+      : null,
     isMapConfigurationPending: isConfigurationPending,
     refetchMapConfiguration: refetchConfiguration,
   };
