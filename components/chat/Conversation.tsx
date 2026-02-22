@@ -218,7 +218,7 @@ export const Conversation = ({ id }: ConversationProps) => {
               identifier={identifyUser(user)}
               lastSeen={format(new Date(), "hh:mm a")}
             />
-            <ChatHeaderRight />
+            <ChatHeaderRight conversationId={id} />
           </View>
 
           {/* Messages */}

@@ -151,6 +151,13 @@ export default function MainLayout() {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="chat/conversation-details"
+          options={{
+            title: "Conversation Details",
+            headerShown: false,
+          }}
+        />
         {/* *************************************************************************************************** */}
         {/* Settings  ****************************************************************************************** */}
         <Stack.Screen
