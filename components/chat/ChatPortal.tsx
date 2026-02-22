@@ -1,12 +1,11 @@
-import { useNotificationContext } from "@/contexts/NotificationsContext";
+import React from "react";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { useDebounce } from "@/hooks/useDebounce";
 import { LegendList } from "@legendapp/list";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { router } from "expo-router";
-import { ArrowLeft } from "lucide-react-native";
-import React from "react";
+import { ArrowLeft, Search, X } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { RefreshControl, View } from "react-native";
 import { api } from "~/api";
@@ -15,8 +14,10 @@ import { ResponseConversationDto } from "~/types";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StablePressable } from "../shared/StablePressable";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
+import { Input } from "../ui/input";
 import { Text } from "../ui/text";
 import { UserEntry } from "./UserEntry";
+import { Icon } from "../ui/icon";
 
 interface ChatPortalProps {
   className?: string;
@@ -24,7 +25,8 @@ interface ChatPortalProps {
 
 export const ChatPortal = ({ className }: ChatPortalProps) => {
   const { t } = useTranslation("common");
-  const { newCount, resetCount } = useNotificationContext();
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const { value: debouncedSearchQuery } = useDebounce(searchQuery, 500);
 
   const { currentUser } = useCurrentUser();
 
@@ -37,12 +39,13 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
     isRefetching,
     isPending: isConversationsPending,
   } = useInfiniteQuery({
-    queryKey: ["conversations"],
+    queryKey: ["conversations", debouncedSearchQuery],
     initialPageParam: 1,
     queryFn: ({ pageParam = 1 }) =>
       api.chat.conversation.findPaginatedUserConversations({
         page: String(pageParam),
         limit: "5",
+        search: debouncedSearchQuery,
       }),
     getNextPageParam: (lastPage) =>
       lastPage.meta.hasNextPage ? lastPage.meta.page + 1 : undefined,
@@ -116,6 +119,22 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
       />
 
       <View className="flex-1 bg-background">
+        {/* Search Bar */}
+        <View className="flex flex-row items-center gap-2 border-b border-border px-3 py-4">
+          <Icon as={Search} size={18} className="text-muted-foreground" />
+          <Input
+            placeholder={"Search conversations..."}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            className="flex-1 border-0 bg-transparent placeholder:text-muted-foreground py-0 h-9"
+            placeholderTextColor="rgba(109, 114, 120, 0.7)"
+          />
+          {searchQuery !== "" && (
+            <StablePressable onPress={() => setSearchQuery("")}>
+              <Icon as={X} size={18} className="text-muted-foreground" />
+            </StablePressable>
+          )}
+        </View>
         {/* Manual Tabs */}
 
         <View className="flex-1 px-3">
