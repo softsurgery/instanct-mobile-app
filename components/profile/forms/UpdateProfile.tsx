@@ -20,7 +20,6 @@ import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import React from "react";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { identifyUserAvatar } from "@/lib/user";
-import { user } from "@/api/user";
 import { useUploadMutation } from "@/hooks/useUploadMutation";
 
 interface UpdateProfileProps {
@@ -28,8 +27,45 @@ interface UpdateProfileProps {
 }
 
 export const UpdateProfile = ({ className }: UpdateProfileProps) => {
+  const { t } = useTranslation("common");
   const userStore = useUserStore();
   const queryClient = useQueryClient();
+
+  const { mutate: updateUser, isPending: isUpdatePending } = useMutation({
+    mutationFn: (user: UpdateUserDto) => api.user.updateCurrent(user),
+    onSuccess: () => {
+      router.back();
+      showToastable({
+        message: "Profile updated successfully",
+        status: "success",
+      });
+      userStore.reset();
+      queryClient.invalidateQueries({ queryKey: ["user", currentUser?.id] });
+      queryClient.invalidateQueries({ queryKey: ["current-user"] });
+      queryClient.invalidateQueries({
+        queryKey: ["server-image", currentUser?.pictureId],
+      });
+      refetchCurrentUser();
+    },
+    onError: (error: ServerErrorResponse) => {
+      showToastable({
+        message: error.response?.data?.message,
+        status: "danger",
+      });
+    },
+  });
+
+  const handleUpdateSubmit = () => {
+    const data = userStore.updateDto;
+    const result = updateUserSchema().safeParse({
+      ...data,
+    });
+    if (!result.success) {
+      userStore.set("errors", result.error.flatten().fieldErrors);
+    } else {
+      updateUser(data);
+    }
+  };
 
   const {
     uploadFiles: uploadProfilePicture,
@@ -49,8 +85,9 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
   const { structure } = useUpdateProfileFormStructure({
     store: userStore,
     uploadPicture: uploadProfilePicture,
+    isProfilePictureUploadPending,
   });
-  const { t } = useTranslation("common");
+
   const { currentUser, refetchCurrentUser, isCurrentUserPending } =
     useCurrentUser();
 
@@ -66,6 +103,9 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
         gender: currentUser.gender,
       });
     }
+    return () => {
+      userStore.reset();
+    };
   }, [currentUser]);
 
   const fallback = React.useMemo(
@@ -90,39 +130,8 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
       userStore.set("picture", profileUploads[0] as string);
       userStore.set("hasInitializedPicture", true);
     }
-  }, [profileUploads]);
+  }, [profileUploads, currentUser?.pictureId]);
 
-  const { mutate: updateUser, isPending: isUpdatePending } = useMutation({
-    mutationFn: (user: UpdateUserDto) => api.user.updateCurrent(user),
-    onSuccess: () => {
-      router.back();
-      showToastable({
-        message: "Profile updated successfully",
-        status: "success",
-      });
-      userStore.reset();
-      queryClient.invalidateQueries({ queryKey: ["user", currentUser?.id] });
-      refetchCurrentUser();
-    },
-    onError: (error: ServerErrorResponse) => {
-      showToastable({
-        message: error.response?.data?.message,
-        status: "danger",
-      });
-    },
-  });
-
-  const handleUpdateSubmit = () => {
-    const data = userStore.updateDto;
-    const result = updateUserSchema().safeParse({
-      ...data,
-    });
-    if (!result.success) {
-      userStore.set("errors", result.error.flatten().fieldErrors);
-    } else {
-      updateUser(data);
-    }
-  };
   return (
     <StableSafeAreaView className={cn("flex-1", className)}>
       <ApplicationHeader
@@ -142,7 +151,12 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
         <FormBuilder structure={structure} className="mt-4 px-2" />
       </StableKeyboardAwareScrollView>
       <View className="absolute bottom-0 left-0 right-0 border-t border-border bg-card p-8 pt-4">
-        <Button size="sm" className="rounded-full" onPress={handleUpdateSubmit}>
+        <Button
+          size="sm"
+          className="rounded-full"
+          onPress={handleUpdateSubmit}
+          disabled={isUpdatePending}
+        >
           <Text>Update Profile</Text>
         </Button>
       </View>

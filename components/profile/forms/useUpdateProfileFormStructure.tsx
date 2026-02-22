@@ -17,11 +17,15 @@ interface useUpdateProfileFormStructureProps {
     files: File[];
     onProgress: (progress: number) => void;
   }) => void;
+  isProfilePictureUploadPending: boolean;
+  isPending?: boolean;
 }
 
 export const useUpdateProfileFormStructure = ({
   store,
   uploadPicture,
+  isProfilePictureUploadPending,
+  isPending = false,
 }: useUpdateProfileFormStructureProps) => {
   // picture
   const pictureField: Field<PictureFieldProps> = {
@@ -34,7 +38,7 @@ export const useUpdateProfileFormStructure = ({
     props: {
       image: store?.picture,
       alt: "?",
-      editable: false,
+      editable: !isProfilePictureUploadPending && !isPending,
       onFileChange: (value) => {
         store.set("picture", value);
       },
@@ -58,7 +62,7 @@ export const useUpdateProfileFormStructure = ({
     variant: FieldVariant.TEXT,
     required: true,
     placeholder: "Enter your first name",
-    disabled: false,
+    disabled: isPending,
     description: "Your first name (e.g., John).",
     error: store?.errors?.firstName?.[0],
     props: {
@@ -77,7 +81,7 @@ export const useUpdateProfileFormStructure = ({
     variant: FieldVariant.TEXT,
     required: true,
     placeholder: "Enter your last name",
-    disabled: false,
+    disabled: isPending,
     description: "Your last name (e.g., Doe).",
     error: store?.errors?.lastName?.[0],
     props: {
@@ -94,7 +98,7 @@ export const useUpdateProfileFormStructure = ({
     id: "dateOfBirth",
     label: "Date of Birth",
     variant: FieldVariant.DATE,
-    disabled: false,
+    disabled: isPending,
     description: "Let us know when you celebrate!",
     error: store?.errors?.dateOfBirth?.[0],
     props: {
@@ -112,7 +116,7 @@ export const useUpdateProfileFormStructure = ({
     label: "Bio",
     variant: FieldVariant.TEXTAREA,
     placeholder: "Write a short bio...",
-    disabled: false,
+    disabled: isPending,
     description: "Tell us a little bit about yourself.",
     error: store?.errors?.bio?.[0],
     props: {
@@ -129,7 +133,7 @@ export const useUpdateProfileFormStructure = ({
     id: "gender",
     label: "Gender",
     variant: FieldVariant.SELECT,
-    disabled: false,
+    disabled: isPending,
     description: "Specifying your gender helps us personalize your experience.",
     error: store?.errors?.gender?.[0],
     props: {
