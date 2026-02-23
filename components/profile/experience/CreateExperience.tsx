@@ -15,6 +15,7 @@ import { ArrowLeft } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { showToastable } from "react-native-toastable";
+import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 import { useCreateExperienceFormStructure } from "./useCreateExperienceFormStructure";
 
 interface CreateExperienceProps {
@@ -23,6 +24,7 @@ interface CreateExperienceProps {
 
 export const CreateExperience = ({ className }: CreateExperienceProps) => {
   const { t } = useTranslation("common");
+  const isKeyboardVisible = useKeyboardVisible();
   const userStore = useUserStore();
   const queryClient = useQueryClient();
 
@@ -67,7 +69,7 @@ export const CreateExperience = ({ className }: CreateExperienceProps) => {
     <StableSafeAreaView className={cn("flex-1", className)}>
       <ApplicationHeader
         className="border-b border-border pb-2 bg-transparent"
-        title={t("screens.experience")}
+        title={"Add Experience"}
         titleVariant="large"
         reverse
         shortcuts={[
@@ -81,19 +83,27 @@ export const CreateExperience = ({ className }: CreateExperienceProps) => {
 
       {/* Scrollable content */}
       <StableKeyboardAwareScrollView className="flex-1 bg-background">
-        <FormBuilder structure={structure} className="mt-4 px-2" />
+        <View className="p-4">
+          <Text className="text-sm text-muted-foreground leading-relaxed">
+            Please provide details about your experience. This information will
+            help others understand your background and expertise.
+          </Text>
+        </View>
+        <FormBuilder structure={structure} className=" px-2" />
       </StableKeyboardAwareScrollView>
 
       {/* Sticky bottom button */}
-      <View className="py-6 border-t border-border">
-        <Button
-          size="sm"
-          className="mx-6 mb-4 rounded-full"
-          onPress={handleCreateSubmit}
-        >
-          <Text>Create Experience</Text>
-        </Button>
-      </View>
+      {!isKeyboardVisible && (
+        <View className="py-6 border-t border-border">
+          <Button
+            size="sm"
+            className="mx-6 mb-4 rounded-full"
+            onPress={handleCreateSubmit}
+          >
+            <Text>Create Experience</Text>
+          </Button>
+        </View>
+      )}
     </StableSafeAreaView>
   );
 };
