@@ -50,6 +50,12 @@ export default ({ config }) => ({
         },
       },
     ],
+    [
+      "expo-audio",
+      {
+        "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+      }
+    ]
   ],
   experiments: {
     typedRoutes: true,

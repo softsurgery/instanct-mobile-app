@@ -1,5 +1,5 @@
-import { Info } from "lucide-react-native";
 import { router } from "expo-router";
+import { EllipsisVertical } from "lucide-react-native";
 import { StablePressable } from "~/components/shared/StablePressable";
 import { Icon } from "~/components/ui/icon";
 import { cn } from "~/lib/utils";
@@ -15,15 +15,16 @@ export const ChatHeaderRight = ({
 }: ChatHeaderRightProps) => {
   return (
     <StablePressable
-      className={cn("mx-2", className)}
+      className={cn("mx-2 p-2", className)}
       onPress={() => {
         router.push({
           pathname: "/main/chat/conversation-details",
           params: { id: String(conversationId) },
         });
       }}
+      onPressClassname="bg-secondary"
     >
-      <Icon as={Info} size={20} />
+      <Icon as={EllipsisVertical} size={24} />
     </StablePressable>
   );
 };

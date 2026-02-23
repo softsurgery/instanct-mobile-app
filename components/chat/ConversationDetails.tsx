@@ -455,7 +455,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
         className="border-b border-border pb-2 bg-card"
       />
       <StableScrollView className="bg-background">
-        <View className="items-center pt-8 pb-6">
+        <View className="items-center m-4 p-4 bg-card rounded-lg">
           <View className="relative">
             {profilePicture}
             <View className="absolute bottom-0 right-0 w-6 h-6 bg-green-500 border-2 border-background rounded-full" />

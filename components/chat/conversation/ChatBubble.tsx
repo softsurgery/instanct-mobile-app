@@ -66,8 +66,8 @@ export const ChatBubble = ({
           className={cn(
             "max-w-[80%] mx-2 rounded-lg mt-2",
             right
-              ? "self-end rounded-bl-xl rounded-br-none bg-muted"
-              : "self-start rounded-br-xl rounded-bl-none bg-secondary"
+              ? "self-end rounded-bl-xl rounded-br-none bg-primary"
+              : "self-start rounded-br-xl rounded-bl-none bg-secondary",
           )}
         >
           <StablePressable

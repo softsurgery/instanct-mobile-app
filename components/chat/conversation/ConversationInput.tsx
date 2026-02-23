@@ -25,24 +25,13 @@ export const ConversationInput = ({
 
   return (
     <View
-      className={cn(
-        "absolute bottom-4 left-4 right-4 flex flex-row items-end justify-between",
-        className
-      )}
+      className={cn("flex flex-row items-end justify-between", className)}
       style={{
         zIndex: 20,
-        elevation: 10, // Android floating shadow
+        elevation: 10,
       }}
     >
-      <View
-        className="flex flex-row items-end justify-between bg-background px-3 py-3 rounded-2xl shadow-md flex-1 border border-border"
-        style={{
-          shadowColor: "#000",
-          shadowOpacity: 0.15,
-          shadowRadius: 6,
-          shadowOffset: { width: 0, height: 3 },
-        }}
-      >
+      <View className="flex flex-row items-center justify-between bg-background px-3 pt-3 pb-8 shadow-md flex-1 border border-border">
         {/* Add Button */}
         <StablePressable
           className="w-10 h-10 flex items-center justify-center bg-primary/20 rounded-lg"
@@ -58,13 +47,13 @@ export const ConversationInput = ({
           onChangeText={setInput}
           placeholder="Aa"
           multiline
-          style={{ minHeight: 42, maxHeight: 120 }}
+          style={{ minHeight: 12, maxHeight: 120, height: "auto" }}
           className="flex-1 mx-2 px-2 py-2 rounded-xl bg-input text-base"
         />
 
         {/* Send Button */}
         <StablePressable
-          className="w-10 h-10 flex items-center justify-center rounded-lg"
+          className="h-10 flex items-center justify-center rounded-lg px-2"
           onPress={handleSend}
           disabled={!input.trim()}
           accessibilityLabel="Send message"

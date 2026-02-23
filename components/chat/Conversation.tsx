@@ -34,6 +34,8 @@ import { ResponseMessageDto } from "~/types";
 import { ConversationInput } from "./conversation/ConversationInput";
 import { useServerImages } from "@/hooks/content/useServerImages";
 
+import { useAudioPlayer } from "expo-audio";
+
 interface ConversationProps {
   id: number;
 }
@@ -45,6 +47,10 @@ type FlatListItem =
   | { type: "message"; message: ResponseMessageDto };
 
 export const Conversation = ({ id }: ConversationProps) => {
+  const soundPlayer = useAudioPlayer(
+    require("~/assets/sounds/receive-message.wav"),
+  );
+
   const authPersistStore = useAuthPersistStore();
   const preferencePersistStore = usePreferencePersistStore();
   const { currentUser } = useCurrentUser();
@@ -74,9 +80,20 @@ export const Conversation = ({ id }: ConversationProps) => {
   const { jsxArray: profilePictures } = useServerImages({
     ids: [user?.pictureId],
     fallbacks: [identifyUserAvatar(user)],
+    wrapperClassName: "rounded-full border border-border",
     size: { width: 40, height: 40 },
     enabled: !!user?.pictureId,
   });
+
+  // Play sound function
+  const playSound = React.useCallback(async () => {
+    try {
+      await soundPlayer.play();
+      console.log("✅ Sound played");
+    } catch (error) {
+      console.error("❌ Error playing sound:", error);
+    }
+  }, [soundPlayer]);
 
   // -----------------------------
   // Message grouping by day
@@ -161,6 +178,7 @@ export const Conversation = ({ id }: ConversationProps) => {
       if (newMessages.length === 0) setHasMore(false);
       else {
         setMessages((prev) => [...prev, ...newMessages]);
+        playSound();
       }
       setLoadingMore(false);
       setIsInitialMessagesLoading(false);
@@ -168,6 +186,7 @@ export const Conversation = ({ id }: ConversationProps) => {
 
     s.on("message", (message: ResponseMessageDto) => {
       setMessages((prev) => [message, ...prev]);
+      playSound();
     });
 
     s.on("error", (err: any) => console.log("❌ Socket error:", err));
@@ -181,10 +200,11 @@ export const Conversation = ({ id }: ConversationProps) => {
   // -----------------------------
   // Send message
   // -----------------------------
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (!input.trim() || !socket) return;
     socket.emit("message", { conversationId: id, content: input.trim() });
     setInput("");
+    await playSound();
   };
 
   // -----------------------------
@@ -197,10 +217,11 @@ export const Conversation = ({ id }: ConversationProps) => {
   };
 
   return (
-    <StableSafeAreaView className="flex-1 bg-background">
+    <StableSafeAreaView className="flex-1 bg-card">
       <KeyboardAvoidingView
         className="flex-1"
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
         <ImageBackground
           source={
@@ -212,8 +233,9 @@ export const Conversation = ({ id }: ConversationProps) => {
           resizeMode="cover"
         >
           {/* Header */}
-          <View className="flex flex-row bg-background justify-between items-center">
+          <View className="flex flex-row bg-card justify-between items-center">
             <ChatHeaderLeft
+              id={user?.id as string}
               profilePicture={profilePictures[0]}
               identifier={identifyUser(user)}
               lastSeen={format(new Date(), "hh:mm a")}
@@ -231,7 +253,7 @@ export const Conversation = ({ id }: ConversationProps) => {
             </View>
           ) : (
             <FlatList
-              className="flex-1 bg-gree-500"
+              className="flex-1 py-4"
               inverted
               keyboardShouldPersistTaps="handled"
               data={flattenedMessages}
@@ -244,7 +266,7 @@ export const Conversation = ({ id }: ConversationProps) => {
                 if (item.type === "header") {
                   return (
                     <View className="w-fit items-center py-2 my-1 mx-auto">
-                      <Text className="text-xs text-foreground">
+                      <Text className="text-sm font-bold text-foreground">
                         {item.date}
                       </Text>
                     </View>
@@ -260,11 +282,6 @@ export const Conversation = ({ id }: ConversationProps) => {
               }}
               onEndReached={handleLoadMore}
               onEndReachedThreshold={0.2}
-              contentContainerStyle={{
-                marginTop:
-                  100 + Math.min(25 * (input.match(/\n/g)?.length ?? 0), 100),
-                marginBottom: 12,
-              }}
               ListFooterComponent={
                 loadingMore ? (
                   <View className="py-2">
