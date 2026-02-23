@@ -16,6 +16,7 @@ import { showToastable } from "react-native-toastable";
 import { useUpdateEducationFormStructure } from "./useUpdateEducationFormStructure";
 import { updateEducationSchema } from "@/types/validations/education.validation";
 import { View } from "react-native";
+import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 
 interface UpdateEducationProps {
   className?: string;
@@ -25,6 +26,7 @@ export const UpdateEducation = ({ className }: UpdateEducationProps) => {
   const { t } = useTranslation("common");
   const userStore = useUserStore();
   const queryClient = useQueryClient();
+  const isKeyboardVisible = useKeyboardVisible();
 
   const { structure } = useUpdateEducationFormStructure({
     store: userStore,
@@ -79,17 +81,25 @@ export const UpdateEducation = ({ className }: UpdateEducationProps) => {
         ]}
       />
       <StableKeyboardAwareScrollView className="flex-1 bg-background">
-        <FormBuilder structure={structure} className="mt-4 px-2" />
+        <View className="p-4">
+          <Text className="text-sm text-muted-foreground leading-relaxed">
+            Add your educational background — institutions, degrees, and any
+            notable achievements.
+          </Text>
+        </View>
+        <FormBuilder structure={structure} className="mb-6" />
       </StableKeyboardAwareScrollView>
-      <View className="py-6 border-t border-border">
-        <Button
-          size="sm"
-          className="mx-6 mb-4 rounded-full"
-          onPress={handleUpdateSubmit}
-        >
-          <Text>Update Education</Text>
-        </Button>
-      </View>
+      {!isKeyboardVisible && (
+        <View className="py-6 border-t border-border">
+          <Button
+            size="sm"
+            className="mx-6 mb-4 rounded-full"
+            onPress={handleUpdateSubmit}
+          >
+            <Text>Update Education</Text>
+          </Button>
+        </View>
+      )}
     </StableSafeAreaView>
   );
 };
