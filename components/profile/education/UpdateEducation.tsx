@@ -87,7 +87,7 @@ export const UpdateEducation = ({ className }: UpdateEducationProps) => {
             notable achievements.
           </Text>
         </View>
-        <FormBuilder structure={structure} className="mb-6" />
+        <FormBuilder structure={structure} className="px-2" />
       </StableKeyboardAwareScrollView>
       {!isKeyboardVisible && (
         <View className="py-6 border-t border-border">

@@ -87,7 +87,7 @@ export const UpdateExperience = ({ className }: UpdateExperienceProps) => {
             help others understand your background and expertise.
           </Text>
         </View>
-        <FormBuilder structure={structure} className=" px-2" />
+        <FormBuilder structure={structure} className="px-2" />
       </StableKeyboardAwareScrollView>
 
       {!isKeyboardVisible && (
