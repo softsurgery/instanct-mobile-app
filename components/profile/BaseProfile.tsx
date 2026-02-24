@@ -49,7 +49,7 @@ export const InspectBaseProfile = ({
   const navigation = useNavigation();
 
   const storeRef = React.useRef(createClientStore());
-  const userStore = useUserStore(); // TODO: use the store ref instead
+  const userStore = storeRef.current();
 
   // user side-effects
   const { currentUser } = useCurrentUser();
@@ -351,7 +351,9 @@ export const InspectBaseProfile = ({
                 </Text>
               )}
             </View>
-            <ProfileStat className="flex flex-row gap-4" />
+            {currentUser?.id === id && (
+              <ProfileStat className="flex flex-row gap-4" />
+            )}
           </View>
         </View>
       </View>
