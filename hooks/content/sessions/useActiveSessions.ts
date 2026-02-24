@@ -1,0 +1,42 @@
+import { api } from "@/api";
+import { SessionType } from "@/types/session";
+import { useQuery } from "@tanstack/react-query";
+import React from "react";
+
+interface useActiveSessionsProps {
+  enabled?: boolean;
+}
+
+export const useActiveSessions = (
+  { enabled }: useActiveSessionsProps = { enabled: true },
+) => {
+  const {
+    data: SessionsResp,
+    isPending: isSessionsPending,
+    refetch: refetchSessions,
+  } = useQuery({
+    queryKey: ["active-sessions"],
+    queryFn: () => api.session.findAllActivePaginated({}),
+    enabled,
+  });
+
+  const activeSessions = React.useMemo(
+    () => SessionsResp?.data || [],
+    [SessionsResp],
+  );
+
+  const mapSession = React.useMemo(
+    () =>
+      activeSessions.find(
+        (session) => session.type === SessionType.MAP_SESSION,
+      ),
+    [activeSessions],
+  );
+
+  return {
+    activeSessions,
+    mapSession,
+    isSessionsPending,
+    refetchSessions,
+  };
+};

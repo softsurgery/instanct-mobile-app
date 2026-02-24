@@ -34,6 +34,16 @@ export default function MainLayout() {
             animationDuration: 200,
           }}
         />
+        <Stack.Screen
+          name="explore/session-starter"
+          options={{
+            title: "Session Starter",
+            headerShown: false,
+            animation: "simple_push",
+            animationDuration: 200,
+          }}
+        />
+        {/* *************************************************************************************************** */}
         {/* Notification  ************************************************************************************* */}
         <Stack.Screen
           name="notifications"

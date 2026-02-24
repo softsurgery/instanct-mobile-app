@@ -15,6 +15,8 @@ import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { UserCard } from "./UserCard";
 import { Text } from "../ui/text";
 import { UsersFilter } from "./users-filter/UsersFilter";
+import { useActiveSessions } from "@/hooks/content/sessions/useActiveSessions";
+import { SessionStarter } from "./SessionStarter";
 
 interface ExplorePortalProps {
   className?: string;
@@ -23,6 +25,7 @@ interface ExplorePortalProps {
 export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   const { t } = useTranslation("common");
   const { newCount, resetCount } = useNotificationContext();
+  const { activeSessions, mapSession } = useActiveSessions();
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [openUserFilters, setOpenUserFilters] = React.useState(false);
 
@@ -54,7 +57,14 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   }, []);
 
   const renderItem = React.useCallback(
-    ({ item }: { item: ResponseUserDto }) => <UserCard user={item} />,
+    ({ item }: { item: ResponseUserDto }) => (
+      <>
+        <Text className="px-4">
+          {JSON.stringify(activeSessions, null, 2)} ss
+        </Text>
+        <UserCard user={item} />
+      </>
+    ),
     [],
   );
 
@@ -80,35 +90,39 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
           },
         ]}
       />
-      <View className="flex-1 bg-transparent">
-        <LegendList
-          data={users}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          pagingEnabled
-          recycleItems={true}
-          bounces={false}
-          alwaysBounceVertical={false}
-          alwaysBounceHorizontal={false}
-          keyExtractor={(item) => item.id.toString()}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreching}
-              onRefresh={refrech}
-              progressViewOffset={0}
-              enabled={true}
-            />
-          }
-          renderItem={renderItem}
-          onScroll={handleScroll}
-          contentContainerStyle={{
-            paddingHorizontal: 0,
-          }}
-        />
-        <Text className="font-bold mx-auto my-4">
-          {currentIndex + 1} / {users.length}
-        </Text>
-      </View>
+      {mapSession ? (
+        <View className="flex-1 bg-transparent">
+          <LegendList
+            data={users}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            pagingEnabled
+            recycleItems={true}
+            bounces={false}
+            alwaysBounceVertical={false}
+            alwaysBounceHorizontal={false}
+            keyExtractor={(item) => item.id.toString()}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreching}
+                onRefresh={refrech}
+                progressViewOffset={0}
+                enabled={true}
+              />
+            }
+            renderItem={renderItem}
+            onScroll={handleScroll}
+            contentContainerStyle={{
+              paddingHorizontal: 0,
+            }}
+          />
+          <Text className="font-bold mx-auto my-4">
+            {currentIndex + 1} / {users.length}
+          </Text>
+        </View>
+      ) : (
+        <SessionStarter className="px-4" />
+      )}
       <UsersFilter
         className="h-[45vh] min-w-[90vw]"
         open={openUserFilters}

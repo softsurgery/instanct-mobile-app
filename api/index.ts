@@ -6,6 +6,7 @@ import { experience } from "./experience";
 import { notifications } from "./notifications";
 import { refImpl } from "./ref-impl";
 import { upload } from "./upload";
+import { session } from "./session";
 import { user } from "./user";
 
 export const api = {
@@ -16,6 +17,7 @@ export const api = {
   education,
   notifications,
   refImpl,
+  session,
   user,
   upload,
 };
