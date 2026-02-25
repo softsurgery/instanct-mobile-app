@@ -36,9 +36,7 @@ export const ProfileEntry = ({ className }: ProfileEntryProps) => {
 
   return (
     <View>
-      <View
-        className={cn("flex flex-row items-center gap-4 p-2 my-5", className)}
-      >
+      <View className={cn("flex flex-row items-center gap-4 my-5", className)}>
         <View className="rounded-full">{profilePictures[0]}</View>
         <View className="flex flex-col gap-4">
           <View className="flex flex-row items-center gap-2">
