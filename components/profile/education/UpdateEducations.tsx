@@ -195,17 +195,13 @@ export const UpdateEducations = ({ className }: UpdateEducationsProps) => {
               <Text className="text-sm text-muted-foreground text-center">
                 Add your education to showcase your academic background
               </Text>
+              <StablePressable
+                className="text-center mt-4 underline font-medium w-fit mx-auto rounded-lg"
+                onPress={() => router.push("/main/profile/create-education")}
+              >
+                <Text className="text-sm underline p-2">New Education?</Text>
+              </StablePressable>
             </View>
-          )}
-
-          {/* Add Education Button */}
-          {userStore.educations && userStore.educations.length >= 0 && (
-            <StablePressable
-              className="text-center mt-4 underline font-medium w-fit mx-auto rounded-lg"
-              onPress={() => router.push("/main/profile/create-education")}
-            >
-              <Text className="text-sm underline p-2">New Education?</Text>
-            </StablePressable>
           )}
         </View>
       </StableScrollView>
