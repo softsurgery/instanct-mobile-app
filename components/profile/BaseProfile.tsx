@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
@@ -8,7 +8,7 @@ import { useExperiences } from "@/hooks/content/users/useExperiences";
 import { useIdentifiedUser } from "@/hooks/content/users/useIdentifiedUser";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import { cn } from "@/lib/utils";
-import { createClientStore, useUserStore } from "@/stores/useUserStore";
+import { createClientStore } from "@/stores/useUserStore";
 import { ResponseEducationDto, ResponseExperienceDto } from "@/types";
 import { format } from "date-fns";
 import { router, useNavigation } from "expo-router";
@@ -142,7 +142,7 @@ export const InspectBaseProfile = ({
       data: experiences as unknown[],
       editable: currentUser?.id === user?.id,
       renderItem: (experience: ResponseExperienceDto) => (
-        <View className="flex flex-col mb-4">
+        <View className="flex flex-col mb-4 mt-2">
           <Text className="font-semibold">{experience.title}</Text>
           <Text className="text-sm text-muted-foreground font-bold">
             {experience.company}
@@ -219,14 +219,14 @@ export const InspectBaseProfile = ({
 
     return (
       <View key={section.key}>
-        <Card className={cn("m-0 pt-1")}>
-          <CardHeader className="flex flex-row items-center justify-between mt-2 -mb-2">
-            <CardTitle>
+        <View className={cn("pt-1 -mx-2 bg-card")}>
+          <View className="flex flex-row items-center justify-between">
+            <View className="px-2">
               <Text variant="h4">{section.title}</Text>
-            </CardTitle>
+            </View>
 
             {section.editable && (
-              <View className="flex flex-row gap-1 items-center -mx-2">
+              <View className="flex flex-row gap-1 items-center p-2">
                 {!isBadge && (
                   <StablePressable
                     className="p-2"
@@ -280,11 +280,11 @@ export const InspectBaseProfile = ({
                 </StablePressable>
               </View>
             )}
-          </CardHeader>
+          </View>
 
           <Separator />
 
-          <CardContent>
+          <View className="px-4 pt-2 pb-4">
             {section.data?.length === 0 ? (
               <View key={section.key}>
                 <Text className="text-sm text-muted-foreground italic text-center">
@@ -306,8 +306,8 @@ export const InspectBaseProfile = ({
                   ))}
               </View>
             )}
-          </CardContent>
-        </Card>
+          </View>
+        </View>
       </View>
     );
   };

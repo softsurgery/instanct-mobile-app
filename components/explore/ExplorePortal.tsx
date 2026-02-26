@@ -124,7 +124,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
         <SessionStarter className="px-4" />
       )}
       <UsersFilter
-        className="h-[45vh] min-w-[90vw]"
+        className="max-h-[80vh] w-[90vw]"
         open={openUserFilters}
         onOpenChange={setOpenUserFilters}
       />

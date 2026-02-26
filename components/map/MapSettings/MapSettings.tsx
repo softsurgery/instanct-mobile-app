@@ -1,8 +1,8 @@
+import React from "react";
 import { cn } from "@/lib/utils";
 import { useMapStore } from "@/stores/useMapStore";
 import { router } from "expo-router";
 import { ArrowLeft, MapPin, RefreshCw, Save } from "lucide-react-native";
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { createSettingRow, SettingRow } from "../../settings/SettingsRow";
@@ -10,13 +10,6 @@ import { ApplicationHeader } from "../../shared/AppHeader";
 import { StableSafeAreaView } from "../../shared/StableSafeAreaView";
 import StableScrollView from "../../shared/StableScrollView";
 import { Badge } from "../../ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../../ui/card";
 import { Separator } from "../../ui/separator";
 import { Switch } from "../../ui/switch";
 import { Text } from "../../ui/text";
@@ -33,6 +26,10 @@ interface MapSettingsProps {
 }
 
 export const MapSettings = ({ className }: MapSettingsProps) => {
+  const cardClass = "border-b border-t border-border bg-card shadow-sm overflow-hidden";
+
+  const primaryCardClass =
+    "border-b border-t border-primary/10 bg-primary/5 shadow-sm overflow-hidden";
   const { t } = useTranslation("common");
   const mapStore = useMapStore();
   const { restartSocket } = useMapContext();
@@ -102,9 +99,9 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
         ]}
       />
       <StableScrollView className="bg-background">
-        <View className="flex flex-col gap-4 p-4 pb-10">
-          <Card className="border-primary/10 bg-primary/5">
-            <CardContent className="flex flex-col gap-2 px-4">
+        <View className="flex flex-col gap-4 py-4 pb-4">
+          <View className={primaryCardClass}>
+            <View className="px-4 py-4 flex flex-col gap-2">
               <View className="flex flex-row items-center justify-between">
                 <Text variant="h4">Map Configuration</Text>
                 <Badge variant="outline">
@@ -113,22 +110,23 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
                   </Text>
                 </Badge>
               </View>
+
               <Text variant="muted">
                 Customize your map experience and discovery preferences. Changes
                 apply instantly.
               </Text>
-            </CardContent>
-          </Card>
-
+            </View>
+          </View>
           {/* Display Preferences */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Display Preferences</CardTitle>
-              <CardDescription>
+          <View className={cardClass}>
+            <View className="px-4 pt-4 pb-2">
+              <Text className="text-lg font-semibold">Display Preferences</Text>
+              <Text className="text-sm text-muted-foreground mt-1">
                 Customize how the map looks and feels.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col">
+              </Text>
+            </View>
+
+            <View className="px-4 pb-4 flex flex-col">
               <View className="flex flex-col gap-4">
                 <SettingRow
                   className="mt-2"
@@ -147,6 +145,7 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
                 />
                 <Separator />
               </View>
+
               <View className="flex flex-col gap-4">
                 <SettingRow
                   className="mt-2"
@@ -164,89 +163,88 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
                   })}
                 />
               </View>
-            </CardContent>
-          </Card>
+            </View>
+          </View>
 
           {/* Discovery Range */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Discovery Range</CardTitle>
-              <CardDescription>
+          <View className={cardClass}>
+            <View className="px-4 pt-4 pb-2">
+              <Text className="text-lg font-semibold">Discovery Range</Text>
+              <Text className="text-sm text-muted-foreground mt-1">
                 Control how far you can see other users.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col">
-              <View className="flex flex-col gap-4">
-                <SettingRow
-                  className="mt-2"
-                  {...createSettingRow({
-                    component: () => (
-                      <RadiusSlider
-                        rangeMaxValue={mapStore.parameters.rangeMax}
-                        rangeMinValue={mapStore.parameters.rangeMin}
-                        onValueChange={handleRadiusChange}
-                      />
-                    ),
-                  })}
-                />
-              </View>
-            </CardContent>
-          </Card>
+              </Text>
+            </View>
+
+            <View className="px-4 pb-4 flex flex-col gap-4">
+              <SettingRow
+                className="mt-2"
+                {...createSettingRow({
+                  component: () => (
+                    <RadiusSlider
+                      rangeMaxValue={mapStore.parameters.rangeMax}
+                      rangeMinValue={mapStore.parameters.rangeMin}
+                      onValueChange={handleRadiusChange}
+                    />
+                  ),
+                })}
+              />
+            </View>
+          </View>
 
           {/* Location Updates */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Location Updates</CardTitle>
-              <CardDescription>
+          <View className={cardClass}>
+            <View className="px-4 pt-4 pb-2">
+              <Text className="text-lg font-semibold">Location Updates</Text>
+              <Text className="text-sm text-muted-foreground mt-1">
                 Manage how often your location is shared.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col">
-              <View className="flex flex-col gap-4">
-                <SettingRow
-                  className="mt-2"
-                  {...createSettingRow({
-                    title: "Auto Refresh",
-                    description: "Automatically update nearby users",
-                    leftIcon: RefreshCw,
-                    rightComponent: (
-                      <Switch
-                        checked={autoRefresh}
-                        onCheckedChange={setAutoRefresh}
-                      />
-                    ),
-                  })}
-                />
-              </View>
-            </CardContent>
-          </Card>
+              </Text>
+            </View>
+
+            <View className="px-4 pb-4 flex flex-col gap-4">
+              <SettingRow
+                className="mt-2"
+                {...createSettingRow({
+                  title: "Auto Refresh",
+                  description: "Automatically update nearby users",
+                  leftIcon: RefreshCw,
+                  rightComponent: (
+                    <Switch
+                      checked={autoRefresh}
+                      onCheckedChange={setAutoRefresh}
+                    />
+                  ),
+                })}
+              />
+            </View>
+          </View>
 
           {/* Privacy & Visibility */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Privacy & Visibility</CardTitle>
-              <CardDescription>
+          <View className={cardClass}>
+            <View className="px-4 pt-4 pb-2">
+              <Text className="text-lg font-semibold">
+                Privacy & Visibility
+              </Text>
+              <Text className="text-sm text-muted-foreground mt-1">
                 Control who can see you on the map.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col">
-              <View className="flex flex-col gap-4">
-                <SettingRow
-                  className="mt-2"
-                  {...createSettingRow({
-                    title: "Location Sharing",
-                    description: "Currently visible to everyone",
-                    leftIcon: MapPin,
-                    rightComponent: (
-                      <Badge variant="default">
-                        <Text className="text-xs font-medium">Active</Text>
-                      </Badge>
-                    ),
-                  })}
-                />
-              </View>
-            </CardContent>
-          </Card>
+              </Text>
+            </View>
+
+            <View className="px-4 pb-4 flex flex-col gap-4">
+              <SettingRow
+                className="mt-2"
+                {...createSettingRow({
+                  title: "Location Sharing",
+                  description: "Currently visible to everyone",
+                  leftIcon: MapPin,
+                  rightComponent: (
+                    <Badge variant="default">
+                      <Text className="text-xs font-medium">Active</Text>
+                    </Badge>
+                  ),
+                })}
+              />
+            </View>
+          </View>
         </View>
       </StableScrollView>
       <View className="py-4 border-t-2 border-border">

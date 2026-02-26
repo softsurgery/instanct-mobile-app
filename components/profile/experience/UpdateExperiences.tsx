@@ -198,17 +198,13 @@ export const UpdateExperiences = ({ className }: UpdateExperiencesProps) => {
               <Text className="text-sm text-muted-foreground text-center">
                 Add your work experience to showcase your professional journey
               </Text>
+              <StablePressable
+                className="text-center mt-4 underline font-medium w-fit mx-auto rounded-lg"
+                onPress={() => router.push("/main/profile/create-experience")}
+              >
+                <Text className="text-sm underline p-2">New Experience ?</Text>
+              </StablePressable>
             </View>
-          )}
-
-          {/* Add Experience Button */}
-          {userStore.experiences && userStore.experiences.length >= 0 && (
-            <StablePressable
-              className="text-center mt-4 underline font-medium w-fit mx-auto rounded-lg"
-              onPress={() => router.push("/main/profile/create-experience")}
-            >
-              <Text className="text-sm underline p-2">New Experience ?</Text>
-            </StablePressable>
           )}
         </View>
       </StableScrollView>

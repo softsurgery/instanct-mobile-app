@@ -8,13 +8,11 @@ import {
   AccordionTrigger,
 } from "~/components/ui/accordion";
 import { cn } from "~/lib/utils";
-import Select from "../../shared/form-builder/Select";
 import { Button } from "../../ui/button";
 import { Dialog, DialogContent } from "../../ui/dialog";
 import { Badge } from "~/components/ui/badge";
 import { useObjectives } from "~/hooks/content/reference-types/useObjectives";
 import { useIndustries } from "~/hooks/content/reference-types/useIndustries";
-import { Gender } from "~/types/user-management";
 import { MultiSelectDialog } from "../../shared/MultiSelectDialog";
 import { ChevronRight } from "lucide-react-native";
 
@@ -33,9 +31,6 @@ export const UsersFilter = ({
   const { objectives } = useObjectives();
   const { industries } = useIndustries();
 
-  const [selectedGender, setSelectedGender] = React.useState<
-    string | undefined
-  >(undefined);
   const [selectedObjectives, setSelectedObjectives] = React.useState<number[]>(
     [],
   );
@@ -49,12 +44,8 @@ export const UsersFilter = ({
   // Computed values
 
   const hasActiveFilters = React.useMemo(() => {
-    return (
-      selectedGender !== undefined ||
-      selectedObjectives.length > 0 ||
-      selectedIndustries.length > 0
-    );
-  }, [selectedGender, selectedObjectives, selectedIndustries]);
+    return selectedObjectives.length > 0 || selectedIndustries.length > 0;
+  }, [selectedObjectives, selectedIndustries]);
 
   const handleOpenChange = (open: boolean) => {
     onOpenChange?.(open);
@@ -69,7 +60,6 @@ export const UsersFilter = ({
   const accordionTriggerClassName = "flex flex-row items-center";
 
   const resetAllFilters = () => {
-    setSelectedGender(undefined);
     setSelectedObjectives([]);
     setSelectedIndustries([]);
   };
@@ -93,45 +83,11 @@ export const UsersFilter = ({
           </View>
 
           <ScrollView
-            className="flex-1 -mx-6"
+            className="flex-grow-0 -mx-6"
             showsVerticalScrollIndicator={false}
           >
             <View className="px-6">
               <Accordion type="single" collapsible>
-                {/* Gender */}
-                <AccordionItem value="gender">
-                  <AccordionTrigger className={accordionTriggerClassName}>
-                    <View className="w-[90%] flex-row items-center justify-between">
-                      <View>
-                        <Text className="font-semibold">Gender</Text>
-                        <Text className="text-muted-foreground text-xs">
-                          Filter by gender preference.
-                        </Text>
-                      </View>
-                      {selectedGender && (
-                        <Badge variant="secondary" className="ml-2">
-                          <Text className="text-xs">{selectedGender}</Text>
-                        </Badge>
-                      )}
-                    </View>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <View className="bg-muted/30 p-3 rounded-lg">
-                      <Select
-                        title="Select gender"
-                        value={selectedGender}
-                        onSelect={(value) =>
-                          setSelectedGender(value || undefined)
-                        }
-                        options={[
-                          { label: Gender.Male, value: Gender.Male },
-                          { label: Gender.Female, value: Gender.Female },
-                        ]}
-                      />
-                    </View>
-                  </AccordionContent>
-                </AccordionItem>
-
                 {/* Objectives */}
                 <AccordionItem value="objectives">
                   <AccordionTrigger className={accordionTriggerClassName}>
