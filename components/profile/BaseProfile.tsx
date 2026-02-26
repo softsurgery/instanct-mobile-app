@@ -1,5 +1,4 @@
 import React from "react";
-import { CardContent } from "@/components/ui/card";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
@@ -8,7 +7,7 @@ import { useExperiences } from "@/hooks/content/users/useExperiences";
 import { useIdentifiedUser } from "@/hooks/content/users/useIdentifiedUser";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import { cn } from "@/lib/utils";
-import { createClientStore } from "@/stores/useUserStore";
+import { createClientStore, useUserStore } from "@/stores/useUserStore";
 import { ResponseEducationDto, ResponseExperienceDto } from "@/types";
 import { format } from "date-fns";
 import { router, useNavigation } from "expo-router";
@@ -49,13 +48,14 @@ export const InspectBaseProfile = ({
   const navigation = useNavigation();
 
   const storeRef = React.useRef(createClientStore());
-  const userStore = storeRef.current();
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const userStore = useUserStore();
 
   // user side-effects
   const { currentUser } = useCurrentUser();
   const { user, isUserPending, refetchUser } = useIdentifiedUser({ id });
   React.useEffect(() => {
-    if (user) userStore.set("response", user);
+    if (user) userStore?.set("response", user);
     navigation.setOptions({
       title: user?.username,
     });
@@ -65,7 +65,7 @@ export const InspectBaseProfile = ({
   const { experiences, isExperiencesPending, refetchExperiences } =
     useExperiences({ id, enabled: !!user });
   React.useEffect(() => {
-    if (experiences) userStore.set("experiences", experiences);
+    if (experiences) userStore?.set("experiences", experiences);
   }, [experiences]);
 
   // education side-effects
@@ -74,7 +74,7 @@ export const InspectBaseProfile = ({
     enabled: !!user,
   });
   React.useEffect(() => {
-    if (educations) userStore.set("educations", educations);
+    if (educations) userStore?.set("educations", educations);
   }, [educations]);
 
   // industries side-effects
@@ -107,7 +107,7 @@ export const InspectBaseProfile = ({
 
   React.useEffect(() => {
     return () => {
-      userStore.reset();
+      userStore?.reset();
       storeRef.current = null as any;
     };
   }, []);
@@ -221,7 +221,7 @@ export const InspectBaseProfile = ({
       <View key={section.key}>
         <View className={cn("pt-1 -mx-2 bg-card")}>
           <View className="flex flex-row items-center justify-between">
-            <View className="px-2">
+            <View className="px-6">
               <Text variant="h4">{section.title}</Text>
             </View>
 
@@ -284,10 +284,10 @@ export const InspectBaseProfile = ({
 
           <Separator />
 
-          <View className="px-4 pt-2 pb-4">
+          <View className="p-4">
             {section.data?.length === 0 ? (
               <View key={section.key}>
-                <Text className="text-sm text-muted-foreground italic text-center">
+                <Text className="text-sm text-muted-foreground italic text-center my-4">
                   No {section.title} added yet
                 </Text>
               </View>
