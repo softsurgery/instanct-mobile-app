@@ -38,10 +38,10 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
     "border border-b-border border-t-border bg-card shadow-sm overflow-hidden";
 
   const primaryCardClass =
-    "border border-primary/10 bg-primary/5 shadow-sm overflow-hidden";
+    "rounded-2xl border border-primary/10 bg-primary/5 shadow-sm overflow-hidden";
 
   const destructiveCardClass =
-    "border border-b-destructive/60 border-t-destructive/60 bg-destructive/5 shadow-sm overflow-hidden";
+    "rounded-2xl border border-destructive/60 bg-destructive/5 shadow-sm overflow-hidden";
 
   const settingsRows: SettingsSection[] = [
     {
@@ -148,26 +148,28 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
       />
       <StableScrollView>
         <View className="flex flex-col gap-2 pt-4 pb-4">
-          <View className={primaryCardClass}>
-            <View className="flex flex-col justify-between p-4 gap-2">
-              <View className="flex flex-row justify-between items-center w-full">
-                <Text variant="h4">
-                  {identifyUser(currentUser) || "Your account"}
+          <View className="px-4 mb-4">
+            <View className={cn(primaryCardClass)}>
+              <View className="flex flex-col justify-between p-4 gap-2">
+                <View className="flex flex-row justify-between items-center w-full">
+                  <Text variant="h4">
+                    {identifyUser(currentUser) || "Your account"}
+                  </Text>
+
+                  {currentUser?.username ? (
+                    <Badge variant="outline" className="self-start">
+                      <Text className="uppercase tracking-wide">
+                        @{currentUser.username}
+                      </Text>
+                    </Badge>
+                  ) : null}
+                </View>
+
+                <Text variant="muted">
+                  Signed in and synced across devices. Make changes that feel
+                  personal.
                 </Text>
-
-                {currentUser?.username ? (
-                  <Badge variant="outline" className="self-start">
-                    <Text className="uppercase tracking-wide">
-                      @{currentUser.username}
-                    </Text>
-                  </Badge>
-                ) : null}
               </View>
-
-              <Text variant="muted">
-                Signed in and synced across devices. Make changes that feel
-                personal.
-              </Text>
             </View>
           </View>
 
@@ -187,40 +189,41 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
                   return (
                     <View key={index} className="flex flex-col gap-4">
                       <SettingRow className="mt-1" {...row} />
-                      {!isLast && <Separator />}
+                      {!isLast && <Separator className="mb-2"/>}
                     </View>
                   );
                 })}
               </View>
             </View>
           ))}
+          <View className="px-4 mt-4">
+            <View className={cn(destructiveCardClass, "mb-10")}>
+              <View className="px-4 pt-4 pb-2">
+                <Text className="text-lg font-semibold">Session</Text>
+                <Text className="text-sm text-muted-foreground mt-1">
+                  Sign out or remove your account.
+                </Text>
+              </View>
 
-          <View className={destructiveCardClass}>
-            <View className="px-4 pt-4 pb-2">
-              <Text className="text-lg font-semibold">Session</Text>
-              <Text className="text-sm text-muted-foreground mt-1">
-                Sign out or remove your account.
-              </Text>
-            </View>
+              <View className="px-4 pb-4 flex flex-col gap-3">
+                <Button
+                  variant="outline"
+                  className="flex flex-row items-center justify-center gap-2"
+                  onPress={logout}
+                >
+                  <Icon as={LogOut} size={18} className="text-foreground" />
+                  <Text>Logout</Text>
+                </Button>
 
-            <View className="px-4 pb-4 flex flex-col gap-3">
-              <Button
-                variant="outline"
-                className="flex flex-row items-center justify-center gap-2"
-                onPress={logout}
-              >
-                <Icon as={LogOut} size={18} className="text-foreground" />
-                <Text>Logout</Text>
-              </Button>
-
-              <Button
-                variant="destructive"
-                className="flex flex-row items-center justify-center gap-2"
-                onPress={() => Alert.alert("Delete account", "Coming soon!")}
-              >
-                <Icon as={Trash2} size={18} color="white" />
-                <Text>Delete Account</Text>
-              </Button>
+                <Button
+                  variant="destructive"
+                  className="flex flex-row items-center justify-center gap-2"
+                  onPress={() => Alert.alert("Delete account", "Coming soon!")}
+                >
+                  <Icon as={Trash2} size={18} color="white" />
+                  <Text>Delete Account</Text>
+                </Button>
+              </View>
             </View>
           </View>
         </View>
