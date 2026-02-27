@@ -188,7 +188,7 @@ export const InspectBaseProfile = ({
       ) as unknown[],
       editable: currentUser?.id === user?.id,
       renderItem: (industry) => (
-        <Badge className={cn("px-2 py-1")}>
+        <Badge variant={"outline"} className={cn("px-2 py-1 rounded-full")}>
           <Text className="text-xs">{industry.label}</Text>
         </Badge>
       ),
@@ -201,7 +201,7 @@ export const InspectBaseProfile = ({
       ) as unknown[],
       editable: currentUser?.id === user?.id,
       renderItem: (objective) => (
-        <Badge className={cn("px-2 py-1")}>
+        <Badge variant={"outline"} className={cn("px-2 py-1 rounded-full")}>
           <Text className="text-xs">{objective.label}</Text>
         </Badge>
       ),
