@@ -134,7 +134,6 @@ export interface CheckboxFieldProps {
   checked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
   editable?: boolean;
-  options: SelectOption[];
 }
 
 export interface SwitchFieldProps {
