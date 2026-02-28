@@ -180,6 +180,27 @@ export default function MainLayout() {
           }}
         />
         <Stack.Screen
+          name="profile/support/report-bug"
+          options={{
+            title: "Report a Bug",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="profile/support/send-feedback"
+          options={{
+            title: "Send Feedback",
+            headerShown: false,
+          }}
+        />
+        {/* <Stack.Screen
+          name="profile/support/faqs"
+          options={{
+            title: "FAQs",
+            headerShown: false,
+          }}
+        /> */}
+        <Stack.Screen
           name="terms"
           options={{
             title: "Terms & Conditions",
