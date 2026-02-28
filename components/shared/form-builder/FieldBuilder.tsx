@@ -12,6 +12,7 @@ import { PictureUploader } from "./PictureUploader";
 import Select from "./Select";
 import { Field, FieldVariant } from "./types";
 import { DatePicker } from "./DatePicker2";
+import { TimePicker } from "./TimePicker";
 
 interface FieldBuilderProps {
   field?: Field<any>;
@@ -85,12 +86,19 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
       return (
         <DatePicker
           {...field?.props}
-          className={cn(
-            "mt-2",
-            field?.error && "border border-red-500 rounded-md",
-          )}
+          className={cn(field?.error && "border border-red-500 rounded-md")}
           value={field?.props?.value}
           onDateChange={(date) => field?.props?.onDateChange?.(date)}
+          disabled={field?.props?.editable}
+        />
+      );
+    case "time":
+      return (
+        <TimePicker
+          {...field?.props}
+          className={cn(field?.error && "border border-red-500 rounded-md")}
+          value={field?.props?.value}
+          onTimeChange={(time) => field?.props?.onTimeChange?.(time)}
           disabled={field?.props?.editable}
         />
       );
