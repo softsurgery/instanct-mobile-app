@@ -108,12 +108,12 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
           rightIcon: ChevronRight,
           onPress: () => router.push("/main/profile/support/send-feedback"),
         }),
-        createSettingRow({
-          title: "Faqs",
-          description: "Find answers to common questions",
-          rightIcon: ChevronRight,
-          onPress: () => router.push("/main/profile/support/faqs"),
-        }),
+        // createSettingRow({
+        //   title: "Faqs",
+        //   description: "Find answers to common questions",
+        //   rightIcon: ChevronRight,
+        //   onPress: () => router.push("/main/profile/support/faqs"),
+        // }),
       ],
     },
     {
