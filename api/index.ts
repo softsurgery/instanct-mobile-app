@@ -8,6 +8,8 @@ import { refImpl } from "./ref-impl";
 import { upload } from "./upload";
 import { session } from "./session";
 import { user } from "./user";
+import { bug } from "./bug";
+import { feedback } from "./feedback";
 
 export const api = {
   auth,
@@ -19,5 +21,7 @@ export const api = {
   refImpl,
   session,
   user,
+  bug,
+  feedback,
   upload,
 };
