@@ -20,11 +20,17 @@ axios.interceptors.request.use(
       config.headers["Authorization"] = `Bearer ${authStore.accessToken}`;
     }
 
+    // Send client timezone so the server can resolve time-sensitive queries
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (timezone) {
+      config.headers["x-timezone"] = timezone;
+    }
+
     return config;
   },
   function (err) {
     return Promise.reject(err);
-  }
+  },
 );
 
 axios.interceptors.response.use(
@@ -61,7 +67,7 @@ axios.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default axios;
