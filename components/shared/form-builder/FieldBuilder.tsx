@@ -8,10 +8,10 @@ import { Feather } from "@expo/vector-icons";
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import StarRating from "react-native-star-rating-widget";
-import { DatePicker } from "./DatePicker";
 import { PictureUploader } from "./PictureUploader";
 import Select from "./Select";
 import { Field, FieldVariant } from "./types";
+import { DatePicker } from "./DatePicker2";
 
 interface FieldBuilderProps {
   field?: Field<any>;
@@ -85,9 +85,12 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
       return (
         <DatePicker
           {...field?.props}
-          className={cn(field?.error && "border border-red-500 rounded-md")}
-          date={field?.props?.value}
-          onChange={(date) => field?.props?.onDateChange?.(date)}
+          className={cn(
+            "mt-2",
+            field?.error && "border border-red-500 rounded-md",
+          )}
+          value={field?.props?.value}
+          onDateChange={(date) => field?.props?.onDateChange?.(date)}
           disabled={field?.props?.editable}
         />
       );
