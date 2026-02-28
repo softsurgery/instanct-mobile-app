@@ -1,13 +1,34 @@
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
+import { ScrollViewContext } from "@/contexts/ScrollViewContext";
 import { cn } from "@/lib/utils";
-import { Clock, X } from "lucide-react-native";
+import { Clock, ChevronDown } from "lucide-react-native";
 import React from "react";
-import { Keyboard, View } from "react-native";
+import {
+  Keyboard,
+  LayoutAnimation,
+  Platform,
+  UIManager,
+  View,
+} from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  Easing,
+} from "react-native-reanimated";
 import { StablePressable } from "../StablePressable";
 import { StableScrollable } from "../StableScrollable";
+import { Separator } from "@/components/ui/separator";
+import * as Haptics from "expo-haptics";
+
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 interface TimePickerProps {
   className?: string;
@@ -52,7 +73,31 @@ export const TimePicker = ({
   onTimeChange,
   nullable = true,
 }: TimePickerProps) => {
-  const [visible, setVisible] = React.useState(false);
+  const [expanded, setExpanded] = React.useState(false);
+  const rotation = useSharedValue(0);
+  const { scrollToView } = React.useContext(ScrollViewContext);
+  const contentRef = React.useRef<View>(null);
+
+  const toggle = () => {
+    if (disabled) return;
+    Keyboard.dismiss();
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    const next = !expanded;
+    setExpanded(next);
+    rotation.value = withTiming(next ? 180 : 0, {
+      duration: 250,
+      easing: Easing.out(Easing.ease),
+    });
+    if (next) {
+      setTimeout(() => {
+        scrollToView(contentRef);
+      }, 350);
+    }
+  };
+
+  const chevronStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value}deg` }],
+  }));
 
   const displayText = React.useMemo(
     () => (time ? formatTime(time) : "Select a time"),
@@ -118,92 +163,81 @@ export const TimePicker = ({
   };
 
   return (
-    <Dialog
-      open={visible}
-      onOpenChange={setVisible}
-      className={cn("rounded-lg", className)}
-    >
-      <DialogTrigger
-        onPress={() => !disabled && setVisible(true)}
-        className="flex-row"
+    <View className={cn("w-full", className)}>
+      {/* Trigger */}
+      <Button
+        disabled={disabled}
+        variant="outline"
+        className={cn("w-full h-8 p-0 px-2", classNames?.trigger)}
+        onPress={toggle}
       >
-        <Button
-          disabled={disabled}
-          variant="outline"
-          className={cn("w-full h-8 p-0 px-2", className)}
-          onPress={() => {
-            setVisible(true);
-            Keyboard.dismiss();
-          }}
-        >
-          <View className="flex flex-row items-center justify-between w-full">
-            <Text className="text-xs">{displayText}</Text>
+        <View className="flex flex-row items-center justify-between w-full">
+          <View className="flex flex-row items-center gap-2">
             <Icon as={Clock} size={16} color={"gray"} />
+            <Text className="text-xs">{displayText}</Text>
           </View>
-        </Button>
-      </DialogTrigger>
+          <Animated.View style={chevronStyle}>
+            <Icon as={ChevronDown} size={16} color={"gray"} />
+          </Animated.View>
+        </View>
+      </Button>
 
-      <DialogContent
-        className={cn("w-[90vw] p-0 pt-4 pb-6 px-2", classNames?.content)}
-      >
-        <View className="flex flex-row justify-between items-start p-2">
-          <View>
-            <Text className="font-bold">Pick a time</Text>
-            <Text className="text-xs text-muted-foreground">
-              Please select a time below.
-            </Text>
+      {/* Accordion content */}
+      {expanded && (
+        <View
+          ref={contentRef}
+          className={cn(
+            "mt-2 rounded-lg border border-border bg-card p-3",
+            classNames?.content,
+          )}
+          onStartShouldSetResponder={() => true}
+          onMoveShouldSetResponder={() => true}
+          onResponderTerminationRequest={() => false}
+        >
+          <View className="flex-row items-center justify-center gap-4">
+            <StableScrollable
+              options={HOURS}
+              value={hour}
+              onChange={(opt) => handleTimeChange("hour", opt.value)}
+              className="flex-1 h-12 border bg-card rounded-lg"
+            />
+            <StableScrollable
+              options={MINUTES}
+              value={minute}
+              onChange={(opt) => handleTimeChange("minute", opt.value)}
+              className="flex-1 h-12 border bg-card rounded-lg"
+            />
+            <StableScrollable
+              options={PERIODS}
+              value={period}
+              onChange={(opt) => handleTimeChange("period", opt.value)}
+              className="flex-1 h-12 border bg-card rounded-lg"
+            />
           </View>
-          <StablePressable
-            className="p-2 rounded-md"
-            onPress={() => {
-              setVisible(false);
-            }}
-          >
-            <Icon as={X} size={20} color={"gray"} />
-          </StablePressable>
+          <Separator className="my-2" />
+          <View className="flex-row justify-between">
+            <StablePressable
+              className="p-2 rounded-lg"
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                setExpanded(false);
+                clearTime();
+              }}
+            >
+              <Text className="font-bold">Remove Time</Text>
+            </StablePressable>
+            <StablePressable
+              className="p-2 rounded-lg"
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                setExpanded(false);
+              }}
+            >
+              <Text className="text-primary font-bold">Done</Text>
+            </StablePressable>
+          </View>
         </View>
-
-        <View className={cn("flex-row items-center justify-center gap-4 px-4")}>
-          <StableScrollable
-            options={HOURS}
-            value={hour}
-            onChange={(opt) => handleTimeChange("hour", opt.value)}
-            className="flex-1 h-12 border bg-card rounded-lg"
-          />
-          <StableScrollable
-            options={MINUTES}
-            value={minute}
-            onChange={(opt) => handleTimeChange("minute", opt.value)}
-            className="flex-1 h-12 border bg-card rounded-lg"
-          />
-          <StableScrollable
-            options={PERIODS}
-            value={period}
-            onChange={(opt) => handleTimeChange("period", opt.value)}
-            className="flex-1 h-12 border bg-card rounded-lg"
-          />
-        </View>
-
-        <View className="flex flex-row justify-between items-center gap-2 px-4">
-          <Button
-            size={"sm"}
-            variant="outline"
-            onPress={clearTime}
-            disabled={disabled}
-            className="flex-1"
-          >
-            <Text>Clear</Text>
-          </Button>
-          <Button
-            size={"sm"}
-            onPress={() => setVisible(false)}
-            disabled={disabled}
-            className="flex-1"
-          >
-            <Text>Done</Text>
-          </Button>
-        </View>
-      </DialogContent>
-    </Dialog>
+      )}
+    </View>
   );
 };
