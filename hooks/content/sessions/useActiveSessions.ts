@@ -28,7 +28,7 @@ export const useActiveSessions = (
   const mapSession = React.useMemo(
     () =>
       activeSessions.find(
-        (session) => session.type === SessionType.MAP_SESSION,
+        (session) => session.sessionType === SessionType.MAP_SESSION,
       ),
     [activeSessions],
   );

@@ -5,18 +5,20 @@ import { ResponseUserDto } from "@/types/user-management";
 import { LegendList } from "@legendapp/list";
 import { IconMessageChatbot } from "@tabler/icons-react-native";
 import { useQuery } from "@tanstack/react-query";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { ArrowDownNarrowWide, Bell } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { RefreshControl, View } from "react-native";
+import { Alert, RefreshControl, View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { UserCard } from "./UserCard";
 import { Text } from "../ui/text";
 import { UsersFilter } from "./users-filter/UsersFilter";
 import { useActiveSessions } from "@/hooks/content/sessions/useActiveSessions";
+import { SessionCountdown } from "./SessionCountdown";
 import { SessionStarter } from "./SessionStarter";
+import { Button } from "../ui/button";
 
 interface ExplorePortalProps {
   className?: string;
@@ -25,7 +27,7 @@ interface ExplorePortalProps {
 export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   const { t } = useTranslation("common");
   const { newCount, resetCount } = useNotificationContext();
-  const { activeSessions, mapSession } = useActiveSessions();
+  const { activeSessions, mapSession, refetchSessions } = useActiveSessions();
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [openUserFilters, setOpenUserFilters] = React.useState(false);
 
@@ -57,17 +59,19 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   }, []);
 
   const renderItem = React.useCallback(
-    ({ item }: { item: ResponseUserDto }) => (
-      <>
-        <Text className="px-4">
-          {JSON.stringify(activeSessions, null, 2)} ss
-        </Text>
-        <UserCard user={item} />
-      </>
-    ),
+    ({ item }: { item: ResponseUserDto }) => <UserCard user={item} />,
     [],
   );
 
+  useFocusEffect(
+    React.useCallback(() => {
+      refetchSessions();
+
+      return () => {
+        // optional cleanup
+      };
+    }, [refetchSessions]),
+  );
   return (
     <StableSafeAreaView
       className={cn("flex flex-1 flex-col bg-background", className)}
@@ -116,12 +120,27 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
               paddingHorizontal: 0,
             }}
           />
-          <Text className="font-bold mx-auto my-4">
-            {currentIndex + 1} / {users.length}
-          </Text>
+          <View className="flex flex-row justify-between m-4">
+            <View className="flex gap-2 flex-row justify-center">
+              <Text>Session Remaining Time</Text>
+              <SessionCountdown session={mapSession} />
+            </View>
+            <Text className="font-bold">
+              {currentIndex + 1} / {users.length}
+            </Text>
+          </View>
         </View>
       ) : (
-        <SessionStarter className="px-4" />
+        <>
+          <SessionStarter className="px-4" />
+          <Button
+            onPress={() => {
+              Alert.alert(JSON.stringify(activeSessions, null, 2));
+            }}
+          >
+            <Text>Show Active Sessions</Text>
+          </Button>
+        </>
       )}
       <UsersFilter
         className="max-h-[80vh] w-[90vw]"
