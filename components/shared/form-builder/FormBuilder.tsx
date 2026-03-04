@@ -101,10 +101,10 @@ export const FormBuilder = React.forwardRef(
                           <View className="pt-1">
                             {field.description && (
                               <View className="flex flex-col justify-between">
-                                {!field?.error ||
+                                {!field?.error &&
                                   (![FieldVariant.CHECKBOX].includes(
                                     field.variant,
-                                  ) && (
+                                  ) ? (
                                     <Text
                                       className={cn(
                                         "text-xs text-gray-500 dark:text-gray-400",
@@ -112,7 +112,7 @@ export const FormBuilder = React.forwardRef(
                                     >
                                       {field.description}
                                     </Text>
-                                  ))}
+                                  ) : null)}
                                 {field?.error && (
                                   <Text className="text-xs font-medium text-red-500">
                                     {field?.error}
