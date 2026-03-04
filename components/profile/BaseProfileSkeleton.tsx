@@ -14,7 +14,7 @@ export const BaseProfileSkeleton = ({
   return (
     <StableSafeAreaView className={cn("flex-1 bg-background", className)}>
       {/* Cover */}
-      <Skeleton className="w-full h-40 rounded-none" />
+      <Skeleton className="w-full h-48 rounded-none bg-primary/25" />
 
       {/* Header with Profile Picture */}
       <View className="relative -mt-12">
@@ -26,7 +26,6 @@ export const BaseProfileSkeleton = ({
               <Skeleton className="h-2 w-20 rounded-md" />
             </View>
           </View>
-          <Skeleton className="w-10 h-10 rounded-md" />
         </View>
 
         {/* Bio */}
@@ -36,7 +35,8 @@ export const BaseProfileSkeleton = ({
 
         {/* Sections (Experience, Education etc) */}
         <View className="flex flex-col gap-4 mt-6">
-          <Skeleton className="w-full h-2/3 rounded-none" />
+          <Skeleton className="w-full h-40 rounded-none bg-primary/25" />
+          <Skeleton className="w-full h-40 rounded-none bg-primary/25" />
         </View>
       </View>
     </StableSafeAreaView>

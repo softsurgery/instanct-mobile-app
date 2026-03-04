@@ -25,6 +25,7 @@ import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
 import { useObjectives } from "@/hooks/content/reference-types/useObjectives";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { BaseProfileSkeleton } from "./BaseProfileSkeleton";
+import { Loader } from "../shared/Loader";
 import { useDebounce } from "@/hooks/useDebounce";
 
 interface ProfileSection<T = unknown> {
@@ -50,11 +51,13 @@ export const InspectBaseProfile = ({
   const navigation = useNavigation();
 
   const storeRef = React.useRef(createClientStore());
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [isRefreshing, setIsRefreshing] = React.useState(false);
+  const { loading: isRefreshDebounced } = useDebounce(isRefreshing, 500);
+
   const userStore = useUserStore();
 
   // user side-effects
-  const { currentUser } = useCurrentUser();
+  const { currentUser, refetchCurrentUser } = useCurrentUser();
   const { user, isUserPending, refetchUser } = useIdentifiedUser({ id });
   React.useEffect(() => {
     if (user) userStore?.set("response", user);
@@ -87,11 +90,11 @@ export const InspectBaseProfile = ({
   const { userObjectives, isUserObjectivesPending, refetchUserObjectives } =
     useUserObjectives({ userId: id, enabled: !!user });
 
-  const { industries, isIndustriesPending, refetchIndustries } = useIndustries({
+  const { industries, isIndustriesPending } = useIndustries({
     enabled: !!user,
   });
 
-  const { objectives, isObjectivesPending, refetchObjectives } = useObjectives({
+  const { objectives, isObjectivesPending } = useObjectives({
     enabled: !!user,
   });
 
@@ -114,35 +117,29 @@ export const InspectBaseProfile = ({
     };
   }, []);
 
-  const onRefresh = () => {
-    refetchUser();
-    refetchExperiences();
-    refetchEducations();
-    refetchUserIndustries();
-    refetchUserObjectives();
-    refetchIndustries();
-    refetchObjectives();
+  const onRefresh = async () => {
+    setIsRefreshing(true);
+    await Promise.allSettled([
+      refetchUser(),
+      refetchExperiences(),
+      refetchEducations(),
+      refetchUserIndustries(),
+      refetchUserObjectives(),
+    ]);
+    setIsRefreshing(false);
   };
 
-  const refreshing =
+  const isInitialLoading =
+    isRefreshDebounced ||
     isUserPending ||
     isExperiencesPending ||
     isEducationsPending ||
     isUserIndustriesPending ||
-    isUserObjectivesPending ||
-    isIndustriesPending ||
-    isObjectivesPending;
-
-  const { value: debouncedIsUserPending } = useDebounce(isUserPending, 2000);
-
-  if (debouncedIsUserPending && !user) {
-    return <BaseProfileSkeleton className={className} />;
-  }
+    isUserObjectivesPending;
 
   // ---------------------------------------------------------------
   //  PROFILE SECTIONS CONFIG
   // ---------------------------------------------------------------
-
   const profileSections: ProfileSection[] = [
     {
       key: "experience",
@@ -324,55 +321,69 @@ export const InspectBaseProfile = ({
   //  UI LAYOUT
   // ---------------------------------------------------------------
   return (
-    <StableScrollView
-      className={cn("flex-1 bg-background", className)}
-      refreshControl={
-        <RefreshControl
-          progressViewOffset={50}
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-        />
-      }
-    >
-      {/* Cover */}
-      <View className="relative w-full h-48 bg-card">
-        {coverExtra}
-        <Image
-          source={require("@/assets/images/partial-react-logo.png")}
-          className="w-full h-full"
-          resizeMode="cover"
-        />
+    <View className={cn("flex-1 bg-background", className)}>
+      <View className="absolute top-2 left-0 right-0 items-center z-20 pointer-events-none">
+        <Loader isPending={isRefreshing} size="small" />
       </View>
-      {/* Header */}
-      <View className="flex-row items-center px-5 -mt-12">
-        <View>{profilePictures[0]}</View>
 
-        <View className="flex-1 mt-16">
-          <View className="flex-row items-center justify-between mx-2">
-            <View>
-              <Text className="text-xl font-semibold text-foreground">
-                {identity}
-              </Text>
-              {id && (
-                <Text className="text-sm text-muted-foreground">
-                  @{user?.username}
-                </Text>
-              )}
+      <StableScrollView
+        className="flex-1"
+        refreshControl={
+          <RefreshControl
+            progressViewOffset={50}
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
+            tintColor="transparent"
+            colors={["transparent"]}
+          />
+        }
+      >
+        {isInitialLoading ? (
+          <BaseProfileSkeleton className={className} />
+        ) : (
+          <>
+            {/* Cover */}
+            <View className="relative w-full h-48 bg-card">
+              {coverExtra}
+              <Image
+                source={require("@/assets/images/partial-react-logo.png")}
+                className="w-full h-full"
+                resizeMode="cover"
+              />
             </View>
-            {currentUser?.id === id && (
-              <ProfileStat className="flex flex-row gap-4" />
-            )}
-          </View>
-        </View>
-      </View>
-      {/* Bio + Sections */}
-      <View className="flex flex-col gap-4 flex-1 px-2 mt-6 pb-8">
-        <Text className="italic text-xs">{user?.bio}</Text>
-        {/* Render all abstracted profile sections */}
-        <View className="flex flex-col gap-4">
-          {profileSections.map(renderSection)}
-        </View>
-      </View>
-    </StableScrollView>
+            {/* Header */}
+            <View className="flex-row items-center px-5 -mt-12">
+              <View>{profilePictures[0]}</View>
+
+              <View className="flex-1 mt-16">
+                <View className="flex-row items-center justify-between mx-2">
+                  <View>
+                    <Text className="text-xl font-semibold text-foreground">
+                      {identity}
+                    </Text>
+                    {id && (
+                      <Text className="text-sm text-muted-foreground">
+                        @{user?.username}
+                      </Text>
+                    )}
+                  </View>
+                  {currentUser?.id === id && (
+                    <ProfileStat className="flex flex-row gap-4" />
+                  )}
+                </View>
+              </View>
+            </View>
+            {/* Bio + Sections */}
+            <View className="flex flex-col gap-4 flex-1 px-2 mt-6 pb-8">
+              <Text className="italic text-xs">{user?.bio}</Text>
+              {/* Render all abstracted profile sections */}
+              <View className="flex flex-col gap-4">
+                {profileSections.map(renderSection)}
+              </View>
+            </View>
+          </>
+        )}
+      </StableScrollView>
+    </View>
   );
 };
