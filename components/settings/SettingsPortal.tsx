@@ -92,6 +92,31 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
       ],
     },
     {
+      key: "support",
+      title: "Support",
+      description: "Report issues or send us your feedback.",
+      rows: [
+        createSettingRow({
+          title: "Report a Bug",
+          description: "Found an issue? Let us know.",
+          rightIcon: ChevronRight,
+          onPress: () => router.push("/main/profile/support/report-bug"),
+        }),
+        createSettingRow({
+          title: "Send Feedback",
+          description: "Have suggestions? We want to hear them.",
+          rightIcon: ChevronRight,
+          onPress: () => router.push("/main/profile/support/send-feedback"),
+        }),
+        // createSettingRow({
+        //   title: "Faqs",
+        //   description: "Find answers to common questions",
+        //   rightIcon: ChevronRight,
+        //   onPress: () => router.push("/main/profile/support/faqs"),
+        // }),
+      ],
+    },
+    {
       key: "info",
       title: "Info & Legal",
       description: "Learn more about Instanct and our policies.",
@@ -189,7 +214,7 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
                   return (
                     <View key={index} className="flex flex-col gap-4">
                       <SettingRow className="mt-1" {...row} />
-                      {!isLast && <Separator className="mb-2"/>}
+                      {!isLast && <Separator className="mb-2" />}
                     </View>
                   );
                 })}
