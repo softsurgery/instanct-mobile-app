@@ -21,7 +21,7 @@ const findAllPaginated = async ({
   if (join) params.join = join;
 
   const response = await axios.get<Paginated<ResponseSessionDto>>(
-    `/notification/list`,
+    `/current-session/list`,
     {
       params,
     },

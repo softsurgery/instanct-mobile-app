@@ -9,16 +9,15 @@ import { router, useFocusEffect } from "expo-router";
 import { ArrowDownNarrowWide, Bell } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, RefreshControl, View } from "react-native";
+import { RefreshControl, View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { UserCard } from "./UserCard";
 import { Text } from "../ui/text";
 import { UsersFilter } from "./users-filter/UsersFilter";
 import { useActiveSessions } from "@/hooks/content/sessions/useActiveSessions";
-import { SessionCountdown } from "./SessionCountdown";
-import { SessionStarter } from "./SessionStarter";
-import { Button } from "../ui/button";
+import { SessionCountdown } from "../session/SessionCountdown";
+import { SessionStarter } from "../session/SessionStarter";
 
 interface ExplorePortalProps {
   className?: string;
@@ -65,10 +64,8 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      refetchSessions();
-
       return () => {
-        // optional cleanup
+        refetchSessions();
       };
     }, [refetchSessions]),
   );
@@ -131,16 +128,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
           </View>
         </View>
       ) : (
-        <>
-          <SessionStarter className="px-4" />
-          <Button
-            onPress={() => {
-              Alert.alert(JSON.stringify(activeSessions, null, 2));
-            }}
-          >
-            <Text>Show Active Sessions</Text>
-          </Button>
-        </>
+        <SessionStarter className="px-4" />
       )}
       <UsersFilter
         className="max-h-[80vh] w-[90vw]"

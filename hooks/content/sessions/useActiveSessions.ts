@@ -11,7 +11,7 @@ export const useActiveSessions = (
   { enabled }: useActiveSessionsProps = { enabled: true },
 ) => {
   const {
-    data: SessionsResp,
+    data: sessionsResp,
     isPending: isSessionsPending,
     refetch: refetchSessions,
   } = useQuery({
@@ -21,8 +21,8 @@ export const useActiveSessions = (
   });
 
   const activeSessions = React.useMemo(
-    () => SessionsResp?.data || [],
-    [SessionsResp],
+    () => sessionsResp?.data || [],
+    [sessionsResp],
   );
 
   const mapSession = React.useMemo(

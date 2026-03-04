@@ -57,6 +57,7 @@ export const SessionStarterPortal = ({
         console.log(JSON.stringify(error));
       },
     });
+
   return (
     <StableSafeAreaView className={cn("flex-1", className)}>
       <ApplicationHeader

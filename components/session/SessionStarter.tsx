@@ -16,15 +16,26 @@ export const SessionStarter = ({ className }: SessionStarterProps) => {
       <Icon as={LocateOff} size={48} />
       <Text variant={"h1"}>No Sessions</Text>
       <Text className="text-center">
-        You don&apos;t have any active sessions. Start a new session to get
-        discovered & connect with like-minded professionals in your industry.
+        You don&apos;t have any active sessions.
       </Text>
-      <Button
-        variant={"outline"}
-        onPress={() => router.push("/main/explore/session-starter")}
-      >
-        <Text>Start New Session</Text>
-      </Button>
+      <Text className="text-center">
+        Start a new session to get discovered & connect with like-minded
+        professionals in your industry.
+      </Text>
+      <View className="flex flex-row gap-2">
+        <Button
+          variant={"default"}
+          onPress={() => router.push("/main/explore/session-starter")}
+        >
+          <Text>Start New Session</Text>
+        </Button>
+        <Button
+          variant={"outline"}
+          onPress={() => router.push("/main/explore/session-history")}
+        >
+          <Text>Session History</Text>
+        </Button>
+      </View>
     </View>
   );
 };
