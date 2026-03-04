@@ -53,11 +53,13 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
           title: "Profile",
           description: "Update your bio, avatar and socials",
           rightIcon: ChevronRight,
+          className: "p-1 px-4",
           onPress: () => router.push("/main/profile/update-profile"),
         }),
         createSettingRow({
           title: "Privacy & Security",
           description: "Set your preferred privacy and security options",
+          className: "p-1 px-4",
           rightComponent: (
             <Badge variant="outline">
               <Text className="text-xs font-medium">Soon</Text>
@@ -72,8 +74,11 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
       description: "Tailor Instanct to your daily habits.",
       rows: [
         createSettingRow({
-          component: () => (
-            <View className="flex flex-col justify-between gap-4">
+          className: "p-1 px-4",
+          Component: () => (
+            <View
+              className={cn("flex flex-col justify-between gap-4", className)}
+            >
               <View>
                 <Text className="font-semibold text-base">Language</Text>
                 <Text className="text-xs text-muted-foreground">
@@ -88,6 +93,7 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
           title: "Appearance",
           description: "Switch between light and dark mode",
           rightComponent: <ThemeToggle className="mx-0" />,
+          className: "p-1 px-4",
         }),
       ],
     },
@@ -100,20 +106,23 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
           title: "Report a Bug",
           description: "Found an issue? Let us know.",
           rightIcon: ChevronRight,
+          className: "p-1 px-4",
           onPress: () => router.push("/main/profile/support/report-bug"),
         }),
         createSettingRow({
           title: "Send Feedback",
           description: "Have suggestions? We want to hear them.",
           rightIcon: ChevronRight,
+          className: "p-1 px-4",
           onPress: () => router.push("/main/profile/support/send-feedback"),
         }),
-        // createSettingRow({
-        //   title: "Faqs",
-        //   description: "Find answers to common questions",
-        //   rightIcon: ChevronRight,
-        //   onPress: () => router.push("/main/profile/support/faqs"),
-        // }),
+        createSettingRow({
+          title: "Frequently Asked Questions",
+          description: "Find answers to common questions",
+          rightIcon: ChevronRight,
+          className: "p-1 px-4",
+          onPress: () => router.push("/main/profile/support/faqs"),
+        }),
       ],
     },
     {
@@ -125,18 +134,21 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
           title: "Terms & Conditions",
           description: "Rules for using Instanct",
           rightIcon: ChevronRight,
+          className: "p-1 px-4",
           onPress: () => router.push("/main/terms"),
         }),
         createSettingRow({
           title: "Privacy Policy",
           description: "How we handle your data",
           rightIcon: ChevronRight,
+          className: "p-1 px-4",
           onPress: () => router.push("/main/privacy-policy"),
         }),
         createSettingRow({
           title: "About Instanct",
           description: "What we stand for",
           rightIcon: ChevronRight,
+          className: "p-1 px-4",
           onPress: () => router.push("/main/about"),
         }),
       ],
@@ -200,7 +212,7 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
 
           {settingsRows.map((section) => (
             <View key={section.key} className={cardClass}>
-              <View className="px-4 pt-4 pb-2">
+              <View className="px-8 py-4 bg-background/75 mb-4">
                 <Text className="text-lg font-semibold">{section.title}</Text>
                 <Text className="text-sm text-muted-foreground mt-1">
                   {section.description}
@@ -212,7 +224,7 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
                   const isLast = index === section.rows.length - 1;
 
                   return (
-                    <View key={index} className="flex flex-col gap-4">
+                    <View key={index} className="flex flex-col gap-2">
                       <SettingRow className="mt-1" {...row} />
                       {!isLast && <Separator className="mb-2" />}
                     </View>

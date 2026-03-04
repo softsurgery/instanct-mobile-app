@@ -13,7 +13,8 @@ export interface SettingRowConfig {
   rightIcon?: LucideIcon;
   rightComponent?: React.ReactNode;
   disabled?: boolean;
-  component?: () => React.ReactNode;
+  Component?: () => React.ReactNode;
+  className?: string;
   onPress?: () => void;
 }
 
@@ -29,22 +30,26 @@ export const SettingRow = ({
   rightIcon,
   rightComponent,
   disabled = false,
-  component,
+  Component,
   onPress,
 }: SettingRowProps) => {
   const isPressable = !!onPress && !disabled;
 
-  if (component) {
+  if (Component) {
     return isPressable ? (
       <StablePressable
         onPress={onPress}
-        className={cn("w-full", disabled && "opacity-50", className)}
+        className={cn("w-full", disabled && "opacity-50")}
       >
-        {component()}
+        <View className={cn(className)}>
+          <Component />
+        </View>
       </StablePressable>
     ) : (
-      <View className={cn(disabled && "opacity-50", className)}>
-        {component()}
+      <View className={cn(disabled && "opacity-50")}>
+        <View className={cn(className)}>
+          <Component />
+        </View>
       </View>
     );
   }
