@@ -24,6 +24,8 @@ import { useUserObjectives } from "@/hooks/content/users/useUserObjectives";
 import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
 import { useObjectives } from "@/hooks/content/reference-types/useObjectives";
 import { useServerImages } from "@/hooks/content/useServerImages";
+import { BaseProfileSkeleton } from "./BaseProfileSkeleton";
+import { useDebounce } from "@/hooks/useDebounce";
 
 interface ProfileSection<T = unknown> {
   key: string;
@@ -130,6 +132,12 @@ export const InspectBaseProfile = ({
     isUserObjectivesPending ||
     isIndustriesPending ||
     isObjectivesPending;
+
+  const { value: debouncedIsUserPending } = useDebounce(isUserPending, 2000);
+
+  if (debouncedIsUserPending && !user) {
+    return <BaseProfileSkeleton className={className} />;
+  }
 
   // ---------------------------------------------------------------
   //  PROFILE SECTIONS CONFIG
