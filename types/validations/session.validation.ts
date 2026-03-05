@@ -1,45 +1,20 @@
 import { z } from "zod";
 import { SessionType } from "../session";
 
-export const createSessionSchema = z
-  .object({
-    sessionType: z.nativeEnum(SessionType, {
-      message: "Session type is required.",
+export const createSessionSchema = z.object({
+  sessionType: z.enum(SessionType, {
+    message: "Session type is required.",
+  }),
+
+  plannedStart: z
+    .date({ message: "Planned start must be a valid date." })
+    .refine((date) => date.getTime() > Date.now(), {
+      message: "Planned start must be in the future.",
     }),
 
-    plannedStart: z
-      .preprocess(
-        (value) =>
-          value === null || value === undefined || value === ""
-            ? undefined
-            : new Date(value as string),
-        z.date({ message: "Planned start must be a valid date." }),
-      )
-      .optional(),
-
-    plannedEnd: z
-      .preprocess(
-        (value) =>
-          value === null || value === undefined || value === ""
-            ? undefined
-            : new Date(value as string),
-        z.date({ message: "Planned end must be a valid date." }),
-      )
-      .optional(),
-
-    payload: z.record(z.unknown()).optional(),
-  })
-  .refine(
-    (data) => {
-      if (data.plannedStart && data.plannedEnd) {
-        return data.plannedEnd > data.plannedStart;
-      }
-      return true;
-    },
-    {
-      message: "Planned end must be after planned start.",
-      path: ["plannedEnd"],
-    },
-  );
+  plannedEnd: z.date({
+    message: "Planned end must be a valid date.",
+  }),
+});
 
 export type CreateSessionValidation = z.infer<typeof createSessionSchema>;

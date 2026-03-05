@@ -6,7 +6,7 @@ interface SessionData {
   createDto: CreateSessionDto;
 
   //errors
-  errors: Record<string, string[]>;
+  createDtoErrors: Record<string, string[]>;
 }
 
 export interface SessionStore extends SessionData {
@@ -23,7 +23,7 @@ const initialState: SessionData = {
     plannedEnd: undefined,
   },
 
-  errors: {},
+  createDtoErrors: {},
 };
 
 export const useSessionStore = create<SessionStore>((set, get) => ({

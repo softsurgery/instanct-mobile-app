@@ -14,6 +14,8 @@ import { useSessionStore } from "@/stores/useSessionStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api";
 import { showToastable } from "react-native-toastable";
+import React from "react";
+import { createSessionSchema } from "@/types/validations/session.validation";
 
 interface SessionStarterPortalProps {
   className?: string;
@@ -27,36 +29,40 @@ export const SessionStarterPortal = ({
   const sessionStore = useSessionStore();
   const { structure } = useSessionStarterFormStructure({ store: sessionStore });
 
+  const isEndDateNextDay = React.useMemo(() => {
+    const { plannedStart, plannedEnd } = sessionStore.createDto;
+
+    if (!plannedStart || !plannedEnd) return false;
+
+    const start = new Date(plannedStart);
+    const end = new Date(plannedEnd);
+
+    return end < start;
+  }, [sessionStore.createDto.plannedStart, sessionStore.createDto.plannedEnd]);
+
   const { mutate: startSession, isPending: isStartingSessionPending } =
     useMutation({
-      mutationFn: async () => {
-        const dto = { ...sessionStore.createDto };
-
-        // If the end time is before or equal to the start time,
-        // assume the session spans past midnight — roll end to the next day
-        if (dto.plannedStart && dto.plannedEnd) {
-          const start = new Date(dto.plannedStart);
-          const end = new Date(dto.plannedEnd);
-          if (end <= start) {
-            end.setDate(end.getDate() + 1);
-            dto.plannedEnd = end;
-          }
-        }
-
-        return api.session.start(dto);
-      },
+      mutationFn: async () => api.session.start(sessionStore.createDto),
       onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: ["active-sessions"] });
         showToastable({
           message: "Session started successfully!",
         });
         router.push(`/main/(tabs)`);
+        sessionStore.reset();
       },
       onError: (error) => {
-        Alert.alert("Error", JSON.stringify(error));
-        console.log(JSON.stringify(error));
+        Alert.alert("Error", JSON.stringify(error, null, 2));
       },
     });
+
+  const handleSessionStart = () => {
+    const result = createSessionSchema.safeParse(sessionStore.createDto);
+    Alert.alert("Validation result", JSON.stringify(result, null, 2));
+    if (!result.success)
+      sessionStore.set("createDtoErrors", result.error.flatten().fieldErrors);
+    else startSession();
+  };
 
   return (
     <StableSafeAreaView className={cn("flex-1", className)}>
@@ -85,13 +91,21 @@ export const SessionStarterPortal = ({
             </Text>
           </View>
           <FormBuilder structure={structure} className="px-2" />
+          {isEndDateNextDay && sessionStore.createDto && (
+            <View className="mx-4 mt-4 p-4 rounded-lg bg-destructive/25">
+              <Text className="text-sm">
+                Your session will end the next day since the end time is before
+                the start time.
+              </Text>
+            </View>
+          )}
         </StableKeyboardAwareScrollView>
         {!isKeyboardVisible && (
           <View className="absolute bottom-0 left-0 right-0 border-t border-border bg-card p-8 pt-4">
             <Button
               size="sm"
               className="rounded-full"
-              onPress={() => startSession()}
+              onPress={() => handleSessionStart()}
             >
               <Text>Start Session</Text>
             </Button>

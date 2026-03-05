@@ -35,6 +35,9 @@ export const SessionHistoryPortal = ({
         <Text className="text-sm">
           {item.plannedEnd ? new Date(item.plannedEnd).toString() : "N/A"}
         </Text>
+        <Text className="text-sm">
+          {item.createdAt ? new Date(item.createdAt).toString() : "N/A"}
+        </Text>
       </View>
     ),
     [],
