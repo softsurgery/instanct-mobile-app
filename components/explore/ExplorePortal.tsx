@@ -93,35 +93,41 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
       />
       {mapSession ? (
         <View className="flex-1 bg-transparent">
-          <LegendList
-            data={users}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            pagingEnabled
-            recycleItems={true}
-            bounces={false}
-            alwaysBounceVertical={false}
-            alwaysBounceHorizontal={false}
-            keyExtractor={(item) => item.id.toString()}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreching}
-                onRefresh={refrech}
-                progressViewOffset={0}
-                enabled={true}
-              />
-            }
-            renderItem={renderItem}
-            onScroll={handleScroll}
-            contentContainerStyle={{
-              paddingHorizontal: 0,
-            }}
-          />
           <View className="flex flex-row justify-between m-4">
             <View className="flex gap-2 flex-row justify-center">
               <Text>Session Remaining Time</Text>
               <SessionCountdown session={mapSession} />
             </View>
+          </View>
+          <View className="flex-1">
+            <LegendList
+              className="flex-1"
+              data={users}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              pagingEnabled
+              recycleItems={true}
+              bounces={false}
+              alwaysBounceVertical={false}
+              alwaysBounceHorizontal={false}
+              keyExtractor={(item) => item.id.toString()}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreching}
+                  onRefresh={refrech}
+                  progressViewOffset={0}
+                  enabled={true}
+                />
+              }
+              renderItem={renderItem}
+              onScroll={handleScroll}
+              contentContainerStyle={{
+                paddingHorizontal: 0,
+              }}
+            />
+          </View>
+
+          <View className="flex flex-row justify-end m-4">
             <Text className="font-bold">
               {currentIndex + 1} / {users.length}
             </Text>

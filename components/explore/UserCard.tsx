@@ -4,7 +4,12 @@ import { cn } from "@/lib/utils";
 import { ResponseConversationDto, ResponseUserDto } from "@/types";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { Heart, MessageCircle, CalendarDays } from "lucide-react-native";
+import {
+  Heart,
+  MessageCircle,
+  CalendarDays,
+  Bookmark,
+} from "lucide-react-native";
 import React from "react";
 import { Dimensions, View } from "react-native";
 import { Icon } from "../ui/icon";
@@ -49,13 +54,13 @@ export const UserCard = ({ user, className }: UserCardProps) => {
 
   return (
     <View
-      className={cn("flex-1 px-4 py-4 my-2 h-[75vh]", className)}
+      className={cn("flex-1 px-4 py-4 my-2 h-full", className)}
       style={{ width: width }}
     >
       <View className="flex-1 bg-background rounded-3xl overflow-hidden border-2 border-purple-200 shadow-xl">
         <ImageBackground
           source={{ uri: uploadedProfilePicture[0] as string }}
-          style={{ height: 250, width: "100%" }}
+          style={{ height: 200, width: "100%" }}
           blurRadius={10}
         >
           {/* Optional gradient overlay for readability */}
@@ -111,22 +116,23 @@ export const UserCard = ({ user, className }: UserCardProps) => {
         {/* Fixed Footer Actions */}
         <View className="flex-row gap-3 px-5 py-5">
           <Button
-            variant="outline"
-            className="flex-1 h-12 rounded-xl flex-row gap-2 border-purple-300"
+            variant="secondary"
+            size={"sm"}
+            className="flex-1 flex-row gap-2 border-purple-300"
             onPress={() => setIsLiked((v) => !v)}
           >
             <Icon
-              as={Heart}
+              as={Bookmark}
               size={18}
-              className={isLiked ? "text-red-500" : "text-purple-500"}
+              fill={isLiked ? "red" : "transparent"}
+              color={isLiked ? "red" : "white"}
             />
-            <Text className={isLiked ? "text-red-500" : "text-purple-500"}>
-              Like
-            </Text>
+            <Text className={isLiked ? "text-red-500" : ""}>Save Profile</Text>
           </Button>
           <Button
-            variant="outline"
-            className="flex-1 h-12 rounded-xl flex-row gap-2 border-purple-300"
+            variant="secondary"
+            size={"sm"}
+            className="flex-1 flex-row gap-2 border-purple-300"
             onPress={() =>
               router.push({
                 pathname: "/main/profile/user-calendar",
@@ -135,12 +141,13 @@ export const UserCard = ({ user, className }: UserCardProps) => {
             }
           >
             <Icon as={CalendarDays} size={18} className="text-purple-500" />
-            <Text className="text-purple-500">Calendar</Text>
+            <Text className="text-purple-500">Request a Meeting</Text>
           </Button>
         </View>
         <View className="flex-row gap-3 px-5 pb-5">
           <Button
-            className="flex-1 h-12 rounded-xl flex-row gap-2 bg-purple-500"
+            size={"sm"}
+            className="flex-1 flex-row gap-2"
             onPress={() => {
               startConversation({ users: [user.id] });
             }}
