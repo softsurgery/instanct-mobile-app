@@ -26,7 +26,7 @@ interface ExplorePortalProps {
 export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   const { t } = useTranslation("common");
   const { newCount, resetCount } = useNotificationContext();
-  const { activeSessions, mapSession, refetchSessions } = useActiveSessions();
+  const { mapSession, refetchSessions } = useActiveSessions();
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [openUserFilters, setOpenUserFilters] = React.useState(false);
 

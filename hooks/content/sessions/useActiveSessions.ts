@@ -4,11 +4,15 @@ import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
 interface useActiveSessionsProps {
+  refetchInterval?: number;
   enabled?: boolean;
 }
 
 export const useActiveSessions = (
-  { enabled }: useActiveSessionsProps = { enabled: true },
+  { enabled, refetchInterval }: useActiveSessionsProps = {
+    enabled: true,
+    refetchInterval: 2000,
+  },
 ) => {
   const {
     data: sessionsResp,
@@ -17,6 +21,7 @@ export const useActiveSessions = (
   } = useQuery({
     queryKey: ["active-sessions"],
     queryFn: () => api.session.findAllActivePaginated({}),
+    refetchInterval,
     enabled,
   });
 
