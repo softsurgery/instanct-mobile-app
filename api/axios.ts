@@ -48,21 +48,29 @@ axios.interceptors.response.use(
 
       if (authStore.refreshToken) {
         try {
-          const response = await _axios.post(`${BASE_URL}/auth/refresh-token`, {
-            refresh_token: authStore.refreshToken,
-          });
+          const response = await _axios.post(
+            `${BASE_URL}/client-auth/refresh-token`,
+            {
+              refresh_token: authStore.refreshToken,
+            },
+          );
 
-          const newAccessToken = response.data.access_token;
-          useAuthPersistStore.getState().setAccessToken(newAccessToken);
-          originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+          const { access_token, refresh_token } = response.data;
+          const store = useAuthPersistStore.getState();
+          store.setAccessToken(access_token);
+          if (refresh_token) {
+            store.setRefreshToken(refresh_token);
+          }
+          originalRequest.headers["Authorization"] = `Bearer ${access_token}`;
 
           return axios(originalRequest);
         } catch (err) {
-          authStore.logout?.();
+          useAuthPersistStore.getState().logout();
           return Promise.reject(err);
         }
       } else {
-        authStore.logout?.();
+        authStore.logout();
+        return Promise.reject(error);
       }
     }
 
