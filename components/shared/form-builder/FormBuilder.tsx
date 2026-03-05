@@ -113,13 +113,13 @@ export const FormBuilder = React.forwardRef(
                                       {field.description}
                                     </Text>
                                   ) : null)}
-                                {field?.error && (
-                                  <Text className="text-xs font-medium text-red-500">
-                                    {field?.error}
-                                  </Text>
-                                )}
                               </View>
                             )}
+                            {field?.error ? (
+                              <Text className="text-xs font-medium text-red-500">
+                                {field?.error}
+                              </Text>
+                            ) : null}
                           </View>
                         </View>
                       );
