@@ -10,7 +10,8 @@ export const createSessionSchema = z.object({
     .date({ message: "Planned start must be a valid date." })
     .refine((date) => date.getTime() > Date.now(), {
       message: "Planned start must be in the future.",
-    }),
+    })
+    .optional(),
 
   plannedEnd: z.date({
     message: "Planned end must be a valid date.",
