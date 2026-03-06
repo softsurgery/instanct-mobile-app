@@ -1,9 +1,11 @@
 import { MapContext } from "@/contexts/MapContext";
 import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
+import { useLiveGeolocationParameters } from "@/hooks/content/geolocation/useLiveGeolocationParamters";
 import { Stack } from "expo-router";
 import React from "react";
 
 export default function MainLayout() {
+  useLiveGeolocationParameters();
   const { restartSocket } = useLiveGeolocation({});
 
   return (

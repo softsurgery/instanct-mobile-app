@@ -9,7 +9,7 @@ import { Socket } from "socket.io-client";
 
 interface useLiveGeolocationOptions {}
 
-export function useLiveGeolocation({}: useLiveGeolocationOptions) {
+export function useLiveGeolocation({}: useLiveGeolocationOptions = {}) {
   const apiUrl =
     process.env.EXPO_PUBLIC_API_SOCKET_URL || "http://localhost:8080";
   const { accessToken } = useAuthPersistStore();

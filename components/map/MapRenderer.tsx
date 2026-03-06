@@ -17,6 +17,7 @@ import { UsersModalContent } from "./UsersModalContent";
 import { AndroidDarkMapStyle } from "./utils/AndroidDarkMapStyle";
 import { useGlobalMapConfiguration } from "@/hooks/content/configurations/useGlobalMapConfiguration";
 import { useCurrentMapConfiguration } from "@/hooks/content/users/useCurrentMapConfiguration";
+import { useLiveGeolocationParameters } from "@/hooks/content/geolocation/useLiveGeolocationParamters";
 
 interface MapRendererProps {
   className?: string;
@@ -37,34 +38,7 @@ export const MapRenderer = ({
   const mapRef = React.useRef<MapView>(null);
   const superCluster = React.useRef<any>(null);
   const mapStore = useMapStore();
-
-  //global configuration
-  const { mapConfiguration, isMapConfigurationPending } =
-    useGlobalMapConfiguration();
-
-  //user map configuration
-  const {
-    mapConfiguration: userMapConfiguration,
-    isMapConfigurationPending: isUserMapConfigurationPending,
-  } = useCurrentMapConfiguration();
-
-  React.useEffect(() => {
-    if (
-      userMapConfiguration &&
-      mapConfiguration &&
-      !mapStore.hasInitializedParameters
-    ) {
-      mapStore.setNested("parameters.radius", userMapConfiguration.radius);
-      mapStore.setNested("parameters.rangeMin", mapConfiguration?.rangeMin);
-      mapStore.setNested("parameters.rangeMax", mapConfiguration?.rangeMax);
-      mapStore.setNested("parameters.clusters", userMapConfiguration.clusters);
-      mapStore.setNested(
-        "parameters.showUsernames",
-        userMapConfiguration.showUsernames,
-      );
-      mapStore.set("hasInitializedParameters", true);
-    }
-  }, [userMapConfiguration, mapConfiguration, mapStore.connected]);
+  const { isPending } = useLiveGeolocationParameters();
 
   //states
   const [selectedUser, setSelectedUser] = React.useState<NearbyUser | null>(
@@ -161,12 +135,7 @@ export const MapRenderer = ({
     [],
   );
 
-  if (
-    !currentUser ||
-    isMapConfigurationPending ||
-    isUserMapConfigurationPending
-  )
-    return <ActivityIndicator />;
+  if (!currentUser || isPending) return <ActivityIndicator />;
   return (
     <View className={cn("flex-1", className)}>
       <MapView
