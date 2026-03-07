@@ -1,0 +1,72 @@
+import { cn } from "@/lib/utils";
+import React from "react";
+import { View } from "react-native";
+import { StablePressable } from "./StablePressable";
+import { Text } from "../ui/text";
+import { Checkbox } from "../ui/checkbox";
+
+export interface ChoicePickerOption {
+  label: string;
+  value: string;
+}
+
+interface ChoicePickerProps {
+  className?: string;
+  options: ChoicePickerOption[];
+  value: string;
+  onChange: (value: string) => void;
+}
+
+export const ChoicePicker = ({
+  className,
+  options,
+  value,
+  onChange,
+}: ChoicePickerProps) => {
+  return (
+    <View className={cn("gap-4", className)}>
+      {options.map((option) => {
+        const isSelected = option.value === value;
+
+        return (
+          <StablePressable
+            key={option.value}
+            className={cn(
+              "rounded-2xl px-6 py-5",
+              isSelected ? "border-2 border-primary" : "border border-border",
+            )}
+            onPressClassname="opacity-80"
+            onPress={() => onChange(option.value)}
+          >
+            <View className="flex-row items-center gap-4">
+              <View className="h-8 w-8 items-center justify-center">
+                <Checkbox
+                  checked={isSelected}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      onChange(option.value);
+                    }
+                  }}
+                  className={cn(
+                    "size-8 rounded-full",
+                    !isSelected && "border-foreground/70",
+                  )}
+                  checkedClassName="rounded-full border-primary"
+                  indicatorClassName="rounded-full"
+                />
+              </View>
+              <Text
+                className={cn(
+                  "flex-1 text-sm text-foreground",
+                  isSelected ? "font-semibold" : "font-medium",
+                )}
+              >
+                {option.label}
+              </Text>
+            </View>
+          </StablePressable>
+        );
+      })}
+    </View>
+  );
+};
