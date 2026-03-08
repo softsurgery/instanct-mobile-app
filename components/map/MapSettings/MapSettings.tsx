@@ -38,10 +38,10 @@ interface SettingsSection {
 
 export const MapSettings = ({ className }: MapSettingsProps) => {
   const cardClass =
-    "border-b border-t border-border bg-card shadow-sm overflow-hidden";
+    "border border-b-border border-t-border bg-card shadow-sm overflow-hidden";
 
   const primaryCardClass =
-    "border border-primary/10 bg-primary/5 shadow-sm overflow-hidden rounded-2xl";
+    "rounded-2xl border border-primary/10 bg-primary/5 shadow-sm overflow-hidden";
 
   const { t } = useTranslation("common");
   const { restartSocket } = useMapContext();
@@ -63,7 +63,7 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
       title: "Display Preferences",
       description: "Customize how the map looks and feels.",
       rows: [
-        {
+        createSettingRow({
           title: "Show User Clusters",
           description: "Group nearby users into clusters",
           rightComponent: (
@@ -74,8 +74,8 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
               }
             />
           ),
-        },
-        {
+        }),
+        createSettingRow({
           title: "Show Usernames",
           description: "Display usernames on map markers",
           rightComponent: (
@@ -86,7 +86,7 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
               }
             />
           ),
-        },
+        }),
       ],
     },
     {
@@ -94,7 +94,7 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
       title: "Discovery Range",
       description: "Control how far you can see other users.",
       rows: [
-        {
+        createSettingRow({
           Component: () => (
             <RadiusSlider
               rangeMaxValue={mapStore.parameters.rangeMax}
@@ -102,7 +102,7 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
               onValueChange={handleRadiusChange}
             />
           ),
-        },
+        }),
       ],
     },
     {
@@ -110,14 +110,14 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
       title: "Location Updates",
       description: "Manage how often your location is shared.",
       rows: [
-        {
+        createSettingRow({
           title: "Auto Refresh",
           description: "Automatically update nearby users",
           leftIcon: RefreshCw,
           rightComponent: (
             <Switch checked={autoRefresh} onCheckedChange={setAutoRefresh} />
           ),
-        },
+        }),
       ],
     },
     {
@@ -125,7 +125,7 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
       title: "Privacy & Visibility",
       description: "Control who can see you on the map.",
       rows: [
-        {
+        createSettingRow({
           title: "Location Sharing",
           description: "Currently visible to everyone",
           leftIcon: MapPin,
@@ -134,7 +134,7 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
               <Text className="text-xs font-medium">Active</Text>
             </Badge>
           ),
-        },
+        }),
       ],
     },
   ];
@@ -186,11 +186,11 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
           },
         ]}
       />
-      <StableScrollView className="bg-background">
+      <StableScrollView>
         <View className="flex flex-col gap-4 py-4 pb-4">
           {/* Header Card */}
           <View className="px-4 mb-4">
-            <View className={primaryCardClass}>
+            <View className={cn(primaryCardClass)}>
               <View className="p-4 flex flex-col gap-2">
                 <View className="flex flex-row items-center justify-between">
                   <Text variant="h4">Map Configuration</Text>
@@ -218,12 +218,14 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
                 </Text>
               </View>
 
-              <View className="px-4 pb-4 flex flex-col gap-4">
-                {section.rows.map((row, rowIndex) => (
-                  <React.Fragment key={rowIndex}>
-                    <SettingRow className="mt-2" {...createSettingRow(row)} />
-                    {rowIndex < section.rows.length - 1 && <Separator />}
-                  </React.Fragment>
+              <View className="px-4 pb-4 flex flex-col">
+                {section.rows.map((row, index) => (
+                  <View key={index} className="flex flex-col gap-2 px-4">
+                    <SettingRow className="mt-1" {...createSettingRow(row)} />
+                    {index < section.rows.length - 1 && (
+                      <Separator className="mb-2" />
+                    )}
+                  </View>
                 ))}
               </View>
             </View>
