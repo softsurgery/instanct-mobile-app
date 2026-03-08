@@ -62,6 +62,7 @@ export const Conversation = ({ id }: ConversationProps) => {
   const [input, setInput] = React.useState("");
   const [isInitialMessagesLoading, setIsInitialMessagesLoading] =
     React.useState(true);
+  const [page, setPage] = React.useState(1);
   const { value: debouncedIsInitialMessagesLoading, loading: isLoading } =
     useDebounce(isInitialMessagesLoading, 1000);
 
@@ -144,13 +145,13 @@ export const Conversation = ({ id }: ConversationProps) => {
   // Load messages
   // -----------------------------
   const loadMessages = React.useCallback(
-    (before?: string | Date) => {
+    (pageNum: number) => {
       if (!socket) return;
       setLoadingMore(true);
       socket.emit("getConversationMessages", {
         conversationId: id,
         limit: 20,
-        before: before instanceof Date ? before.toISOString() : before,
+        page: pageNum.toString(),
       });
     },
     [socket, id],
@@ -171,7 +172,8 @@ export const Conversation = ({ id }: ConversationProps) => {
     s.on("connect", () => {
       console.log("✅ Connected to chat server");
       s.emit("joinConversation", { conversationId: id });
-      loadMessages();
+      setPage(1);
+      loadMessages(1);
     });
 
     s.on("conversationMessages", (newMessages: ResponseMessageDto[]) => {
@@ -212,8 +214,11 @@ export const Conversation = ({ id }: ConversationProps) => {
   // -----------------------------
   const handleLoadMore = () => {
     if (loadingMore || !hasMore || messages.length === 0) return;
-    const oldest = messages[messages.length - 1];
-    loadMessages(oldest.createdAt);
+    const nextPage = page + 1;
+    setPage(nextPage);
+    console.log("⏳ Loading messages - page:", nextPage);
+
+    loadMessages(nextPage);
   };
 
   return (
