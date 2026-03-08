@@ -83,7 +83,17 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
       />
       {mapSession ? (
         <View className="flex-1 bg-transparent">
-          <View></View>
+          <View className="mx-4 mt-4">
+            <View className="flex flex-row justify-between items-center">
+              <View className="flex gap-2 flex-row justify-center">
+                <Text className="font-bold">Your session ends in</Text>
+                <SessionCountdown session={mapSession} />
+              </View>
+              <Button size="sm" variant={"outline"}>
+                <Text>End Session</Text>
+              </Button>
+            </View>
+          </View>
           <LegendList
             className="flex-1"
             data={users}
@@ -101,20 +111,11 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
               paddingHorizontal: 0,
             }}
           />
-          <View className="mx-4 mb-4">
+          <View className="mx-4 mb-4 items-center">
             <View className="flex flex-row justify-between items-center">
               <Text className="text-lg font-bold">
                 {currentIndex + 1} / {users.length}
               </Text>
-            </View>
-            <View className="flex flex-row justify-between items-center">
-              <View className="flex gap-2 flex-row justify-center">
-                <Text className="font-bold">Your session ends in</Text>
-                <SessionCountdown session={mapSession} />
-              </View>
-              <Button size="sm" variant={"outline"}>
-                <Text>End Session</Text>
-              </Button>
             </View>
           </View>
         </View>
