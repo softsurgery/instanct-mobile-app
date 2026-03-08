@@ -10,10 +10,12 @@ import React from "react";
 
 interface useSessionStarterFormStructureProps {
   store: SessionStore;
+  isPending?: boolean;
 }
 
 export const useSessionStarterFormStructure = ({
   store,
+  isPending,
 }: useSessionStarterFormStructureProps) => {
   const [now, setNow] = React.useState<boolean>(true);
 
@@ -23,6 +25,7 @@ export const useSessionStarterFormStructure = ({
     description: "If checked, you can schedule the session for later.",
     variant: FieldVariant.CHECKBOX,
     className: "size-5",
+    disabled: isPending,
     props: {
       checked: now,
       onCheckedChange: (value) => {
@@ -41,6 +44,7 @@ export const useSessionStarterFormStructure = ({
     error: store.createDtoErrors.plannedStart?.[0],
     description:
       "The start time of the session. If 'Start Now' is checked, this will be ignored and the session will start immediately.",
+    disabled: isPending,
     props: {
       value: store.createDto.plannedStart,
       onTimeChange: (time) => {
@@ -57,6 +61,7 @@ export const useSessionStarterFormStructure = ({
     error: store.createDtoErrors.plannedEnd?.[0],
     description:
       "The end time of the session. This will be ignored if 'Start Now' is checked.",
+    disabled: isPending,
     props: {
       value: store.createDto.plannedEnd,
       onTimeChange: (time) => {

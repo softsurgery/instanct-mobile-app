@@ -26,7 +26,8 @@ interface MapSettingsProps {
 }
 
 export const MapSettings = ({ className }: MapSettingsProps) => {
-  const cardClass = "border-b border-t border-border bg-card shadow-sm overflow-hidden";
+  const cardClass =
+    "border-b border-t border-border bg-card shadow-sm overflow-hidden";
 
   const primaryCardClass =
     "border-b border-t border-primary/10 bg-primary/5 shadow-sm overflow-hidden";
@@ -179,7 +180,7 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
               <SettingRow
                 className="mt-2"
                 {...createSettingRow({
-                  component: () => (
+                  Component: () => (
                     <RadiusSlider
                       rangeMaxValue={mapStore.parameters.rangeMax}
                       rangeMinValue={mapStore.parameters.rangeMin}

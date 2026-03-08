@@ -4,12 +4,11 @@ import { cn } from "@/lib/utils";
 import { ResponseUserDto } from "@/types/user-management";
 import { LegendList } from "@legendapp/list";
 import { IconMessageChatbot } from "@tabler/icons-react-native";
-import { useQuery } from "@tanstack/react-query";
 import { router, useFocusEffect } from "expo-router";
 import { ArrowDownNarrowWide, Bell } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { RefreshControl, View } from "react-native";
+import { View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { UserCard } from "./UserCard";
@@ -18,6 +17,8 @@ import { UsersFilter } from "./users-filter/UsersFilter";
 import { useActiveSessions } from "@/hooks/content/sessions/useActiveSessions";
 import { SessionCountdown } from "../session/SessionCountdown";
 import { SessionStarter } from "../session/SessionStarter";
+import { Button } from "../ui/button";
+import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
 
 interface ExplorePortalProps {
   className?: string;
@@ -29,17 +30,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   const { mapSession, refetchSessions } = useActiveSessions();
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [openUserFilters, setOpenUserFilters] = React.useState(false);
-
-  const {
-    data: usersResponse,
-    isPending: refreching,
-    refetch: refrech,
-  } = useQuery({
-    queryKey: ["users"],
-    queryFn: () => api.user.findAll({ join: "objectives,industries" }),
-  });
-
-  const users = React.useMemo(() => usersResponse ?? [], [usersResponse]);
+  const { users } = useLiveGeolocation();
 
   const handleNotificationsPress = React.useCallback(() => {
     resetCount();
@@ -93,11 +84,14 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
       />
       {mapSession ? (
         <View className="flex-1 bg-transparent">
-          <View className="flex flex-row justify-between m-4">
+          <View className="flex flex-row justify-between items-center m-4">
             <View className="flex gap-2 flex-row justify-center">
-              <Text>Session Remaining Time</Text>
+              <Text className="font-bold">Your session ends in</Text>
               <SessionCountdown session={mapSession} />
             </View>
+            <Button size="sm" variant={"outline"}>
+              <Text>End Session</Text>
+            </Button>
           </View>
           <View className="flex-1">
             <LegendList
@@ -111,14 +105,6 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
               alwaysBounceVertical={false}
               alwaysBounceHorizontal={false}
               keyExtractor={(item) => item.id.toString()}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreching}
-                  onRefresh={refrech}
-                  progressViewOffset={0}
-                  enabled={true}
-                />
-              }
               renderItem={renderItem}
               onScroll={handleScroll}
               contentContainerStyle={{

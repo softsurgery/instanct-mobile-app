@@ -16,6 +16,7 @@ import { api } from "@/api";
 import { showToastable } from "react-native-toastable";
 import React from "react";
 import { createSessionSchema } from "@/types/validations/session.validation";
+import { ServerErrorResponse } from "@/types";
 
 interface SessionStarterPortalProps {
   className?: string;
@@ -27,7 +28,28 @@ export const SessionStarterPortal = ({
   const queryClient = useQueryClient();
   const isKeyboardVisible = useKeyboardVisible();
   const sessionStore = useSessionStore();
-  const { structure } = useSessionStarterFormStructure({ store: sessionStore });
+
+  // session start mutation
+  const { mutate: startSession, isPending: isStartingSessionPending } =
+    useMutation({
+      mutationFn: async () => api.session.start(sessionStore.createDto),
+      onSuccess: (data) => {
+        queryClient.invalidateQueries({ queryKey: ["active-sessions"] });
+        showToastable({
+          message: "Session started successfully!",
+        });
+        router.replace(`/main/(tabs)`);
+        sessionStore.reset();
+      },
+      onError: (error: ServerErrorResponse) => {
+        Alert.alert("Error", JSON.stringify(error.message, null, 2));
+      },
+    });
+
+  const { structure } = useSessionStarterFormStructure({
+    store: sessionStore,
+    isPending: isStartingSessionPending,
+  });
 
   const isEndDateNextDay = React.useMemo(() => {
     const { plannedStart, plannedEnd } = sessionStore.createDto;
@@ -40,25 +62,8 @@ export const SessionStarterPortal = ({
     return end < start;
   }, [sessionStore.createDto.plannedStart, sessionStore.createDto.plannedEnd]);
 
-  const { mutate: startSession, isPending: isStartingSessionPending } =
-    useMutation({
-      mutationFn: async () => api.session.start(sessionStore.createDto),
-      onSuccess: (data) => {
-        queryClient.invalidateQueries({ queryKey: ["active-sessions"] });
-        showToastable({
-          message: "Session started successfully!",
-        });
-        router.push(`/main/(tabs)`);
-        sessionStore.reset();
-      },
-      onError: (error) => {
-        Alert.alert("Error", JSON.stringify(error, null, 2));
-      },
-    });
-
   const handleSessionStart = () => {
     const result = createSessionSchema.safeParse(sessionStore.createDto);
-    Alert.alert("Validation result", JSON.stringify(result, null, 2));
     if (!result.success)
       sessionStore.set("createDtoErrors", result.error.flatten().fieldErrors);
     else startSession();

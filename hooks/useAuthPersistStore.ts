@@ -49,13 +49,13 @@ export const useAuthPersistStore = create<AuthPersistStore>()(
       storage: createJSONStorage(() =>
         isClient
           ? require("@react-native-async-storage/async-storage").default
-          : undefined
+          : undefined,
       ),
       onRehydrateStorage: () => {
         return () => {
           _set({ isReady: true });
         };
       },
-    }
-  )
+    },
+  ),
 );

@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import * as Haptics from "expo-haptics";
 import { Icon } from "@/components/ui/icon";
+import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 
 interface ObjectivesManagementProps {
   className?: string;
@@ -23,6 +24,7 @@ interface ObjectivesManagementProps {
 export const ObjectivesManagement = ({
   className,
 }: ObjectivesManagementProps) => {
+  const isKeyboardVisible = useKeyboardVisible();
   const router = useRouter();
   const { userId } = useLocalSearchParams<{ userId: string }>();
   const queryClient = useQueryClient();
@@ -127,37 +129,39 @@ export const ObjectivesManagement = ({
           className="flex-1"
         />
       </View>
-      <View className="py-6 border-t border-border">
-        <Button
-          className="mx-6 mb-4 rounded-full"
-          size="sm"
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-            handleSave();
-          }}
-          disabled={isPending || selectedObjectives.length === 0}
-        >
-          {isPending ? (
-            <React.Fragment>
-              <Icon
-                as={Loader2}
-                size={18}
-                className="text-primary-foreground animate-spin"
-              />
-              <Text className="text-primary-foreground font-semibold">
-                Saving...
-              </Text>
-            </React.Fragment>
-          ) : (
-            <React.Fragment>
-              <Icon as={Save} size={18} className="text-primary-foreground" />
-              <Text className="text-primary-foreground font-semibold">
-                Save Selection
-              </Text>
-            </React.Fragment>
-          )}
-        </Button>
-      </View>
+      {!isKeyboardVisible && (
+        <View className="py-6 border-t border-border">
+          <Button
+            className="mx-6 mb-4 rounded-full"
+            size="sm"
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              handleSave();
+            }}
+            disabled={isPending || selectedObjectives.length === 0}
+          >
+            {isPending ? (
+              <React.Fragment>
+                <Icon
+                  as={Loader2}
+                  size={18}
+                  className="text-primary-foreground animate-spin"
+                />
+                <Text className="text-primary-foreground font-semibold">
+                  Saving...
+                </Text>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <Icon as={Save} size={18} className="text-primary-foreground" />
+                <Text className="text-primary-foreground font-semibold">
+                  Save Selection
+                </Text>
+              </React.Fragment>
+            )}
+          </Button>
+        </View>
+      )}
     </StableSafeAreaView>
   );
 };
