@@ -1,12 +1,18 @@
 import { MapContext } from "@/contexts/MapContext";
 import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
 import { useLiveGeolocationParameters } from "@/hooks/content/geolocation/useLiveGeolocationParamters";
+import { useCheckHealth } from "@/hooks/content/useCheckHealth";
+import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
 import { Stack } from "expo-router";
 import React from "react";
 
 export default function MainLayout() {
-  useLiveGeolocationParameters();
-  const { restartSocket } = useLiveGeolocation({});
+  const authPersistStore = useAuthPersistStore();
+  const { isPending } = useLiveGeolocationParameters();
+  const { restartSocket } = useLiveGeolocation({ enabled: !isPending });
+  useCheckHealth({
+    enabled: authPersistStore.isAuthenticated,
+  });
 
   return (
     <MapContext.Provider value={{ restartSocket }}>

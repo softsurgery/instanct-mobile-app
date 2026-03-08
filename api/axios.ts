@@ -1,5 +1,6 @@
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
 import _axios from "axios";
+import { router } from "expo-router";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
@@ -45,7 +46,6 @@ axios.interceptors.response.use(
       !originalRequest._retry
     ) {
       originalRequest._retry = true;
-
       if (authStore.refreshToken) {
         try {
           const response = await _axios.post(
@@ -56,21 +56,18 @@ axios.interceptors.response.use(
           );
 
           const { access_token, refresh_token } = response.data;
-          const store = useAuthPersistStore.getState();
-          store.setAccessToken(access_token);
+          authStore.setAccessToken(access_token);
           if (refresh_token) {
-            store.setRefreshToken(refresh_token);
+            authStore.setRefreshToken(refresh_token);
           }
           originalRequest.headers["Authorization"] = `Bearer ${access_token}`;
 
           return axios(originalRequest);
         } catch (err) {
-          useAuthPersistStore.getState().logout();
+          authStore.logout();
+          router.push("/");
           return Promise.reject(err);
         }
-      } else {
-        authStore.logout();
-        return Promise.reject(error);
       }
     }
 
