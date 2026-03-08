@@ -265,6 +265,24 @@ export default function MainLayout() {
             animationDuration: 200,
           }}
         />
+        <Stack.Screen
+          name="demande"
+          options={{
+            title: "Demande",
+            headerShown: false,
+            animation: "fade_from_bottom",
+            animationDuration: 200,
+          }}
+        />
+        <Stack.Screen
+          name="accept"
+          options={{
+            title: "Accept",
+            headerShown: false,
+            animation: "fade_from_bottom",
+            animationDuration: 200,
+          }}
+        />
       </Stack>
     </MapContext.Provider>
   );

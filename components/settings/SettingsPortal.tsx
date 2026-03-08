@@ -153,6 +153,27 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
         }),
       ],
     },
+    {
+      key: "testing",
+      title: "Testing Screens",
+      description: "Screens used for testing and development purposes.",
+      rows: [
+        createSettingRow({
+          title: "Accept Meeting Request",
+          description: "Test the accept meeting request screen",
+          rightIcon: ChevronRight,
+          className: "p-1 px-4",
+          onPress: () => router.push("/main/accept"),
+        }),
+        createSettingRow({
+          title: "Send Meeting Request",
+          description: "Test the send meeting request screen",
+          rightIcon: ChevronRight,
+          className: "p-1 px-4",
+          onPress: () => router.push("/main/demande"),
+        }),
+      ],
+    },
   ];
 
   const { t } = useTranslation("common");

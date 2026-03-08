@@ -18,7 +18,7 @@ type Shortcut =
 
 interface ApplicationHeaderProps {
   className?: string;
-  title: string;
+  title: string | React.ReactNode;
   titleVariant?: TextVariantDefaults;
   shortcuts?: Shortcut[];
   reverse?: boolean;
@@ -32,6 +32,20 @@ export const ApplicationHeader = ({
   reverse = false,
 }: ApplicationHeaderProps) => {
   const isRTL = useRTL();
+
+  const renderTitle = () => {
+    if (!title) return null;
+
+    if (typeof title === "string") {
+      return (
+        <Text variant={titleVariant} className="mx-2">
+          {title}
+        </Text>
+      );
+    }
+
+    return <View className="mx-2">{title}</View>;
+  };
   return (
     <View
       className={cn(
@@ -40,9 +54,7 @@ export const ApplicationHeader = ({
         className,
       )}
     >
-      <Text variant={titleVariant} className="mx-2">
-        {title}
-      </Text>
+      {renderTitle()}
       <View
         className={cn("flex gap-2", reverse ? "flex-row-reverse" : "flex-row")}
       >
