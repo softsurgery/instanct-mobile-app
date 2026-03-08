@@ -12,8 +12,13 @@ const findCurrent = async (): Promise<ResponseUserDto> => {
   return response.data;
 };
 
-const findById = async (id: string): Promise<ResponseUserDto> => {
-  const response = await axios.get<ResponseUserDto>(`/admin/user/${id}`);
+const findById = async (
+  id: string,
+  query?: Pick<QueryParams, "join">,
+): Promise<ResponseUserDto> => {
+  const response = await axios.get<ResponseUserDto>(`/admin/user/${id}`, {
+    params: query,
+  });
   return response.data;
 };
 
