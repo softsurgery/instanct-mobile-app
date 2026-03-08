@@ -1,4 +1,3 @@
-import { api } from "@/api";
 import { useNotificationContext } from "@/contexts/NotificationsContext";
 import { cn } from "@/lib/utils";
 import { ResponseUserDto } from "@/types/user-management";
@@ -84,39 +83,39 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
       />
       {mapSession ? (
         <View className="flex-1 bg-transparent">
-          <View className="flex flex-row justify-between items-center m-4">
-            <View className="flex gap-2 flex-row justify-center">
-              <Text className="font-bold">Your session ends in</Text>
-              <SessionCountdown session={mapSession} />
+          <View></View>
+          <LegendList
+            className="flex-1"
+            data={users}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            pagingEnabled
+            recycleItems={true}
+            bounces={false}
+            alwaysBounceVertical={false}
+            alwaysBounceHorizontal={false}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItem}
+            onScroll={handleScroll}
+            contentContainerStyle={{
+              paddingHorizontal: 0,
+            }}
+          />
+          <View className="mx-4 mb-4">
+            <View className="flex flex-row justify-between items-center">
+              <Text className="text-lg font-bold">
+                {currentIndex + 1} / {users.length}
+              </Text>
             </View>
-            <Button size="sm" variant={"outline"}>
-              <Text>End Session</Text>
-            </Button>
-          </View>
-          <View className="flex-1">
-            <LegendList
-              className="flex-1"
-              data={users}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              pagingEnabled
-              recycleItems={true}
-              bounces={false}
-              alwaysBounceVertical={false}
-              alwaysBounceHorizontal={false}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={renderItem}
-              onScroll={handleScroll}
-              contentContainerStyle={{
-                paddingHorizontal: 0,
-              }}
-            />
-          </View>
-
-          <View className="flex flex-row justify-end m-4">
-            <Text className="font-bold">
-              {currentIndex + 1} / {users.length}
-            </Text>
+            <View className="flex flex-row justify-between items-center">
+              <View className="flex gap-2 flex-row justify-center">
+                <Text className="font-bold">Your session ends in</Text>
+                <SessionCountdown session={mapSession} />
+              </View>
+              <Button size="sm" variant={"outline"}>
+                <Text>End Session</Text>
+              </Button>
+            </View>
           </View>
         </View>
       ) : (

@@ -54,10 +54,10 @@ export const UserCard = ({ user, className }: UserCardProps) => {
 
   return (
     <View
-      className={cn("flex-1 px-4 py-4 my-2 h-full", className)}
+      className={cn("flex-1 min-h-full", className)}
       style={{ width: width }}
     >
-      <View className="flex-1 bg-background rounded-3xl overflow-hidden border-2 border-purple-200 shadow-xl">
+      <View className="flex-1 bg-background mx-4 my-2 rounded-xl overflow-hidden border-2 border-border shadow-xl">
         <ImageBackground
           source={{ uri: uploadedProfilePicture[0] as string }}
           style={{ height: 200, width: "100%" }}
@@ -105,56 +105,53 @@ export const UserCard = ({ user, className }: UserCardProps) => {
             </View>
           </LinearGradient>
         </ImageBackground>
-        {/* Content Section */}
-        <View className="flex-1 flex-row flex-wrap items-center gap-x-2 px-4 mt-2">
-          {user.industries?.map((ind) => (
-            <Badge key={ind.id} className="rounded-full mt-2">
-              <Text className="text-xs font-semibold">{ind.label}</Text>
-            </Badge>
-          ))}
-        </View>
-        {/* Fixed Footer Actions */}
-        <View className="flex-row gap-3 px-5 py-5">
-          <Button
-            variant="secondary"
-            size={"sm"}
-            className="flex-1 flex-row gap-2 border-purple-300"
-            onPress={() => setIsLiked((v) => !v)}
-          >
-            <Icon
-              as={Bookmark}
-              size={18}
-              fill={isLiked ? "red" : "transparent"}
-              color={isLiked ? "red" : "white"}
-            />
-            <Text className={isLiked ? "text-red-500" : ""}>Save Profile</Text>
-          </Button>
-          <Button
-            variant="secondary"
-            size={"sm"}
-            className="flex-1 flex-row gap-2 border-purple-300"
-            onPress={() =>
-              router.push({
-                pathname: "/main/profile/user-calendar",
-                params: { id: user?.id },
-              })
-            }
-          >
-            <Icon as={CalendarDays} size={18} className="text-purple-500" />
-            <Text className="text-purple-500">Request a Meeting</Text>
-          </Button>
-        </View>
-        <View className="flex-row gap-3 px-5 pb-5">
-          <Button
-            size={"sm"}
-            className="flex-1 flex-row gap-2"
-            onPress={() => {
-              startConversation({ users: [user.id] });
-            }}
-          >
-            <Icon as={MessageCircle} size={18} className="text-white" />
-            <Text className="text-white font-semibold">Message</Text>
-          </Button>
+        <View className="flex flex-col flex-1">
+          {/* Content Section */}
+          <View className="flex-1 flex-row flex-wrap items-center gap-x-2 px-4 mt-2">
+            {user.industries?.map((ind) => (
+              <Badge key={ind.id} className="rounded-full mt-2">
+                <Text className="text-xs font-semibold">{ind.label}</Text>
+              </Badge>
+            ))}
+          </View>
+          {/* Fixed Footer Actions */}
+          <View className="flex flex-row gap-4 justify-between m-4">
+            <Button
+              variant="secondary"
+              size={"sm"}
+              className="rounded-full h-16 w-16"
+              onPress={() => setIsLiked((v) => !v)}
+            >
+              <Icon
+                as={Bookmark}
+                size={32}
+                fill={isLiked ? "red" : "transparent"}
+                color={isLiked ? "red" : "white"}
+              />
+            </Button>
+            <Button
+              size={"sm"}
+              className="rounded-full h-16 w-16"
+              onPress={() => {
+                startConversation({ users: [user.id] });
+              }}
+            >
+              <Icon as={MessageCircle} size={32} className="text-white" />
+            </Button>
+            <Button
+              variant="secondary"
+              size={"sm"}
+              className="rounded-full h-16 w-16"
+              onPress={() =>
+                router.push({
+                  pathname: "/main/profile/user-calendar",
+                  params: { id: user?.id },
+                })
+              }
+            >
+              <Icon as={CalendarDays} size={32} className="text-purple-500" />
+            </Button>
+          </View>
         </View>
       </View>
     </View>
