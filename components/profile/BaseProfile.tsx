@@ -8,11 +8,15 @@ import { useIdentifiedUser } from "@/hooks/content/users/useIdentifiedUser";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import { cn } from "@/lib/utils";
 import { createClientStore, useUserStore } from "@/stores/useUserStore";
-import { ResponseEducationDto, ResponseExperienceDto } from "@/types";
+import {
+  ResponseEducationDto,
+  ResponseExperienceDto,
+  ResponseRefParamDto,
+} from "@/types";
 import { format } from "date-fns";
 import { router, useNavigation } from "expo-router";
 import { Pen, Plus, Globe, Linkedin } from "lucide-react-native";
-import { Image, Linking, RefreshControl, View } from "react-native";
+import { Image, Linking, RefreshControl, ScrollView, View } from "react-native";
 import { SeeMoreText } from "../shared/SeeMoreText";
 import { StablePressable } from "../shared/StablePressable";
 import { Separator } from "../ui/separator";
@@ -27,6 +31,7 @@ import { useServerImages } from "@/hooks/content/useServerImages";
 import { BaseProfileSkeleton } from "./BaseProfileSkeleton";
 import { Loader } from "../shared/Loader";
 import { useDebounce } from "@/hooks/useDebounce";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
 interface ProfileSection<T = unknown> {
   key: string;
@@ -42,6 +47,8 @@ interface InspectBaseProfileProps {
   id: string;
   coverExtra?: React.ReactNode;
 }
+
+const Tab = createMaterialTopTabNavigator();
 
 export const InspectBaseProfile = ({
   className,
@@ -140,72 +147,84 @@ export const InspectBaseProfile = ({
   // ---------------------------------------------------------------
   //  PROFILE SECTIONS CONFIG
   // ---------------------------------------------------------------
-  const profileSections: ProfileSection[] = [
-    {
-      key: "experience",
-      title: "Experience",
-      data: experiences as unknown[],
-      editable: currentUser?.id === user?.id,
-      renderItem: (experience: ResponseExperienceDto) => (
-        <View className="flex flex-col mb-4 mt-2">
-          <Text className="font-semibold">{experience.title}</Text>
-          <Text className="text-sm text-muted-foreground font-bold">
-            {experience.company}
-          </Text>
-          <Text className="text-xs text-muted-foreground my-1">
-            {format(new Date(experience.startDate!), "MMM yyyy")} —{" "}
-            {format(new Date(experience.endDate!), "MMM yyyy")}
-          </Text>
-          <SeeMoreText textClassname="text-sm" numberOfLines={2}>
-            {experience.description || "No description provided."}
-          </SeeMoreText>
-        </View>
-      ),
-    },
-    {
-      key: "education",
-      title: "Education",
-      data: educations as unknown[],
-      editable: currentUser?.id === user?.id,
-      renderItem: (education: ResponseEducationDto) => (
-        <View className="flex flex-col mb-4 gap-4">
-          <Text className="font-semibold">{education.title}</Text>
-          <Text className="text-sm text-muted-foreground">
-            {education.institution}
-          </Text>
-          <SeeMoreText textClassname="text-sm" numberOfLines={2}>
-            {education.description || "No description provided."}
-          </SeeMoreText>
-        </View>
-      ),
-    },
-    {
-      key: "industries",
-      title: "Industries",
-      data: industries.filter((industry) =>
-        userIndustries?.some((id) => id === industry.id),
-      ) as unknown[],
-      editable: currentUser?.id === user?.id,
-      renderItem: (industry) => (
-        <Badge variant={"outline"} className={cn("px-2 py-1 rounded-full")}>
-          <Text className="text-xs">{industry.label}</Text>
-        </Badge>
-      ),
-    },
-    {
-      key: "objectives",
-      title: "Objectives",
-      data: objectives.filter((objective) =>
-        userObjectives?.some((id) => id === objective.id),
-      ) as unknown[],
-      editable: currentUser?.id === user?.id,
-      renderItem: (objective) => (
-        <Badge variant={"outline"} className={cn("px-2 py-1 rounded-full")}>
-          <Text className="text-xs">{objective.label}</Text>
-        </Badge>
-      ),
-    },
-  ];
+  const profileSections: ProfileSection[] = React.useMemo(
+    () => [
+      {
+        key: "experience",
+        title: "Experience",
+        data: experiences as unknown[],
+        editable: currentUser?.id === user?.id,
+        renderItem: (experience: ResponseExperienceDto) => (
+          <View className="flex flex-col mb-4 mt-2">
+            <Text className="font-semibold">{experience.title}</Text>
+            <Text className="text-sm text-muted-foreground font-bold">
+              {experience.company}
+            </Text>
+            <Text className="text-xs text-muted-foreground my-1">
+              {format(new Date(experience.startDate!), "MMM yyyy")} —{" "}
+              {format(new Date(experience.endDate!), "MMM yyyy")}
+            </Text>
+            <SeeMoreText textClassname="text-sm" numberOfLines={2}>
+              {experience.description || "No description provided."}
+            </SeeMoreText>
+          </View>
+        ),
+      },
+      {
+        key: "education",
+        title: "Education",
+        data: educations as unknown[],
+        editable: currentUser?.id === user?.id,
+        renderItem: (education: ResponseEducationDto) => (
+          <View className="flex flex-col mb-4 gap-4">
+            <Text className="font-semibold">{education.title}</Text>
+            <Text className="text-sm text-muted-foreground">
+              {education.institution}
+            </Text>
+            <SeeMoreText textClassname="text-sm" numberOfLines={2}>
+              {education.description || "No description provided."}
+            </SeeMoreText>
+          </View>
+        ),
+      },
+      {
+        key: "industries",
+        title: "Industries",
+        data: industries.filter((industry) =>
+          userIndustries?.some((id) => id === industry.id),
+        ) as unknown[],
+        editable: currentUser?.id === user?.id,
+        renderItem: (industry: ResponseRefParamDto) => (
+          <Badge variant={"outline"} className={cn("px-2 py-1 rounded-full")}>
+            <Text className="text-xs">{industry.label}</Text>
+          </Badge>
+        ),
+      },
+      {
+        key: "objectives",
+        title: "Objectives",
+        data: objectives.filter((objective) =>
+          userObjectives?.some((id) => id === objective.id),
+        ) as unknown[],
+        editable: currentUser?.id === user?.id,
+        renderItem: (objective: ResponseRefParamDto) => (
+          <Badge variant={"outline"} className={cn("px-2 py-1 rounded-full")}>
+            <Text className="text-xs">{objective.label}</Text>
+          </Badge>
+        ),
+      },
+    ],
+    [
+      experiences,
+      educations,
+      industries,
+      objectives,
+      userIndustries,
+      userObjectives,
+      currentUser?.id,
+      user?.id,
+    ],
+  );
 
   // ---------------------------------------------------------------
   //  SECTION RENDERER
@@ -213,103 +232,209 @@ export const InspectBaseProfile = ({
   const isBadgeSection = (key: string) =>
     key === "industries" || key === "objectives";
 
-  const renderSection = (section: ProfileSection) => {
-    const isBadge = isBadgeSection(section.key);
+  const renderSection = React.useCallback(
+    (section: ProfileSection) => {
+      const isBadge = isBadgeSection(section.key);
 
-    return (
-      <View key={section.key}>
-        <View className={cn("pt-x bg-card border border-border")}>
-          <View className="flex flex-row items-center justify-between bg-primary/10">
-            <View className="px-4">
-              <Text variant="h4">{section.title}</Text>
-            </View>
+      return (
+        <View key={section.key}>
+          <View className={cn("pt-x bg-card border border-border")}>
+            <View className="flex flex-row items-center justify-between bg-primary/10">
+              <View className="px-4">
+                <Text variant="h4">{section.title}</Text>
+              </View>
 
-            {section.editable && (
-              <View className="flex flex-row gap-1 items-center p-2">
-                {!isBadge && (
+              {section.editable && (
+                <View className="flex flex-row gap-1 items-center p-2">
+                  {!isBadge && (
+                    <StablePressable
+                      className="p-2"
+                      onPress={() => {
+                        switch (section.key) {
+                          case "experience":
+                            router.push("/main/profile/create-experience");
+                            break;
+                          case "education":
+                            router.push("/main/profile/create-education");
+                            break;
+                        }
+                      }}
+                      onPressClassname="bg-primary/25 rounded-full"
+                    >
+                      <Icon
+                        as={Plus}
+                        size={20}
+                        className="text-muted-foreground"
+                      />
+                    </StablePressable>
+                  )}
+
                   <StablePressable
                     className="p-2"
                     onPress={() => {
                       switch (section.key) {
                         case "experience":
-                          router.push("/main/profile/create-experience");
+                          router.push("/main/profile/update-experiences");
                           break;
                         case "education":
-                          router.push("/main/profile/create-education");
+                          router.push("/main/profile/update-educations");
+                          break;
+                        case "industries":
+                          router.push({
+                            pathname: "/main/profile/industries",
+                            params: { userId: id },
+                          });
+                          break;
+                        case "objectives":
+                          router.push({
+                            pathname: "/main/profile/objectives",
+                            params: { userId: id },
+                          });
                           break;
                       }
                     }}
                     onPressClassname="bg-primary/25 rounded-full"
                   >
                     <Icon
-                      as={Plus}
-                      size={20}
+                      as={Pen}
+                      size={18}
                       className="text-muted-foreground"
                     />
                   </StablePressable>
-                )}
+                </View>
+              )}
+            </View>
 
-                <StablePressable
-                  className="p-2"
-                  onPress={() => {
-                    switch (section.key) {
-                      case "experience":
-                        router.push("/main/profile/update-experiences");
-                        break;
-                      case "education":
-                        router.push("/main/profile/update-educations");
-                        break;
-                      case "industries":
-                        router.push({
-                          pathname: "/main/profile/industries",
-                          params: { userId: id },
-                        });
-                        break;
-                      case "objectives":
-                        router.push({
-                          pathname: "/main/profile/objectives",
-                          params: { userId: id },
-                        });
-                        break;
-                    }
-                  }}
-                  onPressClassname="bg-primary/25 rounded-full"
-                >
-                  <Icon as={Pen} size={18} className="text-muted-foreground" />
-                </StablePressable>
-              </View>
-            )}
-          </View>
+            <Separator />
 
-          <Separator />
-
-          <View className="p-4">
-            {section.data?.length === 0 ? (
-              <View key={section.key}>
-                <Text className="text-sm text-muted-foreground italic text-center my-4">
-                  No {section.title} added yet
-                </Text>
-              </View>
-            ) : isBadge ? (
-              <View className="flex-row flex-wrap gap-2">
-                {Array.isArray(section.data) &&
-                  section.data.map((item, idx) => (
-                    <View key={idx}>{section.renderItem(item)}</View>
-                  ))}
-              </View>
-            ) : (
-              <View className="flex flex-col gap-4">
-                {Array.isArray(section.data) &&
-                  section.data.map((item, idx) => (
-                    <View key={idx}>{section.renderItem(item)}</View>
-                  ))}
-              </View>
-            )}
+            <View className="p-4">
+              {section.data?.length === 0 ? (
+                <View key={section.key}>
+                  <Text className="text-sm text-muted-foreground italic text-center my-4">
+                    No {section.title} added yet
+                  </Text>
+                </View>
+              ) : isBadge ? (
+                <View className="flex-row flex-wrap gap-2">
+                  {Array.isArray(section.data) &&
+                    section.data.map((item, idx) => (
+                      <View key={idx}>{section.renderItem(item)}</View>
+                    ))}
+                </View>
+              ) : (
+                <View className="flex flex-col gap-4">
+                  {Array.isArray(section.data) &&
+                    section.data.map((item, idx) => (
+                      <View key={idx}>{section.renderItem(item)}</View>
+                    ))}
+                </View>
+              )}
+            </View>
           </View>
         </View>
-      </View>
-    );
-  };
+      );
+    },
+    [id],
+  );
+
+  // ---------------------------------------------------------------
+  //  TAB COMPONENTS
+  // ---------------------------------------------------------------
+  const AboutTab = React.useCallback(
+    () => (
+      <ScrollView className="flex-1 bg-background">
+        <View className="flex flex-col gap-4 pb-8">
+          {/* Bio Section */}
+          {user?.bio ? (
+            <View className="bg-card border border-border overflow-hidden">
+              <View className="p-4 bg-primary/10">
+                <Text variant="h4">About</Text>
+              </View>
+              <Separator />
+              <View className="p-4">
+                <SeeMoreText
+                  textClassname="text-sm leading-6 text-foreground"
+                  numberOfLines={4}
+                >
+                  {user.bio}
+                </SeeMoreText>
+              </View>
+            </View>
+          ) : (
+            <View className="bg-card border border-border p-4">
+              <Text className="text-sm text-muted-foreground italic text-center">
+                No bio added yet
+              </Text>
+            </View>
+          )}
+
+          {/* Links Section */}
+          {(user?.website || user?.linkedin) && (
+            <View className="flex flex-col gap-2">
+              {user?.website && (
+                <StablePressable
+                  className="bg-card border border-border p-4 flex-row items-center gap-3"
+                  onPress={() => {
+                    if (user?.website) Linking.openURL(user?.website);
+                  }}
+                  onPressClassname="bg-muted"
+                >
+                  <Icon as={Globe} size={20} className="text-primary" />
+                  <Text
+                    className="text-sm font-medium text-foreground flex-1"
+                    numberOfLines={1}
+                  >
+                    {user.website}
+                  </Text>
+                </StablePressable>
+              )}
+              {user?.linkedin && (
+                <StablePressable
+                  className="bg-card border border-border p-4 flex-row items-center gap-3"
+                  onPress={() => {
+                    if (user?.linkedin) Linking.openURL(user?.linkedin);
+                  }}
+                  onPressClassname="bg-muted"
+                >
+                  <Icon as={Linkedin} size={20} className="text-primary" />
+                  <Text className="text-sm font-medium text-foreground">
+                    LinkedIn Profile
+                  </Text>
+                </StablePressable>
+              )}
+            </View>
+          )}
+        </View>
+      </ScrollView>
+    ),
+    [user],
+  );
+
+  const ExperienceTab = React.useCallback(
+    () => (
+      <ScrollView className="flex-1 bg-background">
+        <View className="flex flex-col gap-4 pb-8">
+          {profileSections
+            .filter((s) => s.key === "experience" || s.key === "education")
+            .map(renderSection)}
+        </View>
+      </ScrollView>
+    ),
+    [profileSections, renderSection],
+  );
+
+  const InterestsTab = React.useCallback(
+    () => (
+      <ScrollView className="flex-1 bg-background">
+        <View className="flex flex-col gap-4 pb-8">
+          {profileSections
+            .filter((s) => s.key === "industries" || s.key === "objectives")
+            .map(renderSection)}
+        </View>
+      </ScrollView>
+    ),
+    [profileSections, renderSection],
+  );
 
   // ---------------------------------------------------------------
   //  UI LAYOUT
@@ -367,67 +492,24 @@ export const InspectBaseProfile = ({
                 </View>
               </View>
             </View>
-            {/* Bio + Sections */}
-            <View className="flex flex-col gap-4 flex-1 mt-6 pb-8">
-              {/* Bio Section */}
-              {user?.bio && (
-                <View className="bg-card border border-border overflow-hidden">
-                  <View className="p-4 bg-primary/10">
-                    <Text variant="h4">About</Text>
-                  </View>
-                  <Separator />
-                  <View className="p-4">
-                    <SeeMoreText
-                      textClassname="text-sm leading-6 text-foreground"
-                      numberOfLines={4}
-                    >
-                      {user.bio}
-                    </SeeMoreText>
-                  </View>
-                </View>
-              )}
-
-              {/* Links Section */}
-              {(user?.website || user?.linkedin) && (
-                <View className="flex flex-col gap-2">
-                  {user?.website && (
-                    <StablePressable
-                      className="bg-card border border-border p-4 flex-row items-center gap-3"
-                      onPress={() => {
-                        if (user?.website) Linking.openURL(user?.website);
-                      }}
-                      onPressClassname="bg-muted"
-                    >
-                      <Icon as={Globe} size={20} className="text-primary" />
-                      <Text
-                        className="text-sm font-medium text-foreground flex-1"
-                        numberOfLines={1}
-                      >
-                        {user.website}
-                      </Text>
-                    </StablePressable>
-                  )}
-                  {user?.linkedin && (
-                    <StablePressable
-                      className="bg-card border border-border p-4 flex-row items-center gap-3"
-                      onPress={() => {
-                        if (user?.linkedin) Linking.openURL(user?.linkedin);
-                      }}
-                      onPressClassname="bg-muted"
-                    >
-                      <Icon as={Linkedin} size={20} className="text-primary" />
-                      <Text className="text-sm font-medium text-foreground">
-                        LinkedIn Profile
-                      </Text>
-                    </StablePressable>
-                  )}
-                </View>
-              )}
-
-              {/* Render all abstracted profile sections */}
-              <View className="flex flex-col gap-4">
-                {profileSections.map(renderSection)}
-              </View>
+            {/* Tabs */}
+            <View className="flex-1 mt-4" style={{ minHeight: 400 }}>
+              <Tab.Navigator
+                screenOptions={{
+                  tabBarScrollEnabled: false,
+                  tabBarLabelStyle: {
+                    fontSize: 12,
+                    fontWeight: "600",
+                    textTransform: "none",
+                  },
+                  tabBarIndicatorStyle: { backgroundColor: "#6366f1" },
+                  tabBarStyle: { backgroundColor: "transparent" },
+                }}
+              >
+                <Tab.Screen name="About" component={AboutTab} />
+                <Tab.Screen name="Career" component={ExperienceTab} />
+                <Tab.Screen name="Interests" component={InterestsTab} />
+              </Tab.Navigator>
             </View>
           </>
         )}
