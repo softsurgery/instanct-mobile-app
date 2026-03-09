@@ -37,7 +37,7 @@ export const UpdateEducations = ({ className }: UpdateEducationsProps) => {
     userStore.set("updateEducationDto", {
       title: edu.title,
       institution: edu.institution,
-      startDate: new Date(edu.startDate),
+      startDate: new Date(edu.startDate!) || undefined,
       endDate: edu.endDate ? new Date(edu.endDate) : null,
       description: edu.description,
     });
@@ -97,11 +97,6 @@ export const UpdateEducations = ({ className }: UpdateEducationsProps) => {
                           Education {index + 1}
                         </Text>
                       </View>
-                      {edu.endDate === null && (
-                        <View className="bg-green-500/20 px-2.5 py-1 rounded-full">
-                          <Text className="text-xs font-medium">Current</Text>
-                        </View>
-                      )}
                     </View>
 
                     {/* Content */}
@@ -125,21 +120,21 @@ export const UpdateEducations = ({ className }: UpdateEducationsProps) => {
                       </View>
 
                       {/* Duration */}
-                      <View className="flex flex-row items-center gap-3">
+                      {/* <View className="flex flex-row items-center gap-3">
                         <Icon as={Calendar} size={18} />
                         <View>
                           <Text className="text-sm text-foreground font-medium">
-                            {format(new Date(edu.startDate), "MMM yyyy")} -{" "}
+                            {format(new Date(edu.startDate!), "MMM yyyy")} -{" "}
                             {edu.endDate
                               ? format(new Date(edu.endDate), "MMM yyyy")
                               : "Present"}
                           </Text>
                           <Text className="text-xs text-muted-foreground">
-                            {getExperienceYears(edu.startDate, edu.endDate)}{" "}
+                            {getExperienceYears(edu.startDate!, edu.endDate)}{" "}
                             years
                           </Text>
                         </View>
-                      </View>
+                      </View> */}
 
                       {/* Description */}
                       {edu.description && (

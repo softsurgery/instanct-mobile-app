@@ -26,7 +26,7 @@ export const useUpdateEducationFormStructure = ({
     error: store.educationErrors?.title?.[0],
     props: {
       value: store.updateEducationDto.title,
-      onChangeText: (value) => { 
+      onChangeText: (value) => {
         store.setNested("updateEducationDto.title", value);
         store.setNested("educationErrors.title", []);
       },
@@ -69,48 +69,48 @@ export const useUpdateEducationFormStructure = ({
     },
   };
 
-  const startDate: Field<DateFieldProps> = {
-    id: "startDate",
-    label: "Start Date",
-    variant: FieldVariant.DATE,
-    required: true,
-    description: "The date you started this education program.",
-    error: store.educationErrors?.startDate?.[0],
-    props: {
-      value: store.updateEducationDto?.startDate
-        ? new Date(store.updateEducationDto.startDate)
-        : undefined,
-      onDateChange: (value) => {
-        store.setNested(
-          "updateEducationDto.startDate",
-          value ? value.toISOString() : null,
-        );
-        store.setNested("educationErrors.startDate", []);
-      },
-    },
-  };
+  // const startDate: Field<DateFieldProps> = {
+  //   id: "startDate",
+  //   label: "Start Date",
+  //   variant: FieldVariant.DATE,
+  //   required: true,
+  //   description: "The date you started this education program.",
+  //   error: store.educationErrors?.startDate?.[0],
+  //   props: {
+  //     value: store.updateEducationDto?.startDate
+  //       ? new Date(store.updateEducationDto.startDate)
+  //       : undefined,
+  //     onDateChange: (value) => {
+  //       store.setNested(
+  //         "updateEducationDto.startDate",
+  //         value ? value.toISOString() : null,
+  //       );
+  //       store.setNested("educationErrors.startDate", []);
+  //     },
+  //   },
+  // };
 
-  const endDate: Field<DateFieldProps> = {
-    id: "endDate",
-    label: "End Date",
-    variant: FieldVariant.DATE,
-    required: false,
-    description:
-      "The date you completed or expect to complete this program. Leave blank if currently enrolled.",
-    error: store.educationErrors?.endDate?.[0],
-    props: {
-      value: store.updateEducationDto?.endDate
-        ? new Date(store.updateEducationDto.endDate)
-        : undefined,
-      onDateChange: (value) => {
-        store.setNested(
-          "updateEducationDto.endDate",
-          value ? value.toISOString() : null,
-        );
-        store.setNested("educationErrors.endDate", []);
-      },
-    },
-  };
+  // const endDate: Field<DateFieldProps> = {
+  //   id: "endDate",
+  //   label: "End Date",
+  //   variant: FieldVariant.DATE,
+  //   required: false,
+  //   description:
+  //     "The date you completed or expect to complete this program. Leave blank if currently enrolled.",
+  //   error: store.educationErrors?.endDate?.[0],
+  //   props: {
+  //     value: store.updateEducationDto?.endDate
+  //       ? new Date(store.updateEducationDto.endDate)
+  //       : undefined,
+  //     onDateChange: (value) => {
+  //       store.setNested(
+  //         "updateEducationDto.endDate",
+  //         value ? value.toISOString() : null,
+  //       );
+  //       store.setNested("educationErrors.endDate", []);
+  //     },
+  //   },
+  // };
 
   const structure: FormStructure = {
     title: "Update Education",
@@ -130,10 +130,10 @@ export const useUpdateEducationFormStructure = ({
             id: 3,
             fields: [description],
           },
-          {
-            id: 4,
-            fields: [startDate, endDate],
-          },
+          // {
+          //   id: 4,
+          //   fields: [startDate, endDate],
+          // },
         ],
       },
     ],

@@ -36,6 +36,8 @@ export interface ResponseUserDto extends ResponseAbstractUsertDto {
   cin?: string;
   bio?: string;
   gender?: Gender;
+  website?: string;
+  linkedin?: string;
   isPrivate?: boolean;
   pictureId?: number;
   picture?: Upload;
@@ -50,6 +52,8 @@ export interface CreateUserDto extends CreateAbstractUserDto {
   cin?: string;
   bio?: string;
   gender?: Gender;
+  website?: string;
+  linkedin?: string;
   isPrivate?: boolean;
   pictureId?: number;
   officialDocumentId?: number;
@@ -116,8 +120,8 @@ export interface UpdateExperienceDto extends Partial<CreateExperienceDto> {}
 export interface ResponseEducationDto extends DatabaseEntity {
   id: number;
   title: string;
-  startDate: Date;
-  endDate: Date | null;
+  startDate?: Date;
+  endDate?: Date | null;
   institution: string;
   description: string;
   user: ResponseUserDto;
@@ -126,8 +130,8 @@ export interface ResponseEducationDto extends DatabaseEntity {
 
 export interface CreateEducationDto {
   title: string;
-  startDate: Date;
-  endDate: Date | null;
+  startDate?: Date;
+  endDate?: Date | null;
   institution: string;
   description: string;
 }

@@ -149,6 +149,44 @@ export const useUpdateProfileFormStructure = ({
     },
   };
 
+  //website
+  const websiteField: Field<TextFieldProps> = {
+    id: "website",
+    label: "Website",
+    variant: FieldVariant.TEXT,
+    required: false,
+    placeholder: "Enter your personal or professional website URL",
+    description:
+      "Share a link to your personal blog, portfolio, or professional website.",
+    error: store?.errors?.website?.[0],
+    props: {
+      value: store?.updateDto?.website,
+      onChangeText: (value: string) => {
+        store.setNested("updateDto.website", value);
+        store.setNested("errors.website", []);
+      },
+    },
+  };
+
+  //linkedin
+  const linkedinField: Field<TextFieldProps> = {
+    id: "linkedin",
+    label: "LinkedIn",
+    variant: FieldVariant.TEXT,
+    required: false,
+    placeholder: "Enter your LinkedIn profile URL",
+    description:
+      "Connect your LinkedIn profile to showcase your professional experience and network.",
+    error: store?.errors?.linkedin?.[0],
+    props: {
+      value: store?.updateDto?.linkedin,
+      onChangeText: (value: string) => {
+        store.setNested("updateDto.linkedin", value);
+        store.setNested("errors.linkedin", []);
+      },
+    },
+  };
+
   const structure: FormStructure = {
     title: "Update Profile",
     fieldsets: [
@@ -174,6 +212,14 @@ export const useUpdateProfileFormStructure = ({
           {
             id: 5,
             fields: [genderField],
+          },
+          {
+            id: 6,
+            fields: [websiteField],
+          },
+          {
+            id: 7,
+            fields: [linkedinField],
           },
         ],
       },
