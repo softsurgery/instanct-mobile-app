@@ -5,10 +5,10 @@ import { ResponseConversationDto, ResponseUserDto } from "@/types";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import {
-  Heart,
   MessageCircle,
   CalendarDays,
   Bookmark,
+  Handshake,
 } from "lucide-react-native";
 import React from "react";
 import { Dimensions, View } from "react-native";
@@ -93,26 +93,37 @@ export const UserCard = ({ user, className }: UserCardProps) => {
                   <Text className="text-sm font-bold">@{user.username}</Text>
                   <Text className="text-sm font-bold">{user.email}</Text>
                 </View>
-
-                <View className="flex-row flex-wrap justify-end gap-2 mt-5">
-                  {user.objectives?.map((obj) => (
-                    <Badge key={obj.id} className="rounded-full">
-                      <Text className="text-xs font-semibold">{obj.label}</Text>
-                    </Badge>
-                  ))}
-                </View>
               </View>
             </View>
           </LinearGradient>
         </ImageBackground>
-        <View className="flex flex-col flex-1">
+        <View className="flex flex-col flex-1 px-4 gap-2">
           {/* Content Section */}
-          <View className="flex-1 flex-row flex-wrap items-center gap-x-2 px-4 mt-2">
-            {user.industries?.map((ind) => (
-              <Badge key={ind.id} className="rounded-full mt-2">
-                <Text className="text-xs font-semibold">{ind.label}</Text>
-              </Badge>
-            ))}
+          <View className="flex flex-col flex-1">
+            {user.industries && user.industries.length > 0 ? (
+              <>
+                <Text className="font-bold py-2">Industries</Text>
+                <View className="flex flex-row flex-wrap items-center gap-x-2">
+                  {user.industries?.map((ind) => (
+                    <Badge key={ind.id} className="rounded-full mt-2">
+                      <Text className="text-xs font-semibold">{ind.label}</Text>
+                    </Badge>
+                  ))}
+                </View>
+              </>
+            ) : null}
+            {user.objectives && user.objectives.length > 0 ? (
+              <>
+                <Text className="font-bold py-2">Objectives</Text>
+                <View className="flex flex-row flex-wrap items-center gap-x-2">
+                  {user.objectives?.map((obj) => (
+                    <Badge key={obj.id} className="rounded-full mt-2">
+                      <Text className="text-xs font-semibold">{obj.label}</Text>
+                    </Badge>
+                  ))}
+                </View>
+              </>
+            ) : null}
           </View>
           {/* Fixed Footer Actions */}
           <View className="flex flex-row gap-4 justify-between m-4">
@@ -137,6 +148,19 @@ export const UserCard = ({ user, className }: UserCardProps) => {
               }}
             >
               <Icon as={MessageCircle} size={32} className="text-white" />
+            </Button>
+            <Button
+              variant="secondary"
+              size={"sm"}
+              className="rounded-full h-16 w-16"
+              onPress={() =>
+                router.push({
+                  pathname: "/main/demande",
+                  params: { id: user?.id },
+                })
+              }
+            >
+              <Icon as={Handshake} size={32} className="text-purple-500" />
             </Button>
             <Button
               variant="secondary"
