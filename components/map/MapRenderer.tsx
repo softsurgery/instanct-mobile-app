@@ -15,8 +15,6 @@ import { UserModalContent } from "./UserModalContent";
 import { UsersMarker } from "./UsersMarker";
 import { UsersModalContent } from "./UsersModalContent";
 import { AndroidDarkMapStyle } from "./utils/AndroidDarkMapStyle";
-import { useGlobalMapConfiguration } from "@/hooks/content/configurations/useGlobalMapConfiguration";
-import { useCurrentMapConfiguration } from "@/hooks/content/users/useCurrentMapConfiguration";
 import { useLiveGeolocationParameters } from "@/hooks/content/geolocation/useLiveGeolocationParamters";
 
 interface MapRendererProps {
