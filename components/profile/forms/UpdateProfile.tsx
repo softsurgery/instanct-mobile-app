@@ -90,7 +90,6 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
 
   const { currentUser, refetchCurrentUser, isCurrentUserPending } =
     useCurrentUser();
-
   React.useEffect(() => {
     if (currentUser) {
       userStore.set("updateDto", {
@@ -101,6 +100,8 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
           : undefined,
         bio: currentUser.bio,
         gender: currentUser.gender,
+        website: currentUser.website,
+        linkedin: currentUser.linkedin,
       });
     }
     return () => {
