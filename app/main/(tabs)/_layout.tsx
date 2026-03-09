@@ -3,7 +3,7 @@ import { useRTL } from "@/hooks/useRTL";
 import { NAV_THEME } from "@/lib/theme";
 import * as Haptics from "expo-haptics";
 import { Tabs } from "expo-router";
-import { Map, Telescope, User } from "lucide-react-native";
+import { Map, Telescope, Timer, User } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -40,6 +40,13 @@ export default function TabLayout() {
       name: "index",
       title: t("screens.explore"),
       icon: Telescope,
+      iconSize: 30,
+      render: true,
+    },
+    {
+      name: "sessions",
+      title: "Sessions",
+      icon: Timer,
       iconSize: 30,
       render: true,
     },
