@@ -187,11 +187,11 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
         ]}
       />
       <StableScrollView>
-        <View className="flex flex-col gap-4 py-4 pb-4">
+        <View className="flex flex-col">
           {/* Header Card */}
           <View className="px-4 mb-4">
-            <View className={cn(primaryCardClass)}>
-              <View className="p-4 flex flex-col gap-2">
+            <View className={cn("mt-4", primaryCardClass)}>
+              <View className="flex flex-col gap-2 p-4">
                 <View className="flex flex-row items-center justify-between">
                   <Text variant="h4">Map Configuration</Text>
                   <Badge variant="outline">
@@ -220,7 +220,7 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
 
               <View className="px-4 pb-4 flex flex-col">
                 {section.rows.map((row, index) => (
-                  <View key={index} className="flex flex-col gap-2 px-4">
+                  <View key={index} className="flex flex-col gap-2">
                     <SettingRow className="mt-1" {...createSettingRow(row)} />
                     {index < section.rows.length - 1 && (
                       <Separator className="mb-2" />

@@ -205,10 +205,10 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
         ]}
       />
       <StableScrollView>
-        <View className="flex flex-col gap-2 pt-4 pb-4">
+        <View className="flex flex-col">
           <View className="px-4 mb-4">
-            <View className={cn(primaryCardClass)}>
-              <View className="flex flex-col justify-between p-4 gap-2">
+            <View className={cn("mt-4", primaryCardClass)}>
+              <View className="flex flex-col justify-between p-4">
                 <View className="flex flex-row justify-between items-center w-full">
                   <Text variant="h4">
                     {identifyUser(currentUser) || "Your account"}
