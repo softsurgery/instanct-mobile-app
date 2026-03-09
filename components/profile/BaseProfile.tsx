@@ -168,16 +168,10 @@ export const InspectBaseProfile = ({
       data: educations as unknown[],
       editable: currentUser?.id === user?.id,
       renderItem: (education: ResponseEducationDto) => (
-        <View className="flex flex-col mb-4">
+        <View className="flex flex-col mb-4 gap-4">
           <Text className="font-semibold">{education.title}</Text>
           <Text className="text-sm text-muted-foreground">
             {education.institution}
-          </Text>
-          <Text className="text-xs text-muted-foreground my-1">
-            {format(new Date(education.startDate), "MMM yyyy")} —{" "}
-            {education.endDate
-              ? format(new Date(education.endDate), "MMM yyyy")
-              : "Present"}
           </Text>
           <SeeMoreText textClassname="text-sm" numberOfLines={2}>
             {education.description || "No description provided."}

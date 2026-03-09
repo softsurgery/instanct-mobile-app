@@ -42,6 +42,23 @@ const baseUserSchema = z.object({
       ),
     )
     .optional(),
+  website: z
+    .string()
+    .url({ message: "userManagement.validation.invalidWebsiteUrl" })
+    .max(255, { message: "userManagement.validation.websiteTooLong" })
+    .or(z.literal(""))
+    .optional()
+    .nullable(),
+  linkedin: z
+    .string()
+    .url({ message: "userManagement.validation.invalidLinkedinUrl" })
+    .regex(/^https:\/\/(www\.)?linkedin\.com\/in\/[a-zA-Z0-9\-_%]+\/?$/, {
+      message: "userManagement.validation.invalidLinkedinFormat",
+    })
+    .max(255, { message: "userManagement.validation.linkedinTooLong" })
+    .or(z.literal(""))
+    .optional()
+    .nullable(),
 });
 
 function updateUserSchema() {

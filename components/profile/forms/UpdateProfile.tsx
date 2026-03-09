@@ -90,7 +90,6 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
 
   const { currentUser, refetchCurrentUser, isCurrentUserPending } =
     useCurrentUser();
-
   React.useEffect(() => {
     if (currentUser) {
       userStore.set("updateDto", {
@@ -101,6 +100,8 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
           : undefined,
         bio: currentUser.bio,
         gender: currentUser.gender,
+        website: currentUser.website,
+        linkedin: currentUser.linkedin,
       });
     }
     return () => {
@@ -150,10 +151,10 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
       <StableKeyboardAwareScrollView className="flex-1 bg-background ">
         <FormBuilder structure={structure} className="mt-4 px-2" />
       </StableKeyboardAwareScrollView>
-      <View className="absolute bottom-0 left-0 right-0 border-t border-border bg-card p-8 pt-4">
+      <View className="py-6 border-t border-border">
         <Button
           size="sm"
-          className="rounded-full"
+          className="mx-6 mb-4 rounded-full"
           onPress={handleUpdateSubmit}
           disabled={isUpdatePending}
         >

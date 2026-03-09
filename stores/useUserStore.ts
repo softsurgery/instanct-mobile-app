@@ -57,6 +57,8 @@ const initialState: UserData = {
     cin: "",
     bio: "",
     gender: undefined,
+    website: "",
+    linkedin: "",
     isPrivate: true,
   },
   createExperienceDto: {
@@ -82,15 +84,11 @@ const initialState: UserData = {
   createEducationDto: {
     title: "",
     institution: "",
-    startDate: new Date(),
-    endDate: new Date(),
     description: "",
   },
   updateEducationDto: {
     title: "",
     institution: "",
-    startDate: new Date(),
-    endDate: new Date(),
     description: "",
   },
   picture: undefined,
