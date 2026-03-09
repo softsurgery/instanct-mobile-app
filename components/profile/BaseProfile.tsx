@@ -11,8 +11,8 @@ import { createClientStore, useUserStore } from "@/stores/useUserStore";
 import { ResponseEducationDto, ResponseExperienceDto } from "@/types";
 import { format } from "date-fns";
 import { router, useNavigation } from "expo-router";
-import { Pen, Plus } from "lucide-react-native";
-import { Image, RefreshControl, View } from "react-native";
+import { Pen, Plus, Globe, Linkedin } from "lucide-react-native";
+import { Image, Linking, RefreshControl, View } from "react-native";
 import { SeeMoreText } from "../shared/SeeMoreText";
 import { StablePressable } from "../shared/StablePressable";
 import { Separator } from "../ui/separator";
@@ -218,9 +218,9 @@ export const InspectBaseProfile = ({
 
     return (
       <View key={section.key}>
-        <View className={cn("pt-1 -mx-2 bg-card")}>
-          <View className="flex flex-row items-center justify-between">
-            <View className="px-6">
+        <View className={cn("pt-x bg-card border border-border")}>
+          <View className="flex flex-row items-center justify-between bg-primary/10">
+            <View className="px-4">
               <Text variant="h4">{section.title}</Text>
             </View>
 
@@ -298,7 +298,7 @@ export const InspectBaseProfile = ({
                   ))}
               </View>
             ) : (
-              <View className="flex flex-col gap-2">
+              <View className="flex flex-col gap-4">
                 {Array.isArray(section.data) &&
                   section.data.map((item, idx) => (
                     <View key={idx}>{section.renderItem(item)}</View>
@@ -368,8 +368,62 @@ export const InspectBaseProfile = ({
               </View>
             </View>
             {/* Bio + Sections */}
-            <View className="flex flex-col gap-4 flex-1 px-2 mt-6 pb-8">
-              <Text className="italic text-xs">{user?.bio}</Text>
+            <View className="flex flex-col gap-4 flex-1 mt-6 pb-8">
+              {/* Bio Section */}
+              {user?.bio && (
+                <View className="bg-card border border-border overflow-hidden">
+                  <View className="p-4 bg-primary/10">
+                    <Text variant="h4">About</Text>
+                  </View>
+                  <Separator />
+                  <View className="p-4">
+                    <SeeMoreText
+                      textClassname="text-sm leading-6 text-foreground"
+                      numberOfLines={4}
+                    >
+                      {user.bio}
+                    </SeeMoreText>
+                  </View>
+                </View>
+              )}
+
+              {/* Links Section */}
+              {(user?.website || user?.linkedin) && (
+                <View className="flex flex-col gap-2">
+                  {user?.website && (
+                    <StablePressable
+                      className="bg-card border border-border p-4 flex-row items-center gap-3"
+                      onPress={() => {
+                        if (user?.website) Linking.openURL(user?.website);
+                      }}
+                      onPressClassname="bg-muted"
+                    >
+                      <Icon as={Globe} size={20} className="text-primary" />
+                      <Text
+                        className="text-sm font-medium text-foreground flex-1"
+                        numberOfLines={1}
+                      >
+                        {user.website}
+                      </Text>
+                    </StablePressable>
+                  )}
+                  {user?.linkedin && (
+                    <StablePressable
+                      className="bg-card border border-border p-4 flex-row items-center gap-3"
+                      onPress={() => {
+                        if (user?.linkedin) Linking.openURL(user?.linkedin);
+                      }}
+                      onPressClassname="bg-muted"
+                    >
+                      <Icon as={Linkedin} size={20} className="text-primary" />
+                      <Text className="text-sm font-medium text-foreground">
+                        LinkedIn Profile
+                      </Text>
+                    </StablePressable>
+                  )}
+                </View>
+              )}
+
               {/* Render all abstracted profile sections */}
               <View className="flex flex-col gap-4">
                 {profileSections.map(renderSection)}

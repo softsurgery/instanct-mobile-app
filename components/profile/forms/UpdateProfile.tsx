@@ -12,7 +12,7 @@ import { ServerErrorResponse, UpdateUserDto, Upload } from "@/types";
 import { showToastable } from "react-native-toastable";
 import { api } from "@/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateUserSchema } from "@/types/validations/uservalidation";
+import { updateUserSchema } from "@/types/validations/user.validation";
 import { View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
@@ -21,12 +21,14 @@ import React from "react";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { identifyUserAvatar } from "@/lib/user";
 import { useUploadMutation } from "@/hooks/useUploadMutation";
+import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 
 interface UpdateProfileProps {
   className?: string;
 }
 
 export const UpdateProfile = ({ className }: UpdateProfileProps) => {
+  const isKeyboardVisible = useKeyboardVisible();
   const { t } = useTranslation("common");
   const userStore = useUserStore();
   const queryClient = useQueryClient();
@@ -151,16 +153,18 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
       <StableKeyboardAwareScrollView className="flex-1 bg-background ">
         <FormBuilder structure={structure} className="mt-4 px-2" />
       </StableKeyboardAwareScrollView>
-      <View className="py-6 border-t border-border">
-        <Button
-          size="sm"
-          className="mx-6 mb-4 rounded-full"
-          onPress={handleUpdateSubmit}
-          disabled={isUpdatePending}
-        >
-          <Text>Update Profile</Text>
-        </Button>
-      </View>
+      {!isKeyboardVisible && (
+        <View className="py-6 border-t border-border">
+          <Button
+            size="sm"
+            className="mx-6 mb-4 rounded-full"
+            onPress={handleUpdateSubmit}
+            disabled={isUpdatePending}
+          >
+            <Text>Update Profile</Text>
+          </Button>
+        </View>
+      )}
     </StableSafeAreaView>
   );
 };

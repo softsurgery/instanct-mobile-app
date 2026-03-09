@@ -52,10 +52,11 @@ const baseUserSchema = z.object({
   linkedin: z
     .string()
     .url({ message: "userManagement.validation.invalidLinkedinUrl" })
-    .regex(/^https:\/\/(www\.)?linkedin\.com\/in\/[a-zA-Z0-9\-_%]+\/?$/, {
-      message: "userManagement.validation.invalidLinkedinFormat",
-    })
-    .max(255, { message: "userManagement.validation.linkedinTooLong" })
+    .regex(
+      /^https:\/\/(www\.)?linkedin\.com\/in\/[a-zA-Z0-9\-_%]+\/?(\?.*)?$/,
+      { message: "userManagement.validation.invalidLinkedinFormat" },
+    )
+    .max(1024, { message: "userManagement.validation.linkedinTooLong" })
     .or(z.literal(""))
     .optional()
     .nullable(),
