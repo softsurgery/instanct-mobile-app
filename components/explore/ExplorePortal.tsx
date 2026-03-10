@@ -7,7 +7,7 @@ import { router, useFocusEffect } from "expo-router";
 import { ArrowDownNarrowWide, Bell } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { UserCard } from "./UserCard";
@@ -18,6 +18,11 @@ import { SessionCountdown } from "../session/SessionCountdown";
 import { SessionStarter } from "../session/SessionStarter";
 import { Button } from "../ui/button";
 import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
+import { EndSessionDialog } from "../session/SessionEndDialog";
+import { api } from "@/api";
+import { useMutation } from "@tanstack/react-query";
+import { showToastable } from "react-native-toastable";
+import { ServerErrorResponse } from "@/types";
 
 interface ExplorePortalProps {
   className?: string;
@@ -59,6 +64,26 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
       };
     }, [refetchSessions]),
   );
+
+  const { mutate: endSession, isPending: isEndingSessionPending } = useMutation(
+    {
+      mutationFn: async () => api.session.end(mapSession?.id!),
+      onSuccess: (data) => {
+        showToastable({
+          message: "Session ended successfully!",
+        });
+        refetchSessions();
+      },
+      onError: (error: ServerErrorResponse) => {
+        Alert.alert("Error", JSON.stringify(error.message, null, 2));
+      },
+    },
+  );
+
+  const handelSessionEnd = () => {
+    endSession();
+  };
+
   return (
     <StableSafeAreaView
       className={cn("flex flex-1 flex-col bg-background", className)}
@@ -89,9 +114,15 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
                 <Text className="font-bold">Your session ends in</Text>
                 <SessionCountdown session={mapSession} />
               </View>
-              <Button size="sm" variant={"outline"}>
-                <Text>End Session</Text>
-              </Button>
+              <EndSessionDialog
+                handleEndSession={handelSessionEnd}
+                loading={isEndingSessionPending}
+                trigger={
+                  <Button size="lg" variant={"secondary"}>
+                    <Text>End Session</Text>
+                  </Button>
+                }
+              />
             </View>
           </View>
           <LegendList

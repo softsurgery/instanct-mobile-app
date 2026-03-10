@@ -51,15 +51,6 @@ export default function MainLayout() {
             animationDuration: 200,
           }}
         />
-        <Stack.Screen
-          name="explore/session-history"
-          options={{
-            title: "Session History",
-            headerShown: false,
-            animation: "simple_push",
-            animationDuration: 200,
-          }}
-        />
         {/* *************************************************************************************************** */}
         {/* Notification  ************************************************************************************* */}
         <Stack.Screen

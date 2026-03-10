@@ -13,8 +13,31 @@ import { Search, X } from "lucide-react-native";
 import { View } from "react-native";
 import { ApplicationHeader } from "@/components/shared/AppHeader";
 import { router } from "expo-router";
+import { useIdentifiedUser } from "@/hooks/content/users/useIdentifiedUser";
+import { identifyUser, identifyUserAvatar } from "@/lib/user";
+import { useServerImages } from "@/hooks/content/useServerImages";
+import { Label } from "@/components/ui/label";
 
-export const DemmandePortal = () => {
+interface DemmandePortalProps {
+  className?: string;
+  id: string;
+}
+
+export const DemmandePortal = ({ className, id }: DemmandePortalProps) => {
+  const { user } = useIdentifiedUser({ id });
+
+  const identity = React.useMemo(() => identifyUser(user), [user]);
+  const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
+
+  const { jsxArray: profilePictures } = useServerImages({
+    ids: [user?.pictureId],
+    fallbacks: [fallback],
+    wrapperClassName:
+      "border border-border bg-background rounded-full shadow-md",
+    size: { width: 70, height: 70 },
+    enabled: !!user,
+  });
+
   const [checked, setChecked] = React.useState(false);
   const [meetingChoice, setMeetingChoice] = React.useState("partner_decides");
   return (
@@ -42,43 +65,20 @@ export const DemmandePortal = () => {
         </Text>
 
         <View className="mt-4 flex-row items-center gap-4">
-          <View className="h-16 w-16 overflow-hidden rounded-full bg-muted">
-            <Image
-              source={{
-                uri: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=300&q=80",
-              }}
-              style={{ width: "100%", height: "100%" }}
-              contentFit="cover"
-            />
+          <View className="overflow-hidden rounded-full bg-muted">
+            {profilePictures}
           </View>
 
           <View className="flex-1">
             <Text className="text-lg font-semibold leading-10 text-foreground">
-              Yasser Al Jaidah
+              {identity}
             </Text>
-            <Text className="mt-1 text-lg leading-8 text-foreground/80">
-              United Development Company
-            </Text>
+            <Text className="text-lg leading-8 opacity-50">{user?.email}</Text>
           </View>
         </View>
 
-        <View className="mt-6">
-          <View className="relative">
-            <Input
-              className="text-lg"
-              placeholder="Ajouter des partenaires de rendez-vous"
-              editable={false}
-            />
-            <View className="absolute inset-y-0 right-4 items-center justify-center">
-              <Icon as={Search} size={18} />
-            </View>
-          </View>
-          <Text className="mt-2 text-xs text-muted-foreground">
-            Vous pouvez ajouter 2 partenaires de réunion supplémentaires.
-          </Text>
-        </View>
-
-        <View className="mt-6">
+        <View className="flex flex-col gap-2 mt-6">
+          <Label>Message</Label>
           <Textarea className="h-40 px-4 py-4" />
           <Text className="mt-2 text-xs text-muted-foreground">
             Veuillez limiter le nombre de caractères à 280.

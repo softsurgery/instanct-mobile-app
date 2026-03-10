@@ -96,10 +96,15 @@ const start = async (
   return response.data;
 };
 
+const end = async (sessionId: number): Promise<void> => {
+  await axios.put(`/current-session/end/${sessionId}`);
+};
+
 export const session = {
   findAllPaginated,
   findAll,
   findAllActivePaginated,
   findAllActive,
   start,
+  end,
 };

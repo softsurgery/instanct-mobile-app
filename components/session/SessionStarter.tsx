@@ -29,12 +29,6 @@ export const SessionStarter = ({ className }: SessionStarterProps) => {
         >
           <Text>Start New Session</Text>
         </Button>
-        <Button
-          variant={"outline"}
-          onPress={() => router.push("/main/explore/session-history")}
-        >
-          <Text>Session History</Text>
-        </Button>
       </View>
     </View>
   );
