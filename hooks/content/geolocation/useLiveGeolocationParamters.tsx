@@ -33,6 +33,9 @@ export function useLiveGeolocationParameters({}: useLiveGeolocationParameters = 
       );
       mapStore.set("hasInitializedParameters", true);
     }
+    return () => {
+      mapStore.set("hasInitializedParameters", false);
+    };
   }, [userMapConfiguration, mapConfiguration]);
 
   return {
