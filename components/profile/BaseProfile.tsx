@@ -50,6 +50,106 @@ interface InspectBaseProfileProps {
 
 const Tab = createMaterialTopTabNavigator();
 
+// Tab Components - defined outside to prevent minification issues
+const AboutTab = ({ user }: { user: any }) => (
+  <ScrollView className="flex-1 bg-background">
+    <View className="flex flex-col gap-4 pb-8">
+      {/* Bio Section */}
+      {user?.bio ? (
+        <View className="bg-card border border-border overflow-hidden">
+          <View className="p-4 bg-primary/10">
+            <Text variant="h4">About</Text>
+          </View>
+          <Separator />
+          <View className="p-4">
+            <SeeMoreText
+              textClassname="text-sm leading-6 text-foreground"
+              numberOfLines={4}
+            >
+              {user.bio}
+            </SeeMoreText>
+          </View>
+        </View>
+      ) : (
+        <View className="bg-card border border-border p-4">
+          <Text className="text-sm text-muted-foreground italic text-center">
+            No bio added yet
+          </Text>
+        </View>
+      )}
+
+      {/* Links Section */}
+      {(user?.website || user?.linkedin) && (
+        <View className="flex flex-col gap-2">
+          {user?.website && (
+            <StablePressable
+              className="bg-card border border-border p-4 flex-row items-center gap-3"
+              onPress={() => {
+                if (user?.website) Linking.openURL(user?.website);
+              }}
+              onPressClassname="bg-muted"
+            >
+              <Icon as={Globe} size={20} className="text-primary" />
+              <Text
+                className="text-sm font-medium text-foreground flex-1"
+                numberOfLines={1}
+              >
+                {user.website}
+              </Text>
+            </StablePressable>
+          )}
+          {user?.linkedin && (
+            <StablePressable
+              className="bg-card border border-border p-4 flex-row items-center gap-3"
+              onPress={() => {
+                if (user?.linkedin) Linking.openURL(user?.linkedin);
+              }}
+              onPressClassname="bg-muted"
+            >
+              <Icon as={Linkedin} size={20} className="text-primary" />
+              <Text className="text-sm font-medium text-foreground">
+                LinkedIn Profile
+              </Text>
+            </StablePressable>
+          )}
+        </View>
+      )}
+    </View>
+  </ScrollView>
+);
+
+const ExperienceTab = ({
+  profileSections,
+  renderSection,
+}: {
+  profileSections: ProfileSection[];
+  renderSection: (section: ProfileSection) => React.ReactNode;
+}) => (
+  <ScrollView className="flex-1 bg-background">
+    <View className="flex flex-col gap-4 pb-8">
+      {profileSections
+        .filter((s) => s.key === "experience" || s.key === "education")
+        .map(renderSection)}
+    </View>
+  </ScrollView>
+);
+
+const InterestsTab = ({
+  profileSections,
+  renderSection,
+}: {
+  profileSections: ProfileSection[];
+  renderSection: (section: ProfileSection) => React.ReactNode;
+}) => (
+  <ScrollView className="flex-1 bg-background">
+    <View className="flex flex-col gap-4 pb-8">
+      {profileSections
+        .filter((s) => s.key === "industries" || s.key === "objectives")
+        .map(renderSection)}
+    </View>
+  </ScrollView>
+);
+
 export const InspectBaseProfile = ({
   className,
   id,
@@ -337,108 +437,6 @@ export const InspectBaseProfile = ({
     [id],
   );
 
-  // ---------------------------------------------------------------
-  //  TAB COMPONENTS
-  // ---------------------------------------------------------------
-  const AboutTab = React.useCallback(
-    () => (
-      <ScrollView className="flex-1 bg-background">
-        <View className="flex flex-col gap-4 pb-8">
-          {/* Bio Section */}
-          {user?.bio ? (
-            <View className="bg-card border border-border overflow-hidden">
-              <View className="p-4 bg-primary/10">
-                <Text variant="h4">About</Text>
-              </View>
-              <Separator />
-              <View className="p-4">
-                <SeeMoreText
-                  textClassname="text-sm leading-6 text-foreground"
-                  numberOfLines={4}
-                >
-                  {user.bio}
-                </SeeMoreText>
-              </View>
-            </View>
-          ) : (
-            <View className="bg-card border border-border p-4">
-              <Text className="text-sm text-muted-foreground italic text-center">
-                No bio added yet
-              </Text>
-            </View>
-          )}
-
-          {/* Links Section */}
-          {(user?.website || user?.linkedin) && (
-            <View className="flex flex-col gap-2">
-              {user?.website && (
-                <StablePressable
-                  className="bg-card border border-border p-4 flex-row items-center gap-3"
-                  onPress={() => {
-                    if (user?.website) Linking.openURL(user?.website);
-                  }}
-                  onPressClassname="bg-muted"
-                >
-                  <Icon as={Globe} size={20} className="text-primary" />
-                  <Text
-                    className="text-sm font-medium text-foreground flex-1"
-                    numberOfLines={1}
-                  >
-                    {user.website}
-                  </Text>
-                </StablePressable>
-              )}
-              {user?.linkedin && (
-                <StablePressable
-                  className="bg-card border border-border p-4 flex-row items-center gap-3"
-                  onPress={() => {
-                    if (user?.linkedin) Linking.openURL(user?.linkedin);
-                  }}
-                  onPressClassname="bg-muted"
-                >
-                  <Icon as={Linkedin} size={20} className="text-primary" />
-                  <Text className="text-sm font-medium text-foreground">
-                    LinkedIn Profile
-                  </Text>
-                </StablePressable>
-              )}
-            </View>
-          )}
-        </View>
-      </ScrollView>
-    ),
-    [user],
-  );
-
-  const ExperienceTab = React.useCallback(
-    () => (
-      <ScrollView className="flex-1 bg-background">
-        <View className="flex flex-col gap-4 pb-8">
-          {profileSections
-            .filter((s) => s.key === "experience" || s.key === "education")
-            .map(renderSection)}
-        </View>
-      </ScrollView>
-    ),
-    [profileSections, renderSection],
-  );
-
-  const InterestsTab = React.useCallback(
-    () => (
-      <ScrollView className="flex-1 bg-background">
-        <View className="flex flex-col gap-4 pb-8">
-          {profileSections
-            .filter((s) => s.key === "industries" || s.key === "objectives")
-            .map(renderSection)}
-        </View>
-      </ScrollView>
-    ),
-    [profileSections, renderSection],
-  );
-
-  // ---------------------------------------------------------------
-  //  UI LAYOUT
-  // ---------------------------------------------------------------
   return (
     <View className={cn("flex-1 bg-background", className)}>
       <View className="absolute top-2 left-0 right-0 items-center z-20 pointer-events-none">
@@ -506,9 +504,37 @@ export const InspectBaseProfile = ({
                   tabBarStyle: { backgroundColor: "transparent" },
                 }}
               >
-                <Tab.Screen name="About" component={AboutTab} />
-                <Tab.Screen name="Career" component={ExperienceTab} />
-                <Tab.Screen name="Interests" component={InterestsTab} />
+                <Tab.Screen
+                  name="About"
+                  options={{
+                    tabBarLabel: "About",
+                  }}
+                  component={() => <AboutTab user={user} />}
+                />
+                <Tab.Screen
+                  name="Career"
+                  options={{
+                    tabBarLabel: "Career",
+                  }}
+                  component={() => (
+                    <ExperienceTab
+                      profileSections={profileSections}
+                      renderSection={renderSection}
+                    />
+                  )}
+                />
+                <Tab.Screen
+                  name="Interests"
+                  options={{
+                    tabBarLabel: "Interests",
+                  }}
+                  component={() => (
+                    <InterestsTab
+                      profileSections={profileSections}
+                      renderSection={renderSection}
+                    />
+                  )}
+                />
               </Tab.Navigator>
             </View>
           </>
