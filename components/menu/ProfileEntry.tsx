@@ -1,5 +1,5 @@
+//Deprecated
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
-import { useServerImage } from "@/hooks/content/useServerImage";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import { cn } from "@/lib/utils";
 import { router } from "expo-router";
@@ -10,6 +10,7 @@ import { PremiumCarousel } from "../premium/PremiumCarousel";
 import { Button } from "../ui/button";
 import { Icon } from "../ui/icon";
 import { Text } from "../ui/text";
+import { useServerImages } from "@/hooks/content/useServerImages";
 
 interface ProfileEntryProps {
   className?: string;
@@ -26,19 +27,17 @@ export const ProfileEntry = ({ className }: ProfileEntryProps) => {
     return identifyUserAvatar(currentUser);
   }, [currentUser]);
 
-  const { jsx: profilePicture } = useServerImage({
-    id: currentUser?.profile?.pictureId,
-    fallback,
+  const { jsxArray: profilePictures } = useServerImages({
+    ids: [currentUser?.pictureId],
+    fallbacks: [fallback],
     className: "border-2 border-border",
     size: { width: 80, height: 80 },
   });
 
   return (
     <View>
-      <View
-        className={cn("flex flex-row items-center gap-4 p-2 my-5", className)}
-      >
-        <View className="rounded-full">{profilePicture}</View>
+      <View className={cn("flex flex-row items-center gap-4 my-5", className)}>
+        <View className="rounded-full">{profilePictures[0]}</View>
         <View className="flex flex-col gap-4">
           <View className="flex flex-row items-center gap-2">
             <Text variant={"large"}>{identification}</Text>
@@ -47,7 +46,7 @@ export const ProfileEntry = ({ className }: ProfileEntryProps) => {
           <Button
             size={"sm"}
             variant={"secondary"}
-            onPress={() => router.push("/main/update-profile")}
+            onPress={() => router.push("/main/profile/update-profile")}
           >
             <Icon as={Edit} />
             <Text>Complete Profile</Text>

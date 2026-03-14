@@ -1,16 +1,21 @@
+import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
+import { cn } from "@/lib/utils";
 import { useMapStore } from "@/stores/useMapStore";
-import { Cluster, NearbyUser } from "@/types";
+import { NearbyUser } from "@/types";
+import _ from "lodash";
 import { useColorScheme } from "nativewind";
 import React from "react";
-import { View } from "react-native";
-import MapView, { Region } from "react-native-maps";
+import { ActivityIndicator, View } from "react-native";
+import MapView from "react-native-map-clustering";
+import { Marker, Region } from "react-native-maps";
 import Modal from "react-native-modal";
 import { UsersCarousel } from "./UserCarousel/UsersCarousel";
 import { UserMarker } from "./UserMarker";
 import { UserModalContent } from "./UserModalContent";
 import { UsersMarker } from "./UsersMarker";
+import { UsersModalContent } from "./UsersModalContent";
 import { AndroidDarkMapStyle } from "./utils/AndroidDarkMapStyle";
-import { groupUsers } from "./utils/grouping";
+import { useLiveGeolocationParameters } from "@/hooks/content/geolocation/useLiveGeolocationParamters";
 
 interface MapRendererProps {
   className?: string;
@@ -25,124 +30,219 @@ export const MapRenderer = ({
   style,
   latitude,
   longitude,
-  nearbyUsers,
 }: MapRendererProps) => {
+  const { currentUser } = useCurrentUser();
   const { colorScheme } = useColorScheme();
-  const mapStore = useMapStore();
   const mapRef = React.useRef<MapView>(null);
+  const superCluster = React.useRef<any>(null);
+  const mapStore = useMapStore();
+  const { isPending } = useLiveGeolocationParameters();
 
+  //states
   const [selectedUser, setSelectedUser] = React.useState<NearbyUser | null>(
-    null
+    null,
+  );
+  const [clusterUsers, setClusterUsers] = React.useState<NearbyUser[] | null>(
+    null,
   );
   const [currentRegion, setCurrentRegion] = React.useState<Region | null>(null);
   const [prevRegion, setPrevRegion] = React.useState<Region | null>(null);
   const [modalVisible, setModalVisible] = React.useState(false);
 
-  const handleMarkerPress = (user: NearbyUser) => {
+  const nearbyUsersAndMyself = React.useMemo(() => {
+    const myself: NearbyUser = {
+      latitude,
+      longitude,
+      userId: currentUser?.id as string,
+      distance: 0,
+      isOnline: true,
+      profilePicture: null,
+      updatedAt: new Date().toISOString(),
+    };
+    return [...mapStore.nearbyUsers, myself];
+  }, [currentUser, mapStore.nearbyUsers]);
+
+  //handle marker press
+  const handleMarkerPress = (
+    latitude: number,
+    longitude: number,
+    userId: string,
+  ) => {
     if (currentRegion) {
       setPrevRegion(currentRegion);
     }
 
     if (mapRef.current) {
+      //@ts-ignore
       mapRef.current.animateToRegion(
         {
-          latitude: user.latitude,
-          longitude: user.longitude,
+          latitude: latitude,
+          longitude: longitude,
           latitudeDelta: 0.0002,
           longitudeDelta: 0.0002,
         },
-        500
+        500,
       );
     }
 
-    setSelectedUser(user);
+    const nearbyUser = mapStore.nearbyUsers.find((u) => u.userId === userId);
+    const user = mapStore.users.find((u) => u.id === userId);
+    if (nearbyUser && user) setSelectedUser({ ...nearbyUser, user });
     setModalVisible(true);
   };
 
-  const handleCloseModal = () => {
-    setModalVisible(false);
-    if (prevRegion && mapRef.current) {
-      mapRef.current.animateToRegion(prevRegion, 500);
+  const handleClusterPress = (nearbyUser: NearbyUser[] | null) => {
+    if (!nearbyUser || nearbyUser.length === 0) return;
+
+    const unique = Array.from(
+      new Map(nearbyUser.map((u) => [u.userId, u])).values(),
+    );
+
+    if (unique.length === 1 && unique[0].userId !== currentUser?.id) {
+      handleMarkerPress(
+        unique[0].latitude,
+        unique[0].longitude,
+        unique[0].userId,
+      );
+      return;
     }
-    setSelectedUser(null);
+
+    setClusterUsers(
+      unique
+        .filter((u) => u.userId !== currentUser?.id)
+        .sort((a, b) => (a?.distance ?? 0) - (b?.distance ?? 0)),
+    );
+    setModalVisible(true);
   };
 
-  const [clusters, setClusters] = React.useState<Cluster[]>(
-    groupUsers(nearbyUsers, (currentRegion?.latitudeDelta || 0) * 5000)
+  //handle modal close
+  const handleCloseModal = () => {
+    if (prevRegion && mapRef.current && clusterUsers == null) {
+      // @ts-ignore
+      mapRef.current?.animateToRegion(prevRegion, 500);
+    }
+    setModalVisible(false);
+    setSelectedUser(null);
+    setClusterUsers(null);
+  };
+
+  const handleRegionChange = React.useCallback(
+    _.throttle((region: Region) => {
+      setCurrentRegion(region);
+    }, 250),
+    [],
   );
 
+  if (!currentUser || isPending) return <ActivityIndicator />;
   return (
-    <View className={className}>
+    <View className={cn("flex-1", className)}>
       <MapView
+        key={`${colorScheme}`}
         ref={mapRef}
+        superClusterRef={superCluster}
         style={{ flex: 1, ...style }}
         initialRegion={{
           latitude,
           longitude,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
+          latitudeDelta: 0.02,
+          longitudeDelta: 0.02,
         }}
         customMapStyle={
           colorScheme === "dark" ? AndroidDarkMapStyle : undefined
         }
+        onRegionChange={handleRegionChange}
         showsCompass={false}
-        showsMyLocationButton={false}
-        onRegionChange={(region) => {
-          setCurrentRegion(region);
-          setClusters(groupUsers(nearbyUsers, region.latitudeDelta * 5000));
+        mapType={mapStore.parameters.mode === "map" ? "standard" : "satellite"}
+        clusteringEnabled={true}
+        renderCluster={(cluster) => {
+          const { geometry, properties } = cluster;
+          const latitude = geometry.coordinates[1];
+          const longitude = geometry.coordinates[0];
+
+          // extract clustered userIds
+          const clusterIds = properties.cluster_id
+            ? superCluster.current?.getLeaves?.(cluster.id, Infinity)
+            : [];
+
+          const nearbyUsers = nearbyUsersAndMyself
+            .filter((u) =>
+              clusterIds.map((c: any) => c.properties?.id).includes(u.userId),
+            )
+            .map((nearbyUser) => ({
+              ...nearbyUser,
+              user: mapStore.users.find((u) => nearbyUser.userId === u.id),
+            }));
+
+          return (
+            <UsersMarker
+              key={cluster.id}
+              nearbyUsers={nearbyUsers}
+              currentUserIncluded={
+                !!nearbyUsers.find(
+                  (u) => u.userId === (currentUser?.id as string),
+                )
+              }
+              latitude={latitude}
+              longitude={longitude}
+              onPress={handleClusterPress}
+            />
+          );
         }}
       >
-        {clusters.map((cluster, i) =>
-          cluster.users.length === 1 ? (
+        {nearbyUsersAndMyself.map((u) => (
+          <Marker
+            key={u.userId}
+            id={u.userId}
+            anchor={{ x: 0.5, y: 0.5 }}
+            coordinate={{ latitude: u.latitude, longitude: u.longitude }}
+            onPress={() => {
+              if (u.userId !== currentUser?.id)
+                handleMarkerPress(u.latitude, u.longitude, u.userId);
+            }}
+          >
             <UserMarker
-              key={cluster.users[0].userId}
-              userId={cluster.users[0].userId}
-              latitude={cluster.latitude}
-              longitude={cluster.longitude}
-              isOnline={cluster.users[0].isOnline}
-              onPress={(user) =>
-                handleMarkerPress({ ...cluster.users[0], user })
-              }
+              userId={u.userId}
+              isOnline={u.isOnline}
+              isCurrentUser={u.userId === currentUser?.id}
             />
-          ) : (
-            <UsersMarker
-              key={`cluster-${i}`}
-              latitude={cluster.latitude}
-              longitude={cluster.longitude}
-              nearbyUsers={cluster.users}
-              onPress={(users) => {
-                if (users?.length === 1) {
-                  handleMarkerPress(users[0]);
-                } else {
-                  console.log("Cluster clicked:", users);
-                }
-              }}
-            />
-          )
-        )}
+          </Marker>
+        ))}
       </MapView>
-
-      <View className="py-4 absolute bottom-0 left-0 right-0 bg-background/50 rounded-t-2xl">
-        <UsersCarousel
-          users={mapStore.nearbyUsers}
-          className="rounded-full"
-          onUserPress={(user) => handleMarkerPress({ ...user })}
-        />
-      </View>
-
       <Modal
         isVisible={modalVisible}
         onBackdropPress={handleCloseModal}
         onSwipeComplete={handleCloseModal}
         swipeDirection="down"
-        style={{
-          justifyContent: "flex-end",
-          margin: 0,
-        }}
         backdropOpacity={0}
+        style={{
+          margin: 0,
+          flex: 1,
+          justifyContent: "flex-end",
+        }}
+        coverScreen={false}
       >
-        {selectedUser && <UserModalContent nearbyUser={selectedUser} />}
+        {selectedUser ? (
+          <UserModalContent
+            nearbyUser={selectedUser}
+            closeModal={handleCloseModal}
+          />
+        ) : null}
+        {clusterUsers ? (
+          <UsersModalContent
+            clusterUsers={clusterUsers}
+            closeModal={handleCloseModal}
+          />
+        ) : null}
       </Modal>
+      <View className="py-4 absolute bottom-0 left-0 right-0 bg-background/50 rounded-t-2xl">
+        <UsersCarousel
+          users={mapStore.nearbyUsers}
+          className="rounded-full"
+          onUserPress={(user) =>
+            handleMarkerPress(user.latitude, user.longitude, user.userId)
+          }
+        />
+      </View>
     </View>
   );
 };

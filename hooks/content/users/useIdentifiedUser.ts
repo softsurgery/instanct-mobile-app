@@ -13,7 +13,7 @@ export const useIdentifiedUser = ({ id }: useIdentifiedUserProps) => {
     refetch: refetchUser,
   } = useQuery({
     queryKey: ["user", id],
-    queryFn: () => api.client.findById(id),
+    queryFn: () => api.user.findById(id),
   });
 
   const user = React.useMemo(() => {

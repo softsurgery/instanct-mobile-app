@@ -67,7 +67,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       const updatedRoot = setDeepValue(
         { ...(rootValue as object) },
         nestedPath,
-        value
+        value,
       );
 
       return {

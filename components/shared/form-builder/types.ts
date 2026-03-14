@@ -41,6 +41,7 @@ export enum FieldVariant {
   NUMBER = "number",
   PASSWORD = "password",
   DATE = "date",
+  TIME = "time",
   SELECT = "select",
   CHECKBOX = "checkbox",
   CHECK = "check",
@@ -49,6 +50,7 @@ export enum FieldVariant {
   SWITCH = "switch",
   RATING = "rating",
   PICTURE = "picture",
+  CHOICEPICKER = "choice-picker",
   CUSTOM = "custom",
 }
 
@@ -62,7 +64,6 @@ export interface TextareaFieldProps {
   value?: string;
   onChangeText?: (text: string) => void;
   editable?: boolean;
-  cols?: number;
   rows?: number;
 }
 
@@ -93,6 +94,12 @@ export interface PasswordFieldProps {
 export interface DateFieldProps {
   value?: Date;
   onDateChange?: (date: Date) => void;
+  editable?: boolean;
+}
+
+export interface TimeFieldProps {
+  value?: Date;
+  onTimeChange?: (time: Date) => void;
   editable?: boolean;
 }
 
@@ -135,11 +142,17 @@ export interface CheckboxFieldProps {
   checked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
   editable?: boolean;
-  options: SelectOption[];
 }
 
 export interface SwitchFieldProps {
   checked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
+  editable?: boolean;
+}
+
+export interface ChoicePickerFieldProps {
+  value?: string;
+  onSelectChange?: (value: string) => void;
+  options?: SelectOption[];
   editable?: boolean;
 }

@@ -1,7 +1,6 @@
-const { hairlineWidth } = require("nativewind/theme");
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: "media",
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
   presets: [require("nativewind/preset")],
   theme: {
@@ -46,8 +45,15 @@ module.exports = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      borderWidth: {
-        hairline: hairlineWidth(),
+      fontSize: {
+        xs: ["10px", "14px"],
+        sm: ["12px", "16px"],
+        base: ["14px", "20px"],
+        lg: ["16px", "24px"],
+        xl: ["18px", "28px"],
+        "2xl": ["20px", "28px"],
+        "3xl": ["24px", "32px"],
+        "4xl": ["30px", "36px"],
       },
       keyframes: {
         "accordion-down": {

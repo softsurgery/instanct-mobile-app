@@ -1,9 +1,25 @@
 {
   "screens": {
     "explore": "Explorer",
-    "chat": "Chat",
+    "messages": "Messages",
     "like": "Aimer",
     "map": "Carte",
-    "menu": "Menu"
+    "menu": "Menu",
+    "settings": "Paramètres",
+    "notifications": "Notifications",
+    "profile": "Mon Profile",
+    "experience": "Expérience",
+    "education": "Éducation",
+    "reportBug": "Signaler un bug",
+    "sendFeedback": "Envoyer des commentaires",
+    "faqs": "Questions fréquemment posées",
+    "mapSettings": "Paramètres de la carte"
+  },
+  "language": {
+    "select": {
+      "title": "Sélectionnez la langue",
+      "description": "Sélectionnez la langue que vous souhaitez utiliser dans l'application",
+      "placeholder": "Sélectionnez la langue"
+    }
   }
 }

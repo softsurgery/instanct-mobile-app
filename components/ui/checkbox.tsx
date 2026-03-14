@@ -28,7 +28,7 @@ function Checkbox({
         }),
         props.checked && cn("border-primary", checkedClassName),
         props.disabled && "opacity-50",
-        className
+        className,
       )}
       hitSlop={DEFAULT_HIT_SLOP}
       {...props}
@@ -36,12 +36,13 @@ function Checkbox({
       <CheckboxPrimitive.Indicator
         className={cn(
           "bg-primary h-full w-full items-center justify-center",
-          indicatorClassName
+          indicatorClassName,
         )}
       >
         <Icon
           as={Check}
           size={12}
+          strokeWidth={Platform.OS === "web" ? 2.5 : 3.5}
           className={cn("text-primary-foreground", iconClassName)}
         />
       </CheckboxPrimitive.Indicator>

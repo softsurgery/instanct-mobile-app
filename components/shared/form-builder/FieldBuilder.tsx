@@ -8,10 +8,12 @@ import { Feather } from "@expo/vector-icons";
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import StarRating from "react-native-star-rating-widget";
-import { DatePicker } from "./DatePicker";
 import { PictureUploader } from "./PictureUploader";
 import Select from "./Select";
 import { Field, FieldVariant } from "./types";
+import { DatePicker } from "./DatePicker2";
+import { TimePicker } from "./TimePicker";
+import { ChoicePicker } from "../ChoicePicker";
 
 interface FieldBuilderProps {
   field?: Field<any>;
@@ -35,7 +37,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
             placeholder={field.placeholder}
             value={field?.props?.value?.toString() || ""}
             onChangeText={(text) => field?.props?.onChangeText?.(text)}
-            className={cn("p-3 rounded-md", field?.error && "border-red-500")}
+            className={cn("rounded-md", field?.error && "border-red-500")}
           />
         </View>
       );
@@ -49,7 +51,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
             placeholder={field.placeholder}
             value={field?.props?.value}
             onChangeText={(text) => field?.props?.onChangeText?.(Number(text))}
-            className={cn("p-3 rounded-md", field?.error && "border-red-500")}
+            className={cn("rounded-md", field?.error && "border-red-500")}
           />
         </View>
       );
@@ -62,7 +64,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           placeholder={field.placeholder}
           value={field?.props?.value?.toString() || ""}
           onChangeText={(text) => field?.props?.onChangeText?.(text)}
-          className={cn("p-3 rounded-md", field?.error && "border-red-500")}
+          className={cn("rounded-md", field?.error && "border-red-500")}
           style={field?.error ? { borderColor: "red" } : {}}
           {...field.props?.other}
         />
@@ -86,8 +88,18 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
         <DatePicker
           {...field?.props}
           className={cn(field?.error && "border border-red-500 rounded-md")}
-          date={field?.props?.value}
-          onChange={(date) => field?.props?.onDateChange?.(date)}
+          value={field?.props?.value}
+          onDateChange={(date) => field?.props?.onDateChange?.(date)}
+          disabled={field?.props?.editable}
+        />
+      );
+    case "time":
+      return (
+        <TimePicker
+          {...field?.props}
+          className={cn(field?.error && "border border-red-500 rounded-md")}
+          value={field?.props?.value}
+          onTimeChange={(time) => field?.props?.onTimeChange?.(time)}
           disabled={field?.props?.editable}
         />
       );
@@ -96,12 +108,14 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
         <View className="flex-row items-center gap-2">
           <Checkbox
             {...field?.props}
-            checked={!!field?.props?.value}
-            onCheckedChange={(checked) =>
-              field?.props?.onValueChange?.(checked)
-            }
+            disabled={field?.props?.editable === false}
+            checked={field?.props?.checked}
+            onCheckedChange={(checked) => {
+              field?.props?.onCheckedChange?.(checked);
+            }}
+            className={cn(field?.className, field?.error && "border-red-500")}
           />
-          <Text>{field.label}</Text>
+          <Text className="text-xs">{field.description}</Text>
         </View>
       );
     case "password":
@@ -149,7 +163,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
         <View className="flex flex-col gap-2 w-full">
           <Textarea
             {...field?.props}
-            className={cn("h-52", field?.error && "border-red-500")}
+            className={cn("h-32", field?.error && "border-red-500")}
             editable={field?.props?.other}
             placeholder={field.placeholder}
             value={field?.props?.value?.toString() || ""}
@@ -204,6 +218,17 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           className={field?.className}
           checked={field?.props?.checked}
           onCheckedChange={field?.props?.onCheckedChange}
+          disabled={field?.props?.disabled}
+        />
+      );
+    case "choice-picker":
+      return (
+        <ChoicePicker
+          {...field?.props}
+          className={field?.className}
+          options={field?.props?.options || []}
+          value={field?.props?.value}
+          onSelect={field?.props?.onSelectChange}
           disabled={field?.props?.disabled}
         />
       );

@@ -1,15 +1,22 @@
-export const setDeepValue = <T>(obj: any, path: any, value: T): any => {
+export const setDeepValue = <T>(
+  obj: Record<string, any>,
+  path: string,
+  value: T,
+): Record<string, any> => {
   const keys = path.split(".");
-  const lastKey = keys.pop();
-  const nested = keys.reduce(
-    (acc: { [x: string]: any }, key: string | number) => {
-      if (typeof acc[key] !== "object" || acc[key] === null) {
-        acc[key] = {};
-      }
-      return acc[key];
-    },
-    obj
-  );
-  if (lastKey) nested[lastKey] = value;
-  return obj;
+
+  return keys.reduceRight((acc, key, index) => {
+    if (index === keys.length - 1) {
+      return { ...obj, [key]: acc };
+    }
+
+    const parent = obj[key] ?? {};
+    return {
+      ...obj,
+      [key]: {
+        ...parent,
+        ...acc,
+      },
+    };
+  }, value as any);
 };

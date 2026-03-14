@@ -5,37 +5,59 @@ import { cn } from "~/lib/utils";
 import { StablePressable } from "../shared/StablePressable";
 import { Icon } from "../ui/icon";
 import { IconBadge } from "../ui/icon-badge";
-import { Text } from "../ui/text";
+import { Text, TextVariantDefaults } from "../ui/text";
 
 type Shortcut =
   | {
       icon: LucideIcon;
       onPress: () => void;
       badgeText?: string;
+      hidden?: boolean;
     }
   | React.ReactNode;
 
 interface ApplicationHeaderProps {
   className?: string;
-  title: string;
+  title: string | React.ReactNode;
+  titleVariant?: TextVariantDefaults;
   shortcuts?: Shortcut[];
+  reverse?: boolean;
 }
+
 export const ApplicationHeader = ({
   className,
   title,
+  titleVariant = "h1",
   shortcuts,
+  reverse = false,
 }: ApplicationHeaderProps) => {
   const isRTL = useRTL();
+
+  const renderTitle = () => {
+    if (!title) return null;
+
+    if (typeof title === "string") {
+      return (
+        <Text variant={titleVariant} className="mx-2">
+          {title}
+        </Text>
+      );
+    }
+
+    return <View className="mx-2">{title}</View>;
+  };
   return (
     <View
       className={cn(
         "flex flex-row justify-between items-center gap-2 px-2",
-        isRTL ? "flex-row-reverse" : "",
-        className
+        isRTL || reverse ? "flex-row-reverse" : "flex-row",
+        className,
       )}
     >
-      <Text variant="h1">{title}</Text>
-      <View className="flex flex-row gap-2">
+      {renderTitle()}
+      <View
+        className={cn("flex gap-2", reverse ? "flex-row-reverse" : "flex-row")}
+      >
         {shortcuts?.map((shortcut, index) => {
           if (
             shortcut !== null &&
@@ -45,7 +67,7 @@ export const ApplicationHeader = ({
             return (
               <StablePressable
                 key={index}
-                className="p-1"
+                className={cn("p-1", shortcut.hidden && "hidden")}
                 onPress={shortcut.onPress}
               >
                 {shortcut.badgeText ? (

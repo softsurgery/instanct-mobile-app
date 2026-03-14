@@ -1,51 +1,38 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Icon } from "@/components/ui/icon";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Text } from "@/components/ui/text";
 import { toLongDateString } from "@/lib/date";
 import { cn } from "@/lib/utils";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { X } from "lucide-react-native";
+import dayjs from "dayjs";
+import { Calendar, X } from "lucide-react-native";
 import React from "react";
-import { Platform, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Keyboard, View } from "react-native";
+import DatePickerUI, { useDefaultClassNames } from "react-native-ui-datepicker";
+import { StablePressable } from "../StablePressable";
 
 interface DatePickerProps {
   className?: string;
-  disabled?: boolean;
+  classNames?: {
+    trigger: string;
+    content: string;
+  };
   date: Date | null;
   onChange: (date: Date | null) => void;
+  disabled?: boolean;
   nullable?: boolean;
 }
 
 export const DatePicker = ({
   className,
+  classNames,
   disabled,
   date,
   onChange,
-  nullable = false,
+  nullable = true,
 }: DatePickerProps) => {
-  const [pickerVisible, setPickerVisible] = React.useState(
-    Platform.OS === "ios"
-  );
-
-  const handleDateChange = (date?: Date) => {
-    if (date) onChange(date);
-    setPickerVisible(Platform.OS === "ios");
-  };
-
-  const insets = useSafeAreaInsets();
-  const contentInsets = {
-    top: insets.top,
-    bottom: insets.bottom,
-    left: 12,
-    right: 12,
-  };
+  const defaultClassNames = useDefaultClassNames();
+  const [visible, setVisible] = React.useState(false);
 
   const displayText = date ? toLongDateString(date) : "Select a date";
 
@@ -53,87 +40,100 @@ export const DatePicker = ({
     onChange(null);
   };
 
-  if (Platform.OS === "android") {
-    return (
-      <View className={cn("flex-1 justify-center items-center")}>
+  return (
+    <Dialog
+      open={visible}
+      onOpenChange={setVisible}
+      className={cn("rounded-lg", className)}
+    >
+      <DialogTrigger
+        onPress={() => !disabled && setVisible(true)}
+        className="flex-row"
+      >
         <Button
           disabled={disabled}
           variant="outline"
-          className={cn("w-full", className)}
-          onPress={() => setPickerVisible(true)}
+          className={cn("w-full h-8 p-0 px-2", className)}
+          onPress={() => {
+            setVisible(true);
+            Keyboard.dismiss();
+          }}
         >
-          <Text>{displayText}</Text>
+          <View className="flex flex-row items-center justify-between w-full">
+            <Text className="text-xs">{displayText}</Text>
+            <Icon as={Calendar} size={16} color={"gray"} />
+          </View>
         </Button>
-        {nullable && date && (
+      </DialogTrigger>
+
+      <DialogContent
+        className={cn("w-[90vw] p-0 pt-4 pb-6 px-2", classNames?.content)}
+      >
+        <View className="flex flex-row justify-between items-start p-2">
+          <View>
+            <Text className="font-bold">Pick a date</Text>
+            <Text className="text-xs text-muted-foreground">
+              Please select a date from the calendar below.
+            </Text>
+          </View>
+          <StablePressable
+            className="p-2 rounded-md"
+            onPress={() => {
+              setVisible(false);
+            }}
+          >
+            <Icon as={X} size={20} color={"gray"} />
+          </StablePressable>
+        </View>
+
+        <DatePickerUI
+          mode="single"
+          date={date ? dayjs(date) : undefined}
+          onChange={(params) => {
+            const value = params.date;
+            if (!value) {
+              onChange(null);
+            } else if (value instanceof Date) {
+              onChange(value);
+            } else if (typeof value === "string" || typeof value === "number") {
+              onChange(new Date(value));
+            } else {
+              onChange(value.toDate());
+            }
+          }}
+          showOutsideDays
+          className="rounded-lg h-fit px-4"
+          classNames={{
+            ...defaultClassNames,
+            today: "border-primary",
+            selected: "bg-primary border-border rounded-full",
+            selected_label: "text-foreground",
+            day: `${defaultClassNames.day} hover:bg-primary/20`,
+            disabled: "opacity-70",
+            header: "pb-5",
+          }}
+        />
+
+        <View className="flex flex-row justify-between items-center gap-2 px-4">
           <Button
-            variant="ghost"
-            className="mt-2"
+            size={"sm"}
+            variant="outline"
             onPress={clearDate}
             disabled={disabled}
+            className="flex-1"
           >
-            <Text className="text-red-500">Clear</Text>
+            <Text>Clear</Text>
           </Button>
-        )}
-        {React.useMemo(() => {
-          return (
-            pickerVisible && (
-              <DateTimePicker
-                display="default"
-                value={date ?? new Date()}
-                onChange={(e, newDate) => {
-                  handleDateChange(newDate);
-                }}
-              />
-            )
-          );
-        }, [pickerVisible, date])}
-      </View>
-    );
-  } else {
-    return (
-      <View
-        className={cn(
-          "flex flex-1 flex-row justify-center items-center px-6 gap-2"
-        )}
-      >
-        <Popover className="w-full">
-          <PopoverTrigger asChild>
-            <Button
-              disabled={disabled}
-              variant="outline"
-              className={cn("w-full", className)}
-            >
-              <Text>{displayText}</Text>
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent
-            side={Platform.OS === "web" ? "bottom" : "top"}
-            insets={contentInsets}
-            className="w-fit"
+          <Button
+            size={"sm"}
+            onPress={() => setVisible(false)}
+            disabled={disabled}
+            className="flex-1"
           >
-            <DateTimePicker
-              display="inline"
-              value={date ?? new Date()}
-              onChange={(e, newDate) => {
-                onChange(newDate || null);
-              }}
-            />
-            {nullable && date && (
-              <Button
-                variant="ghost"
-                className="mt-2"
-                onPress={clearDate}
-                disabled={disabled}
-              >
-                <Text className="text-red-500">Clear</Text>
-              </Button>
-            )}
-          </PopoverContent>
-        </Popover>
-        <Button variant="ghost" onPress={clearDate} size={"icon"}>
-          <Icon as={X} size={24} />
-        </Button>
-      </View>
-    );
-  }
+            <Text>Done</Text>
+          </Button>
+        </View>
+      </DialogContent>
+    </Dialog>
+  );
 };

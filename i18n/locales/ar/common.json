@@ -1,9 +1,25 @@
 {
   "screens": {
     "explore": "استكشف",
-    "chat": "الدردشة",
+    "messages": "الدردشة",
     "like": "الإعجاب",
     "map": "خريطة",
-    "menu": "القائمة"
+    "menu": "القائمة",
+    "settings": "الإعدادات",
+    "notifications": "الإشعارات",
+    "profile": "ملفي",
+    "experience": "الخبرة",
+    "education": "التعليم",
+    "reportBug": "الإبلاغ عن خطأ",
+    "sendFeedback": "إرسال ملاحظات",
+    "faqs": "الأسئلة الشائعة",
+    "mapSettings": "إعدادات الخريطة"
+  },
+  "language": {
+    "select": {
+      "title": "اختر اللغة",
+      "description": "اختر اللغة التي تريد استخدامها في التطبيق",
+      "placeholder": "اختر اللغة"
+    }
   }
 }

@@ -1,9 +1,25 @@
 {
   "screens": {
     "explore": "Explore",
-    "chat": "Chat",
+    "messages": "Messages",
     "like": "Like",
     "map": "Map",
-    "menu": "Menu"
+    "menu": "Menu",
+    "settings": "Settings",
+    "notifications": "Notifications",
+    "profile": "My Profile",
+    "experience": "Experience",
+    "education": "Education",
+    "reportBug": "Report a Bug",
+    "sendFeedback": "Send Feedback",
+    "faqs": "Frequently Asked Questions",
+    "mapSettings": "Map Settings"
+  },
+  "language": {
+    "select": {
+      "title": "Select Language",
+      "description": "Select the language you want to use in the app",
+      "placeholder": "Select Language"
+    }
   }
 }

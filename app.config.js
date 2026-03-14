@@ -7,10 +7,14 @@ export default ({ config }) => ({
   icon: "./assets/images/logo.png",
   scheme: "instanctmobileapp",
   userInterfaceStyle: "automatic",
+  assetBundlePatterns: ["**/*"],
   newArchEnabled: true,
   ios: {
     supportsTablet: true,
     bundleIdentifier: "com.softsurgery.instanctmobileapp",
+    infoPlist: {
+      UIDesignRequiresCompatibility: true,
+    },
   },
   android: {
     adaptiveIcon: {
@@ -28,14 +32,12 @@ export default ({ config }) => ({
     predictiveBackGestureEnabled: false,
     package: "com.softsurgery.instanctmobileapp",
   },
-  web: {
-    bundler: "metro",
-    output: "static",
-    favicon: "./assets/images/favicon.png",
-  },
   plugins: [
-    "expo-router",
+    "expo-font",
+    "expo-localization",
     "expo-notifications",
+    "expo-router",
+    "expo-web-browser",
     [
       "expo-splash-screen",
       {
@@ -48,6 +50,12 @@ export default ({ config }) => ({
         },
       },
     ],
+    [
+      "expo-audio",
+      {
+        "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+      }
+    ]
   ],
   experiments: {
     typedRoutes: true,

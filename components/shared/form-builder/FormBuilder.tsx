@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import React from "react";
 import { View } from "react-native";
 import { FieldBuilder } from "./FieldBuilder";
-import { FormStructure } from "./types";
+import { FieldVariant, FormStructure } from "./types";
 import { getItemWidth } from "./utils/item-width";
 
 interface FormBuilderProps {
@@ -41,7 +41,7 @@ export const FormBuilder = React.forwardRef(
         <View
           className={cn(
             "flex gap-4",
-            structure.orientation === "vertical" ? "flex-col" : "flex-col"
+            structure.orientation === "vertical" ? "flex-col" : "flex-col",
           )}
         >
           {structure?.fieldsets?.map((fieldset, fieldsetIndex) => (
@@ -51,7 +51,7 @@ export const FormBuilder = React.forwardRef(
                 "flex w-full border-border rounded-lg",
                 structure.orientation === "vertical"
                   ? "flex-col gap-10"
-                  : "flex-col"
+                  : "flex-col",
               )}
             >
               {fieldset.isHeaderVisible && (
@@ -81,12 +81,12 @@ export const FormBuilder = React.forwardRef(
                             structure.orientation === "vertical"
                               ? "w-full"
                               : getItemWidth(fieldCount),
-                            field.fieldClassName
+                            field.fieldClassName,
                           )}
                         >
                           {/* Label */}
                           {field.variant !== "check" && (
-                            <Label className="text-md font-semibold mb-2">
+                            <Label className="text-xs font-semibold mb-1">
                               {field.label}{" "}
                               {field.required && (
                                 <Text className="text-red-500">*</Text>
@@ -98,28 +98,28 @@ export const FormBuilder = React.forwardRef(
                           <FieldBuilder field={field} />
 
                           {/* Description & Error */}
-                          <View className="pt-2">
+                          <View className="pt-1">
                             {field.description && (
                               <View className="flex flex-col justify-between">
-                                {!field?.error && (
-                                  <Text
-                                    className={cn(
-                                      "text-md text-gray-500 dark:text-gray-400"
-                                    )}
-                                  >
-                                    {field.description}
-                                  </Text>
-                                )}
-                                {field?.error && (
-                                  <Text
-                                    className="text-md font-medium"
-                                    style={{ color: "red" }}
-                                  >
-                                    {field?.error}
-                                  </Text>
-                                )}
+                                {!field?.error &&
+                                  (![FieldVariant.CHECKBOX].includes(
+                                    field.variant,
+                                  ) ? (
+                                    <Text
+                                      className={cn(
+                                        "text-xs text-gray-500 dark:text-gray-400",
+                                      )}
+                                    >
+                                      {field.description}
+                                    </Text>
+                                  ) : null)}
                               </View>
                             )}
+                            {field?.error ? (
+                              <Text className="text-xs font-medium text-red-500">
+                                {field?.error}
+                              </Text>
+                            ) : null}
                           </View>
                         </View>
                       );
@@ -132,7 +132,7 @@ export const FormBuilder = React.forwardRef(
         </View>
       </View>
     );
-  }
+  },
 );
 
 FormBuilder.displayName = "FormBuilder";

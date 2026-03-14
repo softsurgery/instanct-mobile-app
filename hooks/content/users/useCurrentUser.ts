@@ -9,7 +9,7 @@ export const useCurrentUser = () => {
     refetch: refetchCurrentUser,
   } = useQuery({
     queryKey: ["current-user"],
-    queryFn: () => api.client.findCurrent(),
+    queryFn: () => api.user.findCurrent(),
   });
 
   const currentUser = React.useMemo(() => {

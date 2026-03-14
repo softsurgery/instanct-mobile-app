@@ -1,19 +1,13 @@
-import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { useRTL } from "@/hooks/useRTL";
 import { NAV_THEME } from "@/lib/theme";
 import * as Haptics from "expo-haptics";
 import { Tabs } from "expo-router";
-import {
-  Heart,
-  Map,
-  Menu,
-  MessageCircle,
-  Telescope,
-} from "lucide-react-native";
+import { Map, Telescope, Timer, User } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { Pressable } from "react-native";
 
 export default function TabLayout() {
   const { colorScheme } = useColorScheme();
@@ -22,23 +16,22 @@ export default function TabLayout() {
 
   const isDarkColorScheme = colorScheme === "dark";
 
-  const withHaptic = (onPress: Function) => {
+  const withHaptic = (functions: Function[]) => {
     return async () => {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      onPress();
+      functions.forEach((fn) => fn());
     };
   };
 
   const VibratingTabButton = (props: any) => {
     const { onPress, children } = props;
     return (
-      <Button
-        variant={"link"}
-        className="flex-1 flex flex-col"
-        onPress={withHaptic(onPress)}
+      <Pressable
+        className="flex flex-col justify-center items-center mt-2 gap-1"
+        onPress={withHaptic([onPress])}
       >
         {children}
-      </Button>
+      </Pressable>
     );
   };
 
@@ -48,30 +41,28 @@ export default function TabLayout() {
       title: t("screens.explore"),
       icon: Telescope,
       iconSize: 30,
+      render: true,
     },
     {
-      name: "chat",
-      title: t("screens.chat"),
-      icon: MessageCircle,
+      name: "sessions",
+      title: "Sessions",
+      icon: Timer,
       iconSize: 30,
-    },
-    {
-      name: "like",
-      title: t("screens.like"),
-      icon: Heart,
-      iconSize: 30,
+      render: true,
     },
     {
       name: "map",
       title: t("screens.map"),
       icon: Map,
       iconSize: 30,
+      render: true,
     },
     {
       name: "menu",
       title: t("screens.menu"),
-      icon: Menu,
+      icon: User,
       iconSize: 30,
+      render: true,
     },
   ];
 
@@ -84,12 +75,13 @@ export default function TabLayout() {
             ? NAV_THEME.dark.colors.card
             : NAV_THEME.light.colors.card,
           borderColor: "transparent",
+          height: "9%",
         },
         sceneStyle: {
           flex: 1,
           backgroundColor: isDarkColorScheme
-            ? NAV_THEME.dark.colors.background
-            : NAV_THEME.light.colors.background,
+            ? NAV_THEME.dark.colors.card
+            : NAV_THEME.light.colors.card,
         },
       }}
     >
@@ -110,8 +102,8 @@ export default function TabLayout() {
                           ? NAV_THEME.dark.colors.primary
                           : NAV_THEME.light.colors.primary
                         : isDarkColorScheme
-                        ? NAV_THEME.dark.colors.text
-                        : NAV_THEME.light.colors.text
+                          ? NAV_THEME.dark.colors.text
+                          : NAV_THEME.light.colors.text
                     }
                   />
                 )
@@ -121,9 +113,8 @@ export default function TabLayout() {
               ? NAV_THEME.dark.colors.primary
               : NAV_THEME.light.colors.primary,
             tabBarLabelStyle: {
-              fontSize: 11,
+              fontSize: 9,
               fontWeight: "bold",
-              margin: "auto",
             },
           }}
         />

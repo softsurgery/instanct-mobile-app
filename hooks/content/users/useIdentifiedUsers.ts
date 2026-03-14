@@ -9,12 +9,12 @@ interface UseIdentifiedUsersProps {
 export const useIdentifiedUsers = ({ ids }: UseIdentifiedUsersProps) => {
   const uniqueIds = React.useMemo(
     () => Array.from(new Set(ids.filter(Boolean))),
-    [ids]
+    [ids],
   );
   const userQueries = useQueries({
     queries: uniqueIds.map((id) => ({
       queryKey: ["user", id],
-      queryFn: () => api.client.findById(id),
+      queryFn: () => api.user.findById(id),
       enabled: !!id,
     })),
   });
@@ -27,7 +27,7 @@ export const useIdentifiedUsers = ({ ids }: UseIdentifiedUsersProps) => {
         isPending,
         refetch,
       })),
-    [userQueries, ids]
+    [userQueries, ids],
   );
 
   const refetchAll = React.useCallback(() => {

@@ -1,4 +1,4 @@
-import { ResponseClientDto } from "./client";
+import { ResponseUserDto } from "./user-management";
 import { DatabaseEntity } from "./utils";
 
 export interface CreateGeolocationDto {
@@ -10,14 +10,14 @@ export interface ResponseGeolocationDto extends DatabaseEntity {
   id: number;
   latitude: number;
   longitude: number;
-  user: ResponseClientDto;
+  user: ResponseUserDto;
   userId: string;
 }
 
 export interface NearbyUser {
   latitude: number;
   longitude: number;
-  user?: ResponseClientDto | null;
+  user?: ResponseUserDto | null;
   userId: string;
   distance?: number;
   isOnline?: boolean;
