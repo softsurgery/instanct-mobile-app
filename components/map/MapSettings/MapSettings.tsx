@@ -23,7 +23,24 @@ import { RadiusSlider } from "./RadiusSlider";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api";
 import { showToastable } from "react-native-toastable";
-import { useMapContext } from "@/contexts/MapContext";
+
+const RadiusSliderRow = React.memo(function RadiusSliderRow() {
+  const setNested = useMapStore((s) => s.setNested);
+  const rangeMin = useMapStore((s) => s.parameters.rangeMin);
+  const rangeMax = useMapStore((s) => s.parameters.rangeMax);
+
+  const handleRadiusChange = React.useCallback((value: number) => {
+    setNested("parameters.radius", value);
+  }, []);
+
+  return (
+    <RadiusSlider
+      rangeMinValue={rangeMin}
+      rangeMaxValue={rangeMax}
+      onValueChange={handleRadiusChange}
+    />
+  );
+});
 
 interface MapSettingsProps {
   className?: string;
@@ -44,18 +61,10 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
     "rounded-2xl border border-primary/10 bg-primary/5 shadow-sm overflow-hidden";
 
   const { t } = useTranslation("common");
-  const { restartSocket } = useMapContext();
   const mapStore = useMapStore();
   const queryClient = useQueryClient();
 
   const [autoRefresh, setAutoRefresh] = React.useState(true);
-
-  const handleRadiusChange = React.useCallback(
-    (value: number) => {
-      mapStore.setNested("parameters.radius", value);
-    },
-    [mapStore],
-  );
 
   const settingsRows: SettingsSection[] = [
     {
@@ -95,13 +104,7 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
       description: "Control how far you can see other users.",
       rows: [
         createSettingRow({
-          Component: () => (
-            <RadiusSlider
-              rangeMaxValue={mapStore.parameters.rangeMax}
-              rangeMinValue={mapStore.parameters.rangeMin}
-              onValueChange={handleRadiusChange}
-            />
-          ),
+          Component: RadiusSliderRow,
         }),
       ],
     },
@@ -151,11 +154,10 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
       });
     },
     onSuccess: () => {
-      restartSocket();
+      mapStore.set("hasInitializedParameters", false);
       queryClient.invalidateQueries({
         queryKey: ["current-map-configuration"],
       });
-      router.push("/main/(tabs)/map");
     },
   });
 
@@ -168,9 +170,6 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
     });
   };
 
-  const isPending = isUpdateMapConfigurationPending;
-
-  if (isPending) return null;
   return (
     <StableSafeAreaView className={cn("flex flex-1", className)}>
       <ApplicationHeader

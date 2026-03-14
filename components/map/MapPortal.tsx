@@ -34,19 +34,13 @@ export const MapPortal = ({ className }: MapPortalProps) => {
 
   return (
     <View className={cn("flex-1 bg-background", className)}>
-      <View className="absolute inset-0 border-y border-border top-0 ">
-        {mapStore.loading || !mapStore.location || !mapStore.location.coords ? (
-          <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" />
-          </View>
-        ) : (
-          <MapRenderer
-            className="flex-1"
-            latitude={latitude}
-            longitude={longitude}
-            nearbyUsers={mapStore.nearbyUsers}
-          />
-        )}
+      <View className="absolute inset-0 border-y border-border top-0">
+        <MapRenderer
+          className="flex-1"
+          latitude={latitude}
+          longitude={longitude}
+          nearbyUsers={mapStore.nearbyUsers}
+        />
       </View>
 
       <StableSafeAreaView className="absolute top-0 left-0 right-0 z-20">
@@ -60,7 +54,6 @@ export const MapPortal = ({ className }: MapPortalProps) => {
             {
               icon: RefreshCcw,
               onPress: () => {
-                mapStore.set("nearbyUsers", []);
                 restartSocket();
               },
             },

@@ -1,10 +1,12 @@
 import { Badge } from "@/components/ui/badge";
 import { Text } from "@/components/ui/text";
+import { hslToHex, THEME } from "@/lib/theme";
 import { useMapStore } from "@/stores/useMapStore";
+import { Slider } from "@miblanchard/react-native-slider";
+import { useColorScheme } from "nativewind";
 import React from "react";
 import { View } from "react-native";
-import { Slider } from "react-native-awesome-slider";
-import { useSharedValue } from "react-native-reanimated";
+import * as Haptics from "expo-haptics";
 
 interface RadiusSliderProps {
   onValueChange: (value: number) => void;
@@ -17,39 +19,54 @@ export const RadiusSlider = ({
   onValueChange,
   rangeMinValue = 0,
   rangeMaxValue = 100,
-  step = 10,
+  step = 50,
 }: RadiusSliderProps) => {
   const mapStore = useMapStore();
+  const { colorScheme } = useColorScheme();
+  const [localRadius, setLocalRadius] = React.useState(
+    mapStore.parameters.radius,
+  );
 
-  const radiusProgress = useSharedValue(mapStore.parameters.radius);
-  const radiusMin = useSharedValue(rangeMinValue);
-  const radiusMax = useSharedValue(rangeMaxValue);
+  const handleValueChange = (value: number | number[]) => {
+    setLocalRadius(Array.isArray(value) ? value[0] : value);
+  };
 
-  const handleSlidingComplete = (value: number) => {
-    onValueChange(value);
+  const handleSlidingComplete = (value: number | number[]) => {
+    Haptics.impactAsync();
+    onValueChange(Array.isArray(value) ? value[0] : value);
   };
 
   return (
-    <View className="flex flex-col gap-4">
+    <View className="flex flex-col">
       <View className="flex flex-row justify-between items-center">
         <View>
           <Text className="font-semibold text-base">Search Radius</Text>
         </View>
         <Badge variant="outline">
-          <Text className="text-sm font-bold">
-            {mapStore.parameters.radius} km
-          </Text>
+          <Text className="text-sm font-bold">{localRadius} km</Text>
         </Badge>
       </View>
 
-      <View className="flex flex-col gap-3">
+      <View className="flex flex-col">
         <Slider
-          progress={radiusProgress}
-          minimumValue={radiusMin}
-          maximumValue={radiusMax}
+          thumbTintColor={hslToHex(
+            colorScheme === "dark" ? THEME.dark.primary : THEME.light.primary,
+          )}
+          minimumTrackTintColor={hslToHex(
+            colorScheme === "dark" ? THEME.dark.primary : THEME.light.primary,
+          )}
+          maximumTrackTintColor={hslToHex(
+            colorScheme === "dark"
+              ? THEME.dark.foreground
+              : THEME.light.foreground,
+          )}
+          animateTransitions
+          value={localRadius}
+          minimumValue={rangeMinValue}
+          maximumValue={rangeMaxValue}
+          onValueChange={handleValueChange}
           onSlidingComplete={handleSlidingComplete}
-          forceSnapToStep
-          steps={step}
+          step={step}
         />
         <View className="flex flex-row justify-between">
           <Text className="text-xs text-muted-foreground">
