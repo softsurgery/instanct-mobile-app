@@ -50,6 +50,7 @@ export enum FieldVariant {
   SWITCH = "switch",
   RATING = "rating",
   PICTURE = "picture",
+  CHOICEPICKER = "choice-picker",
   CUSTOM = "custom",
 }
 
@@ -146,5 +147,12 @@ export interface CheckboxFieldProps {
 export interface SwitchFieldProps {
   checked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
+  editable?: boolean;
+}
+
+export interface ChoicePickerFieldProps {
+  value?: string;
+  onSelectChange?: (value: string) => void;
+  options?: SelectOption[];
   editable?: boolean;
 }

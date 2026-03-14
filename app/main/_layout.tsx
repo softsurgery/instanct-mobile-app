@@ -1,6 +1,5 @@
 import { MapContext } from "@/contexts/MapContext";
 import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
-import { useLiveGeolocationParameters } from "@/hooks/content/geolocation/useLiveGeolocationParamters";
 import { useCheckHealth } from "@/hooks/content/useCheckHealth";
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
 import { Stack } from "expo-router";
@@ -8,8 +7,7 @@ import React from "react";
 
 export default function MainLayout() {
   const authPersistStore = useAuthPersistStore();
-  const { isPending } = useLiveGeolocationParameters();
-  const { restartSocket } = useLiveGeolocation({ enabled: !isPending });
+  const { restartSocket } = useLiveGeolocation();
   useCheckHealth({
     enabled: authPersistStore.isAuthenticated,
   });
@@ -246,30 +244,32 @@ export default function MainLayout() {
             animationDuration: 200,
           }}
         />
+        {/* Request  ********************************************************************************************* */}
+
+        <Stack.Screen
+          name="request/new-request"
+          options={{
+            title: "Send a Request",
+            headerShown: false,
+            animation: "fade_from_bottom",
+            animationDuration: 200,
+          }}
+        />
+        <Stack.Screen
+          name="request/index"
+          options={{
+            title: "Accept",
+            headerShown: false,
+            animation: "fade_from_bottom",
+            animationDuration: 200,
+          }}
+        />
         {/* *************************************************************************************************** */}
         {/* Test  ********************************************************************************************* */}
         <Stack.Screen
           name="test"
           options={{
             title: "Try Anything",
-            animation: "fade_from_bottom",
-            animationDuration: 200,
-          }}
-        />
-        <Stack.Screen
-          name="demande"
-          options={{
-            title: "Demande",
-            headerShown: false,
-            animation: "fade_from_bottom",
-            animationDuration: 200,
-          }}
-        />
-        <Stack.Screen
-          name="accept"
-          options={{
-            title: "Accept",
-            headerShown: false,
             animation: "fade_from_bottom",
             animationDuration: 200,
           }}

@@ -14,14 +14,14 @@ interface ChoicePickerProps {
   className?: string;
   options: ChoicePickerOption[];
   value: string;
-  onChange: (value: string) => void;
+  onSelectChange: (value: string) => void;
 }
 
 export const ChoicePicker = ({
   className,
   options,
   value,
-  onChange,
+  onSelectChange,
 }: ChoicePickerProps) => {
   return (
     <View className={cn("gap-4", className)}>
@@ -36,7 +36,7 @@ export const ChoicePicker = ({
               isSelected ? "border-2 border-primary" : "border border-border",
             )}
             onPressClassname="opacity-80"
-            onPress={() => onChange(option.value)}
+            onPress={() => onSelectChange(option.value)}
           >
             <View className="flex-row items-center gap-4">
               <View className="h-8 w-8 items-center justify-center">
@@ -44,7 +44,7 @@ export const ChoicePicker = ({
                   checked={isSelected}
                   onCheckedChange={(checked) => {
                     if (checked) {
-                      onChange(option.value);
+                      onSelectChange(option.value);
                     }
                   }}
                   className={cn(

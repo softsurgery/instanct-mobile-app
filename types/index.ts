@@ -7,4 +7,5 @@ export * from "./reference-types";
 export * from "./upload";
 export * from "./user-management";
 export * from "./system-reports";
+export * from "./request";
 export * from "./utils";

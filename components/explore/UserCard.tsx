@@ -155,7 +155,7 @@ export const UserCard = ({ user, className }: UserCardProps) => {
               className="rounded-full h-16 w-16"
               onPress={() =>
                 router.push({
-                  pathname: "/main/demande",
+                  pathname: "/main/request/new-request",
                   params: { id: user?.id },
                 })
               }

@@ -13,6 +13,7 @@ import Select from "./Select";
 import { Field, FieldVariant } from "./types";
 import { DatePicker } from "./DatePicker2";
 import { TimePicker } from "./TimePicker";
+import { ChoicePicker } from "../ChoicePicker";
 
 interface FieldBuilderProps {
   field?: Field<any>;
@@ -217,6 +218,17 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           className={field?.className}
           checked={field?.props?.checked}
           onCheckedChange={field?.props?.onCheckedChange}
+          disabled={field?.props?.disabled}
+        />
+      );
+    case "choice-picker":
+      return (
+        <ChoicePicker
+          {...field?.props}
+          className={field?.className}
+          options={field?.props?.options || []}
+          value={field?.props?.value}
+          onSelect={field?.props?.onSelectChange}
           disabled={field?.props?.disabled}
         />
       );
