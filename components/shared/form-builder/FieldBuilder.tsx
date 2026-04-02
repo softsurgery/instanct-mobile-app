@@ -144,15 +144,15 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
             onPress={() => setShowPassword(!showPassword)}
             style={{
               position: "absolute",
-              right: 10,
-              top: 7,
+              right: 4,
+              top: 4,
               padding: 4,
             }}
             disabled={!field?.props?.editable}
           >
             <Feather
               name={showPassword ? "eye-off" : "eye"}
-              size={20}
+              size={16}
               color="gray"
             />
           </TouchableOpacity>
