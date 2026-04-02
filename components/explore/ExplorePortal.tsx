@@ -4,7 +4,7 @@ import { ResponseUserDto } from "@/types/user-management";
 import { LegendList } from "@legendapp/list";
 import { IconMessageChatbot } from "@tabler/icons-react-native";
 import { router, useFocusEffect } from "expo-router";
-import { ArrowDownNarrowWide, Bell } from "lucide-react-native";
+import { ArrowDownNarrowWide, Bell, Play } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, View } from "react-native";
@@ -16,7 +16,6 @@ import { UsersFilter } from "./users-filter/UsersFilter";
 import { useActiveSessions } from "@/hooks/content/sessions/useActiveSessions";
 import { SessionCountdown } from "../session/SessionCountdown";
 import { SessionStarter } from "../session/SessionStarter";
-import { Button } from "../ui/button";
 import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
 import { EndSessionDialog } from "../session/SessionEndDialog";
 import { api } from "@/api";
@@ -24,12 +23,18 @@ import { useMutation } from "@tanstack/react-query";
 import { showToastable } from "react-native-toastable";
 import { ServerErrorResponse } from "@/types";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
+import { Icon } from "../ui/icon";
+import { StablePressable } from "../shared/StablePressable";
+import { hslToHex, THEME } from "@/lib/theme";
+import { useColorScheme } from "nativewind";
 
 interface ExplorePortalProps {
   className?: string;
 }
 
 export const ExplorePortal = ({ className }: ExplorePortalProps) => {
+  const { colorScheme } = useColorScheme();
+  const isDarkColorScheme = colorScheme === "dark";
   const { t } = useTranslation("common");
   const { currentUser } = useCurrentUser();
   const { newCount, resetCount } = useNotificationContext();
@@ -98,8 +103,35 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
       className={cn("flex flex-1 flex-col bg-background", className)}
     >
       <ApplicationHeader
-        title={t("screens.explore")}
+        title={
+          <View
+            key="session-countdown"
+            className="flex flex-col items-center mx-2"
+          >
+            <Text variant={"h1"}>{t("screens.explore")}</Text>
+            {mapSession && <SessionCountdown session={mapSession} />}
+          </View>
+        }
         shortcuts={[
+          <EndSessionDialog
+            key="end-session-dialog"
+            handleEndSession={handelSessionEnd}
+            loading={isEndingSessionPending}
+            trigger={
+              <StablePressable className={cn("p-1")}>
+                <Icon
+                  as={Play}
+                  size={28}
+                  color={hslToHex(
+                    isDarkColorScheme
+                      ? THEME.dark.destructive
+                      : THEME.light.destructive,
+                  )}
+                />
+              </StablePressable>
+            }
+          />,
+
           {
             icon: ArrowDownNarrowWide,
             onPress: () => setOpenUserFilters(true),
@@ -116,24 +148,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
         ]}
       />
       {mapSession ? (
-        <View className="flex-1 bg-transparent">
-          <View className="mx-4 mt-4">
-            <View className="flex flex-row justify-between items-center">
-              <View className="flex gap-2 flex-row justify-center">
-                <Text className="font-bold">Your session ends in</Text>
-                <SessionCountdown session={mapSession} />
-              </View>
-              <EndSessionDialog
-                handleEndSession={handelSessionEnd}
-                loading={isEndingSessionPending}
-                trigger={
-                  <Button size="lg" variant={"secondary"}>
-                    <Text>End Session</Text>
-                  </Button>
-                }
-              />
-            </View>
-          </View>
+        <View className="flex-1 bg-transparent mt-2">
           <LegendList
             className="flex-1"
             data={users}
