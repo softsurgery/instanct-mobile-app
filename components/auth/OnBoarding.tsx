@@ -34,7 +34,7 @@ export default function OnBoarding({ className }: OnBoardingProps) {
   };
   return (
     <StableSafeAreaView
-      className={cn("flex-1 justify-between mb-8", className)}
+      className={cn("flex-1 justify-between bg-background", className)}
     >
       <View className="flex-1 flex flex-col justify-between">
         <View className="flex flex-row gap-2 px-4 items-center">

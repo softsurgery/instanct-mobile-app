@@ -20,7 +20,7 @@ type Shortcut =
 
 interface ApplicationHeaderProps {
   className?: string;
-  title: string | React.ReactNode;
+  title?: string | React.ReactNode;
   titleVariant?: TextVariantDefaults;
   shortcuts?: Shortcut[];
   reverse?: boolean;

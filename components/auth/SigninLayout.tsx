@@ -16,6 +16,8 @@ import { FormBuilder } from "../shared/form-builder/FormBuilder";
 import { useSignInFormStructure } from "./useSigninFormStructure";
 import { SSOButtons } from "./SSOButtons";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
+import { ApplicationHeader } from "../shared/AppHeader";
+import { ArrowLeft } from "lucide-react-native";
 
 interface SigninProps {
   className?: string;
@@ -57,53 +59,71 @@ export const SigninLayout = ({ className }: SigninProps) => {
   };
 
   return (
-    <StableSafeAreaView className="flex-1 pb-4">
-      <StableKeyboardAwareScrollView>
-        <View
-          className={cn("flex flex-col justify-centers gap-5 p-4", className)}
-        >
-          <View className="my-5">
-            <Text className="text-2xl font-extrabold text-center">
-              Welecome Back
-            </Text>
-            <Text className="text-2xl font-thin text-center">
-              Glad to see you again
-            </Text>
+    <StableSafeAreaView className={cn("flex-1", className)}>
+      <ApplicationHeader
+        className="border-b border-border pb-2 bg-transparent"
+        titleVariant="large"
+        shortcuts={[
+          {
+            key: "back",
+            icon: ArrowLeft,
+            onPress: () => {
+              router.back();
+            },
+          },
+        ]}
+      />
+      <View className="flex-1 bg-background">
+        <StableKeyboardAwareScrollView className="flex-1 bg-background">
+          <View
+            className={cn(
+              "flex flex-col flex-1 justify-centers gap-5 p-4 bg-background",
+              className,
+            )}
+          >
+            <View className="my-5">
+              <Text className="text-2xl font-extrabold text-center">
+                Welecome Back
+              </Text>
+              <Text className="text-2xl font-thin text-center">
+                Glad to see you again
+              </Text>
+            </View>
+
+            <View className="flex flex-col gap-2 w-fit">
+              <FormBuilder structure={signInFormStructure} />
+
+              <Text className="text-sm font-bold ml-auto my-1">
+                Forget Password ?
+              </Text>
+
+              <Button
+                disabled={isSignInPending}
+                className="flex flex-row justify-center gap-2 my-1"
+                onPress={onSignInPress}
+              >
+                <Text className="font-bold">Continue with E-Mail</Text>
+              </Button>
+
+              <DividedText text="OR" />
+
+              <SSOButtons isSignInPending={isSignInPending} />
+            </View>
+
+            <View className="flex flex-row gap-1 items-center justify-center">
+              <Text variant={"muted"}>Don&apos;t have an account?</Text>
+              <Text
+                variant={"small"}
+                onPress={() => {
+                  router.push("/auth/sign-up");
+                }}
+              >
+                Create an account
+              </Text>
+            </View>
           </View>
-
-          <View className="flex flex-col gap-2 px-2 w-fit">
-            <FormBuilder structure={signInFormStructure} />
-
-            <Text className="text-md font-bold ml-auto my-1">
-              Forget Password ?
-            </Text>
-
-            <Button
-              disabled={isSignInPending}
-              className="flex flex-row justify-center gap-2 my-1"
-              onPress={onSignInPress}
-            >
-              <Text className="font-bold">Continue with E-Mail</Text>
-            </Button>
-
-            <DividedText text="OR" />
-
-            <SSOButtons isSignInPending={isSignInPending} />
-          </View>
-
-          <View className="flex flex-row gap-1 items-center justify-center">
-            <Text variant={"muted"}>Don&apos;t have an account?</Text>
-            <Text
-              variant={"small"}
-              onPress={() => {
-                router.push("/auth/sign-up");
-              }}
-            >
-              Create an account
-            </Text>
-          </View>
-        </View>
-      </StableKeyboardAwareScrollView>
+        </StableKeyboardAwareScrollView>
+      </View>
     </StableSafeAreaView>
   );
 };
