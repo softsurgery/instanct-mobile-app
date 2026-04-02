@@ -23,6 +23,7 @@ import { api } from "@/api";
 import { useMutation } from "@tanstack/react-query";
 import { showToastable } from "react-native-toastable";
 import { ServerErrorResponse } from "@/types";
+import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 
 interface ExplorePortalProps {
   className?: string;
@@ -30,14 +31,19 @@ interface ExplorePortalProps {
 
 export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   const { t } = useTranslation("common");
+  const { currentUser } = useCurrentUser();
   const { newCount, resetCount } = useNotificationContext();
   const { mapSession, refetchSessions } = useActiveSessions();
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [openUserFilters, setOpenUserFilters] = React.useState(false);
-  const { users } = useLiveGeolocation({
+  const { users: liveUsers } = useLiveGeolocation({
     enabled: true,
     join: ["user", "user.objectives", "user.industries"],
   });
+
+  const users = React.useMemo(() => {
+    return liveUsers.filter((user) => user.id !== currentUser?.id);
+  }, [liveUsers, currentUser]);
 
   const handleNotificationsPress = React.useCallback(() => {
     resetCount();
