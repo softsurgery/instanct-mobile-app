@@ -23,7 +23,6 @@ export const InspectProfile = ({ className, id }: InspectProfileProps) => {
           >
             <ApplicationHeader
               title=""
-              reverse
               shortcuts={[
                 {
                   key: "settings",

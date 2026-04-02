@@ -21,7 +21,7 @@
     "@react-native-ohos/react-native-keyboard-aware-scroll-view": "0.9.6-rc.1",
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
-    "@react-navigation/material-top-tabs": "^7.4.18",
+    "@react-navigation/material-top-tabs": "^7.4.19",
     "@react-navigation/native": "^7.1.8",
     "@rn-primitives/accordion": "^1.2.0",
     "@rn-primitives/checkbox": "^1.2.0",

@@ -48,8 +48,6 @@ interface InspectBaseProfileProps {
   coverExtra?: React.ReactNode;
 }
 
-const Tab = createMaterialTopTabNavigator();
-
 // Tab Components - defined outside to prevent minification issues
 const AboutTab = ({ user }: { user: any }) => (
   <ScrollView className="flex-1 bg-background">
@@ -339,70 +337,69 @@ export const InspectBaseProfile = ({
       return (
         <View key={section.key}>
           <View className={cn("pt-x bg-card border border-border")}>
-            <View className="flex flex-row items-center justify-between bg-primary/10">
+            <View className="flex flex-row items-center justify-between bg-primary/10 py-4">
               <View className="px-4">
                 <Text variant="h4">{section.title}</Text>
               </View>
 
-              {section.editable && (
-                <View className="flex flex-row gap-1 items-center p-2">
-                  {!isBadge && (
-                    <StablePressable
-                      className="p-2"
-                      onPress={() => {
-                        switch (section.key) {
-                          case "experience":
-                            router.push("/main/profile/create-experience");
-                            break;
-                          case "education":
-                            router.push("/main/profile/create-education");
-                            break;
-                        }
-                      }}
-                      onPressClassname="bg-primary/25 rounded-full"
-                    >
-                      <Icon
-                        as={Plus}
-                        size={20}
-                        className="text-muted-foreground"
-                      />
-                    </StablePressable>
-                  )}
-
+              <View
+                className={cn(
+                  "flex flex-row gap-1 items-center px-2",
+                  !section.editable && "hidden",
+                )}
+              >
+                {!isBadge && (
                   <StablePressable
                     className="p-2"
                     onPress={() => {
                       switch (section.key) {
                         case "experience":
-                          router.push("/main/profile/update-experiences");
+                          router.push("/main/profile/create-experience");
                           break;
                         case "education":
-                          router.push("/main/profile/update-educations");
-                          break;
-                        case "industries":
-                          router.push({
-                            pathname: "/main/profile/industries",
-                            params: { userId: id },
-                          });
-                          break;
-                        case "objectives":
-                          router.push({
-                            pathname: "/main/profile/objectives",
-                            params: { userId: id },
-                          });
+                          router.push("/main/profile/create-education");
                           break;
                       }
                     }}
                     onPressClassname="bg-primary/25 rounded-full"
                   >
                     <Icon
-                      as={Pen}
-                      size={18}
+                      as={Plus}
+                      size={20}
                       className="text-muted-foreground"
                     />
                   </StablePressable>
-                </View>
-              )}
+                )}
+
+                <StablePressable
+                  className="p-2"
+                  onPress={() => {
+                    switch (section.key) {
+                      case "experience":
+                        router.push("/main/profile/update-experiences");
+                        break;
+                      case "education":
+                        router.push("/main/profile/update-educations");
+                        break;
+                      case "industries":
+                        router.push({
+                          pathname: "/main/profile/industries",
+                          params: { userId: id },
+                        });
+                        break;
+                      case "objectives":
+                        router.push({
+                          pathname: "/main/profile/objectives",
+                          params: { userId: id },
+                        });
+                        break;
+                    }
+                  }}
+                  onPressClassname="bg-primary/25 rounded-full"
+                >
+                  <Icon as={Pen} size={18} className="text-muted-foreground" />
+                </StablePressable>
+              </View>
             </View>
 
             <Separator />
@@ -437,109 +434,106 @@ export const InspectBaseProfile = ({
     [id],
   );
 
+  const Tab = createMaterialTopTabNavigator();
+
   return (
     <View className={cn("flex-1 bg-background", className)}>
       <View className="absolute top-2 left-0 right-0 items-center z-20 pointer-events-none">
         <Loader isPending={isRefreshing} size="small" />
       </View>
 
-      <StableScrollView
-        className="flex-1"
-        refreshControl={
-          <RefreshControl
-            progressViewOffset={50}
-            refreshing={isRefreshing}
-            onRefresh={onRefresh}
-            tintColor="transparent"
-            colors={["transparent"]}
-          />
-        }
-      >
-        {isInitialLoading ? (
-          <BaseProfileSkeleton className={className} />
-        ) : (
-          <>
-            {/* Cover */}
-            <View className="relative w-full h-48 bg-card">
-              {coverExtra}
-              <Image
-                source={require("@/assets/images/partial-react-logo.png")}
-                className="w-full h-full"
-                resizeMode="cover"
-              />
-            </View>
-            {/* Header */}
-            <View className="flex-row items-center px-5 -mt-12">
-              <View>{profilePictures[0]}</View>
+      {isInitialLoading ? (
+        <BaseProfileSkeleton className={className} />
+      ) : (
+        <>
+          {/* Cover */}
+          <View className="relative w-full h-48 bg-card">
+            {coverExtra}
+            <Image
+              source={require("@/assets/images/partial-react-logo.png")}
+              className="w-full h-full"
+              resizeMode="cover"
+            />
+          </View>
+          {/* Header */}
+          <View className="flex-row items-center px-5 -mt-12">
+            <View>{profilePictures[0]}</View>
 
-              <View className="flex-1 mt-16">
-                <View className="flex-row items-center justify-between mx-2">
-                  <View>
-                    <Text className="text-xl font-semibold text-foreground">
-                      {identity}
+            <View className="flex-1 mt-16">
+              <View className="flex-row items-center justify-between mx-2">
+                <View>
+                  <Text className="text-xl font-semibold text-foreground">
+                    {identity}
+                  </Text>
+                  {id && (
+                    <Text className="text-sm text-muted-foreground">
+                      @{user?.username}
                     </Text>
-                    {id && (
-                      <Text className="text-sm text-muted-foreground">
-                        @{user?.username}
-                      </Text>
-                    )}
-                  </View>
-                  {currentUser?.id === id && (
-                    <ProfileStat className="flex flex-row gap-4" />
                   )}
                 </View>
+                {currentUser?.id === id && (
+                  <ProfileStat className="flex flex-row gap-4" />
+                )}
               </View>
             </View>
-            {/* Tabs */}
-            <View className="flex-1 mt-4" style={{ minHeight: 400 }}>
-              <Tab.Navigator
-                screenOptions={{
-                  tabBarScrollEnabled: false,
-                  tabBarLabelStyle: {
-                    fontSize: 12,
-                    fontWeight: "600",
-                    textTransform: "none",
-                  },
-                  tabBarIndicatorStyle: { backgroundColor: "#6366f1" },
-                  tabBarStyle: { backgroundColor: "transparent" },
+          </View>
+          {/* Tabs */}
+          <View className="flex-1 mt-4" style={{ minHeight: 400 }}>
+            <Tab.Navigator
+              screenOptions={{
+                tabBarScrollEnabled: false,
+                tabBarLabelStyle: {
+                  fontSize: 12,
+                  fontWeight: "600",
+                  textTransform: "none",
+                },
+                tabBarIndicatorStyle: { backgroundColor: "#6366f1" },
+                tabBarStyle: { backgroundColor: "transparent" },
+              }}
+              commonOptions={{
+                sceneStyle: {
+                  flex: 1,
+                },
+              }}
+            >
+              <Tab.Screen
+                name="About"
+                options={{
+                  tabBarLabel: "About",
                 }}
               >
-                <Tab.Screen
-                  name="About"
-                  options={{
-                    tabBarLabel: "About",
-                  }}
-                  component={() => <AboutTab user={user} />}
-                />
-                <Tab.Screen
-                  name="Career"
-                  options={{
-                    tabBarLabel: "Career",
-                  }}
-                  component={() => (
-                    <ExperienceTab
-                      profileSections={profileSections}
-                      renderSection={renderSection}
-                    />
-                  )}
-                />
-                <Tab.Screen
-                  name="Interests"
-                  options={{
-                    tabBarLabel: "Interests",
-                  }}
-                  component={() => (
-                    <InterestsTab
-                      profileSections={profileSections}
-                      renderSection={renderSection}
-                    />
-                  )}
-                />
-              </Tab.Navigator>
-            </View>
-          </>
-        )}
-      </StableScrollView>
+                {() => <AboutTab user={user} />}
+              </Tab.Screen>
+              <Tab.Screen
+                name="Career"
+                options={{
+                  tabBarLabel: "Career",
+                }}
+              >
+                {() => (
+                  <ExperienceTab
+                    profileSections={profileSections}
+                    renderSection={renderSection}
+                  />
+                )}
+              </Tab.Screen>
+              <Tab.Screen
+                name="Interests"
+                options={{
+                  tabBarLabel: "Interests",
+                }}
+              >
+                {() => (
+                  <InterestsTab
+                    profileSections={profileSections}
+                    renderSection={renderSection}
+                  />
+                )}
+              </Tab.Screen>
+            </Tab.Navigator>
+          </View>
+        </>
+      )}
     </View>
   );
 };
