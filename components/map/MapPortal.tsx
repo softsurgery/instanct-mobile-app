@@ -32,6 +32,19 @@ export const MapPortal = ({ className }: MapPortalProps) => {
     longitude: 0,
   };
 
+  if (!mapStore.location) {
+    return (
+      <View
+        className={cn(
+          "flex-1 items-center justify-center bg-background",
+          className,
+        )}
+      >
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
   return (
     <View className={cn("flex-1 bg-background", className)}>
       <View className="absolute inset-0 border-y border-border top-0">

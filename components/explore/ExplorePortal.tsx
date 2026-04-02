@@ -34,7 +34,10 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   const { mapSession, refetchSessions } = useActiveSessions();
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [openUserFilters, setOpenUserFilters] = React.useState(false);
-  const { users } = useLiveGeolocation();
+  const { users } = useLiveGeolocation({
+    enabled: true,
+    join: ["user", "user.objectives", "user.industries"],
+  });
 
   const handleNotificationsPress = React.useCallback(() => {
     resetCount();

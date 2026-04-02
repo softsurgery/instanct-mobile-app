@@ -60,7 +60,7 @@ export const UserCard = ({ user, className }: UserCardProps) => {
       <View className="flex-1 bg-background mx-4 my-2 rounded-xl overflow-hidden border-2 border-border shadow-xl">
         <ImageBackground
           source={{ uri: uploadedProfilePicture[0] as string }}
-          style={{ height: 200, width: "100%" }}
+          style={{ height: 150, width: "100%" }}
           blurRadius={10}
         >
           {/* Optional gradient overlay for readability */}
@@ -90,8 +90,8 @@ export const UserCard = ({ user, className }: UserCardProps) => {
                 </Text>
 
                 <View className="flex-col items-end -gap-2">
-                  <Text className="text-sm font-bold">@{user.username}</Text>
-                  <Text className="text-sm font-bold">{user.email}</Text>
+                  <Text className="text-md font-bold">@{user.username}</Text>
+                  <Text className="text-md font-bold">{user.email}</Text>
                 </View>
               </View>
             </View>
@@ -99,30 +99,30 @@ export const UserCard = ({ user, className }: UserCardProps) => {
         </ImageBackground>
         <View className="flex flex-col flex-1 px-4 gap-2">
           {/* Content Section */}
-          <View className="flex flex-col flex-1">
+          <View className="flex flex-col flex-1 gap-6">
             {user.industries && user.industries.length > 0 ? (
-              <>
-                <Text className="font-bold py-2">Industries</Text>
+              <View>
+                <Text className="font-bold py-2 text-lg">Industries</Text>
                 <View className="flex flex-row flex-wrap items-center gap-x-2">
                   {user.industries?.map((ind) => (
-                    <Badge key={ind.id} className="rounded-full mt-2">
-                      <Text className="text-xs font-semibold">{ind.label}</Text>
+                    <Badge key={ind.id} className="rounded-full mt-2 py-1 px-3">
+                      <Text className="text-md font-semibold">{ind.label}</Text>
                     </Badge>
                   ))}
                 </View>
-              </>
+              </View>
             ) : null}
             {user.objectives && user.objectives.length > 0 ? (
-              <>
-                <Text className="font-bold py-2">Objectives</Text>
+              <View>
+                <Text className="font-bold py-2 text-lg">Objectives</Text>
                 <View className="flex flex-row flex-wrap items-center gap-x-2">
                   {user.objectives?.map((obj) => (
-                    <Badge key={obj.id} className="rounded-full mt-2">
-                      <Text className="text-xs font-semibold">{obj.label}</Text>
+                    <Badge key={obj.id} className="rounded-full mt-2 py-1 px-3">
+                      <Text className="text-md font-semibold">{obj.label}</Text>
                     </Badge>
                   ))}
                 </View>
-              </>
+              </View>
             ) : null}
           </View>
           {/* Fixed Footer Actions */}
@@ -130,7 +130,7 @@ export const UserCard = ({ user, className }: UserCardProps) => {
             <Button
               variant="secondary"
               size={"sm"}
-              className="rounded-full h-16 w-16"
+              className="rounded-full h-16 w-16 bg-[#7B4FBF]"
               onPress={() => setIsLiked((v) => !v)}
             >
               <Icon
@@ -142,17 +142,22 @@ export const UserCard = ({ user, className }: UserCardProps) => {
             </Button>
             <Button
               size={"sm"}
-              className="rounded-full h-16 w-16"
+              className="rounded-full h-16 w-16 bg-[#4A90D9]"
               onPress={() => {
                 startConversation({ users: [user.id] });
               }}
             >
-              <Icon as={MessageCircle} size={32} className="text-white" />
+              <Icon
+                as={MessageCircle}
+                size={32}
+                className="text-white"
+                color={"white"}
+              />
             </Button>
             <Button
               variant="secondary"
               size={"sm"}
-              className="rounded-full h-16 w-16"
+              className="rounded-full h-16 w-16 bg-[#3DBFA0]"
               onPress={() =>
                 router.push({
                   pathname: "/main/request/new-request",
@@ -160,12 +165,17 @@ export const UserCard = ({ user, className }: UserCardProps) => {
                 })
               }
             >
-              <Icon as={Handshake} size={32} className="text-purple-500" />
+              <Icon
+                as={Handshake}
+                size={32}
+                className="text-purple-500"
+                color={"white"}
+              />
             </Button>
             <Button
               variant="secondary"
               size={"sm"}
-              className="rounded-full h-16 w-16"
+              className="rounded-full h-16 w-16 bg-[#29C9E0]"
               onPress={() =>
                 router.push({
                   pathname: "/main/profile/user-calendar",
@@ -173,7 +183,12 @@ export const UserCard = ({ user, className }: UserCardProps) => {
                 })
               }
             >
-              <Icon as={CalendarDays} size={32} className="text-purple-500" />
+              <Icon
+                as={CalendarDays}
+                size={32}
+                className="text-purple-500"
+                color={"white"}
+              />
             </Button>
           </View>
         </View>

@@ -7,7 +7,10 @@ import React from "react";
 
 export default function MainLayout() {
   const authPersistStore = useAuthPersistStore();
-  const { restartSocket } = useLiveGeolocation();
+  const { restartSocket } = useLiveGeolocation({
+    enabled: authPersistStore.isAuthenticated,
+    join: ["user", "user.objectives", "user.industries"],
+  });
   useCheckHealth({
     enabled: authPersistStore.isAuthenticated,
   });

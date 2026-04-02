@@ -8,13 +8,17 @@ interface useLiveGeolocationParameters {}
 export function useLiveGeolocationParameters({}: useLiveGeolocationParameters = {}) {
   const mapStore = useMapStore();
   //global configuration
-  const { mapConfiguration, isMapConfigurationPending } =
-    useGlobalMapConfiguration();
+  const {
+    mapConfiguration,
+    isMapConfigurationPending,
+    refetchMapConfiguration: refetchGlobalMapConfiguration,
+  } = useGlobalMapConfiguration();
 
   //user map configuration
   const {
     mapConfiguration: userMapConfiguration,
     isMapConfigurationPending: isUserMapConfigurationPending,
+    refetchMapConfiguration: refetchUserMapConfiguration,
   } = useCurrentMapConfiguration();
 
   React.useEffect(() => {
@@ -39,6 +43,10 @@ export function useLiveGeolocationParameters({}: useLiveGeolocationParameters = 
   }, [userMapConfiguration, mapConfiguration]);
 
   return {
+    refetchMapConfiguration: () => {
+      refetchGlobalMapConfiguration();
+      refetchUserMapConfiguration();
+    },
     isPending: isMapConfigurationPending || isUserMapConfigurationPending,
   };
 }

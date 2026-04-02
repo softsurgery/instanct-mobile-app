@@ -1,4 +1,3 @@
-import { api } from "@/api";
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
 import { disconnectSocket, getSocket } from "@/lib/socket";
 import { useMapStore } from "@/stores/useMapStore";
@@ -6,10 +5,21 @@ import { NearbyUser } from "@/types";
 import * as Location from "expo-location";
 import React from "react";
 import { Socket } from "socket.io-client";
+import { useLiveGeolocationParameters } from "./useLiveGeolocationParamters";
 
-interface useLiveGeolocationOptions {}
+interface useLiveGeolocationOptions {
+  enabled?: boolean; // reserved for future use
+  join: string[];
+}
 
-export function useLiveGeolocation({}: useLiveGeolocationOptions = {}) {
+export function useLiveGeolocation(
+  { enabled, join }: useLiveGeolocationOptions = {
+    enabled: true,
+    join: [],
+  },
+) {
+  const { refetchMapConfiguration } = useLiveGeolocationParameters();
+
   const apiUrl =
     process.env.EXPO_PUBLIC_API_SOCKET_URL || "http://localhost:8080";
   const { accessToken } = useAuthPersistStore();
@@ -19,31 +29,29 @@ export function useLiveGeolocation({}: useLiveGeolocationOptions = {}) {
 
   const socketRef = React.useRef<Socket | null>(null);
   const intervalRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
-  const radiusRef = React.useRef(mapStore.parameters.radius);
   const listenerSetupDoneRef = React.useRef(false);
 
-  // Keep ref in sync for use in callbacks without triggering re-renders
-  React.useEffect(() => {
-    radiusRef.current = mapStore.parameters.radius;
-  }, [mapStore.parameters.radius]);
+  const updateLocation = React.useCallback(
+    async (socket?: Socket) => {
+      try {
+        const pos = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.High,
+        });
 
-  const updateLocation = React.useCallback(async (socket?: Socket) => {
-    try {
-      const pos = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
-      });
+        mapStore.set("location", pos);
 
-      mapStore.set("location", pos);
-
-      (socket ?? socketRef.current)?.emit("update_location", {
-        latitude: pos.coords.latitude,
-        longitude: pos.coords.longitude,
-        radius: radiusRef.current,
-      });
-    } catch (err) {
-      console.warn("⚠️ Failed to fetch location:", err);
-    }
-  }, []);
+        (socket ?? socketRef.current)?.emit("update_location", {
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+          radius: mapStore.parameters.radius,
+          query: { join: join.join(",") },
+        });
+      } catch (err) {
+        console.warn("⚠️ Failed to fetch location:", err);
+      }
+    },
+    [mapStore.parameters.radius],
+  );
 
   const initializeSocket = React.useCallback(async () => {
     // Skip if already initialized
@@ -124,13 +132,10 @@ export function useLiveGeolocation({}: useLiveGeolocationOptions = {}) {
         // fetch profiles for all nearby users (lazy)
         for (const n of nearbyList) {
           const existing = mapStore.getUserById(n.userId);
-          if (!existing) {
-            try {
-              const profile = await api.user.findById(n.userId);
-              mapStore.addUser(profile); // prevents duplicates
-            } catch (e) {
-              console.warn("Failed to fetch profile:", e);
-            }
+          try {
+            if (!existing && n.user) mapStore.addUser(n.user);
+          } catch (e) {
+            console.warn("Failed to fetch profile:", e);
           }
         }
       });
@@ -139,13 +144,10 @@ export function useLiveGeolocation({}: useLiveGeolocationOptions = {}) {
         mapStore.updateNearbyUser(data);
 
         const existing = mapStore.getUserById(data.userId);
-        if (!existing) {
-          try {
-            const profile = await api.user.findById(data.userId);
-            mapStore.addUser(profile);
-          } catch (e) {
-            console.warn("❌ Failed retrieving user", e);
-          }
+        try {
+          if (!existing && data.user) mapStore.addUser(data.user);
+        } catch (e) {
+          console.warn("❌ Failed retrieving user", e);
         }
       });
     }
@@ -153,27 +155,54 @@ export function useLiveGeolocation({}: useLiveGeolocationOptions = {}) {
     await updateLocation(socket);
     if (!intervalRef.current) {
       intervalRef.current = setInterval(
-        () => updateLocation(socket),
+        async () => await updateLocation(socket),
         mapStore.parameters.updateInterval * 1000,
       );
     }
   }, [accessToken, apiUrl, updateLocation]);
 
   React.useEffect(() => {
+    if (!enabled) return;
+    if (!mapStore.hasInitializedParameters) return;
+
     initializeSocket();
+
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      intervalRef.current = null;
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+
       disconnectSocket("geolocation");
       socketRef.current = null;
       listenerSetupDoneRef.current = false;
     };
-  }, [initializeSocket, restartCount]);
+  }, [
+    enabled,
+    initializeSocket,
+    restartCount,
+    mapStore.hasInitializedParameters,
+  ]);
 
-  const restartSocket = React.useCallback(() => {
-    mapStore.reset();
+  const restartSocket = async () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+
+    disconnectSocket("geolocation");
+    socketRef.current = null;
+    listenerSetupDoneRef.current = false;
+
+    mapStore.restart();
+
+    refetchMapConfiguration();
+
+    // make sure this becomes true again
+    mapStore.set("hasInitializedParameters", true);
+
     setRestartCount((c) => c + 1);
-  }, []);
+  };
 
   return {
     connected: mapStore.connected,
@@ -183,5 +212,6 @@ export function useLiveGeolocation({}: useLiveGeolocationOptions = {}) {
     users: mapStore.users,
     location: mapStore.location,
     restartSocket,
+    refetchMapConfiguration,
   };
 }

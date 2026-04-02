@@ -17,7 +17,7 @@ export interface ResponseGeolocationDto extends DatabaseEntity {
 export interface NearbyUser {
   latitude: number;
   longitude: number;
-  user?: ResponseUserDto | null;
+  user?: ResponseUserDto;
   userId: string;
   distance?: number;
   isOnline?: boolean;
