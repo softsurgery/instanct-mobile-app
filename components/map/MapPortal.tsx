@@ -61,16 +61,19 @@ export const MapPortal = ({ className }: MapPortalProps) => {
           title={t("screens.map")}
           shortcuts={[
             {
+              key: "settings",
               icon: Settings,
               onPress: () => router.push("/main/maps/map-settings"),
             },
             {
+              key: "refresh",
               icon: RefreshCcw,
               onPress: () => {
                 restartSocket();
               },
             },
             {
+              key: "notifications",
               icon: Bell,
               onPress: () => {
                 router.push("/main/notifications");
@@ -79,6 +82,7 @@ export const MapPortal = ({ className }: MapPortalProps) => {
               badgeText: newCount > 0 ? `${newCount}` : undefined,
             },
             {
+              key: "chat",
               icon: IconMessageChatbot,
               onPress: () => {
                 router.push("/main/chat");

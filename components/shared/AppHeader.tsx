@@ -6,15 +6,17 @@ import { StablePressable } from "../shared/StablePressable";
 import { Icon } from "../ui/icon";
 import { IconBadge } from "../ui/icon-badge";
 import { Text, TextVariantDefaults } from "../ui/text";
+import React from "react";
 
 type Shortcut =
   | {
+      key: string;
       icon: LucideIcon;
       onPress: () => void;
       badgeText?: string;
       hidden?: boolean;
     }
-  | React.ReactNode;
+  | { key: string; render: React.ReactNode; hidden?: boolean };
 
 interface ApplicationHeaderProps {
   className?: string;
@@ -58,7 +60,7 @@ export const ApplicationHeader = ({
       <View
         className={cn("flex gap-2", reverse ? "flex-row-reverse" : "flex-row")}
       >
-        {shortcuts?.map((shortcut, index) => {
+        {shortcuts?.map((shortcut) => {
           if (
             shortcut !== null &&
             typeof shortcut === "object" &&
@@ -66,7 +68,7 @@ export const ApplicationHeader = ({
           ) {
             return (
               <StablePressable
-                key={index}
+                key={shortcut.key}
                 className={cn("p-1", shortcut.hidden && "hidden")}
                 onPress={shortcut.onPress}
               >
@@ -81,8 +83,14 @@ export const ApplicationHeader = ({
                 )}
               </StablePressable>
             );
+          } else {
+            if (!shortcut.hidden)
+              return (
+                <React.Fragment key={shortcut.key}>
+                  {shortcut.render}
+                </React.Fragment>
+              );
           }
-          return shortcut;
         })}
       </View>
     </View>

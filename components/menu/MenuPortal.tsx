@@ -30,6 +30,7 @@ export const MenuPortal = ({ className }: MenuPortalProps) => {
               title={t("screens.menu")}
               shortcuts={[
                 {
+                  key: "notifications",
                   icon: Bell,
                   onPress: () => {
                     router.push("/main/notifications");

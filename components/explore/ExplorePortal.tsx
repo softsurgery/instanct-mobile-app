@@ -104,48 +104,52 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
     >
       <ApplicationHeader
         title={
-          <View
-            key="session-countdown"
-            className="flex flex-col items-center mx-2"
-          >
+          <View key="session-countdown" className="flex flex-col items-center">
             <Text variant={"h1"}>{t("screens.explore")}</Text>
             {mapSession && <SessionCountdown session={mapSession} />}
           </View>
         }
         shortcuts={[
-          <EndSessionDialog
-            key="end-session-dialog"
-            handleEndSession={handelSessionEnd}
-            loading={isEndingSessionPending}
-            trigger={
-              <StablePressable className={cn("p-1")}>
-                <Icon
-                  as={Play}
-                  size={28}
-                  color={hslToHex(
-                    isDarkColorScheme
-                      ? THEME.dark.destructive
-                      : THEME.light.destructive,
-                  )}
-                />
-              </StablePressable>
-            }
-          />,
-
           {
+            key: "end-session",
+            hidden: !mapSession,
+            render: (
+              <EndSessionDialog
+                handleEndSession={handelSessionEnd}
+                loading={isEndingSessionPending}
+                trigger={
+                  <StablePressable className="p-1">
+                    <Icon
+                      as={Play}
+                      size={28}
+                      color={hslToHex(
+                        isDarkColorScheme
+                          ? THEME.dark.destructive
+                          : THEME.light.destructive,
+                      )}
+                    />
+                  </StablePressable>
+                }
+              />
+            ),
+          },
+          {
+            key: "filter",
             icon: ArrowDownNarrowWide,
             onPress: () => setOpenUserFilters(true),
           },
           {
+            key: "notifications",
             icon: Bell,
             onPress: handleNotificationsPress,
             badgeText: newCount > 0 ? String(newCount) : undefined,
           },
           {
+            key: "chat",
             icon: IconMessageChatbot,
             onPress: handleChatPress,
           },
-        ]}
+        ].filter(Boolean)}
       />
       {mapSession ? (
         <View className="flex-1 bg-transparent mt-2">
