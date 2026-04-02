@@ -7,7 +7,13 @@ import { Map, Telescope, Timer, User } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable } from "react-native";
+import { Pressable, View } from "react-native";
+import Animated, {
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 
 export default function TabLayout() {
   const { colorScheme } = useColorScheme();
@@ -16,106 +22,133 @@ export default function TabLayout() {
 
   const isDarkColorScheme = colorScheme === "dark";
 
-  const withHaptic = (functions: Function[]) => {
-    return async () => {
-      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      functions.forEach((fn) => fn());
-    };
-  };
+  const colors = isDarkColorScheme
+    ? NAV_THEME.dark.colors
+    : NAV_THEME.light.colors;
 
-  const VibratingTabButton = (props: any) => {
-    const { onPress, children } = props;
+  const tabsConfig = React.useMemo(
+    () => [
+      {
+        name: "index",
+        title: t("screens.explore"),
+        icon: Telescope,
+      },
+      {
+        name: "sessions",
+        title: t("screens.sessions", "Sessions"),
+        icon: Timer,
+      },
+      {
+        name: "map",
+        title: t("screens.map"),
+        icon: Map,
+      },
+      {
+        name: "menu",
+        title: t("screens.menu"),
+        icon: User,
+      },
+    ],
+    [t],
+  );
+
+  const orderedTabs = isRTL ? [...tabsConfig].reverse() : tabsConfig;
+
+  const VibratingTabButton = ({
+    accessibilityState,
+    children,
+    onPress,
+  }: any) => {
+    const focused = accessibilityState?.selected;
+    const scale = useSharedValue(focused ? 1 : 0);
+
+    React.useEffect(() => {
+      scale.value = withSpring(focused ? 1 : 0, {
+        damping: 15,
+        stiffness: 140,
+      });
+    }, [focused]);
+
+    const animatedStyle = useAnimatedStyle(() => ({
+      transform: [
+        {
+          scale: interpolate(scale.value, [0, 1], [1, 1.08]),
+        },
+      ],
+    }));
+
+    const indicatorStyle = useAnimatedStyle(() => ({
+      opacity: scale.value,
+      transform: [
+        {
+          scaleX: withSpring(focused ? 1 : 0.4),
+        },
+      ],
+    }));
+
+    const handlePress = async () => {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      onPress?.();
+    };
+
     return (
-      <Pressable
-        className="flex flex-col justify-center items-center mt-2 gap-1"
-        onPress={withHaptic([onPress])}
-      >
-        {children}
+      <Pressable onPress={handlePress} className="mt-2">
+        <Animated.View
+          style={animatedStyle}
+          className="items-center justify-center gap-1"
+        >
+          {children}
+
+          <Animated.View
+            style={indicatorStyle}
+            className="mt-1 h-1 w-8 rounded-full"
+          >
+            <View
+              style={{ backgroundColor: colors.primary }}
+              className="h-full w-full rounded-full"
+            />
+          </Animated.View>
+        </Animated.View>
       </Pressable>
     );
   };
-
-  const tabsConfig = [
-    {
-      name: "index",
-      title: t("screens.explore"),
-      icon: Telescope,
-      iconSize: 30,
-      render: true,
-    },
-    {
-      name: "sessions",
-      title: "Sessions",
-      icon: Timer,
-      iconSize: 30,
-      render: true,
-    },
-    {
-      name: "map",
-      title: t("screens.map"),
-      icon: Map,
-      iconSize: 30,
-      render: true,
-    },
-    {
-      name: "menu",
-      title: t("screens.menu"),
-      icon: User,
-      iconSize: 30,
-      render: true,
-    },
-  ];
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: {
-          backgroundColor: isDarkColorScheme
-            ? NAV_THEME.dark.colors.card
-            : NAV_THEME.light.colors.card,
-          borderColor: "transparent",
-          height: "9%",
-        },
         sceneStyle: {
           flex: 1,
-          backgroundColor: isDarkColorScheme
-            ? NAV_THEME.dark.colors.card
-            : NAV_THEME.light.colors.card,
+          backgroundColor: "transparent",
+        },
+        tabBarShowLabel: true,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.text,
+        tabBarStyle: {
+          borderRadius: 28,
+          paddingTop: 10,
+          paddingInline: 10,
+          backgroundColor: colors.card,
+          borderColor: colors.border,
+          borderTopWidth: 0,
+          height: "9%",
+        },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: "700",
         },
       }}
     >
-      {(isRTL ? tabsConfig.reverse() : tabsConfig).map((tab) => (
+      {orderedTabs.map((tab) => (
         <Tabs.Screen
           key={tab.name}
           name={tab.name}
           options={{
             title: tab.title,
-            tabBarIcon: tab.icon
-              ? ({ focused }) => (
-                  <Icon
-                    as={tab.icon}
-                    size={tab.iconSize}
-                    color={
-                      focused
-                        ? isDarkColorScheme
-                          ? NAV_THEME.dark.colors.primary
-                          : NAV_THEME.light.colors.primary
-                        : isDarkColorScheme
-                          ? NAV_THEME.dark.colors.text
-                          : NAV_THEME.light.colors.text
-                    }
-                  />
-                )
-              : undefined,
-            tabBarButton: VibratingTabButton,
-            tabBarActiveTintColor: isDarkColorScheme
-              ? NAV_THEME.dark.colors.primary
-              : NAV_THEME.light.colors.primary,
-            tabBarLabelStyle: {
-              fontSize: 9,
-              fontWeight: "bold",
-            },
+            tabBarButton: (props) => <VibratingTabButton {...props} />,
+            tabBarIcon: ({ color, focused }) => (
+              <Icon as={tab.icon} size={focused ? 28 : 24} color={color} />
+            ),
           }}
         />
       ))}

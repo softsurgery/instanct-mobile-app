@@ -61,8 +61,8 @@ export default function RootLayout() {
                     keyboardHandlingEnabled: true,
                     headerStyle: {
                       backgroundColor: isDarkColorScheme
-                        ? NAV_THEME.dark.colors.card
-                        : NAV_THEME.light.colors.card,
+                        ? NAV_THEME.dark.colors.background
+                        : NAV_THEME.light.colors.background,
                     },
                     headerTintColor: isDarkColorScheme
                       ? NAV_THEME.dark.colors.text

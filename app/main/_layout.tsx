@@ -2,10 +2,14 @@ import { MapContext } from "@/contexts/MapContext";
 import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
 import { useCheckHealth } from "@/hooks/content/useCheckHealth";
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
+import { hslToHex, THEME } from "@/lib/theme";
 import { Stack } from "expo-router";
+import { useColorScheme } from "nativewind";
 import React from "react";
 
 export default function MainLayout() {
+  const { colorScheme } = useColorScheme();
+  const isDarkColorScheme = colorScheme === "dark";
   const authPersistStore = useAuthPersistStore();
   const { restartSocket } = useLiveGeolocation({
     enabled: authPersistStore.isAuthenticated,
@@ -21,6 +25,11 @@ export default function MainLayout() {
         screenOptions={{
           contentStyle: {
             flex: 1,
+            backgroundColor: hslToHex(
+              isDarkColorScheme
+                ? THEME.dark.background
+                : THEME.light.background,
+            ),
           },
         }}
       >
