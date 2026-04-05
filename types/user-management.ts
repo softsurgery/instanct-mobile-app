@@ -43,7 +43,6 @@ export interface ResponseUserDto extends ResponseAbstractUsertDto {
   picture?: Upload;
   experiences?: ResponseExperienceDto[];
   educations?: ResponseEducationDto[];
-  objectives?: ResponseRefParamDto[];
   industries?: ResponseRefParamDto[];
 }
 

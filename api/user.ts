@@ -40,16 +40,6 @@ const findAll = async ({
   return response.data;
 };
 
-const updateObjectives = async (
-  id: string,
-  objectives: number[],
-): Promise<ResponseUserDto> => {
-  const response = await axios.put(`/admin/user/objectives/${id}`, {
-    objectives,
-  });
-  return response.data;
-};
-
 const updateIndustries = async (
   id: string,
   industries: number[],
@@ -67,11 +57,6 @@ const getCurrentMapConfiguration =
     );
     return response.data;
   };
-
-const getObjectives = async (id: string): Promise<number[] | null> => {
-  const response = await axios.get(`/admin/user/objectives/${id}`);
-  return response.data;
-};
 
 const getIndustries = async (id: string): Promise<number[] | null> => {
   const response = await axios.get(`/admin/user/industries/${id}`);
@@ -94,9 +79,7 @@ export const user = {
   findById,
   updateCurrent,
   updateIndustries,
-  updateObjectives,
   getIndustries,
-  getObjectives,
   getCurrentMapConfiguration,
   updateMapConfiguration,
 };

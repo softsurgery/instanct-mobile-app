@@ -16,17 +16,14 @@ import {
 import { format } from "date-fns";
 import { router, useNavigation } from "expo-router";
 import { Pen, Plus, Globe, Linkedin } from "lucide-react-native";
-import { Image, Linking, RefreshControl, ScrollView, View } from "react-native";
+import { Image, Linking, ScrollView, View } from "react-native";
 import { SeeMoreText } from "../shared/SeeMoreText";
 import { StablePressable } from "../shared/StablePressable";
 import { Separator } from "../ui/separator";
 import { Badge } from "../ui/badge";
 import { ProfileStat } from "./ProfileStat";
-import StableScrollView from "../shared/StableScrollView";
 import { useUserIndustries } from "@/hooks/content/users/useUserIndustries";
-import { useUserObjectives } from "@/hooks/content/users/useUserObjectives";
 import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
-import { useObjectives } from "@/hooks/content/reference-types/useObjectives";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { BaseProfileSkeleton } from "./BaseProfileSkeleton";
 import { Loader } from "../shared/Loader";
@@ -141,9 +138,7 @@ const InterestsTab = ({
 }) => (
   <ScrollView className="flex-1 bg-background">
     <View className="flex flex-col gap-4 pb-8">
-      {profileSections
-        .filter((s) => s.key === "industries" || s.key === "objectives")
-        .map(renderSection)}
+      {profileSections.filter((s) => s.key === "industries").map(renderSection)}
     </View>
   </ScrollView>
 );
@@ -191,15 +186,7 @@ export const InspectBaseProfile = ({
   const { userIndustries, isUserIndustriesPending, refetchUserIndustries } =
     useUserIndustries({ userId: id, enabled: !!user });
 
-  // objectives side-effects
-  const { userObjectives, isUserObjectivesPending, refetchUserObjectives } =
-    useUserObjectives({ userId: id, enabled: !!user });
-
   const { industries, isIndustriesPending } = useIndustries({
-    enabled: !!user,
-  });
-
-  const { objectives, isObjectivesPending } = useObjectives({
     enabled: !!user,
   });
 
@@ -229,7 +216,6 @@ export const InspectBaseProfile = ({
       refetchExperiences(),
       refetchEducations(),
       refetchUserIndustries(),
-      refetchUserObjectives(),
     ]);
     setIsRefreshing(false);
   };
@@ -239,8 +225,7 @@ export const InspectBaseProfile = ({
     isUserPending ||
     isExperiencesPending ||
     isEducationsPending ||
-    isUserIndustriesPending ||
-    isUserObjectivesPending;
+    isUserIndustriesPending;
 
   // ---------------------------------------------------------------
   //  PROFILE SECTIONS CONFIG
@@ -298,27 +283,12 @@ export const InspectBaseProfile = ({
           </Badge>
         ),
       },
-      {
-        key: "objectives",
-        title: "Objectives",
-        data: objectives.filter((objective) =>
-          userObjectives?.some((id) => id === objective.id),
-        ) as unknown[],
-        editable: currentUser?.id === user?.id,
-        renderItem: (objective: ResponseRefParamDto) => (
-          <Badge variant={"outline"} className={cn("px-2 py-1 rounded-full")}>
-            <Text className="text-xs">{objective.label}</Text>
-          </Badge>
-        ),
-      },
     ],
     [
       experiences,
       educations,
       industries,
-      objectives,
       userIndustries,
-      userObjectives,
       currentUser?.id,
       user?.id,
     ],
@@ -327,8 +297,7 @@ export const InspectBaseProfile = ({
   // ---------------------------------------------------------------
   //  SECTION RENDERER
   // ---------------------------------------------------------------
-  const isBadgeSection = (key: string) =>
-    key === "industries" || key === "objectives";
+  const isBadgeSection = (key: string) => key === "industries";
 
   const renderSection = React.useCallback(
     (section: ProfileSection) => {
@@ -384,12 +353,6 @@ export const InspectBaseProfile = ({
                       case "industries":
                         router.push({
                           pathname: "/main/profile/industries",
-                          params: { userId: id },
-                        });
-                        break;
-                      case "objectives":
-                        router.push({
-                          pathname: "/main/profile/objectives",
                           params: { userId: id },
                         });
                         break;
