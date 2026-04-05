@@ -86,7 +86,7 @@ export const FormBuilder = React.forwardRef(
                         >
                           {/* Label */}
                           {field.variant !== "check" && (
-                            <Label className="text-xs font-semibold mb-1">
+                            <Label className="text-sm font-semibold mb-1">
                               {field.label}{" "}
                               {field.required && (
                                 <Text className="text-red-500">*</Text>
@@ -105,18 +105,14 @@ export const FormBuilder = React.forwardRef(
                                   (![FieldVariant.CHECKBOX].includes(
                                     field.variant,
                                   ) ? (
-                                    <Text
-                                      className={cn(
-                                        "text-xs text-gray-500 dark:text-gray-400",
-                                      )}
-                                    >
+                                    <Text className={cn("text-sm opacity-70")}>
                                       {field.description}
                                     </Text>
                                   ) : null)}
                               </View>
                             )}
                             {field?.error ? (
-                              <Text className="text-xs font-medium text-red-500">
+                              <Text className="text-sm font-medium text-destructive">
                                 {field?.error}
                               </Text>
                             ) : null}

@@ -166,13 +166,13 @@ export const DatePicker = ({
       <Button
         disabled={disabled}
         variant="outline"
-        className={cn("w-full h-8 p-0 px-2", classNames?.trigger)}
+        className={cn("w-full h-9 p-0 px-2", classNames?.trigger)}
         onPress={toggle}
       >
         <View className="flex flex-row items-center justify-between w-full">
           <View className="flex flex-row items-center gap-2">
             <Icon as={Calendar} size={16} color={"gray"} />
-            <Text className="text-xs">{displayText}</Text>
+            <Text className="text-sm">{displayText}</Text>
           </View>
           <Animated.View style={chevronStyle}>
             <Icon as={ChevronDown} size={16} color={"gray"} />

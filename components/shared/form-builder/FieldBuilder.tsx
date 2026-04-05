@@ -115,7 +115,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
             }}
             className={cn(field?.className, field?.error && "border-red-500")}
           />
-          <Text className="text-xs">{field.description}</Text>
+          <Text className="text-sm">{field.description}</Text>
         </View>
       );
     case "password":
