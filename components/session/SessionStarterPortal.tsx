@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Alert, View } from "react-native";
+import { Alert, View, Pressable } from "react-native";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { ArrowLeft } from "lucide-react-native";
@@ -28,6 +28,7 @@ export const SessionStarterPortal = ({
   const queryClient = useQueryClient();
   const isKeyboardVisible = useKeyboardVisible();
   const sessionStore = useSessionStore();
+  const [startNow, setStartNow] = React.useState(true);
 
   // session start mutation
   const { mutate: startSession, isPending: isStartingSessionPending } =
@@ -60,7 +61,7 @@ export const SessionStarterPortal = ({
     const end = new Date(plannedEnd);
 
     return end < start;
-  }, [sessionStore.createDto.plannedStart, sessionStore.createDto.plannedEnd]);
+  }, [sessionStore.createDto]);
 
   const handleSessionStart = () => {
     const result = createSessionSchema.safeParse(sessionStore.createDto);
@@ -70,10 +71,10 @@ export const SessionStarterPortal = ({
   };
 
   return (
-    <StableSafeAreaView className={cn("flex-1", className)}>
+    <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
-        className="border-b border-border pb-2 bg-transparent"
-        title={"Start a Session"}
+        className="border-b border-border pb-2"
+        title={"Démarrer une session"}
         titleVariant="large"
         reverse
         shortcuts={[
@@ -87,20 +88,22 @@ export const SessionStarterPortal = ({
         ]}
       />
       <View className="flex-1 bg-background">
-        <StableKeyboardAwareScrollView className="flex-1 bg-background ">
+        <StableKeyboardAwareScrollView className="flex-1 bg-background">
+          {/* Toggle buttons */}
+
           <View className="p-4">
             <Text className="text-sm text-muted-foreground leading-relaxed">
-              Please provide the details about your session. This information
-              will help others understand when you are available and interested
-              in connecting.
+              Veuillez fournir les détails de votre session. Ces informations
+              aideront les autres à comprendre quand vous êtes disponible et
+              intéressé par la connexion.
             </Text>
           </View>
           <FormBuilder structure={structure} className="px-2" />
           {isEndDateNextDay && sessionStore.createDto && (
             <View className="mx-4 mt-4 p-4 rounded-lg bg-destructive/25">
               <Text className="text-sm">
-                Your session will end the next day since the end time is before
-                the start time.
+                Votre session se terminera le jour suivant car l&apos;heure de
+                fin est antérieure à l&apos;heure de début.
               </Text>
             </View>
           )}
@@ -111,8 +114,9 @@ export const SessionStarterPortal = ({
               size="sm"
               className="rounded-full"
               onPress={() => handleSessionStart()}
+              disabled={isStartingSessionPending}
             >
-              <Text>Start Session</Text>
+              <Text>Sélectionner la session</Text>
             </Button>
           </View>
         )}

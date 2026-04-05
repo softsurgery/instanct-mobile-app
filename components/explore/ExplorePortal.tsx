@@ -43,7 +43,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   const [openUserFilters, setOpenUserFilters] = React.useState(false);
   const { users: liveUsers } = useLiveGeolocation({
     enabled: true,
-    join: ["user", "user.objectives", "user.industries"],
+    join: ["user", "user.industries"],
   });
 
   const users = React.useMemo(() => {

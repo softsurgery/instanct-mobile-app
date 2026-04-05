@@ -38,20 +38,6 @@ export const useCreateNewRequestFormStructure = ({
     },
   };
 
-  const isMessageSendChecked: Field<CheckboxFieldProps> = {
-    id: "isMessageSendChecked",
-    label: "",
-    variant: FieldVariant.CHECKBOX,
-    required: false,
-    description: "Send a message to the requester ?",
-    error: "",
-    // props: {
-    //   value: store.createDto?.isMessageSendChecked,
-    //   onChangeValue: (value) => {
-    //     store.setNested("createDto.isMessageSendChecked", value);
-    //   },
-  };
-
   const choice: Field<ChoicePickerFieldProps> = {
     id: "choicePicker",
     label: "Location & Time",
@@ -124,10 +110,7 @@ export const useCreateNewRequestFormStructure = ({
             id: 1,
             fields: [description],
           },
-          {
-            id: 2,
-            fields: [isMessageSendChecked],
-          },
+
           {
             id: 3,
             fields: [choice],

@@ -232,6 +232,10 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           disabled={field?.props?.disabled}
         />
       );
+    case "custom":
+      return (
+        <View className={cn(field?.className)}>{field?.props?.children}</View>
+      );
     default:
       return (
         <Text style={{ color: "red", fontSize: 12 }}>

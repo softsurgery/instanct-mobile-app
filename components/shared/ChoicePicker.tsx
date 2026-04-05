@@ -53,6 +53,7 @@ export const ChoicePicker = ({
                   )}
                   checkedClassName="rounded-full border-primary"
                   indicatorClassName="rounded-full"
+                  iconClassName="mt-4"
                 />
               </View>
               <Text

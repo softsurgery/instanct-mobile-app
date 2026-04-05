@@ -49,15 +49,15 @@ export const NotificationsPortal = ({ className }: NotificationPortalProps) => {
   const renderItem = React.useCallback(
     ({ item }: { item: ResponseNotificationDto }) => {
       return (
-        <NotificationEntry className="" key={item.id} notification={item} />
+        <NotificationEntry className="mt-1" key={item.id} notification={item} />
       );
     },
     [],
   );
   return (
-    <StableSafeAreaView className={cn("flex flex-1", className)}>
+    <StableSafeAreaView className={cn("flex flex-1 bg-card", className)}>
       <ApplicationHeader
-        className="border-b border-border pb-2 bg-transparent"
+        className="border-b border-border pb-2"
         title={t("screens.notifications")}
         titleVariant="large"
         reverse

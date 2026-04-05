@@ -1,16 +1,26 @@
+import React from "react";
 import { View } from "react-native";
 import { LegendList } from "@legendapp/list";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { cn } from "@/lib/utils";
 import { ApplicationHeader } from "../shared/AppHeader";
-import { Bell } from "lucide-react-native";
+import {
+  Bell,
+  Map as MapIcon,
+  Rocket,
+  ChevronRight,
+} from "lucide-react-native";
 import { router } from "expo-router";
-import { useUserSessions } from "@/hooks/content/sessions/useUserSessions";
 import { Text } from "../ui/text";
 import { SessionType, type ResponseSessionDto } from "@/types/session";
-import React from "react";
 import { IconMessageChatbot } from "@tabler/icons-react-native";
 import { useNotificationContext } from "@/contexts/NotificationsContext";
+import { toDateOnly, toTimeOnly } from "@/lib/date";
+import { Icon } from "../ui/icon";
+import { useInfiniteUserSessions } from "@/hooks/content/sessions/useInfiniteUserSessions";
+import { useScrollableElement } from "@/hooks/useScrollableElement";
+import { StablePressable } from "../shared/StablePressable";
+import Animated from "react-native-reanimated";
 
 interface SessionHistoryPortalProps {
   className?: string;
@@ -19,11 +29,21 @@ interface SessionHistoryPortalProps {
 export const SessionHistoryPortal = ({
   className,
 }: SessionHistoryPortalProps) => {
-  const { sessions } = useUserSessions({
+  const {
+    sessions,
+    fetchNextPage,
+    refetchSessions,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteUserSessions({
     sessionType: SessionType.MAP_SESSION,
-    page: "1",
-    limit: "20",
   });
+
+  const { animatedHeaderStyle, handleScroll } = useScrollableElement({
+    deltaThreshold: 30,
+    duration: 250,
+  });
+
   const { newCount, resetCount } = useNotificationContext();
 
   const handleNotificationsPress = React.useCallback(() => {
@@ -35,22 +55,49 @@ export const SessionHistoryPortal = ({
     router.push("/main/chat");
   }, []);
 
+  const formatSessionName = (
+    startDate: Date | undefined,
+    endDate: Date | undefined,
+  ) => {
+    const start = startDate ? toDateOnly(new Date(startDate)) : "N/A";
+    const end = endDate ? toDateOnly(new Date(endDate)) : "N/A";
+
+    const isSameDay = start === end;
+
+    if (isSameDay) return `${start}`;
+    return `${start} → ${end}`;
+  };
+
   const renderItem = React.useCallback(
     ({ item }: { item: ResponseSessionDto }) => (
-      <View className="p-4 border-b border-border">
-        <View className="flex-row items-center justify-between mb-2">
-          <Text className="font-medium">{item.sessionType}</Text>
+      <StablePressable className="p-4 my-2 rounded-lg">
+        <View className="flex flex-row items-center justify-between">
+          <View className="flex-row items-center gap-4">
+            <View className="bg-primary/10 h-10 w-10 items-center justify-center rounded-full">
+              {item.sessionType.includes("Map") ? (
+                <Icon as={MapIcon} size={20} />
+              ) : (
+                <Icon as={Rocket} size={20} />
+              )}
+            </View>
+            <View className="flex-col pb-0.5">
+              <Text className="font-semibold text-foreground text-base">
+                {formatSessionName(item.plannedStart, item.plannedEnd)}
+              </Text>
+              <Text className="text-sm text-muted-foreground mt-0.5">
+                {item.plannedStart
+                  ? toTimeOnly(new Date(item.plannedStart))
+                  : "N/A"}
+                {" → "}
+                {item.plannedEnd
+                  ? toTimeOnly(new Date(item.plannedEnd))
+                  : "N/A"}
+              </Text>
+            </View>
+          </View>
+          <Icon as={ChevronRight} size={20} />
         </View>
-        <Text className="text-sm">
-          {item.plannedStart ? new Date(item.plannedStart).toString() : "N/A"}
-        </Text>
-        <Text className="text-sm">
-          {item.plannedEnd ? new Date(item.plannedEnd).toString() : "N/A"}
-        </Text>
-        <Text className="text-sm">
-          {item.createdAt ? new Date(item.createdAt).toString() : "N/A"}
-        </Text>
-      </View>
+      </StablePressable>
     ),
     [],
   );
@@ -59,20 +106,24 @@ export const SessionHistoryPortal = ({
     <StableSafeAreaView
       className={cn("flex flex-1 flex-col bg-background", className)}
     >
-      <ApplicationHeader
-        title={"Sessions"}
-        shortcuts={[
-          {
-            icon: Bell,
-            onPress: handleNotificationsPress,
-            badgeText: newCount > 0 ? String(newCount) : undefined,
-          },
-          {
-            icon: IconMessageChatbot,
-            onPress: handleChatPress,
-          },
-        ]}
-      />
+      <Animated.View style={animatedHeaderStyle}>
+        <ApplicationHeader
+          title={"Sessions"}
+          shortcuts={[
+            {
+              key: "bell",
+              icon: Bell,
+              onPress: handleNotificationsPress,
+              badgeText: newCount > 0 ? String(newCount) : undefined,
+            },
+            {
+              key: "chat",
+              icon: IconMessageChatbot,
+              onPress: handleChatPress,
+            },
+          ]}
+        />
+      </Animated.View>
       <View className="flex-1 my-2">
         <LegendList
           data={sessions}
@@ -80,6 +131,14 @@ export const SessionHistoryPortal = ({
           keyExtractor={(item) => item.id.toString()}
           showsVerticalScrollIndicator={false}
           recycleItems={true}
+          onEndReached={() => {
+            if (hasNextPage && !isFetchingNextPage) {
+              fetchNextPage();
+            }
+          }}
+          onRefresh={refetchSessions}
+          onEndReachedThreshold={0.5}
+          onScroll={handleScroll}
         />
       </View>
     </StableSafeAreaView>

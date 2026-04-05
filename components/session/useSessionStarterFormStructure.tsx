@@ -1,12 +1,15 @@
 import { SessionStore } from "@/stores/useSessionStore";
 import {
-  CheckboxFieldProps,
+  CustomFieldProps,
   Field,
   FieldVariant,
   FormStructure,
   TimeFieldProps,
 } from "../shared/form-builder/types";
 import React from "react";
+import { View, Pressable } from "react-native";
+import { cn } from "@/lib/utils";
+import { Text } from "../ui/text";
 
 interface useSessionStarterFormStructureProps {
   store: SessionStore;
@@ -19,20 +22,53 @@ export const useSessionStarterFormStructure = ({
 }: useSessionStarterFormStructureProps) => {
   const [now, setNow] = React.useState<boolean>(true);
 
-  const nowField: Field<CheckboxFieldProps> = {
+  const nowField: Field<CustomFieldProps> = {
     id: "start-now",
-    label: "Start Now",
+    label: "",
     description: "If checked, you can schedule the session for later.",
-    variant: FieldVariant.CHECKBOX,
-    className: "size-5",
+    variant: FieldVariant.CUSTOM,
     disabled: isPending,
     props: {
-      checked: now,
-      onCheckedChange: (value) => {
-        setNow(value);
-        store.setNested("createDto.plannedStart", undefined);
-        store.setNested("createDtoErrors.plannedStart", []);
-      },
+      children: (
+        <View className="-mt-4 pb-2 flex-row gap-2">
+          <Pressable
+            onPress={() => setNow(true)}
+            className={cn(
+              "flex-1 py-3 px-4 rounded-lg items-center justify-center border-2",
+              now
+                ? "bg-primary border-primary"
+                : "bg-transparent border-border",
+            )}
+          >
+            <Text
+              className={cn(
+                "font-semibold",
+                now ? "text-primary-foreground" : "text-foreground",
+              )}
+            >
+              Démarrer maintenant
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={() => setNow(false)}
+            className={cn(
+              "flex-1 py-3 px-4 rounded-lg items-center justify-center border-2",
+              !now
+                ? "bg-primary border-primary"
+                : "bg-transparent border-border",
+            )}
+          >
+            <Text
+              className={cn(
+                "font-semibold",
+                !now ? "text-primary-foreground" : "text-foreground",
+              )}
+            >
+              Planifier
+            </Text>
+          </Pressable>
+        </View>
+      ),
     },
   };
 

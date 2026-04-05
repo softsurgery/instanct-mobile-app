@@ -23,9 +23,9 @@ export const SignupLayout = ({ className }: SignupProps) => {
   const { signUpFormStructure } = useSignUpFormStructure({ store: authStore });
 
   return (
-    <StableSafeAreaView className={cn("flex-1", className)}>
+    <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
-        className="border-b border-border pb-2 bg-transparent"
+        className="border-b border-border pb-2"
         titleVariant="large"
         shortcuts={[
           {

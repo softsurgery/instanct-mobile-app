@@ -63,9 +63,9 @@ export const UserCard = ({ user, className }: UserCardProps) => {
           style={{ height: 150, width: "100%" }}
           blurRadius={10}
         >
-          {/* Optional gradient overlay for readability */}
+          {/* Gradient overlay optimized for dark mode readability */}
           <LinearGradient
-            colors={["rgba(255,0,0,0.6)", "rgba(0,0,255,0.6)"]}
+            colors={["rgba(139, 92, 246, 0.7)", "rgba(59, 130, 246, 0.7)"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={{ flex: 1 }}
@@ -85,13 +85,17 @@ export const UserCard = ({ user, className }: UserCardProps) => {
               </StablePressable>
 
               <View className="flex flex-col items-end flex-[4]">
-                <Text className="text-2xl font-extrabold text-foreground text-center">
+                <Text className="text-2xl font-extrabold text-center text-white">
                   {identity}
                 </Text>
 
                 <View className="flex-col items-end -gap-2">
-                  <Text className="text-md font-bold">@{user.username}</Text>
-                  <Text className="text-md font-bold">{user.email}</Text>
+                  <Text className="text-md font-bold text-white">
+                    @{user.username}
+                  </Text>
+                  <Text className="text-md font-bold text-white">
+                    {user.email}
+                  </Text>
                 </View>
               </View>
             </View>
@@ -112,37 +116,25 @@ export const UserCard = ({ user, className }: UserCardProps) => {
                 </View>
               </View>
             ) : null}
-            {user.objectives && user.objectives.length > 0 ? (
-              <View>
-                <Text className="font-bold py-2 text-lg">Objectives</Text>
-                <View className="flex flex-row flex-wrap items-center gap-x-2">
-                  {user.objectives?.map((obj) => (
-                    <Badge key={obj.id} className="rounded-full mt-2 py-1 px-3">
-                      <Text className="text-md font-semibold">{obj.label}</Text>
-                    </Badge>
-                  ))}
-                </View>
-              </View>
-            ) : null}
           </View>
           {/* Fixed Footer Actions */}
           <View className="flex flex-row gap-4 justify-between m-4">
             <Button
               variant="secondary"
               size={"sm"}
-              className="rounded-full h-16 w-16 bg-[#7B4FBF]"
+              className="rounded-full h-16 w-16 bg-violet-600 dark:bg-violet-500"
               onPress={() => setIsLiked((v) => !v)}
             >
               <Icon
                 as={Bookmark}
                 size={32}
-                fill={isLiked ? "red" : "transparent"}
-                color={isLiked ? "red" : "white"}
+                fill={isLiked ? "#ef4444" : "transparent"}
+                color={isLiked ? "#ef4444" : "white"}
               />
             </Button>
             <Button
               size={"sm"}
-              className="rounded-full h-16 w-16 bg-[#4A90D9]"
+              className="rounded-full h-16 w-16 bg-blue-600 dark:bg-blue-500"
               onPress={() => {
                 startConversation({ users: [user.id] });
               }}
@@ -157,7 +149,7 @@ export const UserCard = ({ user, className }: UserCardProps) => {
             <Button
               variant="secondary"
               size={"sm"}
-              className="rounded-full h-16 w-16 bg-[#3DBFA0]"
+              className="rounded-full h-16 w-16 bg-teal-600 dark:bg-teal-500"
               onPress={() =>
                 router.push({
                   pathname: "/main/request/new-request",
@@ -168,14 +160,14 @@ export const UserCard = ({ user, className }: UserCardProps) => {
               <Icon
                 as={Handshake}
                 size={32}
-                className="text-purple-500"
+                className="text-white"
                 color={"white"}
               />
             </Button>
             <Button
               variant="secondary"
               size={"sm"}
-              className="rounded-full h-16 w-16 bg-[#29C9E0]"
+              className="rounded-full h-16 w-16 bg-cyan-600 dark:bg-cyan-500"
               onPress={() =>
                 router.push({
                   pathname: "/main/profile/user-calendar",
@@ -186,7 +178,7 @@ export const UserCard = ({ user, className }: UserCardProps) => {
               <Icon
                 as={CalendarDays}
                 size={32}
-                className="text-purple-500"
+                className="text-white"
                 color={"white"}
               />
             </Button>

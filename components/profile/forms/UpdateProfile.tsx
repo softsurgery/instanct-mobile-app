@@ -136,9 +136,9 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
   }, [profileUploads, currentUser?.pictureId]);
 
   return (
-    <StableSafeAreaView className={cn("flex-1", className)}>
+    <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
-        className="border-b border-border pb-2 bg-transparent"
+        className="border-b border-border pb-2"
         title={"Update Profile"}
         titleVariant="large"
         reverse
@@ -150,7 +150,7 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
           },
         ]}
       />
-      <StableKeyboardAwareScrollView className="flex-1 bg-background ">
+      <StableKeyboardAwareScrollView className="flex-1 bg-background">
         <FormBuilder structure={structure} className="mt-4 px-2" />
       </StableKeyboardAwareScrollView>
       {!isKeyboardVisible && (

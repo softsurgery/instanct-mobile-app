@@ -156,3 +156,7 @@ export interface ChoicePickerFieldProps {
   options?: SelectOption[];
   editable?: boolean;
 }
+
+export interface CustomFieldProps {
+  children?: React.ReactNode;
+}

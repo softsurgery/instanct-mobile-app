@@ -13,7 +13,7 @@ export default function MainLayout() {
   const authPersistStore = useAuthPersistStore();
   const { restartSocket } = useLiveGeolocation({
     enabled: authPersistStore.isAuthenticated,
-    join: ["user", "user.objectives", "user.industries"],
+    join: ["user", "user.industries"],
   });
   useCheckHealth({
     enabled: authPersistStore.isAuthenticated,

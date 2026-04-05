@@ -65,7 +65,7 @@ export const UsersFilter = ({
   };
 
   return (
-    <>
+    <React.Fragment>
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent className={cn(className)}>
           <View>
@@ -206,7 +206,7 @@ export const UsersFilter = ({
           </ScrollView>
 
           {/* Actions */}
-          <View className="flex-row justify-between w-full gap-2 mt-4 pt-4 border-t border-border">
+          <View className="flex-row justify-between w-full gap-2 mt-4">
             <Button
               className="flex-1"
               onPress={() => {
@@ -260,6 +260,6 @@ export const UsersFilter = ({
         onSelectionChange={setSelectedIndustries}
         searchPlaceholder="Search industries..."
       />
-    </>
+    </React.Fragment>
   );
 };
