@@ -12,7 +12,6 @@ import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { UserCard } from "./UserCard";
 import { Text } from "../ui/text";
-import { UsersFilter } from "./users-filter/UsersFilter";
 import { useActiveSessions } from "@/hooks/content/sessions/useActiveSessions";
 import { SessionCountdown } from "../session/SessionCountdown";
 import { SessionStarter } from "../session/SessionStarter";
@@ -33,6 +32,7 @@ interface ExplorePortalProps {
 }
 
 export const ExplorePortal = ({ className }: ExplorePortalProps) => {
+  const usersFilterPath = "/main/explore/users-filter" as any;
   const { colorScheme } = useColorScheme();
   const isDarkColorScheme = colorScheme === "dark";
   const { t } = useTranslation("common");
@@ -40,7 +40,6 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   const { newCount, resetCount } = useNotificationContext();
   const { mapSession, refetchSessions } = useActiveSessions();
   const [currentIndex, setCurrentIndex] = React.useState(0);
-  const [openUserFilters, setOpenUserFilters] = React.useState(false);
   const { users: liveUsers } = useLiveGeolocation({
     enabled: true,
     join: ["user", "user.industries"],
@@ -136,7 +135,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
           {
             key: "filter",
             icon: ArrowDownNarrowWide,
-            onPress: () => setOpenUserFilters(true),
+            onPress: () => router.push(usersFilterPath),
           },
           {
             key: "notifications",
@@ -181,11 +180,6 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
       ) : (
         <SessionStarter className="px-4" />
       )}
-      <UsersFilter
-        className="max-h-[80vh] w-[90vw]"
-        open={openUserFilters}
-        onOpenChange={setOpenUserFilters}
-      />
     </StableSafeAreaView>
   );
 };
