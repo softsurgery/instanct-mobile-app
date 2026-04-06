@@ -3,7 +3,6 @@ import StableScrollView from "@/components/shared/StableScrollView";
 import { ApplicationHeader } from "@/components/shared/AppHeader";
 import { StableSafeAreaView } from "@/components/shared/StableSafeAreaView";
 import { Text } from "@/components/ui/text";
-import { toDateOnly } from "@/lib/date";
 import { cn } from "@/lib/utils";
 import { MapSessionPayload, ResponseSessionDto } from "@/types/session";
 import { router, useLocalSearchParams } from "expo-router";
@@ -21,24 +20,6 @@ export const SessionDetailsPortal = ({
   const { session: sessionParam } = useLocalSearchParams<{
     session?: string;
   }>();
-
-  const getStatus = (session: ResponseSessionDto<MapSessionPayload>) => {
-    if (session.ended) return "Ended";
-    if (session.started) return "In Progress";
-    return "Scheduled";
-  };
-
-  const formatSessionWindow = (
-    session: ResponseSessionDto<MapSessionPayload>,
-  ) => {
-    const start = session.plannedStart
-      ? toDateOnly(new Date(session.plannedStart))
-      : "N/A";
-    const end = session.plannedEnd
-      ? toDateOnly(new Date(session.plannedEnd))
-      : null;
-    return end ? `${start} to ${end}` : start;
-  };
 
   const session =
     React.useMemo<ResponseSessionDto<MapSessionPayload> | null>(() => {
@@ -66,9 +47,9 @@ export const SessionDetailsPortal = ({
   );
 
   return (
-    <StableSafeAreaView className={cn("flex-1 bg-background", className)}>
+    <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
-        className="border-b border-border pb-2 bg-transparent"
+        className="border-b border-border pb-2"
         title="Session Details"
         titleVariant="large"
         reverse
@@ -81,15 +62,11 @@ export const SessionDetailsPortal = ({
         ]}
       />
 
-      <StableScrollView>
+      <StableScrollView className="flex-1 bg-background">
         {!session ? (
           <EmptyState />
         ) : (
-          <SessionDetailsContent
-            session={session}
-            getStatus={getStatus}
-            formatSessionWindow={formatSessionWindow}
-          />
+          <SessionDetailsContent session={session} />
         )}
       </StableScrollView>
     </StableSafeAreaView>

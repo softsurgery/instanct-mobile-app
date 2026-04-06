@@ -49,7 +49,7 @@ export const SessionStarterPortal = ({
       },
     });
 
-  const { objectives, isObjectivesPending } = useObjectives();
+  const { objectives, isObjectivesSubTypePending } = useObjectives();
 
   const { structure } = useSessionStarterFormStructure({
     store: sessionStore,
@@ -58,7 +58,7 @@ export const SessionStarterPortal = ({
       labelKey: "label",
       valueKey: "id",
     }),
-    isPending: isStartingSessionPending || isObjectivesPending,
+    isPending: isStartingSessionPending || isObjectivesSubTypePending,
   });
 
   const isEndDateNextDay = React.useMemo(() => {

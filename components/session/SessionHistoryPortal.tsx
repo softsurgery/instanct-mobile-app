@@ -7,8 +7,8 @@ import { ApplicationHeader } from "../shared/AppHeader";
 import {
   Bell,
   Map as MapIcon,
-  Rocket,
   ChevronRight,
+  Calendar,
 } from "lucide-react-native";
 import { router } from "expo-router";
 import { Text } from "../ui/text";
@@ -21,6 +21,7 @@ import { useInfiniteUserSessions } from "@/hooks/content/sessions/useInfiniteUse
 import { useScrollableElement } from "@/hooks/useScrollableElement";
 import { StablePressable } from "../shared/StablePressable";
 import Animated from "react-native-reanimated";
+import { SessionStarter } from "./SessionStarter";
 
 interface SessionHistoryPortalProps {
   className?: string;
@@ -72,7 +73,7 @@ export const SessionHistoryPortal = ({
   const renderItem = React.useCallback(
     ({ item }: { item: ResponseSessionDto }) => (
       <StablePressable
-        className="p-4 my-2 rounded-lg"
+        className="p-4 my-1 rounded-lg"
         onPress={() =>
           router.push({
             pathname: sessionDetailsPath,
@@ -88,7 +89,7 @@ export const SessionHistoryPortal = ({
               {item.sessionType.includes("Map") ? (
                 <Icon as={MapIcon} size={20} />
               ) : (
-                <Icon as={Rocket} size={20} />
+                <Icon as={Calendar} size={20} />
               )}
             </View>
             <View className="flex-col pb-0.5">
@@ -113,45 +114,61 @@ export const SessionHistoryPortal = ({
     [sessionDetailsPath],
   );
 
+  const applicationHeaderShortcuts = (
+    <ApplicationHeader
+      title={"Sessions"}
+      shortcuts={[
+        {
+          key: "bell",
+          icon: Bell,
+          onPress: handleNotificationsPress,
+          badgeText: newCount > 0 ? String(newCount) : undefined,
+        },
+        {
+          key: "chat",
+          icon: IconMessageChatbot,
+          onPress: handleChatPress,
+        },
+      ]}
+    />
+  );
+
   return (
     <StableSafeAreaView
       className={cn("flex flex-1 flex-col bg-background", className)}
     >
-      <Animated.View style={animatedHeaderStyle}>
-        <ApplicationHeader
-          title={"Sessions"}
-          shortcuts={[
-            {
-              key: "bell",
-              icon: Bell,
-              onPress: handleNotificationsPress,
-              badgeText: newCount > 0 ? String(newCount) : undefined,
-            },
-            {
-              key: "chat",
-              icon: IconMessageChatbot,
-              onPress: handleChatPress,
-            },
-          ]}
-        />
-      </Animated.View>
-      <View className="flex-1 my-2">
-        <LegendList
-          data={sessions}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id.toString()}
-          showsVerticalScrollIndicator={false}
-          recycleItems={true}
-          onEndReached={() => {
-            if (hasNextPage && !isFetchingNextPage) {
-              fetchNextPage();
-            }
-          }}
-          onRefresh={refetchSessions}
-          onEndReachedThreshold={0.5}
-          onScroll={handleScroll}
-        />
-      </View>
+      {sessions.length !== 0 ? (
+        <Animated.View style={animatedHeaderStyle}>
+          {applicationHeaderShortcuts}
+        </Animated.View>
+      ) : (
+        applicationHeaderShortcuts
+      )}
+      {sessions.length !== 0 ? (
+        <View className="flex-1 bg-transparent mt-2">
+          <LegendList
+            className="flex-1"
+            data={sessions}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id.toString()}
+            showsVerticalScrollIndicator={false}
+            recycleItems={true}
+            onEndReached={() => {
+              if (hasNextPage && !isFetchingNextPage) {
+                fetchNextPage();
+              }
+            }}
+            onRefresh={refetchSessions}
+            onEndReachedThreshold={0.5}
+            onScroll={handleScroll}
+            contentContainerStyle={{
+              paddingHorizontal: 0,
+            }}
+          />
+        </View>
+      ) : (
+        <SessionStarter className="px-4" />
+      )}
     </StableSafeAreaView>
   );
 };
