@@ -127,9 +127,8 @@ export const UserCard = ({ user, className }: UserCardProps) => {
           {/* Fixed Footer Actions */}
           <View className="flex flex-row gap-4 justify-between m-4">
             <Button
-              variant="secondary"
               size={"sm"}
-              className="rounded-full h-16 w-16 bg-violet-600 dark:bg-violet-500"
+              className="rounded-full h-16 w-16 bg-violet-600 dark:bg-violet-500 active:bg-violet-700 dark:active:bg-violet-600"
               onPress={() => setIsLiked((v) => !v)}
             >
               <Icon
@@ -141,7 +140,7 @@ export const UserCard = ({ user, className }: UserCardProps) => {
             </Button>
             <Button
               size={"sm"}
-              className="rounded-full h-16 w-16 bg-blue-600 dark:bg-blue-500"
+              className="rounded-full h-16 w-16 bg-blue-600 dark:bg-blue-500 active:bg-blue-700 dark:active:bg-blue-600"
               onPress={() => {
                 startConversation({ users: [user.id] });
               }}
@@ -154,9 +153,8 @@ export const UserCard = ({ user, className }: UserCardProps) => {
               />
             </Button>
             <Button
-              variant="secondary"
               size={"sm"}
-              className="rounded-full h-16 w-16 bg-teal-600 dark:bg-teal-500"
+              className="rounded-full h-16 w-16 bg-teal-600 dark:bg-teal-500 active:bg-teal-700 dark:active:bg-teal-600"
               onPress={() =>
                 router.push({
                   pathname: "/main/request/new-request",
@@ -171,24 +169,6 @@ export const UserCard = ({ user, className }: UserCardProps) => {
                 color={"white"}
               />
             </Button>
-            {/* <Button
-              variant="secondary"
-              size={"sm"}
-              className="rounded-full h-16 w-16 bg-cyan-600 dark:bg-cyan-500"
-              onPress={() =>
-                router.push({
-                  pathname: "/main/profile/user-calendar",
-                  params: { id: user?.id },
-                })
-              }
-            >
-              <Icon
-                as={CalendarDays}
-                size={32}
-                className="text-white"
-                color={"white"}
-              />
-            </Button> */}
           </View>
         </View>
       </View>
