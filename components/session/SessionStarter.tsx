@@ -15,29 +15,29 @@ export const SessionStarter = ({ className }: SessionStarterProps) => {
       className={cn("flex-1 items-center justify-center gap-6 px-6", className)}
     >
       {/* Illustration with connecting people */}
-      <View className="relative w-48 h-40 items-center justify-center">
+      <View className="relative w-[80vw] h-[20vh] items-center justify-center">
         {/* Background decorative element */}
         <View className="absolute inset-0 items-center justify-center opacity-10">
-          <View className="w-full h-full border-2 border-primary rounded-full" />
+          <View className="w-full h-full border-4 border-primary rounded-full" />
         </View>
 
         {/* Center telescope icon */}
         <View className="z-10 bg-primary rounded-full p-3 mb-8">
-          <Telescope size={32} color="white" />
+          <Telescope size={48} color="white" strokeWidth={1} />
         </View>
 
         {/* Connected people circles */}
         <View className="absolute top-4 left-0 bg-blue-400 rounded-full p-2">
-          <Users size={20} color="white" />
+          <Users size={30} color="white" />
         </View>
         <View className="absolute top-6 right-4 bg-purple-400 rounded-full p-2">
-          <Users size={20} color="white" />
+          <Users size={30} color="white" />
         </View>
         <View className="absolute bottom-0 left-8 bg-pink-400 rounded-full p-2">
-          <Users size={20} color="white" />
+          <Users size={30} color="white" />
         </View>
-        <View className="absolute bottom-2 right-8 bg-green-400 rounded-full p-2">
-          <Users size={20} color="white" />
+        <View className="absolute bottom-0 right-12 bg-green-400 rounded-full p-2">
+          <Users size={30} color="white" />
         </View>
       </View>
 

@@ -1,10 +1,11 @@
+import { ResponseSessionDto } from "./session";
 import { ResponseUserDto } from "./user-management";
 import { DatabaseEntity } from "./utils";
 
 export interface ResponseRequestDto extends DatabaseEntity {
   id: number;
-  senderId: string;
-  sender: ResponseUserDto;
+  senderId: number;
+  session: ResponseSessionDto;
   receivers: ResponseUserDto[];
   description?: string;
   place?: string;

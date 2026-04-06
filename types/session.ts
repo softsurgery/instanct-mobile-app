@@ -6,7 +6,7 @@ export enum SessionType {
   MAP_SESSION = "map-session",
 }
 
-export interface ResponseSessionDto<T> extends DatabaseEntity {
+export interface ResponseSessionDto<T = any> extends DatabaseEntity {
   id: number;
   userId?: string;
   user: ResponseUserDto;
@@ -18,7 +18,7 @@ export interface ResponseSessionDto<T> extends DatabaseEntity {
   payload?: T;
 }
 
-export interface CreateSessionDto<T> {
+export interface CreateSessionDto<T = any> {
   sessionType: SessionType;
   plannedStart?: Date;
   plannedEnd?: Date;
