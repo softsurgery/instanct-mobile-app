@@ -9,7 +9,6 @@ import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
 import React from "react";
 import { View } from "react-native";
-import { showToastable } from "react-native-toastable";
 import DividedText from "../shared/DividedText";
 import { StableKeyboardAwareScrollView } from "../shared/StableKeyboardAwareScrollView";
 import { FormBuilder } from "../shared/form-builder/FormBuilder";
@@ -18,6 +17,7 @@ import { SSOButtons } from "./SSOButtons";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { ArrowLeft } from "lucide-react-native";
+import { toast } from "sonner-native";
 
 interface SigninProps {
   className?: string;
@@ -32,10 +32,7 @@ export const SigninLayout = ({ className }: SigninProps) => {
       router.replace("/");
     },
     onError: (error: ServerErrorResponse) => {
-      showToastable({
-        message: error.response?.data.message,
-        status: "danger",
-      });
+      toast.error(error.response?.data?.message || "An error occurred", {});
     },
   });
 

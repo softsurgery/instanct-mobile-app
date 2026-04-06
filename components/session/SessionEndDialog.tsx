@@ -30,7 +30,7 @@ export const EndSessionModal = ({
   return (
     <>
       <StablePressable
-        className={cn("flex-row items-center")}
+        className={cn("flex-row items-center p-1")}
         onPress={() => sheetRef.current?.show()}
       >
         {trigger || (

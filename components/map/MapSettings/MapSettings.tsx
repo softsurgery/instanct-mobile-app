@@ -22,7 +22,7 @@ import { Icon } from "../../ui/icon";
 import { RadiusSlider } from "./RadiusSlider";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api";
-import { showToastable } from "react-native-toastable";
+import { toast } from "sonner-native";
 
 const RadiusSliderRow = React.memo(function RadiusSliderRow() {
   const setNested = useMapStore((s) => s.setNested);
@@ -163,10 +163,8 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
 
   const handleMapConfigurationUpdate = () => {
     updateMapConfiguration();
-    showToastable({
-      title: "Map configuration updated",
-      status: "success",
-      message: "Your map configuration has been successfully updated.",
+    toast.success("Map configuration updated", {
+      description: "Your map configuration has been successfully updated.",
     });
   };
 

@@ -7,7 +7,7 @@ import { router, useFocusEffect } from "expo-router";
 import { ArrowDownNarrowWide, Bell, Play } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, View } from "react-native";
+import { View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { UserCard } from "./UserCard";
@@ -19,12 +19,12 @@ import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocati
 import { EndSessionModal } from "../session/SessionEndDialog";
 import { api } from "@/api";
 import { useMutation } from "@tanstack/react-query";
-import { showToastable } from "react-native-toastable";
 import { ServerErrorResponse } from "@/types";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { Icon } from "../ui/icon";
 import { hslToHex, THEME } from "@/lib/theme";
 import { useColorScheme } from "nativewind";
+import { toast } from "sonner-native";
 
 interface ExplorePortalProps {
   className?: string;
@@ -81,13 +81,11 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
     {
       mutationFn: async () => api.session.end(mapSession?.id!),
       onSuccess: (data) => {
-        showToastable({
-          message: "Session ended successfully!",
-        });
+        toast.success("Session ended successfully!", {});
         refetchSessions();
       },
       onError: (error: ServerErrorResponse) => {
-        Alert.alert("Error", JSON.stringify(error.message, null, 2));
+        toast.error(error.response?.data?.message || "An error occurred", {});
       },
     },
   );

@@ -11,12 +11,12 @@ import { router } from "expo-router";
 import { ArrowLeft } from "lucide-react-native";
 import { useCreateEducationFormStructure } from "./useCreateEducationFormStructure";
 import { CreateEducationDto, ServerErrorResponse } from "@/types";
-import { showToastable } from "react-native-toastable";
 import { api } from "@/api";
 import { useTranslation } from "react-i18next";
 import { createEducationSchema } from "@/types/validations/education.validation";
 import { View } from "react-native";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
+import { toast } from "sonner-native";
 
 interface CreateEducationProps {
   className?: string;
@@ -36,9 +36,8 @@ export const CreateEducation = ({ className }: CreateEducationProps) => {
     mutationFn: (data: { id: string; education: CreateEducationDto }) =>
       api.education.create(data.id, data.education),
     onSuccess: () => {
-      showToastable({
-        message: "Education created successfully",
-        status: "success",
+      toast.success("Education created successfully", {
+        description: "Your education has been successfully added.",
       });
       queryClient.invalidateQueries({
         queryKey: ["educations", userStore.response?.id],
@@ -46,7 +45,7 @@ export const CreateEducation = ({ className }: CreateEducationProps) => {
       router.back();
     },
     onError: (error: ServerErrorResponse) => {
-      showToastable({ message: error.response?.data?.message });
+      toast.error(error.response?.data?.message || "An error occurred", {});
     },
   });
 

@@ -14,9 +14,9 @@ import { router } from "expo-router";
 import { ArrowLeft } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import { showToastable } from "react-native-toastable";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 import { useCreateExperienceFormStructure } from "./useCreateExperienceFormStructure";
+import { toast } from "sonner-native";
 
 interface CreateExperienceProps {
   className?: string;
@@ -36,9 +36,8 @@ export const CreateExperience = ({ className }: CreateExperienceProps) => {
     mutationFn: (data: { id: string; experience: CreateExperienceDto }) =>
       api.experience.create(data.id, data.experience),
     onSuccess: () => {
-      showToastable({
-        message: "Experience created successfully",
-        status: "success",
+      toast.success("Experience created successfully", {
+        description: "Your experience has been successfully created.",
       });
       queryClient.invalidateQueries({
         queryKey: ["experiences", userStore.response?.id],
@@ -46,7 +45,7 @@ export const CreateExperience = ({ className }: CreateExperienceProps) => {
       router.back();
     },
     onError: (error: ServerErrorResponse) => {
-      showToastable({ message: error.response?.data?.message });
+      toast.error(error.response?.data?.message || "An error occurred", {});
     },
   });
 

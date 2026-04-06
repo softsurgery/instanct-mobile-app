@@ -171,7 +171,7 @@ export const UserCard = ({ user, className }: UserCardProps) => {
                 color={"white"}
               />
             </Button>
-            <Button
+            {/* <Button
               variant="secondary"
               size={"sm"}
               className="rounded-full h-16 w-16 bg-cyan-600 dark:bg-cyan-500"
@@ -188,7 +188,7 @@ export const UserCard = ({ user, className }: UserCardProps) => {
                 className="text-white"
                 color={"white"}
               />
-            </Button>
+            </Button> */}
           </View>
         </View>
       </View>

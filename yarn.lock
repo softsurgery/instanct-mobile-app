@@ -8364,11 +8364,6 @@ react-native-tab-view@^4.3.0:
   dependencies:
     use-latest-callback "^0.2.4"
 
-react-native-toastable@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.npmjs.org/react-native-toastable/-/react-native-toastable-0.5.0.tgz"
-  integrity sha512-WF1fkNJQfdiaoV94dtVHZhsRINcjDHdQgMCtNHI2FcGsc85YOpWzziUODggawfeTS4NCg4e7nnYHVNHpSHvE/g==
-
 react-native-web@~0.21.0:
   version "0.21.2"
   resolved "https://registry.npmjs.org/react-native-web/-/react-native-web-0.21.2.tgz"
@@ -9071,6 +9066,11 @@ socket.io-parser@~4.2.4:
   dependencies:
     "@socket.io/component-emitter" "~3.1.0"
     debug "~4.3.1"
+
+sonner-native@^0.24.0:
+  version "0.24.0"
+  resolved "https://registry.yarnpkg.com/sonner-native/-/sonner-native-0.24.0.tgz#e24dab555c347b37b3c07910c3911bc150206953"
+  integrity sha512-E94/NyGrL3HBd0E4BZHkYEJpMfrF/on2E2b+GckHTatSSZOyCWZnDVAALGZ7NfOl0Xl/P3IHchIa6Umb9Yqf/g==
 
 source-map-js@^1.0.1, source-map-js@^1.2.1:
   version "1.2.1"

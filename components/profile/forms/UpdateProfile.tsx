@@ -9,7 +9,6 @@ import { StableKeyboardAwareScrollView } from "../../shared/StableKeyboardAwareS
 import { StableSafeAreaView } from "../../shared/StableSafeAreaView";
 import { useUpdateProfileFormStructure } from "./useUpdateProfileFormStructure";
 import { ServerErrorResponse, UpdateUserDto, Upload } from "@/types";
-import { showToastable } from "react-native-toastable";
 import { api } from "@/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateUserSchema } from "@/types/validations/user.validation";
@@ -22,6 +21,7 @@ import { useServerImages } from "@/hooks/content/useServerImages";
 import { identifyUserAvatar } from "@/lib/user";
 import { useUploadMutation } from "@/hooks/useUploadMutation";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
+import { toast } from "sonner-native";
 
 interface UpdateProfileProps {
   className?: string;
@@ -37,9 +37,8 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
     mutationFn: (user: UpdateUserDto) => api.user.updateCurrent(user),
     onSuccess: () => {
       router.back();
-      showToastable({
-        message: "Profile updated successfully",
-        status: "success",
+      toast.success("Profile updated successfully", {
+        description: "Your profile has been successfully updated.",
       });
       userStore.reset();
       queryClient.invalidateQueries({ queryKey: ["user", currentUser?.id] });
@@ -50,10 +49,10 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
       refetchCurrentUser();
     },
     onError: (error: ServerErrorResponse) => {
-      showToastable({
-        message: error.response?.data?.message,
-        status: "danger",
-      });
+      toast.error(
+        error.response?.data?.message || "Failed to update profile",
+        {},
+      );
     },
   });
 
@@ -77,10 +76,10 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
       userStore.setNested("updateDto.pictureId", response?.[0]?.id);
     },
     onError: (error: ServerErrorResponse) => {
-      showToastable({
-        message: error.response?.data?.message || "Failed to upload image",
-        status: "danger",
-      });
+      toast.error(
+        error.response?.data?.message || "Failed to upload image",
+        {},
+      );
     },
   });
 

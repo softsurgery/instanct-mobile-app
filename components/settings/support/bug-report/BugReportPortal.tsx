@@ -8,7 +8,6 @@ import { View } from "react-native";
 import { useBugReportFormStructure } from "./useBugReportFormStructure";
 import { FormBuilder } from "~/components/shared/form-builder/FormBuilder";
 import { cn } from "~/lib/utils";
-import { showToastable } from "react-native-toastable";
 import { StableKeyboardAwareScrollView } from "~/components/shared/StableKeyboardAwareScrollView";
 import { router } from "expo-router";
 import { StableSafeAreaView } from "~/components/shared/StableSafeAreaView";
@@ -17,6 +16,8 @@ import { useTranslation } from "react-i18next";
 import { createBugSchema } from "@/types/validations/system-reports.validation";
 import { useReportBugStore } from "@/stores/useReportBugStore";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
+import { toast } from "sonner-native";
+import { ServerErrorResponse } from "@/types";
 
 interface BugReportPortalProps {
   className?: string;
@@ -38,17 +39,17 @@ export const BugReportPortal = ({ className }: BugReportPortalProps) => {
   const { mutate: reportBug, isPending: isReportBugPending } = useMutation({
     mutationFn: async () => api.bug.create(bugStore.createDto),
     onSuccess: () => {
-      showToastable({
-        message: "Bug reported successfully",
-        status: "success",
+      toast.success("Bug reported successfully", {
+        description: "Your bug report has been successfully submitted.",
       });
       router.back();
       bugStore.reset();
     },
-    onError: (error) => {
-      showToastable({
-        message: "oops! Failed to submit bug report",
-        status: "danger",
+    onError: (error: ServerErrorResponse) => {
+      toast.error("Oops! Failed to submit bug report", {
+        description:
+          error.response?.data?.message ||
+          "An error occurred while submitting your bug report.",
       });
     },
   });

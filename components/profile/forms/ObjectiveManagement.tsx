@@ -1,7 +1,6 @@
 import React from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { View } from "react-native";
-import { showToastable } from "react-native-toastable";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api";
 import { SelectBox } from "@/components/shared/SelectBox";
@@ -16,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import * as Haptics from "expo-haptics";
 import { Icon } from "@/components/ui/icon";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
+import { toast } from "sonner-native";
 
 interface ObjectivesManagementProps {
   className?: string;
@@ -60,17 +60,13 @@ export const ObjectivesManagement = ({
         queryClient.invalidateQueries({
           queryKey: ["userObjectives", userId],
         });
-        showToastable({
-          message: "Objectives updated successfully",
-          status: "success",
+        toast.success("Objectives updated successfully", {
+          description: "Your objectives have been successfully updated.",
         });
         router.back();
       },
       onError: (error: Error) => {
-        showToastable({
-          message: error.message || "Failed to update objectives",
-          status: "danger",
-        });
+        toast.error(error.message || "Failed to update objectives", {});
       },
     });
 
@@ -78,9 +74,8 @@ export const ObjectivesManagement = ({
     if (selectedObjectives.length > 0) {
       updateObjectives(selectedObjectives);
     } else {
-      showToastable({
-        message: "Please select at least one objective.",
-        status: "warning",
+      toast.warning("Please select at least one objective.", {
+        description: "You need to select at least one objective before saving.",
       });
     }
   };

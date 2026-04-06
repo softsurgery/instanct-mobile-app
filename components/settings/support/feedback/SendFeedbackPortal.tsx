@@ -9,7 +9,6 @@ import { Button } from "~/components/ui/button";
 import { FormBuilder } from "~/components/shared/form-builder/FormBuilder";
 import { useSendFeedbackFormStructure } from "./useSendFeedbackFormStructure";
 import { cn } from "~/lib/utils";
-import { showToastable } from "react-native-toastable";
 import { StableKeyboardAwareScrollView } from "~/components/shared/StableKeyboardAwareScrollView";
 import { router } from "expo-router";
 import { StableSafeAreaView } from "~/components/shared/StableSafeAreaView";
@@ -17,7 +16,8 @@ import { useTranslation } from "react-i18next";
 import { ApplicationHeader } from "~/components/shared/AppHeader";
 import { useSendFeedbackStore } from "@/stores/useFeedbackManager";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
-import { is } from "zod/v4/locales";
+import { ServerErrorResponse } from "@/types/utils/server.interfaces";
+import { toast } from "sonner-native";
 
 interface SendFeedbackPortalProps {
   className?: string;
@@ -42,17 +42,17 @@ export const SendFeedbackPortal = ({ className }: SendFeedbackPortalProps) => {
     useMutation({
       mutationFn: async () => api.feedback.create(sendFeedbackStore.createDto),
       onSuccess: () => {
-        showToastable({
-          message: "Feedback submitted successfully",
-          status: "success",
+        toast.success("Feedback submitted successfully", {
+          description: "Your feedback has been successfully submitted.",
         });
         router.back();
         sendFeedbackStore.reset();
       },
-      onError: (error) => {
-        showToastable({
-          message: "Oops! Failed to submit feedback",
-          status: "danger",
+      onError: (error: ServerErrorResponse) => {
+        toast.error("Oops! Failed to submit feedback", {
+          description:
+            error.response?.data?.message ||
+            "An error occurred while submitting your feedback.",
         });
       },
     });
@@ -88,7 +88,7 @@ export const SendFeedbackPortal = ({ className }: SendFeedbackPortalProps) => {
             hear them!
           </Text>
         </View>
-      <FormBuilder structure={feedbackFormStructure} className="px-2" />
+        <FormBuilder structure={feedbackFormStructure} className="px-2" />
       </StableKeyboardAwareScrollView>
       {!isKeyboardVisible && (
         <View className="py-6 border-t border-border">

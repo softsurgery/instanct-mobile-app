@@ -21,8 +21,8 @@ import {
   FileText,
 } from "lucide-react-native";
 import { View } from "react-native";
-import { showToastable } from "react-native-toastable";
 import { DeleteExperienceDialog } from "./DeleteExperienceDialog";
+import { toast } from "sonner-native";
 
 interface UpdateExperiencesProps {
   className?: string;
@@ -50,16 +50,15 @@ export const UpdateExperiences = ({ className }: UpdateExperiencesProps) => {
   const { mutate: deleteExperience, isPending: isDeletePending } = useMutation({
     mutationFn: (id: number) => api.experience.remove(id),
     onSuccess: () => {
-      showToastable({
-        message: "Experience deleted successfully",
-        status: "success",
+      toast.success("Experience deleted successfully", {
+        description: "Your experience has been successfully deleted.",
       });
       queryClient.invalidateQueries({
         queryKey: ["experiences", userStore.response?.id],
       });
     },
     onError: (error: ServerErrorResponse) => {
-      showToastable({ message: error.response?.data?.message });
+      toast.error(error.response?.data?.message || "An error occurred", {});
     },
   });
 

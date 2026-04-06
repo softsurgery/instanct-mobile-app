@@ -1,7 +1,6 @@
 import React from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { View } from "react-native";
-import { showToastable } from "react-native-toastable";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api";
 import { SelectBox } from "@/components/shared/SelectBox";
@@ -16,6 +15,7 @@ import { Icon } from "@/components/ui/icon";
 import * as Haptics from "expo-haptics";
 import { Button } from "@/components/ui/button";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
+import { toast } from "sonner-native";
 
 interface IndustriesManagementProps {
   className?: string;
@@ -60,17 +60,13 @@ export const IndustriesManagement = ({
         queryClient.invalidateQueries({
           queryKey: ["userIndustries", userId],
         });
-        showToastable({
-          message: "Industries updated successfully",
-          status: "success",
+        toast.success("Industries updated successfully", {
+          description: "Your industries have been successfully updated.",
         });
         router.back();
       },
       onError: (error: Error) => {
-        showToastable({
-          message: error.message || "Failed to update industries",
-          status: "danger",
-        });
+        toast.error(error.message || "Failed to update industries", {});
       },
     });
 
@@ -78,9 +74,8 @@ export const IndustriesManagement = ({
     if (selectedIndustries.length > 0) {
       updateIndustries(selectedIndustries);
     } else {
-      showToastable({
-        message: "Please select at least one industry.",
-        status: "warning",
+      toast.warning("Please select at least one industry.", {
+        description: "You need to select at least one industry before saving.",
       });
     }
   };

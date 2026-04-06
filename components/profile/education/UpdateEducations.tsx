@@ -6,23 +6,20 @@ import { StableSafeAreaView } from "@/components/shared/StableSafeAreaView";
 import StableScrollView from "@/components/shared/StableScrollView";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { getExperienceYears } from "@/lib/date";
 import { cn } from "@/lib/utils";
 import { useUserStore } from "@/stores/useUserStore";
 import { ResponseEducationDto, ServerErrorResponse } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { format } from "date-fns";
 import { router } from "expo-router";
 import {
   ArrowLeft,
   GraduationCap,
   Building2,
-  Calendar,
   FileText,
 } from "lucide-react-native";
 import { View } from "react-native";
-import { showToastable } from "react-native-toastable";
 import { DeleteEducationDialog } from "./DeleteEducationDialog";
+import { toast } from "sonner-native";
 
 interface UpdateEducationsProps {
   className?: string;
@@ -47,16 +44,15 @@ export const UpdateEducations = ({ className }: UpdateEducationsProps) => {
   const { mutate: deleteEducation, isPending: isDeletePending } = useMutation({
     mutationFn: (id: number) => api.education.remove(id),
     onSuccess: () => {
-      showToastable({
-        message: "Education deleted successfully",
-        status: "success",
+      toast.success("Education deleted successfully", {
+        description: "Your education has been successfully deleted.",
       });
       queryClient.invalidateQueries({
         queryKey: ["educations", userStore.response?.id],
       });
     },
     onError: (error: ServerErrorResponse) => {
-      showToastable({ message: error.response?.data?.message });
+      toast.error(error.response?.data?.message || "An error occurred", {});
     },
   });
 

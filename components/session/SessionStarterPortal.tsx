@@ -13,13 +13,13 @@ import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 import { useSessionStore } from "@/stores/useSessionStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api";
-import { showToastable } from "react-native-toastable";
 import React from "react";
 import { createSessionSchema } from "@/types/validations/session.validation";
 import { ServerErrorResponse } from "@/types";
 import { useObjectives } from "@/hooks/content/reference-types/useObjectives";
 import { mapToSelectOptions } from "../shared/form-builder/utils/map-select-options";
 import { zodErrorsToNested } from "@/lib/object";
+import { toast } from "sonner-native";
 
 interface SessionStarterPortalProps {
   className?: string;
@@ -38,8 +38,8 @@ export const SessionStarterPortal = ({
       mutationFn: async () => api.session.start(sessionStore.createDto),
       onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: ["active-sessions"] });
-        showToastable({
-          message: "Session started successfully!",
+        toast.success("Session started successfully!", {
+          description: "Your session has been successfully started.",
         });
         router.replace(`/main/(tabs)`);
         sessionStore.reset();
