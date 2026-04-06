@@ -22,6 +22,7 @@ import { useScrollableElement } from "@/hooks/useScrollableElement";
 import { StablePressable } from "../shared/StablePressable";
 import Animated from "react-native-reanimated";
 import { SessionStarter } from "./SessionStarter";
+import { useTranslation } from "react-i18next";
 
 interface SessionHistoryPortalProps {
   className?: string;
@@ -30,6 +31,8 @@ interface SessionHistoryPortalProps {
 export const SessionHistoryPortal = ({
   className,
 }: SessionHistoryPortalProps) => {
+  const { t } = useTranslation("common");
+
   const {
     sessions,
     fetchNextPage,
@@ -116,7 +119,7 @@ export const SessionHistoryPortal = ({
 
   const applicationHeaderShortcuts = (
     <ApplicationHeader
-      title={"Sessions"}
+      title={t("screens.sessions")}
       shortcuts={[
         {
           key: "bell",
