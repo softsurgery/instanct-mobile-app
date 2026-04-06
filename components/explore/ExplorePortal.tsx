@@ -16,14 +16,13 @@ import { useActiveSessions } from "@/hooks/content/sessions/useActiveSessions";
 import { SessionCountdown } from "../session/SessionCountdown";
 import { SessionStarter } from "../session/SessionStarter";
 import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
-import { EndSessionDialog } from "../session/SessionEndDialog";
+import { EndSessionModal } from "../session/SessionEndDialog";
 import { api } from "@/api";
 import { useMutation } from "@tanstack/react-query";
 import { showToastable } from "react-native-toastable";
 import { ServerErrorResponse } from "@/types";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { Icon } from "../ui/icon";
-import { StablePressable } from "../shared/StablePressable";
 import { hslToHex, THEME } from "@/lib/theme";
 import { useColorScheme } from "nativewind";
 
@@ -113,21 +112,19 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
             key: "end-session",
             hidden: !mapSession,
             render: (
-              <EndSessionDialog
+              <EndSessionModal
                 handleEndSession={handelSessionEnd}
                 loading={isEndingSessionPending}
                 trigger={
-                  <StablePressable className="p-1">
-                    <Icon
-                      as={Play}
-                      size={28}
-                      color={hslToHex(
-                        isDarkColorScheme
-                          ? THEME.dark.destructive
-                          : THEME.light.destructive,
-                      )}
-                    />
-                  </StablePressable>
+                  <Icon
+                    as={Play}
+                    size={28}
+                    color={hslToHex(
+                      isDarkColorScheme
+                        ? THEME.dark.destructive
+                        : THEME.light.destructive,
+                    )}
+                  />
                 }
               />
             ),

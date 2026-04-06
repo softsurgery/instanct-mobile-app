@@ -1,75 +1,95 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog";
-import { View } from "react-native";
+import { Keyboard, View } from "react-native";
 import { Text } from "../ui/text";
 import { Button } from "../ui/button";
+import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
+import { useColorScheme } from "nativewind";
+import { THEME } from "@/lib/theme";
+import { StablePressable } from "../shared/StablePressable";
 
-interface EndSessionDialogProps {
+interface EndSessionModalProps {
   className?: string;
   trigger?: React.ReactNode;
   loading?: boolean;
   handleEndSession?: () => void;
 }
 
-export const EndSessionDialog = ({
+export const EndSessionModal = ({
   className,
   trigger,
   loading,
   handleEndSession,
-}: EndSessionDialogProps) => {
-  const [visible, setVisible] = React.useState(false);
+}: EndSessionModalProps) => {
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
+  const sheetRef = React.useRef<ActionSheetRef>(null);
+
+  const handleClose = () => Keyboard.dismiss();
 
   return (
-    <Dialog open={visible} onOpenChange={setVisible}>
-      <DialogTrigger asChild>
+    <>
+      <StablePressable
+        className={cn("flex-row items-center")}
+        onPress={() => sheetRef.current?.show()}
+      >
         {trigger || (
-          <Button size="sm" variant={"outline"} className="flex-1">
+          <Button size="sm" variant="outline" className="flex-1">
             <Text>End Session</Text>
           </Button>
         )}
-      </DialogTrigger>
+      </StablePressable>
 
-      <DialogContent className={cn("w-[90vw] rounded-lg", className)}>
-        <DialogTitle>
-          <Text className="text-lg font-semibold text-foreground">
-            End session
-          </Text>
-        </DialogTitle>
+      <ActionSheet
+        ref={sheetRef}
+        gestureEnabled
+        statusBarTranslucent
+        defaultOverlayOpacity={0.5}
+        onClose={handleClose}
+        containerStyle={{
+          backgroundColor: isDark
+            ? THEME.dark.background
+            : THEME.light.background,
+          borderTopLeftRadius: 24,
+          borderTopRightRadius: 24,
+          paddingHorizontal: 24,
+          paddingTop: 20,
+          paddingBottom: 40,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.15,
+          shadowRadius: 6,
+          elevation: 5,
+        }}
+      >
+        <View className="flex flex-col justify-between ">
+          {/* Header */}
+          <View className="flex flex-col gap-3 mb-6">
+            <Text className="text-lg font-semibold text-destructive">
+              End Session
+            </Text>
+            <Text className="text-sm text-muted-foreground">
+              Are you sure you want to end this session? This action cannot be
+              undone.
+            </Text>
+          </View>
 
-        <View className="flex flex-col gap-2">
-          <Text className="text-sm text-muted-foreground">
-            Are you sure you want to end this session?
-          </Text>
-        </View>
-
-        <View className="flex flex-row gap-3 justify-end">
+          {/* Actions */}
           <Button
             variant="destructive"
             onPress={() => {
               handleEndSession?.();
-              setVisible(false);
+              handleClose();
             }}
             disabled={loading}
-            className="flex-1"
+            className="py-3 rounded-lg"
           >
-            <Text>{loading ? "Ending..." : "End Session"}</Text>
-          </Button>
-          <Button
-            variant="outline"
-            disabled={loading}
-            onPress={() => setVisible(false)}
-            className="flex-1"
-          >
-            <Text>Cancel</Text>
+            <Text className="text-base font-medium">
+              {loading ? "Ending..." : "Yes, I'm sure"}
+            </Text>
           </Button>
         </View>
-      </DialogContent>
-    </Dialog>
+      </ActionSheet>
+    </>
   );
 };
