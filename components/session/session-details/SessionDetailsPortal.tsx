@@ -9,6 +9,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { ArrowLeft } from "lucide-react-native";
 import { View } from "react-native";
 import { SessionDetailsContent } from "./SessionDetailsContent";
+import { useTranslation } from "react-i18next";
 
 interface SessionDetailsPortalProps {
   className?: string;
@@ -17,6 +18,8 @@ interface SessionDetailsPortalProps {
 export const SessionDetailsPortal = ({
   className,
 }: SessionDetailsPortalProps) => {
+  const { t } = useTranslation("common");
+
   const { session: sessionParam } = useLocalSearchParams<{
     session?: string;
   }>();
@@ -50,7 +53,7 @@ export const SessionDetailsPortal = ({
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
         className="border-b border-border pb-2"
-        title="Session Details"
+        title={t("screens.sessionDetails")}
         titleVariant="large"
         reverse
         shortcuts={[
