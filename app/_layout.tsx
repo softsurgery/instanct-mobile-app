@@ -12,7 +12,6 @@ import { useColorScheme } from "nativewind";
 import React from "react";
 import { View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import Toastable from "react-native-toastable";
 import "../global.css";
 import "../i18n";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -45,24 +44,6 @@ export default function RootLayout() {
           >
             <GestureHandlerRootView style={{ flex: 1 }}>
               <View className={cn("flex-1 light dark:dark")}>
-                <Toastable
-                  position="bottom"
-                  statusMap={{
-                    success: isDarkColorScheme
-                      ? THEME.dark.accent
-                      : THEME.light.accent,
-                    danger: isDarkColorScheme
-                      ? THEME.dark.destructive
-                      : THEME.light.destructive,
-                    warning: isDarkColorScheme
-                      ? THEME.dark.secondary
-                      : THEME.light.secondary,
-                    info: isDarkColorScheme
-                      ? THEME.dark.primary
-                      : THEME.light.primary,
-                  }}
-                  swipeDirection={"right"}
-                />
                 <StatusBar
                   style={colorScheme === "dark" ? "light" : "dark"}
                   translucent
