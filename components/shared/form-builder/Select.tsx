@@ -18,10 +18,9 @@ import { useColorScheme } from "nativewind";
 import { THEME } from "@/lib/theme";
 
 interface SelectProps {
-  className?: string;
   classNames?: {
-    trigger: string;
-    content: string;
+    trigger?: string;
+    content?: string;
   };
   title?: string;
   description?: string;
@@ -36,7 +35,6 @@ interface SelectProps {
 }
 
 export default function Select({
-  className,
   classNames,
 
   title,
@@ -76,8 +74,9 @@ export default function Select({
     <>
       <Pressable
         className={cn(
-          "flex-row items-center w-full",
           disabled && "opacity-50 pointer-events-none",
+          "flex justify-center",
+          classNames?.trigger,
         )}
         onPress={() => {
           if (!disabled) sheetRef.current?.show();
@@ -86,8 +85,9 @@ export default function Select({
         <Input
           pointerEvents="none"
           value={selectedOption?.label || ""}
+          justify-center
           placeholder={placeholder || "Select an option"}
-          className={cn(classNames?.trigger)}
+          className={cn()}
         />
         <View className="absolute right-3 text-muted-foreground">
           <Icon as={ChevronDown} size={18} color={"gray"} />

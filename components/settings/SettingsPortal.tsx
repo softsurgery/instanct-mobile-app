@@ -13,7 +13,6 @@ import { ApplicationHeader } from "../shared/AppHeader";
 import { LanguageSwitcher } from "../shared/LanguageSwitcher";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import StableScrollView from "../shared/StableScrollView";
-import { ThemeToggle } from "../ThemeToggle";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Icon } from "../ui/icon";
@@ -21,6 +20,7 @@ import { Separator } from "../ui/separator";
 import { Text } from "../ui/text";
 import { createSettingRow, SettingRow } from "./SettingsRow";
 import type { SettingRowConfig } from "./SettingsRow";
+import { ThemeSwitcher } from "../shared/ThemeSwitcher";
 
 interface SettingsPortalProps {
   className?: string;
@@ -77,23 +77,41 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
           className: "p-1 px-4",
           Component: () => (
             <View
-              className={cn("flex flex-col justify-between gap-4", className)}
+              className={cn("flex flex-row justify-between gap-4", className)}
             >
-              <View>
+              <View className="flex-1">
                 <Text className="font-semibold text-base">Language</Text>
                 <Text className="text-xs text-muted-foreground">
                   Set your preferred language
                 </Text>
               </View>
-              <LanguageSwitcher />
+              <LanguageSwitcher
+                classNames={{
+                  trigger: "flex-1",
+                }}
+              />
             </View>
           ),
         }),
         createSettingRow({
-          title: "Appearance",
-          description: "Switch between light and dark mode",
-          rightComponent: <ThemeToggle className="mx-0" />,
           className: "p-1 px-4",
+          Component: () => (
+            <View
+              className={cn("flex flex-row justify-between gap-4", className)}
+            >
+              <View className="flex-1">
+                <Text className="font-semibold text-base">Theme</Text>
+                <Text className="text-xs text-muted-foreground">
+                  Set your preferred theme
+                </Text>
+              </View>
+              <ThemeSwitcher
+                classNames={{
+                  trigger: "flex-1 ",
+                }}
+              />
+            </View>
+          ),
         }),
       ],
     },
@@ -153,27 +171,6 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
         }),
       ],
     },
-    {
-      key: "testing",
-      title: "Testing Screens",
-      description: "Screens used for testing and development purposes.",
-      rows: [
-        createSettingRow({
-          title: "Accept Meeting Request",
-          description: "Test the accept meeting request screen",
-          rightIcon: ChevronRight,
-          className: "p-1 px-4",
-          onPress: () => {},
-        }),
-        createSettingRow({
-          title: "Send Meeting Request",
-          description: "Test the send meeting request screen",
-          rightIcon: ChevronRight,
-          className: "p-1 px-4",
-          onPress: () => {},
-        }),
-      ],
-    },
   ];
 
   const { t } = useTranslation("common");
@@ -190,9 +187,9 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
   };
 
   return (
-    <StableSafeAreaView className={cn("flex flex-1", className)}>
+    <StableSafeAreaView className={cn("flex flex-1 bg-card", className)}>
       <ApplicationHeader
-        className="border-b border-border pb-2 bg-transparent"
+        className="border-b border-border pb-2"
         title={t("screens.settings")}
         titleVariant="large"
         reverse
@@ -204,7 +201,7 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
           },
         ]}
       />
-      <StableScrollView>
+      <StableScrollView className="flex-1 bg-background">
         <View className="flex flex-col">
           <View className="px-4 mb-4">
             <View className={cn("mt-4", primaryCardClass)}>

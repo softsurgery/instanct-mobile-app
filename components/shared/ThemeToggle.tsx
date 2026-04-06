@@ -5,8 +5,8 @@ import { MoonStar, Sun } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import React from "react";
 import { View } from "react-native";
-import { StablePressable } from "./shared/StablePressable";
-import { Icon } from "./ui/icon";
+import { StablePressable } from "./StablePressable";
+import { Icon } from "../ui/icon";
 
 interface ThemeToggleProps {
   className?: string;

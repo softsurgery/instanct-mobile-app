@@ -1,4 +1,4 @@
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { Stack } from "expo-router";
 import React from "react";
 
