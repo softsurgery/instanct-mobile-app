@@ -29,6 +29,7 @@ import { BaseProfileSkeleton } from "./BaseProfileSkeleton";
 import { Loader } from "../shared/Loader";
 import { useDebounce } from "@/hooks/useDebounce";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { ProfilePhotoPreview } from "./ProfilePhotoPreview";
 
 interface ProfileSection<T = unknown> {
   key: string;
@@ -193,14 +194,16 @@ export const InspectBaseProfile = ({
   const identity = React.useMemo(() => identifyUser(user), [user]);
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
 
-  const { jsxArray: profilePictures } = useServerImages({
-    ids: [user?.pictureId],
-    fallbacks: [fallback],
-    wrapperClassName:
-      "border border-border bg-background rounded-full shadow-md",
-    size: { width: 100, height: 100 },
-    enabled: !!user,
-  });
+  const { uploads: profileUploads, jsxArray: profilePictures } =
+    useServerImages({
+      ids: [user?.pictureId],
+      fallbacks: [fallback],
+      wrapperClassName:
+        "border border-border bg-background rounded-full shadow-md",
+      size: { width: 100, height: 100 },
+      enabled: !!user,
+    });
+  const profilePictureSource = profileUploads?.[0];
 
   React.useEffect(() => {
     return () => {
@@ -420,7 +423,9 @@ export const InspectBaseProfile = ({
           </View>
           {/* Header */}
           <View className="flex-row items-center px-5 -mt-12">
-            <View>{profilePictures[0]}</View>
+            <ProfilePhotoPreview source={profilePictureSource}>
+              <View>{profilePictures[0]}</View>
+            </ProfilePhotoPreview>
 
             <View className="flex-1 mt-16">
               <View className="flex-row items-center justify-between mx-2">
