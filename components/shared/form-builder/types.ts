@@ -43,6 +43,7 @@ export enum FieldVariant {
   DATE = "date",
   TIME = "time",
   SELECT = "select",
+  MULTISELECT = "multi-select",
   CHECKBOX = "checkbox",
   CHECK = "check",
   RADIO = "radio",
@@ -111,6 +112,13 @@ export interface SelectOption {
 export interface SelectFieldProps {
   value?: string;
   onSelect?: (value: string) => void;
+  options?: SelectOption[];
+  editable?: boolean;
+}
+
+export interface MultiSelectFieldProps {
+  value?: string[];
+  onSelect?: (value: string[]) => void;
   options?: SelectOption[];
   editable?: boolean;
 }

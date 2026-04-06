@@ -14,6 +14,7 @@ import { Field, FieldVariant } from "./types";
 import { DatePicker } from "./DatePicker2";
 import { TimePicker } from "./TimePicker";
 import { ChoicePicker } from "../ChoicePicker";
+import MultiSelect from "./MultiSelect";
 
 interface FieldBuilderProps {
   field?: Field<any>;
@@ -78,6 +79,20 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           description={field.description}
           placeholder={field?.placeholder}
           value={field?.props?.value?.toString()}
+          onSelect={(value) => field?.props?.onSelect?.(value)}
+          disabled={field?.props?.other}
+          options={field?.props?.options}
+        />
+      );
+    case "multi-select":
+      return (
+        <MultiSelect
+          {...field?.props}
+          className={cn(field?.error && "border-red-500")}
+          title={field.label}
+          description={field.description}
+          placeholder={field?.placeholder}
+          value={field?.props?.value || []}
           onSelect={(value) => field?.props?.onSelect?.(value)}
           disabled={field?.props?.other}
           options={field?.props?.options}
