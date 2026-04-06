@@ -4,7 +4,7 @@ export interface ResponseRefTypeDto<T = object> extends DatabaseEntity {
   id: number;
   label: string;
   description: string;
-  refParams: ResponseRefParamDto[];
+  params: ResponseRefParamDto[];
   parentId?: number;
   parent?: ResponseRefTypeDto;
   children: ResponseRefTypeDto[];
@@ -19,8 +19,9 @@ export interface CreateRefTypeDto<T = object> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface UpdateRefTypeDto<T = object>
-  extends Partial<CreateRefTypeDto<T>> {}
+export interface UpdateRefTypeDto<T = object> extends Partial<
+  CreateRefTypeDto<T>
+> {}
 
 export interface ResponseRefParamDto<T = object> extends DatabaseEntity {
   id: number;
@@ -39,5 +40,6 @@ export interface CreateRefParamDto<T = object> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface UpdateRefParamDto<T = object>
-  extends Partial<CreateRefParamDto<T>> {}
+export interface UpdateRefParamDto<T = object> extends Partial<
+  CreateRefParamDto<T>
+> {}

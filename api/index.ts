@@ -4,13 +4,13 @@ import { configuration } from "./configuration";
 import { education } from "./education";
 import { experience } from "./experience";
 import { notifications } from "./notifications";
-import { refImpl } from "./ref-impl";
 import { upload } from "./upload";
 import { session } from "./session";
 import { user } from "./user";
 import { bug } from "./bug";
 import { feedback } from "./feedback";
 import { store } from "./store";
+import { referenceTypes } from "./reference-types";
 
 export const api = {
   auth,
@@ -19,11 +19,11 @@ export const api = {
   experience,
   education,
   notifications,
-  refImpl,
   session,
   user,
   bug,
   feedback,
   store,
   upload,
+  referenceTypes,
 };
