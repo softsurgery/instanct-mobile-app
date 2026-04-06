@@ -123,11 +123,12 @@ export const useSessionStarterFormStructure = ({
     variant: FieldVariant.MULTISELECT,
     description: "Select the objectives for this session.",
     placeholder: "Select objectives",
+    error: store.createDtoErrors?.payload?.objectives?.[0],
     props: {
       value: store.createDto.payload?.objectives || [],
       onSelect: (values) => {
         store.setNested("createDto.payload.objectives", values);
-        store.setNested("createDtoErrors.objectives", []);
+        store.setNested("createDtoErrors.payload.objectives", []);
       },
       options: objectives,
     },

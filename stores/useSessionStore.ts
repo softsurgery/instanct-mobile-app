@@ -10,7 +10,7 @@ interface SessionData {
   createDto: CreateSessionDto<MapSessionPayload>;
 
   //errors
-  createDtoErrors: Record<string, string[]>;
+  createDtoErrors: Record<string, any>;
 }
 
 export interface SessionStore extends SessionData {

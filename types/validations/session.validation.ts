@@ -16,6 +16,12 @@ export const createSessionSchema = z.object({
   plannedEnd: z.date({
     message: "Planned end must be a valid date.",
   }),
+  payload: z.object({
+    objectives: z
+      .array(z.string({ message: "Objective must be a string." }))
+      .min(1, { message: "At least one objective must be selected." })
+      .optional(),
+  }),
 });
 
 export type CreateSessionValidation = z.infer<typeof createSessionSchema>;

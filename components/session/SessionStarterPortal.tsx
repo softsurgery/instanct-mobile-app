@@ -19,6 +19,7 @@ import { createSessionSchema } from "@/types/validations/session.validation";
 import { ServerErrorResponse } from "@/types";
 import { useObjectives } from "@/hooks/content/reference-types/useObjectives";
 import { mapToSelectOptions } from "../shared/form-builder/utils/map-select-options";
+import { zodErrorsToNested } from "@/lib/object";
 
 interface SessionStarterPortalProps {
   className?: string;
@@ -73,9 +74,9 @@ export const SessionStarterPortal = ({
 
   const handleSessionStart = () => {
     const result = createSessionSchema.safeParse(sessionStore.createDto);
-    if (!result.success)
-      sessionStore.set("createDtoErrors", result.error.flatten().fieldErrors);
-    else startSession();
+    if (!result.success) {
+      sessionStore.set("createDtoErrors", zodErrorsToNested(result.error));
+    } else startSession();
   };
 
   return (
