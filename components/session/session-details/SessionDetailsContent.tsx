@@ -1,4 +1,4 @@
-import { ResponseSessionDto } from "@/types/session";
+import type { MapSessionPayload, ResponseSessionDto } from "@/types/session";
 import { View } from "react-native";
 import { Text } from "../../ui/text";
 import { Badge } from "../../ui/badge";
@@ -7,9 +7,11 @@ import { InfoRow } from "./SessionInfoRow";
 import { toTimeOnly } from "@/lib/date";
 
 interface SessionDetailsContentProps {
-  session: ResponseSessionDto;
-  getStatus: (session: ResponseSessionDto) => string;
-  formatSessionWindow: (session: ResponseSessionDto) => string;
+  session: ResponseSessionDto<MapSessionPayload>;
+  getStatus: (session: ResponseSessionDto<MapSessionPayload>) => string;
+  formatSessionWindow: (
+    session: ResponseSessionDto<MapSessionPayload>,
+  ) => string;
 }
 
 const toSafeTime = (value?: Date | string) => {
@@ -35,6 +37,7 @@ export const SessionDetailsContent = ({
     { label: "Planned End", value: toSafeTime(session.plannedEnd) },
     { label: "Started At", value: toSafeTime(session.started) },
     { label: "Ended At", value: toSafeTime(session.ended) },
+    { label: "Payload", value: JSON.stringify(session.payload, null, 2) },
   ];
 
   return (

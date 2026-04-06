@@ -7,20 +7,21 @@ export const setDeepValue = <T>(
 ): Record<string, any> => {
   const keys = path.split(".");
 
-  return keys.reduceRight((acc, key, index) => {
-    if (index === keys.length - 1) {
-      return { ...obj, [key]: acc };
-    }
+  const newObj = { ...obj };
+  let current: any = newObj;
 
-    const parent = obj[key] ?? {};
-    return {
-      ...obj,
-      [key]: {
-        ...parent,
-        ...acc,
-      },
-    };
-  }, value as any);
+  keys.forEach((key, index) => {
+    if (index === keys.length - 1) {
+      current[key] = value;
+    } else {
+      if (!current[key] || typeof current[key] !== "object") {
+        current[key] = {};
+      }
+      current = current[key];
+    }
+  });
+
+  return newObj;
 };
 
 export function nestErrors(errors: Record<string, string[]>) {

@@ -76,8 +76,16 @@ export const SessionStarterPortal = ({
     const result = createSessionSchema.safeParse(sessionStore.createDto);
     if (!result.success) {
       sessionStore.set("createDtoErrors", zodErrorsToNested(result.error));
-    } else startSession();
+    } else {
+      startSession();
+    }
   };
+
+  React.useEffect(() => {
+    return () => {
+      sessionStore.reset();
+    };
+  }, []);
 
   return (
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>

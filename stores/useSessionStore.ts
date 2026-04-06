@@ -40,28 +40,15 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
       [name]: value,
     }));
   },
-  setNested: (path: string, value: unknown) => {
-    if (!path.includes(".")) {
-      // No nesting — set directly
-      set((state) => ({
-        ...state,
-        [path]: value,
-      }));
-      return;
-    }
-
-    // Nested path case
+  setNested: (path, value) => {
     const [rootKey, ...restPath] = path.split(".");
     const nestedPath = restPath.join(".");
-
     set((state) => {
-      const rootValue = state[rootKey as keyof SessionData];
-      if (typeof rootValue !== "object" || rootValue === null) {
-        throw new Error(`Cannot set nested path on non-object: ${rootKey}`);
-      }
-
-      const updatedRoot = setDeepValue(rootValue, nestedPath, value);
-
+      const updatedRoot = setDeepValue(
+        { ...state[rootKey as keyof SessionData] },
+        nestedPath,
+        value,
+      );
       return {
         ...state,
         [rootKey]: updatedRoot,

@@ -5,7 +5,7 @@ import { StableSafeAreaView } from "@/components/shared/StableSafeAreaView";
 import { Text } from "@/components/ui/text";
 import { toDateOnly } from "@/lib/date";
 import { cn } from "@/lib/utils";
-import { ResponseSessionDto } from "@/types/session";
+import { MapSessionPayload, ResponseSessionDto } from "@/types/session";
 import { router, useLocalSearchParams } from "expo-router";
 import { ArrowLeft } from "lucide-react-native";
 import { View } from "react-native";
@@ -22,13 +22,15 @@ export const SessionDetailsPortal = ({
     session?: string;
   }>();
 
-  const getStatus = (session: ResponseSessionDto) => {
+  const getStatus = (session: ResponseSessionDto<MapSessionPayload>) => {
     if (session.ended) return "Ended";
     if (session.started) return "In Progress";
     return "Scheduled";
   };
 
-  const formatSessionWindow = (session: ResponseSessionDto) => {
+  const formatSessionWindow = (
+    session: ResponseSessionDto<MapSessionPayload>,
+  ) => {
     const start = session.plannedStart
       ? toDateOnly(new Date(session.plannedStart))
       : "N/A";
@@ -38,14 +40,17 @@ export const SessionDetailsPortal = ({
     return end ? `${start} to ${end}` : start;
   };
 
-  const session = React.useMemo<ResponseSessionDto | null>(() => {
-    if (!sessionParam || typeof sessionParam !== "string") return null;
-    try {
-      return JSON.parse(sessionParam) as ResponseSessionDto;
-    } catch {
-      return null;
-    }
-  }, [sessionParam]);
+  const session =
+    React.useMemo<ResponseSessionDto<MapSessionPayload> | null>(() => {
+      if (!sessionParam || typeof sessionParam !== "string") return null;
+      try {
+        return JSON.parse(
+          sessionParam,
+        ) as ResponseSessionDto<MapSessionPayload>;
+      } catch {
+        return null;
+      }
+    }, [sessionParam]);
 
   const EmptyState = () => (
     <View className="px-4 mt-4">
@@ -53,7 +58,7 @@ export const SessionDetailsPortal = ({
         <View className="p-4">
           <Text className="text-lg font-semibold">Session not found</Text>
           <Text className="text-sm text-muted-foreground mt-1">
-            We could not load this session details.
+            We could not load this session&apos;s details.
           </Text>
         </View>
       </View>

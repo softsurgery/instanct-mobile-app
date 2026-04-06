@@ -116,6 +116,13 @@ export const UserCard = ({ user, className }: UserCardProps) => {
                 </View>
               </View>
             ) : null}
+            {/* Bio */}
+            <View>
+              <Text className="font-bold py-2 text-lg">Bio</Text>
+              <Text className="text-md text-muted-foreground">
+                {user.bio || "No bio available."}
+              </Text>
+            </View>
           </View>
           {/* Fixed Footer Actions */}
           <View className="flex flex-row gap-4 justify-between m-4">
