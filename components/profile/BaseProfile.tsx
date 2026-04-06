@@ -47,12 +47,12 @@ interface InspectBaseProfileProps {
 
 // Tab Components - defined outside to prevent minification issues
 const AboutTab = ({ user }: { user: any }) => (
-  <ScrollView className="flex-1 bg-background">
+  <ScrollView className="flex-1 bg-background p-4">
     <View className="flex flex-col gap-4 pb-8">
       {/* Bio Section */}
       {user?.bio ? (
-        <View className="bg-card border border-border overflow-hidden">
-          <View className="p-4 bg-primary/10">
+        <View className="bg-card border border-border overflow-hidden rounded-lg">
+          <View className="p-4">
             <Text variant="h4">About</Text>
           </View>
           <Separator />
@@ -78,7 +78,7 @@ const AboutTab = ({ user }: { user: any }) => (
         <View className="flex flex-col gap-2">
           {user?.website && (
             <StablePressable
-              className="bg-card border border-border p-4 flex-row items-center gap-3"
+              className="bg-card border border-border p-4 flex-row items-center gap-3 rounded-lg"
               onPress={() => {
                 if (user?.website) Linking.openURL(user?.website);
               }}
@@ -95,7 +95,7 @@ const AboutTab = ({ user }: { user: any }) => (
           )}
           {user?.linkedin && (
             <StablePressable
-              className="bg-card border border-border p-4 flex-row items-center gap-3"
+              className="bg-card border border-border p-4 flex-row items-center gap-3 rounded-lg"
               onPress={() => {
                 if (user?.linkedin) Linking.openURL(user?.linkedin);
               }}
@@ -121,7 +121,7 @@ const ExperienceTab = ({
   renderSection: (section: ProfileSection) => React.ReactNode;
 }) => (
   <ScrollView className="flex-1 bg-background">
-    <View className="flex flex-col gap-4 pb-8">
+    <View className="flex flex-col p-4 gap-4">
       {profileSections
         .filter((s) => s.key === "experience" || s.key === "education")
         .map(renderSection)}
@@ -137,7 +137,7 @@ const InterestsTab = ({
   renderSection: (section: ProfileSection) => React.ReactNode;
 }) => (
   <ScrollView className="flex-1 bg-background">
-    <View className="flex flex-col gap-4 pb-8">
+    <View className="flex flex-col p-4 gap-4">
       {profileSections.filter((s) => s.key === "industries").map(renderSection)}
     </View>
   </ScrollView>
@@ -305,8 +305,8 @@ export const InspectBaseProfile = ({
 
       return (
         <View key={section.key}>
-          <View className={cn("pt-x bg-card border border-border")}>
-            <View className="flex flex-row items-center justify-between bg-primary/10 py-4">
+          <View className={cn("bg-card border border-border rounded-lg")}>
+            <View className="flex flex-row items-center justify-between py-4">
               <View className="px-4">
                 <Text variant="h4">{section.title}</Text>
               </View>
