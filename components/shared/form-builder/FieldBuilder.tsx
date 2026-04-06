@@ -88,7 +88,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
       return (
         <MultiSelect
           {...field?.props}
-          className={cn(field?.error && "border-red-500")}
+          classNames={{ trigger: cn(field?.error && "border-red-500") }}
           title={field.label}
           description={field.description}
           placeholder={field?.placeholder}

@@ -18,7 +18,6 @@ import { useColorScheme } from "nativewind";
 import { THEME } from "@/lib/theme";
 
 interface MultiSelectProps {
-  className?: string;
   classNames?: {
     trigger: string;
     content: string;
@@ -36,7 +35,6 @@ interface MultiSelectProps {
 }
 
 export default function MultiSelect({
-  className,
   classNames,
 
   title,
