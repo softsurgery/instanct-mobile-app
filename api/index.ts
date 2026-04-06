@@ -11,6 +11,7 @@ import { bug } from "./bug";
 import { feedback } from "./feedback";
 import { store } from "./store";
 import { referenceTypes } from "./reference-types";
+import { request } from "./request";
 
 export const api = {
   auth,
@@ -26,4 +27,5 @@ export const api = {
   store,
   upload,
   referenceTypes,
+  request,
 };

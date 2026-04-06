@@ -12,10 +12,9 @@ export interface ResponseRequestDto extends DatabaseEntity {
 }
 
 export interface CreateRequestDto {
-  senderId: string;
-  receivers: string[];
-  description?: string;
-  place?: string;
+  receiversIds: string[];
+  message?: string;
+  location?: string;
   time?: Date;
 }
 
