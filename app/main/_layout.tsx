@@ -61,6 +61,24 @@ export default function MainLayout() {
             animationDuration: 200,
           }}
         />
+        <Stack.Screen
+          name="explore/users-filter"
+          options={{
+            title: "User Filters",
+            headerShown: false,
+            animation: "simple_push",
+            animationDuration: 200,
+          }}
+        />
+        <Stack.Screen
+          name="sessions/details"
+          options={{
+            title: "Session Details",
+            headerShown: false,
+            animation: "simple_push",
+            animationDuration: 200,
+          }}
+        />
         {/* *************************************************************************************************** */}
         {/* Notification  ************************************************************************************* */}
         <Stack.Screen

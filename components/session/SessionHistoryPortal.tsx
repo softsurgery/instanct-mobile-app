@@ -45,6 +45,7 @@ export const SessionHistoryPortal = ({
   });
 
   const { newCount, resetCount } = useNotificationContext();
+  const sessionDetailsPath = "/main/sessions/details" as any;
 
   const handleNotificationsPress = React.useCallback(() => {
     resetCount();
@@ -70,7 +71,17 @@ export const SessionHistoryPortal = ({
 
   const renderItem = React.useCallback(
     ({ item }: { item: ResponseSessionDto }) => (
-      <StablePressable className="p-4 my-2 rounded-lg">
+      <StablePressable
+        className="p-4 my-2 rounded-lg"
+        onPress={() =>
+          router.push({
+            pathname: sessionDetailsPath,
+            params: {
+              session: JSON.stringify(item),
+            },
+          })
+        }
+      >
         <View className="flex flex-row items-center justify-between">
           <View className="flex-row items-center gap-4">
             <View className="bg-primary/10 h-10 w-10 items-center justify-center rounded-full">
@@ -99,7 +110,7 @@ export const SessionHistoryPortal = ({
         </View>
       </StablePressable>
     ),
-    [],
+    [sessionDetailsPath],
   );
 
   return (
