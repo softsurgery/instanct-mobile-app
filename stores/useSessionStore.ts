@@ -1,9 +1,13 @@
 import { setDeepValue } from "@/lib/object";
-import { CreateSessionDto, SessionType } from "@/types/session";
+import {
+  CreateSessionDto,
+  MapSessionPayload,
+  SessionType,
+} from "@/types/session";
 import { create } from "zustand";
 
 interface SessionData {
-  createDto: CreateSessionDto;
+  createDto: CreateSessionDto<MapSessionPayload>;
 
   //errors
   createDtoErrors: Record<string, string[]>;
@@ -18,7 +22,9 @@ export interface SessionStore extends SessionData {
 const initialState: SessionData = {
   createDto: {
     sessionType: SessionType.MAP_SESSION,
-    payload: {},
+    payload: {
+      objectives: [],
+    },
     plannedStart: undefined,
     plannedEnd: undefined,
   },

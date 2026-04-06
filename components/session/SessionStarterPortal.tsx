@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Alert, View, Pressable } from "react-native";
+import { Alert, View } from "react-native";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { ArrowLeft } from "lucide-react-native";
@@ -17,6 +17,8 @@ import { showToastable } from "react-native-toastable";
 import React from "react";
 import { createSessionSchema } from "@/types/validations/session.validation";
 import { ServerErrorResponse } from "@/types";
+import { useObjectives } from "@/hooks/content/reference-types/useObjectives";
+import { mapToSelectOptions } from "../shared/form-builder/utils/map-select-options";
 
 interface SessionStarterPortalProps {
   className?: string;
@@ -28,7 +30,6 @@ export const SessionStarterPortal = ({
   const queryClient = useQueryClient();
   const isKeyboardVisible = useKeyboardVisible();
   const sessionStore = useSessionStore();
-  const [startNow, setStartNow] = React.useState(true);
 
   // session start mutation
   const { mutate: startSession, isPending: isStartingSessionPending } =
@@ -47,9 +48,16 @@ export const SessionStarterPortal = ({
       },
     });
 
+  const { objectives, isObjectivesPending } = useObjectives();
+
   const { structure } = useSessionStarterFormStructure({
     store: sessionStore,
-    isPending: isStartingSessionPending,
+    objectives: mapToSelectOptions({
+      data: objectives,
+      labelKey: "label",
+      valueKey: "id",
+    }),
+    isPending: isStartingSessionPending || isObjectivesPending,
   });
 
   const isEndDateNextDay = React.useMemo(() => {
@@ -87,40 +95,36 @@ export const SessionStarterPortal = ({
           },
         ]}
       />
-      <View className="flex-1 bg-background">
-        <StableKeyboardAwareScrollView className="flex-1 bg-background">
-          {/* Toggle buttons */}
-
-          <View className="p-4">
-            <Text className="text-sm text-muted-foreground leading-relaxed">
-              Veuillez fournir les détails de votre session. Ces informations
-              aideront les autres à comprendre quand vous êtes disponible et
-              intéressé par la connexion.
+      <StableKeyboardAwareScrollView className="flex-1 bg-background">
+        <View className="p-4">
+          <Text className="text-sm text-muted-foreground leading-relaxed">
+            Veuillez fournir les détails de votre session. Ces informations
+            aideront les autres à comprendre quand vous êtes disponible et
+            intéressé par la connexion.
+          </Text>
+        </View>
+        <FormBuilder structure={structure} className="px-2" />
+        {isEndDateNextDay && sessionStore.createDto && (
+          <View className="mx-4 mt-4 p-4 rounded-lg bg-destructive/25">
+            <Text className="text-sm">
+              Votre session se terminera le jour suivant car l&apos;heure de fin
+              est antérieure à l&apos;heure de début.
             </Text>
           </View>
-          <FormBuilder structure={structure} className="px-2" />
-          {isEndDateNextDay && sessionStore.createDto && (
-            <View className="mx-4 mt-4 p-4 rounded-lg bg-destructive/25">
-              <Text className="text-sm">
-                Votre session se terminera le jour suivant car l&apos;heure de
-                fin est antérieure à l&apos;heure de début.
-              </Text>
-            </View>
-          )}
-        </StableKeyboardAwareScrollView>
-        {!isKeyboardVisible && (
-          <View className="absolute bottom-0 left-0 right-0 border-t border-border bg-card p-8 pt-4">
-            <Button
-              size="sm"
-              className="rounded-full"
-              onPress={() => handleSessionStart()}
-              disabled={isStartingSessionPending}
-            >
-              <Text>Sélectionner la session</Text>
-            </Button>
-          </View>
         )}
-      </View>
+      </StableKeyboardAwareScrollView>
+      {!isKeyboardVisible && (
+        <View className="absolute bottom-0 left-0 right-0 border-t border-border bg-card p-8 pt-4">
+          <Button
+            size="sm"
+            className="rounded-full"
+            onPress={() => handleSessionStart()}
+            disabled={isStartingSessionPending}
+          >
+            <Text>Sélectionner la session</Text>
+          </Button>
+        </View>
+      )}
     </StableSafeAreaView>
   );
 };

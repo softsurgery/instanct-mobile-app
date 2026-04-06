@@ -4,6 +4,8 @@ import {
   Field,
   FieldVariant,
   FormStructure,
+  MultiSelectFieldProps,
+  SelectOption,
   TimeFieldProps,
 } from "../shared/form-builder/types";
 import React from "react";
@@ -13,11 +15,13 @@ import { Text } from "../ui/text";
 
 interface useSessionStarterFormStructureProps {
   store: SessionStore;
+  objectives?: SelectOption[];
   isPending?: boolean;
 }
 
 export const useSessionStarterFormStructure = ({
   store,
+  objectives,
   isPending,
 }: useSessionStarterFormStructureProps) => {
   const [now, setNow] = React.useState<boolean>(true);
@@ -32,7 +36,11 @@ export const useSessionStarterFormStructure = ({
       children: (
         <View className="-mt-4 pb-2 flex-row gap-2">
           <Pressable
-            onPress={() => setNow(true)}
+            onPress={() => {
+              setNow(true);
+              store.setNested("createDto.plannedStart", null);
+              store.setNested("createDto.plannedEnd", null);
+            }}
             className={cn(
               "flex-1 py-3 px-4 rounded-lg items-center justify-center border-2",
               now
@@ -50,7 +58,9 @@ export const useSessionStarterFormStructure = ({
             </Text>
           </Pressable>
           <Pressable
-            onPress={() => setNow(false)}
+            onPress={() => {
+              setNow(false);
+            }}
             className={cn(
               "flex-1 py-3 px-4 rounded-lg items-center justify-center border-2",
               !now
@@ -107,6 +117,22 @@ export const useSessionStarterFormStructure = ({
     },
   };
 
+  const objectivesField: Field<MultiSelectFieldProps> = {
+    id: "objectives",
+    label: "Objectives",
+    variant: FieldVariant.MULTISELECT,
+    description: "Select the objectives for this session.",
+    placeholder: "Select objectives",
+    props: {
+      value: store.createDto.payload?.objectives || [],
+      onSelect: (values) => {
+        store.setNested("createDto.payload.objectives", values);
+        store.setNested("createDtoErrors.objectives", []);
+      },
+      options: objectives,
+    },
+  };
+
   const structure: FormStructure = {
     title: "Start a Session",
     fieldsets: [
@@ -124,6 +150,10 @@ export const useSessionStarterFormStructure = ({
           {
             id: 3,
             fields: [endDateField],
+          },
+          {
+            id: 4,
+            fields: [objectivesField],
           },
         ],
       },
