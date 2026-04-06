@@ -1,23 +1,34 @@
-import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 import * as CheckboxPrimitive from "@rn-primitives/checkbox";
 import { Check } from "lucide-react-native";
 import { Platform } from "react-native";
+import { Icon } from "./icon";
 
 const DEFAULT_HIT_SLOP = 24;
 
+interface CheckboxProps {
+  classNames?: {
+    root?: string;
+    checked?: string;
+    indicator?: string;
+    icon?: string;
+  };
+  icon?: {
+    color?: string;
+    size?: number;
+  };
+}
+
 function Checkbox({
-  className,
-  checkedClassName,
-  indicatorClassName,
-  iconClassName,
+  classNames,
+  icon = {
+    color: undefined,
+    size: 12,
+  },
   ...props
 }: CheckboxPrimitive.RootProps &
-  React.RefAttributes<CheckboxPrimitive.RootRef> & {
-    checkedClassName?: string;
-    indicatorClassName?: string;
-    iconClassName?: string;
-  }) {
+  React.RefAttributes<CheckboxPrimitive.RootRef> &
+  CheckboxProps) {
   return (
     <CheckboxPrimitive.Root
       className={cn(
@@ -26,9 +37,9 @@ function Checkbox({
           web: "focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive peer cursor-default outline-none transition-shadow focus-visible:ring-[3px] disabled:cursor-not-allowed",
           native: "overflow-hidden",
         }),
-        props.checked && cn("border-primary", checkedClassName),
+        props.checked && cn("border-primary", classNames?.checked),
         props.disabled && "opacity-50",
-        className,
+        classNames?.root,
       )}
       hitSlop={DEFAULT_HIT_SLOP}
       {...props}
@@ -36,14 +47,15 @@ function Checkbox({
       <CheckboxPrimitive.Indicator
         className={cn(
           "bg-primary h-full w-full items-center justify-center",
-          indicatorClassName,
+          classNames?.indicator,
         )}
       >
         <Icon
           as={Check}
-          size={12}
+          color={icon.color || "white"}
+          size={icon.size}
           strokeWidth={Platform.OS === "web" ? 2.5 : 3.5}
-          className={cn("text-primary-foreground", iconClassName)}
+          className={cn("text-primary-foreground")}
         />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
