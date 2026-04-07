@@ -2,9 +2,9 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { useMapStore } from "@/stores/useMapStore";
 import { router } from "expo-router";
-import { ArrowLeft, MapPin, RefreshCw, Save } from "lucide-react-native";
+import { ArrowLeft, Save } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import {
   createSettingRow,
   SettingRow,
@@ -12,8 +12,6 @@ import {
 } from "../../settings/SettingsRow";
 import { ApplicationHeader } from "../../shared/AppHeader";
 import { StableSafeAreaView } from "../../shared/StableSafeAreaView";
-import StableScrollView from "../../shared/StableScrollView";
-import { Badge } from "../../ui/badge";
 import { Separator } from "../../ui/separator";
 import { Switch } from "../../ui/switch";
 import { Text } from "../../ui/text";
@@ -23,24 +21,6 @@ import { RadiusSlider } from "./RadiusSlider";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api";
 import { toast } from "sonner-native";
-
-const RadiusSliderRow = React.memo(function RadiusSliderRow() {
-  const setNested = useMapStore((s) => s.setNested);
-  const rangeMin = useMapStore((s) => s.parameters.rangeMin);
-  const rangeMax = useMapStore((s) => s.parameters.rangeMax);
-
-  const handleRadiusChange = React.useCallback((value: number) => {
-    setNested("parameters.radius", value);
-  }, []);
-
-  return (
-    <RadiusSlider
-      rangeMinValue={rangeMin}
-      rangeMaxValue={rangeMax}
-      onValueChange={handleRadiusChange}
-    />
-  );
-});
 
 interface MapSettingsProps {
   className?: string;
@@ -64,9 +44,47 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
   const mapStore = useMapStore();
   const queryClient = useQueryClient();
 
-  const [autoRefresh, setAutoRefresh] = React.useState(true);
+  const [draftRadius, setDraftRadius] = React.useState(
+    mapStore.settings.radius,
+  );
+  const [draftClusters, setDraftClusters] = React.useState(
+    mapStore.settings.clusters,
+  );
+  const [draftShowUsernames, setDraftShowUsernames] = React.useState(
+    mapStore.settings.showUsernames,
+  );
+
+  const handleDraftRadiusChange = React.useCallback((value: number) => {
+    setDraftRadius(value);
+  }, []);
+
+  const savedRadiusRef = React.useRef(mapStore.settings.radius);
+
+  const StableRadiusRow = React.useMemo(() => {
+    return function RadiusRow() {
+      const ms = useMapStore();
+      return (
+        <RadiusSlider
+          initialValue={savedRadiusRef.current}
+          rangeMinValue={ms.parameters.rangeMin}
+          rangeMaxValue={ms.parameters.rangeMax}
+          onValueChange={handleDraftRadiusChange}
+        />
+      );
+    };
+  }, [handleDraftRadiusChange]);
 
   const settingsRows: SettingsSection[] = [
+    {
+      key: "discovery",
+      title: "Discovery Range",
+      description: "Control how far you can see other users.",
+      rows: [
+        createSettingRow({
+          Component: StableRadiusRow,
+        }),
+      ],
+    },
     {
       key: "display",
       title: "Display Preferences",
@@ -77,10 +95,8 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
           description: "Group nearby users into clusters",
           rightComponent: (
             <Switch
-              checked={mapStore.parameters.clusters}
-              onCheckedChange={(value) =>
-                mapStore.setNested("parameters.clusters", value)
-              }
+              checked={draftClusters}
+              onCheckedChange={setDraftClusters}
             />
           ),
         }),
@@ -89,57 +105,46 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
           description: "Display usernames on map markers",
           rightComponent: (
             <Switch
-              checked={mapStore.parameters.showUsernames}
-              onCheckedChange={(value) =>
-                mapStore.setNested("parameters.showUsernames", value)
-              }
+              checked={draftShowUsernames}
+              onCheckedChange={setDraftShowUsernames}
             />
           ),
         }),
       ],
     },
-    {
-      key: "discovery",
-      title: "Discovery Range",
-      description: "Control how far you can see other users.",
-      rows: [
-        createSettingRow({
-          Component: RadiusSliderRow,
-        }),
-      ],
-    },
-    {
-      key: "location",
-      title: "Location Updates",
-      description: "Manage how often your location is shared.",
-      rows: [
-        createSettingRow({
-          title: "Auto Refresh",
-          description: "Automatically update nearby users",
-          leftIcon: RefreshCw,
-          rightComponent: (
-            <Switch checked={autoRefresh} onCheckedChange={setAutoRefresh} />
-          ),
-        }),
-      ],
-    },
-    {
-      key: "privacy",
-      title: "Privacy & Visibility",
-      description: "Control who can see you on the map.",
-      rows: [
-        createSettingRow({
-          title: "Location Sharing",
-          description: "Currently visible to everyone",
-          leftIcon: MapPin,
-          rightComponent: (
-            <Badge variant="default">
-              <Text className="text-xs font-medium">Active</Text>
-            </Badge>
-          ),
-        }),
-      ],
-    },
+
+    // {
+    //   key: "location",
+    //   title: "Location Updates",
+    //   description: "Manage how often your location is shared.",
+    //   rows: [
+    //     createSettingRow({
+    //       title: "Auto Refresh",
+    //       description: "Automatically update nearby users",
+    //       leftIcon: RefreshCw,
+    //       rightComponent: (
+    //         <Switch checked={autoRefresh} onCheckedChange={setAutoRefresh} />
+    //       ),
+    //     }),
+    //   ],
+    // },
+    // {
+    //   key: "privacy",
+    //   title: "Privacy & Visibility",
+    //   description: "Control who can see you on the map.",
+    //   rows: [
+    //     createSettingRow({
+    //       title: "Location Sharing",
+    //       description: "Currently visible to everyone",
+    //       leftIcon: MapPin,
+    //       rightComponent: (
+    //         <Badge variant="default">
+    //           <Text className="text-xs font-medium">Active</Text>
+    //         </Badge>
+    //       ),
+    //     }),
+    //   ],
+    // },
   ];
 
   const {
@@ -148,30 +153,30 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
   } = useMutation({
     mutationFn: async () => {
       await api.user.updateMapConfiguration({
-        radius: mapStore.parameters.radius,
-        clusters: mapStore.parameters.clusters,
-        showUsernames: mapStore.parameters.showUsernames,
+        radius: draftRadius,
+        clusters: draftClusters,
+        showUsernames: draftShowUsernames,
       });
     },
     onSuccess: () => {
-      mapStore.set("hasInitializedParameters", false);
-      queryClient.invalidateQueries({
-        queryKey: ["current-map-configuration"],
+      mapStore.setNested("settings.radius", draftRadius);
+      mapStore.setNested("settings.clusters", draftClusters);
+      mapStore.setNested("settings.showUsernames", draftShowUsernames);
+      mapStore.set("nearbyUsers", []);
+      toast.success("Map configuration updated", {
+        description: "Your map configuration has been successfully updated.",
       });
     },
   });
 
   const handleMapConfigurationUpdate = () => {
     updateMapConfiguration();
-    toast.success("Map configuration updated", {
-      description: "Your map configuration has been successfully updated.",
-    });
   };
 
   return (
-    <StableSafeAreaView className={cn("flex flex-1", className)}>
+    <StableSafeAreaView className={cn("flex flex-1 bg-card", className)}>
       <ApplicationHeader
-        className="border-b border-border pb-2 bg-transparent"
+        className="border-b border-border pb-2"
         title={t("screens.mapSettings")}
         titleVariant="large"
         reverse
@@ -183,27 +188,9 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
           },
         ]}
       />
-      <StableScrollView>
+      <ScrollView className="bg-background">
         <View className="flex flex-col">
           {/* Header Card */}
-          <View className="px-4 mb-4">
-            <View className={cn("mt-4", primaryCardClass)}>
-              <View className="flex flex-col gap-2 p-4">
-                <View className="flex flex-row items-center justify-between">
-                  <Text variant="h4">Map Configuration</Text>
-                  <Badge variant="outline">
-                    <Text className="text-xs font-medium">
-                      {mapStore.connected ? "Connected" : "Offline"}
-                    </Text>
-                  </Badge>
-                </View>
-                <Text variant="muted">
-                  Customize your map experience and discovery preferences.
-                  Changes apply instantly.
-                </Text>
-              </View>
-            </View>
-          </View>
 
           {/* Settings Sections */}
           {settingsRows.map((section) => (
@@ -228,13 +215,14 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
             </View>
           ))}
         </View>
-      </StableScrollView>
+      </ScrollView>
 
       <View className="py-4 border-t-2 border-border">
         <Button
           size="sm"
           className="mx-6 mb-4 rounded-full"
           onPress={handleMapConfigurationUpdate}
+          disabled={isUpdateMapConfigurationPending}
         >
           <Icon as={Save} size={16} />
           <Text>Update Configuration</Text>

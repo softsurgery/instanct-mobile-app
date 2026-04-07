@@ -22,24 +22,23 @@ export function useLiveGeolocationParameters({}: useLiveGeolocationParameters = 
   } = useCurrentMapConfiguration();
 
   React.useEffect(() => {
-    if (
-      userMapConfiguration &&
-      mapConfiguration &&
-      !mapStore.hasInitializedParameters
-    ) {
-      mapStore.setNested("parameters.radius", userMapConfiguration.radius);
+    if (userMapConfiguration && mapConfiguration) {
+      // Always update global parameters
       mapStore.setNested("parameters.rangeMin", mapConfiguration?.rangeMin);
       mapStore.setNested("parameters.rangeMax", mapConfiguration?.rangeMax);
-      mapStore.setNested("parameters.clusters", userMapConfiguration.clusters);
-      mapStore.setNested(
-        "parameters.showUsernames",
-        userMapConfiguration.showUsernames,
-      );
-      mapStore.set("hasInitializedParameters", true);
+      mapStore.setNested("parameters.radius", userMapConfiguration.radius);
+
+      // Seed user settings from server on first load only
+      if (!mapStore.hasInitializedParameters) {
+        mapStore.setNested("settings.radius", userMapConfiguration.radius);
+        mapStore.setNested("settings.clusters", userMapConfiguration.clusters);
+        mapStore.setNested(
+          "settings.showUsernames",
+          userMapConfiguration.showUsernames,
+        );
+        mapStore.set("hasInitializedParameters", true);
+      }
     }
-    return () => {
-      mapStore.set("hasInitializedParameters", false);
-    };
   }, [userMapConfiguration, mapConfiguration]);
 
   return {

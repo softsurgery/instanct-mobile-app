@@ -152,7 +152,7 @@ export const MapRenderer = ({
         }
         onRegionChange={handleRegionChange}
         showsCompass={false}
-        mapType={mapStore.parameters.mode === "map" ? "standard" : "satellite"}
+        mapType={mapStore.settings.mode === "map" ? "standard" : "satellite"}
         clusteringEnabled={true}
         renderCluster={(cluster) => {
           const { geometry, properties } = cluster;

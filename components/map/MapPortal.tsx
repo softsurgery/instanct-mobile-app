@@ -1,4 +1,3 @@
-import { useMapContext } from "@/contexts/MapContext";
 import { useNotificationContext } from "@/contexts/NotificationsContext";
 import { cn } from "@/lib/utils";
 import { useMapStore } from "@/stores/useMapStore";
@@ -15,6 +14,8 @@ import { MapRenderer } from "./MapRenderer";
 import { MapSessionStarter } from "./MapSessionStarter";
 import { MapStatus } from "./MapDebugging/MapStatus";
 import { MapDebugDialog } from "./MapDebugging/MapDebugDialog";
+import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
+import { Loader } from "../shared/Loader";
 
 interface MapPortalProps {
   className?: string;
@@ -25,7 +26,7 @@ export const MapPortal = ({ className }: MapPortalProps) => {
   const [sessionStarted, setSessionStarted] = React.useState(false);
   const mapStore = useMapStore();
   const { newCount, resetCount } = useNotificationContext();
-  const { restartSocket } = useMapContext();
+  const { restartSocket } = useLiveGeolocation();
 
   const { latitude, longitude } = mapStore?.location?.coords || {
     latitude: 0,
@@ -40,7 +41,7 @@ export const MapPortal = ({ className }: MapPortalProps) => {
           className,
         )}
       >
-        <ActivityIndicator size="large" color="#0000ff" />
+        <Loader size="large" />
       </View>
     );
   }

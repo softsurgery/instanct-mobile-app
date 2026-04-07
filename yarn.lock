@@ -8241,6 +8241,11 @@ react-native-animatable@1.4.0:
   dependencies:
     prop-types "^15.8.1"
 
+react-native-awesome-slider@^2.9.0:
+  version "2.9.0"
+  resolved "https://registry.yarnpkg.com/react-native-awesome-slider/-/react-native-awesome-slider-2.9.0.tgz#7d5013a0e0e15ed84d59b4fa4c26a8b7ab9b2454"
+  integrity sha512-sc5qgX4YtM6IxjtosjgQLdsal120MvU+YWs0F2MdgQWijps22AXLDCUoBnZZ8vxVhVyJ2WnnIPrmtVBvVJjSuQ==
+
 react-native-css-interop@0.2.1:
   version "0.2.1"
   resolved "https://registry.npmjs.org/react-native-css-interop/-/react-native-css-interop-0.2.1.tgz"

@@ -1,7 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Text } from "@/components/ui/text";
 import { hslToHex, THEME } from "@/lib/theme";
-import { useMapStore } from "@/stores/useMapStore";
 import { Slider } from "@miblanchard/react-native-slider";
 import { useColorScheme } from "nativewind";
 import React from "react";
@@ -9,6 +8,7 @@ import { View } from "react-native";
 import * as Haptics from "expo-haptics";
 
 interface RadiusSliderProps {
+  initialValue: number;
   onValueChange: (value: number) => void;
   rangeMaxValue?: number;
   rangeMinValue?: number;
@@ -16,16 +16,14 @@ interface RadiusSliderProps {
 }
 
 export const RadiusSlider = ({
+  initialValue,
   onValueChange,
   rangeMinValue = 0,
   rangeMaxValue = 100,
   step = 50,
 }: RadiusSliderProps) => {
-  const mapStore = useMapStore();
   const { colorScheme } = useColorScheme();
-  const [localRadius, setLocalRadius] = React.useState(
-    mapStore.parameters.radius,
-  );
+  const [localRadius, setLocalRadius] = React.useState(initialValue);
 
   const handleValueChange = (value: number | number[]) => {
     setLocalRadius(Array.isArray(value) ? value[0] : value);

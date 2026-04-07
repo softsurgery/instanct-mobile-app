@@ -28,11 +28,11 @@ export const MapModes = ({ className, setSessionStarted }: MapModesProps) => {
     {
       key: "globe",
       icon: SatelliteDish,
-      color: mapStore.parameters.mode === "map" ? inactive : active,
+      color: mapStore.settings.mode === "map" ? inactive : active,
       onPress: () => {
-        if (mapStore.parameters.mode === "map")
-          mapStore.setNested("parameters.mode", "sattelite");
-        else mapStore.setNested("parameters.mode", "map");
+        if (mapStore.settings.mode === "map")
+          mapStore.setNested("settings.mode", "sattelite");
+        else mapStore.setNested("settings.mode", "map");
       },
     },
     // {

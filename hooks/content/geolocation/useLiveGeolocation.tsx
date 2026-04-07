@@ -23,7 +23,6 @@ export function useLiveGeolocation(
   const apiUrl =
     process.env.EXPO_PUBLIC_API_SOCKET_URL || "http://localhost:8080";
   const { accessToken } = useAuthPersistStore();
-  const [restartCount, setRestartCount] = React.useState(0);
 
   const mapStore = useMapStore();
 
@@ -40,17 +39,24 @@ export function useLiveGeolocation(
 
         mapStore.set("location", pos);
 
-        (socket ?? socketRef.current)?.emit("update_location", {
+        const radius = useMapStore.getState().settings?.radius;
+
+        if (radius == null) {
+          console.warn("⚠️ radius not initialized yet");
+          return;
+        }
+
+        socket?.emit("update_location", {
           latitude: pos.coords.latitude,
           longitude: pos.coords.longitude,
-          radius: mapStore.parameters.radius,
+          radius,
           query: { join: join.join(",") },
         });
       } catch (err) {
         console.warn("⚠️ Failed to fetch location:", err);
       }
     },
-    [mapStore.parameters.radius],
+    [join, mapStore.parameters.radius],
   );
 
   const initializeSocket = React.useCallback(async () => {
@@ -159,7 +165,7 @@ export function useLiveGeolocation(
         mapStore.parameters.updateInterval * 1000,
       );
     }
-  }, [accessToken, apiUrl, updateLocation]);
+  }, []);
 
   React.useEffect(() => {
     if (!enabled) return;
@@ -180,7 +186,7 @@ export function useLiveGeolocation(
   }, [
     enabled,
     initializeSocket,
-    restartCount,
+    mapStore.restartSignal,
     mapStore.hasInitializedParameters,
   ]);
 
@@ -195,13 +201,7 @@ export function useLiveGeolocation(
     listenerSetupDoneRef.current = false;
 
     mapStore.restart();
-
-    refetchMapConfiguration();
-
-    // make sure this becomes true again
-    mapStore.set("hasInitializedParameters", true);
-
-    setRestartCount((c) => c + 1);
+    mapStore.triggerRestart();
   };
 
   return {
