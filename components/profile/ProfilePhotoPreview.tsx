@@ -185,16 +185,6 @@ export const ProfilePhotoPreview = ({
             onPressClassname="opacity-100"
           />
 
-          <View className="absolute top-0 left-0 right-0 z-10 flex-row justify-end p-6">
-            <StablePressable
-              onPress={closePreview}
-              className="rounded-full bg-white/10 px-4 py-2"
-              onPressClassname="bg-white/20"
-            >
-              <Text className="text-sm font-semibold text-white">Close</Text>
-            </StablePressable>
-          </View>
-
           {hasImageSource ? (
             <View className="flex-1 items-center justify-center">
               <GestureDetector gesture={gesture}>
