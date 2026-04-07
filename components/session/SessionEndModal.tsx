@@ -8,19 +8,19 @@ import { useColorScheme } from "nativewind";
 import { THEME } from "@/lib/theme";
 import { StablePressable } from "../shared/StablePressable";
 
-interface EndSessionModalProps {
+interface SessionEndModalProps {
   className?: string;
   trigger?: React.ReactNode;
   loading?: boolean;
   handleEndSession?: () => void;
 }
 
-export const EndSessionModal = ({
+export const SessionEndModal = ({
   className,
   trigger,
   loading,
   handleEndSession,
-}: EndSessionModalProps) => {
+}: SessionEndModalProps) => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const sheetRef = React.useRef<ActionSheetRef>(null);
@@ -30,7 +30,7 @@ export const EndSessionModal = ({
   return (
     <>
       <StablePressable
-        className={cn("flex-row items-center p-1")}
+        className={cn("flex-row items-center p-1", className)}
         onPress={() => sheetRef.current?.show()}
       >
         {trigger || (

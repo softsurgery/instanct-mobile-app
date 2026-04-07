@@ -16,6 +16,7 @@ export interface ResponseSessionDto<T = any> extends DatabaseEntity {
   started?: Date;
   ended?: Date;
   payload?: T;
+  active: boolean;
 }
 
 export interface CreateSessionDto<T = any> {

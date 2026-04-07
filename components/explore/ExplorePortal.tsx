@@ -16,9 +16,9 @@ import { useActiveSessions } from "@/hooks/content/sessions/useActiveSessions";
 import { SessionCountdown } from "../session/SessionCountdown";
 import { SessionStarter } from "../session/SessionStarter";
 import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
-import { EndSessionModal } from "../session/SessionEndDialog";
+import { SessionEndModal } from "../session/SessionEndModal";
 import { api } from "@/api";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ServerErrorResponse } from "@/types";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { Icon } from "../ui/icon";
@@ -31,6 +31,7 @@ interface ExplorePortalProps {
 }
 
 export const ExplorePortal = ({ className }: ExplorePortalProps) => {
+  const queryClient = useQueryClient();
   const usersFilterPath = "/main/explore/users-filter" as any;
   const { colorScheme } = useColorScheme();
   const isDarkColorScheme = colorScheme === "dark";
@@ -82,6 +83,9 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
       mutationFn: async () => api.session.end(mapSession?.id!),
       onSuccess: (data) => {
         toast.success("Session ended successfully!", {});
+        queryClient.invalidateQueries({
+          queryKey: ["sessions"],
+        });
         refetchSessions();
       },
       onError: (error: ServerErrorResponse) => {
@@ -110,7 +114,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
             key: "end-session",
             hidden: !mapSession,
             render: (
-              <EndSessionModal
+              <SessionEndModal
                 handleEndSession={handelSessionEnd}
                 loading={isEndingSessionPending}
                 trigger={
