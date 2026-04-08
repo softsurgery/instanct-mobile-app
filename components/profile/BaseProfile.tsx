@@ -48,11 +48,11 @@ interface InspectBaseProfileProps {
 
 // Tab Components - defined outside to prevent minification issues
 const AboutTab = ({ user }: { user: any }) => (
-  <ScrollView className="flex-1 bg-background p-4">
+  <ScrollView className="flex-1 bg-background">
     <View className="flex flex-col gap-4 pb-8">
       {/* Bio Section */}
       {user?.bio ? (
-        <View className="bg-card border border-border overflow-hidden rounded-lg">
+        <View>
           <View className="p-4">
             <Text variant="h4">About</Text>
           </View>
@@ -67,7 +67,7 @@ const AboutTab = ({ user }: { user: any }) => (
           </View>
         </View>
       ) : (
-        <View className="bg-card border border-border p-4">
+        <View className="p-4">
           <Text className="text-sm text-muted-foreground italic text-center">
             No bio added yet
           </Text>
@@ -122,7 +122,7 @@ const ExperienceTab = ({
   renderSection: (section: ProfileSection) => React.ReactNode;
 }) => (
   <ScrollView className="flex-1 bg-background">
-    <View className="flex flex-col p-4 gap-4">
+    <View className="flex flex-col gap-4">
       {profileSections
         .filter((s) => s.key === "experience" || s.key === "education")
         .map(renderSection)}
@@ -138,7 +138,7 @@ const InterestsTab = ({
   renderSection: (section: ProfileSection) => React.ReactNode;
 }) => (
   <ScrollView className="flex-1 bg-background">
-    <View className="flex flex-col p-4 gap-4">
+    <View className="flex flex-col gap-4">
       {profileSections.filter((s) => s.key === "industries").map(renderSection)}
     </View>
   </ScrollView>
@@ -187,7 +187,7 @@ export const InspectBaseProfile = ({
   const { userIndustries, isUserIndustriesPending, refetchUserIndustries } =
     useUserIndustries({ userId: id, enabled: !!user });
 
-  const { industries, isIndustriesPending } = useIndustries({
+  const { industries, isIndustriesSubTypePending } = useIndustries({
     enabled: !!user,
   });
 
@@ -308,91 +308,85 @@ export const InspectBaseProfile = ({
 
       return (
         <View key={section.key}>
-          <View className={cn("bg-card border border-border rounded-lg")}>
-            <View className="flex flex-row items-center justify-between py-4">
-              <View className="px-4">
-                <Text variant="h4">{section.title}</Text>
-              </View>
+          <View className="flex flex-row items-center justify-between">
+            <View className="p-4">
+              <Text variant="h4">{section.title}</Text>
+            </View>
 
-              <View
-                className={cn(
-                  "flex flex-row gap-1 items-center px-2",
-                  !section.editable && "hidden",
-                )}
-              >
-                {!isBadge && (
-                  <StablePressable
-                    className="p-2"
-                    onPress={() => {
-                      switch (section.key) {
-                        case "experience":
-                          router.push("/main/profile/create-experience");
-                          break;
-                        case "education":
-                          router.push("/main/profile/create-education");
-                          break;
-                      }
-                    }}
-                    onPressClassname="bg-primary/25 rounded-full"
-                  >
-                    <Icon
-                      as={Plus}
-                      size={20}
-                      className="text-muted-foreground"
-                    />
-                  </StablePressable>
-                )}
-
+            <View
+              className={cn(
+                "flex flex-row gap-1 items-center px-2",
+                !section.editable && "hidden",
+              )}
+            >
+              {!isBadge && (
                 <StablePressable
                   className="p-2"
                   onPress={() => {
                     switch (section.key) {
                       case "experience":
-                        router.push("/main/profile/update-experiences");
+                        router.push("/main/profile/create-experience");
                         break;
                       case "education":
-                        router.push("/main/profile/update-educations");
-                        break;
-                      case "industries":
-                        router.push({
-                          pathname: "/main/profile/industries",
-                          params: { userId: id },
-                        });
+                        router.push("/main/profile/create-education");
                         break;
                     }
                   }}
                   onPressClassname="bg-primary/25 rounded-full"
                 >
-                  <Icon as={Pen} size={18} className="text-muted-foreground" />
+                  <Icon as={Plus} size={20} className="text-muted-foreground" />
                 </StablePressable>
-              </View>
-            </View>
-
-            <Separator />
-
-            <View className="p-4">
-              {section.data?.length === 0 ? (
-                <View key={section.key}>
-                  <Text className="text-sm text-muted-foreground italic text-center my-4">
-                    No {section.title} added yet
-                  </Text>
-                </View>
-              ) : isBadge ? (
-                <View className="flex-row flex-wrap gap-2">
-                  {Array.isArray(section.data) &&
-                    section.data.map((item, idx) => (
-                      <View key={idx}>{section.renderItem(item)}</View>
-                    ))}
-                </View>
-              ) : (
-                <View className="flex flex-col gap-4">
-                  {Array.isArray(section.data) &&
-                    section.data.map((item, idx) => (
-                      <View key={idx}>{section.renderItem(item)}</View>
-                    ))}
-                </View>
               )}
+
+              <StablePressable
+                className="p-2"
+                onPress={() => {
+                  switch (section.key) {
+                    case "experience":
+                      router.push("/main/profile/update-experiences");
+                      break;
+                    case "education":
+                      router.push("/main/profile/update-educations");
+                      break;
+                    case "industries":
+                      router.push({
+                        pathname: "/main/profile/industries",
+                        params: { userId: id },
+                      });
+                      break;
+                  }
+                }}
+                onPressClassname="bg-primary/25 rounded-full"
+              >
+                <Icon as={Pen} size={18} className="text-muted-foreground" />
+              </StablePressable>
             </View>
+          </View>
+
+          <Separator />
+
+          <View className="p-4">
+            {section.data?.length === 0 ? (
+              <View key={section.key}>
+                <Text className="text-sm text-muted-foreground italic text-center my-4">
+                  No {section.title} added yet
+                </Text>
+              </View>
+            ) : isBadge ? (
+              <View className="flex-row flex-wrap gap-2">
+                {Array.isArray(section.data) &&
+                  section.data.map((item, idx) => (
+                    <View key={idx}>{section.renderItem(item)}</View>
+                  ))}
+              </View>
+            ) : (
+              <View className="flex flex-col gap-4">
+                {Array.isArray(section.data) &&
+                  section.data.map((item, idx) => (
+                    <View key={idx}>{section.renderItem(item)}</View>
+                  ))}
+              </View>
+            )}
           </View>
         </View>
       );
