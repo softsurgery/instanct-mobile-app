@@ -46,7 +46,10 @@ export const SessionStarterPortal = ({
         sessionStore.reset();
       },
       onError: (error: ServerErrorResponse) => {
-        Alert.alert("Error", JSON.stringify(error.message, null, 2));
+        toast.error("Failed to start session", {
+          description:
+            error.message || "An error occurred while starting the session.",
+        });
       },
     });
 

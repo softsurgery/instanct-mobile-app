@@ -12,7 +12,11 @@ import {
 } from "lucide-react-native";
 import { router } from "expo-router";
 import { Text } from "../ui/text";
-import { SessionType, type ResponseSessionDto } from "@/types/session";
+import {
+  SessionStatus,
+  SessionType,
+  type ResponseSessionDto,
+} from "@/types/session";
 import { IconMessageChatbot } from "@tabler/icons-react-native";
 import { useNotificationContext } from "@/contexts/NotificationsContext";
 import { toDateOnly, toTimeOnly } from "@/lib/date";
@@ -23,6 +27,7 @@ import { StablePressable } from "../shared/StablePressable";
 import Animated from "react-native-reanimated";
 import { SessionStarter } from "./SessionStarter";
 import { useTranslation } from "react-i18next";
+import { Loader } from "../shared/Loader";
 
 interface SessionHistoryPortalProps {
   className?: string;
@@ -36,6 +41,7 @@ export const SessionHistoryPortal = ({
   const {
     sessions,
     fetchNextPage,
+    isSessionsPending,
     refetchSessions,
     hasNextPage,
     isFetchingNextPage,
@@ -77,7 +83,12 @@ export const SessionHistoryPortal = ({
       <StablePressable
         className={cn(
           "p-4 my-1 rounded-lg",
-          item.active && "bg-green-500/25 dark:bg-green-500/50",
+          item.status === SessionStatus.ACTIVE &&
+            "bg-green-500/10 active:bg-green-500/25",
+          item.status === SessionStatus.SCHEDULED &&
+            "bg-primary/10 active:bg-primary/25",
+          item.status === SessionStatus.CANCELLED &&
+            "bg-destructive/10 active:bg-destructive/25",
         )}
         onPress={() =>
           router.push({
@@ -149,7 +160,11 @@ export const SessionHistoryPortal = ({
       ) : (
         applicationHeaderShortcuts
       )}
-      {sessions.length !== 0 ? (
+      {isSessionsPending ? (
+        <View className="flex flex-col flex-1 justify-center items-center">
+          <Loader />
+        </View>
+      ) : sessions.length !== 0 ? (
         <View className="flex-1 bg-transparent mt-2">
           <LegendList
             className="flex-1"
