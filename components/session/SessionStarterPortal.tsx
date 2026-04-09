@@ -38,6 +38,7 @@ export const SessionStarterPortal = ({
       mutationFn: async () => api.session.start(sessionStore.createDto),
       onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: ["active-sessions"] });
+        queryClient.invalidateQueries({ queryKey: ["sessions"] });
         toast.success("Session started successfully!", {
           description: "Your session has been successfully started.",
         });
@@ -73,9 +74,11 @@ export const SessionStarterPortal = ({
   }, [sessionStore.createDto]);
 
   const handleSessionStart = () => {
-    const result = createSessionSchema.safeParse(sessionStore.createDto);
+    const result = createSessionSchema(sessionStore.flags.startNow).safeParse(
+      sessionStore.createDto,
+    );
     if (!result.success) {
-      sessionStore.set("createDtoErrors", zodErrorsToNested(result.error));
+      sessionStore.set("errors", zodErrorsToNested(result.error));
     } else {
       startSession();
     }

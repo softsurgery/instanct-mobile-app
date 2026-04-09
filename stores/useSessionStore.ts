@@ -8,9 +8,11 @@ import { create } from "zustand";
 
 interface SessionData {
   createDto: CreateSessionDto<MapSessionPayload>;
-
+  flags: {
+    startNow: boolean;
+  };
   //errors
-  createDtoErrors: Record<string, any>;
+  errors: Record<string, any>;
 }
 
 export interface SessionStore extends SessionData {
@@ -29,7 +31,10 @@ const initialState: SessionData = {
     plannedEnd: undefined,
   },
 
-  createDtoErrors: {},
+  flags: {
+    startNow: true,
+  },
+  errors: {},
 };
 
 export const useSessionStore = create<SessionStore>((set, get) => ({
