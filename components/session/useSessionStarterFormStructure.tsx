@@ -133,6 +133,7 @@ export const useSessionStarterFormStructure = ({
         store.setNested("errors.payload.objectives", []);
       },
       options: objectives,
+      max: 5,
     },
   };
 

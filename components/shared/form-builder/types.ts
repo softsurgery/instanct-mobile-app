@@ -121,6 +121,7 @@ export interface MultiSelectFieldProps {
   onSelect?: (value: string[]) => void;
   options?: SelectOption[];
   editable?: boolean;
+  max?: number;
 }
 
 export interface RatingFieldProps {

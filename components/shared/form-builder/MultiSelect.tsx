@@ -16,6 +16,7 @@ import { cn } from "~/lib/utils";
 import ActionSheet, { type ActionSheetRef } from "react-native-actions-sheet";
 import { useColorScheme } from "nativewind";
 import { THEME } from "@/lib/theme";
+import { toast } from "sonner-native";
 
 interface MultiSelectProps {
   classNames?: {
@@ -32,6 +33,7 @@ interface MultiSelectProps {
 
   options?: SelectOption[];
   searchable?: boolean;
+  max: number;
 }
 
 export default function MultiSelect({
@@ -47,6 +49,7 @@ export default function MultiSelect({
 
   options = [],
   searchable = false,
+  max = Infinity,
 }: MultiSelectProps) {
   const { colorScheme } = useColorScheme();
   const isDarkColorScheme = colorScheme === "dark";
@@ -72,9 +75,19 @@ export default function MultiSelect({
 
   const handleToggle = async (v: string) => {
     await Haptics.selectionAsync();
-    const next = value.includes(v)
-      ? value.filter((item) => item !== v)
-      : [...value, v];
+
+    let next: string[];
+
+    if (value.includes(v)) {
+      next = value.filter((item) => item !== v);
+    } else {
+      if (value.length >= max) {
+        toast.warning(`You can only select up to ${max} options.`);
+        return;
+      }
+      next = [...value, v];
+    }
+
     onSelect?.(next);
   };
 

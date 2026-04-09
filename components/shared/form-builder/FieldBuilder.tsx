@@ -96,6 +96,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           onSelect={(value) => field?.props?.onSelect?.(value)}
           disabled={field?.props?.other}
           options={field?.props?.options}
+          max={field?.props?.max || Infinity}
         />
       );
     case "date":
