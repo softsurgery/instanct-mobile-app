@@ -7,12 +7,15 @@ import { Icon } from "../ui/icon";
 import { IconBadge } from "../ui/icon-badge";
 import { Text, TextVariantDefaults } from "../ui/text";
 import React from "react";
+import { colorScheme, useColorScheme } from "nativewind";
+import { hslToHex, THEME } from "@/lib/theme";
 
 type Shortcut =
   | {
       key: string;
       icon: LucideIcon;
       onPress: () => void;
+      color?: string;
       badgeText?: string;
       hidden?: boolean;
     }
@@ -33,6 +36,12 @@ export const ApplicationHeader = ({
   shortcuts,
   reverse = false,
 }: ApplicationHeaderProps) => {
+  const { colorScheme } = useColorScheme();
+  const isDarkColorScheme = colorScheme === "dark";
+  const color = hslToHex(
+    isDarkColorScheme ? THEME.dark.foreground : THEME.light.foreground,
+  );
+
   const isRTL = useRTL();
 
   const renderTitle = () => {
@@ -77,9 +86,14 @@ export const ApplicationHeader = ({
                     as={shortcut.icon}
                     size={28}
                     badgeText={shortcut.badgeText}
+                    color={shortcut.color || color}
                   />
                 ) : (
-                  <Icon as={shortcut.icon} size={28} />
+                  <Icon
+                    as={shortcut.icon}
+                    size={28}
+                    color={shortcut.color || color}
+                  />
                 )}
               </StablePressable>
             );
