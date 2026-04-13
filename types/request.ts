@@ -4,16 +4,16 @@ import { DatabaseEntity } from "./utils";
 
 export interface ResponseRequestDto extends DatabaseEntity {
   id: number;
-  senderId: number;
+  sessionId: number;
   session: ResponseSessionDto;
   receivers: ResponseUserDto[];
-  description?: string;
-  place?: string;
+  message?: string;
+  location?: string;
   time?: Date;
 }
 
 export interface CreateRequestDto {
-  receiversIds: string[];
+  receiverIds: string[];
   message?: string;
   location?: string;
   time?: Date;

@@ -10,6 +10,8 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { Separator } from "@/components/ui/separator";
 import { ArrowRight } from "lucide-react-native";
 import { Icon } from "@/components/ui/icon";
+import { SessionIncomingRequests } from "./SessionIncomingRequests";
+import { SessionOutgoingRequests } from "./SessionOutgoingRequests";
 
 interface SessionDetailsContentProps {
   session: ResponseSessionDto<MapSessionPayload>;
@@ -174,19 +176,11 @@ export const SessionDetailsContent = ({
               </ScrollView>
             )}
           </Tab.Screen>
-          <Tab.Screen name="Requests">
-            {() => (
-              <View className="px-2 gap-2 my-4 overflow-hidden">
-                <Text>Participants content goes here</Text>
-              </View>
-            )}
+          <Tab.Screen name="Incoming">
+            {() => <SessionIncomingRequests session={session} />}
           </Tab.Screen>
-          <Tab.Screen name="Bookmarks">
-            {() => (
-              <View className="px-2 gap-2 my-4 overflow-hidden">
-                <Text>Bookmarks content goes here</Text>
-              </View>
-            )}
+          <Tab.Screen name="Outgoing">
+            {() => <SessionOutgoingRequests session={session} />}
           </Tab.Screen>
         </Tab.Navigator>
       </View>

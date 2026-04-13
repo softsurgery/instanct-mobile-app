@@ -54,8 +54,8 @@ export const useCreateNewRequestFormStructure = ({
           <Pressable
             onPress={() => {
               store.setNested("flags.mentionTimeAndPlace", true);
-              store.setNested("createDto.plannedStart", null);
-              store.setNested("createDto.plannedEnd", null);
+              store.setNested("createDto.location", undefined);
+              store.setNested("createDto.time", undefined);
             }}
             className={cn(
               "flex-1 py-3 px-4 rounded-lg items-center justify-center border-2",

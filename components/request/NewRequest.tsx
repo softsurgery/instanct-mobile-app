@@ -34,7 +34,7 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
 
   React.useEffect(() => {
     if (user) {
-      requestStore.setNested("createDto.receiversIds", [id]);
+      requestStore.setNested("createDto.receiverIds", [id]);
     }
     return () => {
       requestStore.reset();
@@ -74,9 +74,9 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
     const result = CreateRequestDtoSchema(
       requestStore.flags.mentionTimeAndPlace,
     ).safeParse(requestStore.createDto);
+
     if (!result.success) {
       requestStore.set("errors", zodErrorsToNested(result.error));
-
       return;
     }
     sendRequest();

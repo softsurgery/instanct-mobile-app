@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const CreateRequestDtoSchema = (mention: boolean) =>
   z.object({
-    receiversIds: z
+    receiverIds: z
       .array(z.string())
       .min(1, "At least one receiver is required"),
 

@@ -18,9 +18,9 @@ export interface RequestStore extends RequestData {
 
 const initialState: RequestData = {
   createDto: {
-    receiversIds: [],
+    receiverIds: [],
     message: "",
-    location: "",
+    location: undefined,
     time: undefined,
   },
   flags: {
