@@ -12,6 +12,7 @@ import { feedback } from "./feedback";
 import { store } from "./store";
 import { referenceTypes } from "./reference-types";
 import { request } from "./request";
+import { bookmark } from "./bookmark";
 
 export const api = {
   auth,
@@ -28,4 +29,5 @@ export const api = {
   upload,
   referenceTypes,
   request,
+  bookmark,
 };

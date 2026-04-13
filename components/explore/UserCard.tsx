@@ -18,6 +18,7 @@ import { ImageBackground } from "expo-image";
 import { StablePressable } from "../shared/StablePressable";
 import { Badge } from "../ui/badge";
 import { useStartConversation } from "@/hooks/content/chat/useStartConversation";
+import { useBookmarkActions } from "@/hooks/content/users/useBookmarkActions";
 import { useServerImages } from "@/hooks/content/useServerImages";
 
 const { width } = Dimensions.get("window");
@@ -28,7 +29,16 @@ interface UserCardProps {
 }
 
 export const UserCard = ({ user, className }: UserCardProps) => {
-  const [isLiked, setIsLiked] = React.useState(false);
+  const {
+    bookmark,
+    isBookmarkPending,
+    saveBookmark,
+    isSavingBookmark,
+    deleteBookmark,
+    isDeletingBookmark,
+  } = useBookmarkActions({ bookmarkId: user.id });
+
+  const isBookmarked = !!bookmark;
 
   const identity = React.useMemo(() => identifyUser(user), [user]);
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
@@ -128,14 +138,23 @@ export const UserCard = ({ user, className }: UserCardProps) => {
           <View className="flex flex-row gap-4 justify-between m-4">
             <Button
               size={"sm"}
-              className="rounded-full h-16 w-16 bg-violet-600 dark:bg-violet-500 active:bg-violet-700 dark:active:bg-violet-600"
-              onPress={() => setIsLiked((v) => !v)}
+              className={cn(
+                `rounded-full h-16 w-16 transition-all duration-200`,
+                isBookmarked
+                  ? "bg-destructive shadow-lg shadow-red-500/40"
+                  : "bg-violet-600 dark:bg-violet-500 active:bg-violet-700 dark:active:bg-violet-600",
+              )}
+              disabled={
+                isBookmarkPending || isSavingBookmark || isDeletingBookmark
+              }
+              onPress={() => (isBookmarked ? deleteBookmark() : saveBookmark())}
             >
               <Icon
                 as={Bookmark}
                 size={32}
-                fill={isLiked ? "#ef4444" : "transparent"}
-                color={isLiked ? "#ef4444" : "white"}
+                className="transition-all duration-200"
+                fill={isBookmarked ? "#fff" : "transparent"}
+                color={"white"}
               />
             </Button>
             <Button
