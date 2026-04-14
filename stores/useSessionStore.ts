@@ -3,11 +3,13 @@ import {
   CreateSessionDto,
   MapSessionPayload,
   SessionType,
+  UpdateSessionDto,
 } from "@/types/session";
 import { create } from "zustand";
 
 interface SessionData {
   createDto: CreateSessionDto<MapSessionPayload>;
+  updateDto: UpdateSessionDto<MapSessionPayload>;
   flags: {
     startNow: boolean;
   };
@@ -30,7 +32,12 @@ const initialState: SessionData = {
     plannedStart: undefined,
     plannedEnd: undefined,
   },
-
+  updateDto: {
+    plannedEnd: undefined,
+    payload: {
+      objectives: [],
+    },
+  },
   flags: {
     startNow: true,
   },

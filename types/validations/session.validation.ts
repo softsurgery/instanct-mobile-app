@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { SessionType } from "../session";
+
 export const createSessionSchema = (now: boolean) => {
   return z
     .object({
@@ -43,3 +44,16 @@ export const createSessionSchema = (now: boolean) => {
       },
     );
 };
+
+export const updateSessionSchema = z.object({
+  plannedEnd: z
+    .date({ message: "Planned end must be a valid date." })
+    .optional(),
+
+  payload: z.object({
+    objectives: z
+      .array(z.string({ message: "Objective must be a string." }))
+      .min(1, { message: "At least one objective must be selected." })
+      .optional(),
+  }),
+});

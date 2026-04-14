@@ -33,6 +33,11 @@ export interface CreateSessionDto<T = any> {
   payload?: T;
 }
 
+export interface UpdateSessionDto<T = any> {
+  plannedEnd?: Date;
+  payload?: T;
+}
+
 export interface MapSessionPayload {
   objectives: string[];
 }

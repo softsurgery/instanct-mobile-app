@@ -4,7 +4,7 @@ import { ResponseUserDto } from "@/types/user-management";
 import { LegendList } from "@legendapp/list";
 import { IconMessageChatbot } from "@tabler/icons-react-native";
 import { router, useFocusEffect } from "expo-router";
-import { ArrowDownNarrowWide, Bell, Play } from "lucide-react-native";
+import { ArrowDownNarrowWide, Bell, CalendarCog } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
@@ -16,25 +16,22 @@ import { useActiveSessions } from "@/hooks/content/sessions/useActiveSessions";
 import { SessionCountdown } from "../session/SessionCountdown";
 import { SessionStarter } from "../session/SessionStarter";
 import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
-import { SessionEndModal } from "../session/SessionEndModal";
-import { api } from "@/api";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ServerErrorResponse } from "@/types";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
-import { Icon } from "../ui/icon";
+import { Loader } from "../shared/Loader";
 import { hslToHex, THEME } from "@/lib/theme";
 import { useColorScheme } from "nativewind";
-import { toast } from "sonner-native";
 
 interface ExplorePortalProps {
   className?: string;
 }
 
 export const ExplorePortal = ({ className }: ExplorePortalProps) => {
-  const queryClient = useQueryClient();
-  const usersFilterPath = "/main/explore/users-filter" as any;
   const { colorScheme } = useColorScheme();
   const isDarkColorScheme = colorScheme === "dark";
+  const color = hslToHex(
+    isDarkColorScheme ? THEME.dark.primary : THEME.light.primary,
+  );
+  const usersFilterPath = "/main/explore/users-filter" as any;
   const { t } = useTranslation("common");
   const { currentUser } = useCurrentUser();
   const { newCount, resetCount } = useNotificationContext();
@@ -78,26 +75,6 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
     }, [refetchSessions]),
   );
 
-  const { mutate: endSession, isPending: isEndingSessionPending } = useMutation(
-    {
-      mutationFn: async () => api.session.end(mapSession?.id!),
-      onSuccess: (data) => {
-        toast.success("Session ended successfully!", {});
-        queryClient.invalidateQueries({
-          queryKey: ["sessions"],
-        });
-        refetchSessions();
-      },
-      onError: (error: ServerErrorResponse) => {
-        toast.error(error.response?.data?.message || "An error occurred", {});
-      },
-    },
-  );
-
-  const handelSessionEnd = () => {
-    endSession();
-  };
-
   return (
     <StableSafeAreaView
       className={cn("flex flex-1 flex-col bg-background", className)}
@@ -113,26 +90,13 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
           {
             key: "end-session",
             hidden: !mapSession,
-            render: (
-              <SessionEndModal
-                handleEndSession={handelSessionEnd}
-                loading={isEndingSessionPending}
-                trigger={
-                  <Icon
-                    as={Play}
-                    size={28}
-                    color={hslToHex(
-                      isDarkColorScheme
-                        ? THEME.dark.destructive
-                        : THEME.light.destructive,
-                    )}
-                  />
-                }
-              />
-            ),
+            icon: CalendarCog,
+            color: hslToHex(color),
+            onPress: () => router.push("/main/sessions/manage"),
           },
           {
             key: "filter",
+            hidden: !mapSession,
             icon: ArrowDownNarrowWide,
             onPress: () => router.push(usersFilterPath),
           },
@@ -150,32 +114,41 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
         ].filter(Boolean)}
       />
       {mapSession ? (
-        <View className="flex-1 bg-transparent mt-2">
-          <LegendList
-            className="flex-1"
-            data={users}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            pagingEnabled
-            recycleItems={true}
-            bounces={false}
-            alwaysBounceVertical={false}
-            alwaysBounceHorizontal={false}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderItem}
-            onScroll={handleScroll}
-            contentContainerStyle={{
-              paddingHorizontal: 0,
-            }}
-          />
-          <View className="mx-4 mb-4 items-center">
-            <View className="flex flex-row justify-between items-center">
-              <Text className="text-lg font-bold">
-                {currentIndex + 1} / {users.length}
-              </Text>
+        users.length === 0 ? (
+          <View className="flex flex-col flex-1 justify-center items-center px-4">
+            <Loader />
+            <Text variant={"large"} className="text-center">
+              Nearby people will be available shortly, if any are around.
+            </Text>
+          </View>
+        ) : (
+          <View className="flex-1 bg-transparent mt-2">
+            <LegendList
+              className="flex-1"
+              data={users}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              pagingEnabled
+              recycleItems={true}
+              bounces={false}
+              alwaysBounceVertical={false}
+              alwaysBounceHorizontal={false}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={renderItem}
+              onScroll={handleScroll}
+              contentContainerStyle={{
+                paddingHorizontal: 0,
+              }}
+            />
+            <View className="mx-4 mb-4 items-center">
+              <View className="flex flex-row justify-between items-center">
+                <Text className="text-lg font-bold">
+                  {currentIndex + 1} / {users.length}
+                </Text>
+              </View>
             </View>
           </View>
-        </View>
+        )
       ) : (
         <SessionStarter className="px-4" />
       )}
