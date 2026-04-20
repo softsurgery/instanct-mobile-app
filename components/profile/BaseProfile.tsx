@@ -15,8 +15,8 @@ import {
 } from "@/types";
 import { format } from "date-fns";
 import { router, useNavigation } from "expo-router";
-import { Pen, Plus, Globe, Linkedin } from "lucide-react-native";
-import { Image, Linking, ScrollView, View } from "react-native";
+import { Pen, Plus } from "lucide-react-native";
+import { Image, ScrollView, View } from "react-native";
 import { SeeMoreText } from "../shared/SeeMoreText";
 import { StablePressable } from "../shared/StablePressable";
 import { Separator } from "../ui/separator";
@@ -30,6 +30,10 @@ import { Loader } from "../shared/Loader";
 import { useDebounce } from "@/hooks/useDebounce";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { ProfilePhotoPreview } from "./ProfilePhotoPreview";
+import { AboutTab } from "./sections/AboutTab";
+import { ExperienceTab } from "./sections/ExperienceTab";
+import { InterestsTab } from "./sections/InterestsTab";
+import { RenderSection } from "./sections/RenderSection";
 
 interface ProfileSection<T = unknown> {
   key: string;
@@ -45,104 +49,6 @@ interface InspectBaseProfileProps {
   id: string;
   coverExtra?: React.ReactNode;
 }
-
-// Tab Components - defined outside to prevent minification issues
-const AboutTab = ({ user }: { user: any }) => (
-  <ScrollView className="flex-1 bg-background">
-    <View className="flex flex-col gap-4 pb-8">
-      {/* Bio Section */}
-      {user?.bio ? (
-        <View>
-          <View className="p-4">
-            <Text variant="h4">About</Text>
-          </View>
-          <Separator />
-          <View className="p-4">
-            <SeeMoreText
-              textClassname="text-sm leading-6 text-foreground"
-              numberOfLines={4}
-            >
-              {user.bio}
-            </SeeMoreText>
-          </View>
-        </View>
-      ) : (
-        <View className="p-4">
-          <Text className="text-sm text-muted-foreground italic text-center">
-            No bio added yet
-          </Text>
-        </View>
-      )}
-
-      {/* Links Section */}
-      {(user?.website || user?.linkedin) && (
-        <View className="flex flex-col gap-2">
-          {user?.website && (
-            <StablePressable
-              className="bg-card border border-border p-4 flex-row items-center gap-3 rounded-lg"
-              onPress={() => {
-                if (user?.website) Linking.openURL(user?.website);
-              }}
-              onPressClassname="bg-muted"
-            >
-              <Icon as={Globe} size={20} className="text-primary" />
-              <Text
-                className="text-sm font-medium text-foreground flex-1"
-                numberOfLines={1}
-              >
-                {user.website}
-              </Text>
-            </StablePressable>
-          )}
-          {user?.linkedin && (
-            <StablePressable
-              className="bg-card border border-border p-4 flex-row items-center gap-3 rounded-lg"
-              onPress={() => {
-                if (user?.linkedin) Linking.openURL(user?.linkedin);
-              }}
-              onPressClassname="bg-muted"
-            >
-              <Icon as={Linkedin} size={20} className="text-primary" />
-              <Text className="text-sm font-medium text-foreground">
-                LinkedIn Profile
-              </Text>
-            </StablePressable>
-          )}
-        </View>
-      )}
-    </View>
-  </ScrollView>
-);
-
-const ExperienceTab = ({
-  profileSections,
-  renderSection,
-}: {
-  profileSections: ProfileSection[];
-  renderSection: (section: ProfileSection) => React.ReactNode;
-}) => (
-  <ScrollView className="flex-1 bg-background">
-    <View className="flex flex-col gap-4">
-      {profileSections
-        .filter((s) => s.key === "experience" || s.key === "education")
-        .map(renderSection)}
-    </View>
-  </ScrollView>
-);
-
-const InterestsTab = ({
-  profileSections,
-  renderSection,
-}: {
-  profileSections: ProfileSection[];
-  renderSection: (section: ProfileSection) => React.ReactNode;
-}) => (
-  <ScrollView className="flex-1 bg-background">
-    <View className="flex flex-col gap-4">
-      {profileSections.filter((s) => s.key === "industries").map(renderSection)}
-    </View>
-  </ScrollView>
-);
 
 export const InspectBaseProfile = ({
   className,
@@ -297,103 +203,6 @@ export const InspectBaseProfile = ({
     ],
   );
 
-  // ---------------------------------------------------------------
-  //  SECTION RENDERER
-  // ---------------------------------------------------------------
-  const isBadgeSection = (key: string) => key === "industries";
-
-  const renderSection = React.useCallback(
-    (section: ProfileSection) => {
-      const isBadge = isBadgeSection(section.key);
-
-      return (
-        <View key={section.key}>
-          <View className="flex flex-row items-center justify-between">
-            <View className="p-4">
-              <Text variant="h4">{section.title}</Text>
-            </View>
-
-            <View
-              className={cn(
-                "flex flex-row gap-1 items-center px-2",
-                !section.editable && "hidden",
-              )}
-            >
-              {!isBadge && (
-                <StablePressable
-                  className="p-2"
-                  onPress={() => {
-                    switch (section.key) {
-                      case "experience":
-                        router.push("/main/profile/create-experience");
-                        break;
-                      case "education":
-                        router.push("/main/profile/create-education");
-                        break;
-                    }
-                  }}
-                  onPressClassname="bg-primary/25 rounded-full"
-                >
-                  <Icon as={Plus} size={20} className="text-muted-foreground" />
-                </StablePressable>
-              )}
-
-              <StablePressable
-                className="p-2"
-                onPress={() => {
-                  switch (section.key) {
-                    case "experience":
-                      router.push("/main/profile/update-experiences");
-                      break;
-                    case "education":
-                      router.push("/main/profile/update-educations");
-                      break;
-                    case "industries":
-                      router.push({
-                        pathname: "/main/profile/industries",
-                        params: { userId: id },
-                      });
-                      break;
-                  }
-                }}
-                onPressClassname="bg-primary/25 rounded-full"
-              >
-                <Icon as={Pen} size={18} className="text-muted-foreground" />
-              </StablePressable>
-            </View>
-          </View>
-
-          <Separator />
-
-          <View className="p-4">
-            {section.data?.length === 0 ? (
-              <View key={section.key}>
-                <Text className="text-sm text-muted-foreground italic text-center my-4">
-                  No {section.title} added yet
-                </Text>
-              </View>
-            ) : isBadge ? (
-              <View className="flex-row flex-wrap gap-2">
-                {Array.isArray(section.data) &&
-                  section.data.map((item, idx) => (
-                    <View key={idx}>{section.renderItem(item)}</View>
-                  ))}
-              </View>
-            ) : (
-              <View className="flex flex-col gap-4">
-                {Array.isArray(section.data) &&
-                  section.data.map((item, idx) => (
-                    <View key={idx}>{section.renderItem(item)}</View>
-                  ))}
-              </View>
-            )}
-          </View>
-        </View>
-      );
-    },
-    [id],
-  );
-
   const Tab = createMaterialTopTabNavigator();
 
   return (
@@ -475,7 +284,7 @@ export const InspectBaseProfile = ({
                 {() => (
                   <ExperienceTab
                     profileSections={profileSections}
-                    renderSection={renderSection}
+                    renderSection={RenderSection}
                   />
                 )}
               </Tab.Screen>
@@ -488,7 +297,7 @@ export const InspectBaseProfile = ({
                 {() => (
                   <InterestsTab
                     profileSections={profileSections}
-                    renderSection={renderSection}
+                    renderSection={RenderSection}
                   />
                 )}
               </Tab.Screen>
