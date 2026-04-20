@@ -25,7 +25,7 @@ import { BaseProfileSkeleton } from "./BaseProfileSkeleton";
 import { Loader } from "../shared/Loader";
 import { useDebounce } from "@/hooks/useDebounce";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { ProfilePhotoPreview } from "./ProfilePhotoPreview";
+import { ProfilePhotoPreviewV2 } from "@/components/shared/ProfilePhotoPreviewV2";
 import { AboutTab } from "./sections/AboutTab";
 import { ExperienceTab } from "./sections/ExperienceTab";
 import { InterestsTab } from "./sections/InterestsTab";
@@ -222,9 +222,9 @@ export const InspectBaseProfile = ({
           </View>
           {/* Header */}
           <View className="flex-row items-center px-5 -mt-12">
-            <ProfilePhotoPreview source={profilePictureSource}>
+            <ProfilePhotoPreviewV2 source={profilePictureSource}>
               <View>{profilePictures[0]}</View>
-            </ProfilePhotoPreview>
+            </ProfilePhotoPreviewV2>
 
             <View className="flex-1 mt-16">
               <View className="flex-row items-center justify-between mx-2">
