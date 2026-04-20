@@ -28,6 +28,7 @@ import Animated from "react-native-reanimated";
 import { SessionStarter } from "./SessionStarter";
 import { useTranslation } from "react-i18next";
 import { Loader } from "../shared/Loader";
+import { SessionStatusLegend } from "./SessionStatusLegend";
 
 interface SessionHistoryPortalProps {
   className?: string;
@@ -50,7 +51,7 @@ export const SessionHistoryPortal = ({
   });
 
   const { animatedHeaderStyle, handleScroll } = useScrollableElement({
-    deltaThreshold: 30,
+    deltaThreshold: 60,
     duration: 250,
   });
 
@@ -156,6 +157,7 @@ export const SessionHistoryPortal = ({
       {sessions.length !== 0 ? (
         <Animated.View style={animatedHeaderStyle}>
           {applicationHeaderShortcuts}
+          <SessionStatusLegend />
         </Animated.View>
       ) : (
         applicationHeaderShortcuts
