@@ -1,5 +1,4 @@
 import React from "react";
-import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { useEducations } from "@/hooks/content/users/useEducations";
@@ -14,12 +13,9 @@ import {
   ResponseRefParamDto,
 } from "@/types";
 import { format } from "date-fns";
-import { router, useNavigation } from "expo-router";
-import { Pen, Plus } from "lucide-react-native";
-import { Image, ScrollView, View } from "react-native";
+import { useNavigation } from "expo-router";
+import { Image, View } from "react-native";
 import { SeeMoreText } from "../shared/SeeMoreText";
-import { StablePressable } from "../shared/StablePressable";
-import { Separator } from "../ui/separator";
 import { Badge } from "../ui/badge";
 import { ProfileStat } from "./ProfileStat";
 import { useUserIndustries } from "@/hooks/content/users/useUserIndustries";
@@ -298,6 +294,7 @@ export const InspectBaseProfile = ({
                   <InterestsTab
                     profileSections={profileSections}
                     renderSection={RenderSection}
+                    userId={id}
                   />
                 )}
               </Tab.Screen>
