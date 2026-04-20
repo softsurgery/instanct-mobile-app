@@ -134,11 +134,9 @@ export const DatePicker = ({
         break;
       case "month":
         newMonth = value;
-        newDay = "1";
         break;
       case "year":
         newYear = value;
-        newDay = "1";
         break;
     }
 
@@ -198,19 +196,19 @@ export const DatePicker = ({
               options={days}
               value={day}
               onChange={(opt) => handleDateChange("day", opt.value)}
-              className="flex-1 h-12 border bg-card rounded-lg"
+              className="flex-1 h-12 bg-card rounded-lg"
             />
             <StableScrollable
               options={MONTHS}
               value={month}
               onChange={(opt) => handleDateChange("month", opt.value)}
-              className="flex-1 h-12 border bg-card rounded-lg"
+              className="flex-1 h-12 bg-card rounded-lg"
             />
             <StableScrollable
               options={years}
               value={year}
               onChange={(opt) => handleDateChange("year", opt.value)}
-              className="flex-1 h-12 border bg-card rounded-lg"
+              className="flex-1 h-12 bg-card rounded-lg"
             />
           </View>
           <Separator className="my-2" />

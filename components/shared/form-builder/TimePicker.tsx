@@ -199,19 +199,19 @@ export const TimePicker = ({
               options={HOURS}
               value={hour}
               onChange={(opt) => handleTimeChange("hour", opt.value)}
-              className="flex-1 h-12 border bg-card rounded-lg"
+              className="flex-1 h-12 bg-card rounded-lg"
             />
             <StableScrollable
               options={MINUTES}
               value={minute}
               onChange={(opt) => handleTimeChange("minute", opt.value)}
-              className="flex-1 h-12 border bg-card rounded-lg"
+              className="flex-1 h-12 bg-card rounded-lg"
             />
             <StableScrollable
               options={PERIODS}
               value={period}
               onChange={(opt) => handleTimeChange("period", opt.value)}
-              className="flex-1 h-12 border bg-card rounded-lg"
+              className="flex-1 h-12 bg-card rounded-lg"
             />
           </View>
           <Separator className="my-2" />
