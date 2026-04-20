@@ -61,6 +61,7 @@ export const SessionManagePortal = ({
           queryKey: ["sessions"],
         });
         refetchSessions();
+        router.replace(`/main/(tabs)`);
       },
       onError: (error: ServerErrorResponse) => {
         toast.error(error.response?.data?.message || "An error occurred", {});
