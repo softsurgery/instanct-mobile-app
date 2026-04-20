@@ -15,6 +15,7 @@ import { DatePicker } from "./DatePicker2";
 import { TimePicker } from "./TimePicker";
 import { ChoicePicker } from "../ChoicePicker";
 import MultiSelect from "./MultiSelect";
+import MapPinField from "./MapPinField";
 
 interface FieldBuilderProps {
   field?: Field<any>;
@@ -246,6 +247,19 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           value={field?.props?.value}
           onSelect={field?.props?.onSelectChange}
           disabled={field?.props?.disabled}
+        />
+      );
+    case "map-pin":
+      return (
+        <MapPinField
+          {...field?.props}
+          className={cn(field?.className, field?.error && "border-red-500")}
+          placeholder={field?.placeholder}
+          latitude={field?.props?.latitude}
+          longitude={field?.props?.longitude}
+          locationName={field?.props?.locationName}
+          onLocationChange={field?.props?.onLocationChange}
+          editable={field?.props?.editable}
         />
       );
     case "custom":
