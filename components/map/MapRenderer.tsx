@@ -16,6 +16,7 @@ import { UsersMarker } from "./UsersMarker";
 import { UsersModalContent } from "./UsersModalContent";
 import { AndroidDarkMapStyle } from "./utils/AndroidDarkMapStyle";
 import { useLiveGeolocationParameters } from "@/hooks/content/geolocation/useLiveGeolocationParamters";
+import { MapModes } from "./MapModes";
 
 interface MapRendererProps {
   className?: string;
@@ -81,7 +82,7 @@ export const MapRenderer = ({
           latitudeDelta: 0.0002,
           longitudeDelta: 0.0002,
         },
-        500,
+        1000,
       );
     }
 
@@ -89,6 +90,21 @@ export const MapRenderer = ({
     const user = mapStore.users.find((u) => u.id === userId);
     if (nearbyUser && user) setSelectedUser({ ...nearbyUser, user });
     setModalVisible(true);
+  };
+
+  const handleMoveToCurrentLocation = () => {
+    if (mapRef.current) {
+      //@ts-ignore
+      mapRef.current.animateToRegion(
+        {
+          latitude: latitude,
+          longitude: longitude,
+          latitudeDelta: 0.0002,
+          longitudeDelta: 0.0002,
+        },
+        1000,
+      );
+    }
   };
 
   const handleClusterPress = (nearbyUser: NearbyUser[] | null) => {
@@ -119,7 +135,7 @@ export const MapRenderer = ({
   const handleCloseModal = () => {
     if (prevRegion && mapRef.current && clusterUsers == null) {
       // @ts-ignore
-      mapRef.current?.animateToRegion(prevRegion, 500);
+      mapRef.current?.animateToRegion(prevRegion, 1000);
     }
     setModalVisible(false);
     setSelectedUser(null);
@@ -243,6 +259,8 @@ export const MapRenderer = ({
           }
         />
       </View>
+      {/* Navigation Mode */}
+      <MapModes moveToCurrentLocation={handleMoveToCurrentLocation} />
     </View>
   );
 };

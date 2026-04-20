@@ -6,14 +6,12 @@ import { router } from "expo-router";
 import { Bell, RefreshCcw, Settings } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, View } from "react-native";
+import { View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { MapModes } from "./MapModes";
 import { MapRenderer } from "./MapRenderer";
-import { MapSessionStarter } from "./MapSessionStarter";
 import { MapStatus } from "./MapDebugging/MapStatus";
-import { MapDebugDialog } from "./MapDebugging/MapDebugDialog";
 import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
 import { Loader } from "../shared/Loader";
 
@@ -23,7 +21,6 @@ interface MapPortalProps {
 
 export const MapPortal = ({ className }: MapPortalProps) => {
   const { t } = useTranslation("common");
-  const [sessionStarted, setSessionStarted] = React.useState(false);
   const mapStore = useMapStore();
   const { newCount, resetCount } = useNotificationContext();
   const { restartSocket } = useLiveGeolocation();
@@ -92,13 +89,11 @@ export const MapPortal = ({ className }: MapPortalProps) => {
           ]}
         />
         <MapStatus />
-        <MapDebugDialog className="m-4" />
+        {/* <MapDebugDialog className="m-4" /> */}
       </StableSafeAreaView>
-      {/* Navigation Mode */}
-      <MapModes setSessionStarted={setSessionStarted} />
-      {!sessionStarted && (
+      {/* {!sessionStarted && (
         <MapSessionStarter onStart={() => setSessionStarted(true)} />
-      )}
+      )} */}
     </View>
   );
 };

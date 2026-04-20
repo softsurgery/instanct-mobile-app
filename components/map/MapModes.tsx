@@ -2,17 +2,20 @@ import { cn } from "@/lib/utils";
 import { View } from "react-native";
 import { Icon } from "../ui/icon";
 import * as Haptics from "expo-haptics";
-import { Eye, SatelliteDish } from "lucide-react-native";
+import { Crosshair, Eye, SatelliteDish } from "lucide-react-native";
 import { useMapStore } from "@/stores/useMapStore";
 import { THEME } from "@/lib/theme";
 import { useColorScheme } from "nativewind";
 
 interface MapModesProps {
   className?: string;
-  setSessionStarted?: (value: boolean) => void;
+  moveToCurrentLocation?: () => void;
 }
 
-export const MapModes = ({ className, setSessionStarted }: MapModesProps) => {
+export const MapModes = ({
+  className,
+  moveToCurrentLocation,
+}: MapModesProps) => {
   const { colorScheme } = useColorScheme();
   const active =
     colorScheme === "dark" ? THEME.dark.primary : THEME.light.primary;
@@ -21,11 +24,6 @@ export const MapModes = ({ className, setSessionStarted }: MapModesProps) => {
   const mapStore = useMapStore();
   const modes = [
     {
-      key: "session",
-      icon: Eye,
-      onPress: () => setSessionStarted?.(false),
-    },
-    {
       key: "globe",
       icon: SatelliteDish,
       color: mapStore.settings.mode === "map" ? inactive : active,
@@ -33,6 +31,13 @@ export const MapModes = ({ className, setSessionStarted }: MapModesProps) => {
         if (mapStore.settings.mode === "map")
           mapStore.setNested("settings.mode", "sattelite");
         else mapStore.setNested("settings.mode", "map");
+      },
+    },
+    {
+      key: "move-to-current",
+      icon: Crosshair,
+      onPress: () => {
+        moveToCurrentLocation?.();
       },
     },
     // {
