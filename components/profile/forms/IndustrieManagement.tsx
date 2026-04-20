@@ -3,7 +3,6 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { View } from "react-native";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api";
-import { SelectBox } from "@/components/shared/SelectBox";
 import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
 import { useUserIndustries } from "@/hooks/content/users/useUserIndustries";
 import { cn } from "@/lib/utils";
@@ -16,6 +15,13 @@ import * as Haptics from "expo-haptics";
 import { Button } from "@/components/ui/button";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 import { toast } from "sonner-native";
+import { FormBuilder } from "@/components/shared/form-builder/FormBuilder";
+import {
+  FieldVariant,
+  FormStructure,
+  MultiSelectFieldProps,
+} from "@/components/shared/form-builder/types";
+import { StableKeyboardAwareScrollView } from "@/components/shared/StableKeyboardAwareScrollView";
 
 interface IndustriesManagementProps {
   className?: string;
@@ -28,7 +34,7 @@ export const IndustriesManagement = ({
   const router = useRouter();
   const { userId } = useLocalSearchParams<{ userId: string }>();
   const queryClient = useQueryClient();
-  const { industries, isIndustriesPending } = useIndustries();
+  const { industries, isIndustriesSubTypePending } = useIndustries();
   const { userIndustries, isUserIndustriesPending } = useUserIndustries({
     userId,
     enabled: !!userId,
@@ -44,21 +50,16 @@ export const IndustriesManagement = ({
     }
   }, [userIndustries]);
 
-  const handleSelectIndustry = (id: number | string) => {
-    setSelectedIndustries((prev) => [...prev, Number(id)]);
-  };
-
-  const handleRemoveIndustry = (id: number | string) => {
-    setSelectedIndustries((prev) => prev.filter((i) => i !== Number(id)));
-  };
-
   const { mutate: updateIndustries, isPending: isMutationPending } =
     useMutation({
       mutationFn: async (industryIds: number[]) =>
         api.user.updateIndustries(userId, industryIds),
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: ["userIndustries", userId],
+          queryKey: ["user", userId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["user-industries", userId],
         });
         toast.success("Industries updated successfully", {
           description: "Your industries have been successfully updated.",
@@ -81,19 +82,45 @@ export const IndustriesManagement = ({
   };
 
   const isPending =
-    isIndustriesPending || isUserIndustriesPending || isMutationPending;
+    isIndustriesSubTypePending || isUserIndustriesPending || isMutationPending;
 
   const options = React.useMemo(
     () =>
       industries.map((industry) => ({
         label: industry.label,
-        value: industry.id,
+        value: industry.id.toString(),
       })),
     [industries],
   );
 
+  const strurcture: FormStructure = {
+    title: "Industries",
+    fieldsets: [
+      {
+        rows: [
+          {
+            id: 1,
+            fields: [
+              {
+                id: "industries",
+                variant: FieldVariant.MULTISELECT,
+                label: "Industries",
+                props: {
+                  value: selectedIndustries.map(String),
+                  onSelect: (ids) => setSelectedIndustries(ids.map(Number)),
+                  options: options,
+                  max: 5,
+                } satisfies MultiSelectFieldProps,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+
   return (
-    <StableSafeAreaView className={cn("flex-1", className)}>
+    <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
         className="border-b border-border pb-2 bg-transparent"
         title="Industries"
@@ -115,14 +142,9 @@ export const IndustriesManagement = ({
             professionals and opportunities.
           </Text>
         </View>
-        <SelectBox
-          params={options}
-          selected={selectedIndustries}
-          isPending={isPending}
-          onSelectParam={handleSelectIndustry}
-          onRemoveParam={handleRemoveIndustry}
-          className="flex-1"
-        />
+        <StableKeyboardAwareScrollView className="flex-1 bg-background">
+          <FormBuilder structure={strurcture} className="mt-4 px-2" />
+        </StableKeyboardAwareScrollView>
       </View>
       {!isKeyboardVisible && (
         <View className="py-6 border-t border-border">
