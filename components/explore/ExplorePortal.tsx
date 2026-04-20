@@ -86,6 +86,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
             {mapSession && <SessionCountdown session={mapSession} />}
           </View>
         }
+        className={cn(mapSession ? "items-start" : "")}
         shortcuts={[
           {
             key: "end-session",

@@ -60,7 +60,7 @@ export const ApplicationHeader = ({
   return (
     <View
       className={cn(
-        "flex flex-row justify-between items-start gap-2 px-2",
+        "flex flex-row justify-between items-center gap-2 px-2",
         isRTL || reverse ? "flex-row-reverse" : "flex-row",
         className,
       )}
