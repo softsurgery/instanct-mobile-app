@@ -75,10 +75,11 @@ export default function RootLayout() {
                   }}
                 />
                 <Toaster
+                  duration={1000}
                   style={{
                     backgroundColor: isDarkColorScheme
-                      ? THEME.dark.background
-                      : THEME.light.background,
+                      ? THEME.dark.card
+                      : THEME.light.card,
                   }}
                 />
                 <PortalHost />
