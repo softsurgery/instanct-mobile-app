@@ -3,8 +3,8 @@ import {
   Field,
   FieldVariant,
   FormStructure,
+  MapPinFieldProps,
   TextareaFieldProps,
-  TextFieldProps,
   TimeFieldProps,
 } from "@/components/shared/form-builder/types";
 import { Text } from "@/components/ui/text";
@@ -120,19 +120,26 @@ export const useCreateNewRequestFormStructure = ({
     },
   };
 
-  const locationField: Field<TextFieldProps> = {
+  const locationField: Field<MapPinFieldProps> = {
     id: "location",
     label: "Location",
-    variant: FieldVariant.TEXT,
+    variant: FieldVariant.MAPPIN,
     required: true,
     placeholder: "Select a location",
     description: "Select a location for your request",
     hidden: !store.flags.mentionTimeAndPlace,
     error: store.errors?.location?.[0] || "",
     props: {
-      value: store.createDto?.location,
-      onChangeText: (value) => {
-        store.setNested("createDto.location", value);
+      longitude: store.flags.location.longitude,
+      latitude: store.flags.location.latitude,
+      locationName: store.createDto?.location,
+      editable: true,
+      onLocationChange: (value) => {
+        store.setNested("flags.location", {
+          latitude: value.latitude,
+          longitude: value.longitude,
+        });
+        store.setNested("createDto.location", value.name);
         store.setNested("errors.location", []);
       },
     },

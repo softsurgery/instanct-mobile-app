@@ -4,7 +4,13 @@ import { CreateRequestDto } from "~/types";
 
 interface RequestData {
   createDto: CreateRequestDto;
+
   flags: {
+    initialLocationSet: boolean;
+    location: {
+      latitude: number;
+      longitude: number;
+    };
     mentionTimeAndPlace: boolean;
   };
   errors: Record<string, string[]>;
@@ -24,6 +30,11 @@ const initialState: RequestData = {
     time: undefined,
   },
   flags: {
+    initialLocationSet: false,
+    location: {
+      latitude: 0,
+      longitude: 0,
+    },
     mentionTimeAndPlace: false,
   },
   errors: {},

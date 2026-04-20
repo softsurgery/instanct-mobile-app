@@ -21,6 +21,7 @@ import { toast } from "sonner-native";
 import { ServerErrorResponse } from "@/types";
 import { CreateRequestDtoSchema } from "@/types/validations/request.validation";
 import { zodErrorsToNested } from "@/lib/object";
+import { useMapStore } from "@/stores/useMapStore";
 
 interface NewRequestProps {
   className?: string;
@@ -31,6 +32,19 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
   const isKeyboardVisible = useKeyboardVisible();
   const requestStore = useRequestStore();
   const { user } = useIdentifiedUser({ id });
+  const mapStore = useMapStore();
+
+  const { latitude, longitude } = mapStore?.location?.coords || {
+    latitude: 0,
+    longitude: 0,
+  };
+
+  React.useEffect(() => {
+    if (latitude && longitude && !requestStore.flags.initialLocationSet) {
+      requestStore.setNested("flags.location", { latitude, longitude });
+      requestStore.setNested("flags.initialLocationSet", true);
+    }
+  }, [latitude, longitude]);
 
   React.useEffect(() => {
     if (user) {

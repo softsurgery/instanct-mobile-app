@@ -9,7 +9,6 @@ import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
-import { MapModes } from "./MapModes";
 import { MapRenderer } from "./MapRenderer";
 import { MapStatus } from "./MapDebugging/MapStatus";
 import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
