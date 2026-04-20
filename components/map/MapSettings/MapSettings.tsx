@@ -166,6 +166,7 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
       toast.success("Map configuration updated", {
         description: "Your map configuration has been successfully updated.",
       });
+      router.push("/main/(tabs)/map");
     },
   });
 
