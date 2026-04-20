@@ -76,7 +76,7 @@ export const SessionDetailsContent = ({
 
           {/* Arrow */}
           {end && (
-            <View className="flex-[3] flex-row  items-center justify-center pb-0.5">
+            <View className="flex-1 flex-row items-center justify-center pb-0.5">
               <Icon as={ArrowRight} size={20} />
             </View>
           )}

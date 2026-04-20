@@ -4,12 +4,18 @@ import { api } from "~/api";
 
 interface useInfiniteIncomingSessionRequestsProps {
   sessionId?: number;
+  join: string[];
   enabled?: boolean;
 }
 
 export const useInfiniteIncomingSessionRequests = (
-  { sessionId, enabled = true }: useInfiniteIncomingSessionRequestsProps = {
+  {
+    sessionId,
+    join = [],
+    enabled = true,
+  }: useInfiniteIncomingSessionRequestsProps = {
     sessionId: undefined,
+    join: [],
     enabled: true,
   },
 ) => {
@@ -32,6 +38,7 @@ export const useInfiniteIncomingSessionRequests = (
       };
       return api.request.findAllIncomingPaginated(sessionId!, {
         ...queryParams,
+        join: join.join(","),
       });
     },
     getNextPageParam: (lastPage) =>

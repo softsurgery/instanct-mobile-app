@@ -4,12 +4,14 @@ import { api } from "~/api";
 
 interface useInfiniteSessionRequestsProps {
   sessionId?: number;
+  join?: string[];
   enabled?: boolean;
 }
 
 export const useInfiniteSessionRequests = (
-  { sessionId, enabled = true }: useInfiniteSessionRequestsProps = {
+  { sessionId, join = [], enabled = true }: useInfiniteSessionRequestsProps = {
     sessionId: undefined,
+    join: [],
     enabled: true,
   },
 ) => {
@@ -33,6 +35,7 @@ export const useInfiniteSessionRequests = (
       return api.request.findAllPaginated({
         ...queryParams,
         filter: `sessionId||$eq||${sessionId}`,
+        join: join.join(","),
       });
     },
     getNextPageParam: (lastPage) =>
