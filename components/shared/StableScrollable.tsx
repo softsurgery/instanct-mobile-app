@@ -257,11 +257,11 @@ export const StableScrollable = <T extends string = string>({
               maxScroll,
             );
             isSnapping.value = true;
+            const idx = Math.round(target / ITEM_HEIGHT);
+            runOnJS(emitChange)(idx);
             scrollY.value = withSpring(target, SNAP_SPRING, (finished) => {
               if (finished) {
                 isSnapping.value = false;
-                const idx = Math.round(target / ITEM_HEIGHT);
-                runOnJS(emitChange)(idx);
               }
             });
             return;
@@ -279,14 +279,14 @@ export const StableScrollable = <T extends string = string>({
               if (finished !== false) {
                 const target = snapPoint(scrollY.value, maxScroll);
                 isSnapping.value = true;
+                const idx = Math.round(target / ITEM_HEIGHT);
+                runOnJS(emitChange)(idx);
                 scrollY.value = withSpring(
                   target,
                   SNAP_SPRING,
                   (snapFinished) => {
                     if (snapFinished) {
                       isSnapping.value = false;
-                      const idx = Math.round(target / ITEM_HEIGHT);
-                      runOnJS(emitChange)(idx);
                     }
                   },
                 );
@@ -315,10 +315,7 @@ export const StableScrollable = <T extends string = string>({
 
   return (
     <View
-      className={cn(
-        "items-center justify-center overflow-hidden",
-        className,
-      )}
+      className={cn("items-center justify-center overflow-hidden", className)}
       style={styles.container}
     >
       <MaskedView
