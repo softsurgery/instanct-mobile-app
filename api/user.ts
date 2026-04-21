@@ -2,6 +2,7 @@ import {
   QueryParams,
   ResponseConfigurationNamespaceDto,
   ResponseUserDto,
+  UpdateUserCoverDto,
   UpdateUserDto,
   UpdateUserMapConfigurationDto,
 } from "@/types";
@@ -26,6 +27,13 @@ const updateCurrent = async (
   updateUserDto: UpdateUserDto,
 ): Promise<ResponseUserDto> => {
   const response = await axios.put(`/current-user`, updateUserDto);
+  return response.data;
+};
+
+const updateCover = async (
+  updateUserCoverDto: UpdateUserCoverDto,
+): Promise<ResponseUserDto> => {
+  const response = await axios.post(`/current-user/cover`, updateUserCoverDto);
   return response.data;
 };
 
@@ -79,6 +87,7 @@ export const user = {
   findById,
   updateCurrent,
   updateIndustries,
+  updateCover,
   getIndustries,
   getCurrentMapConfiguration,
   updateMapConfiguration,

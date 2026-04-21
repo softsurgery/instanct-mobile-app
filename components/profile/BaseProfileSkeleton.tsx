@@ -36,7 +36,6 @@ export const BaseProfileSkeleton = ({
         {/* Sections (Experience, Education etc) */}
         <View className="flex flex-col gap-4 mt-6">
           <Skeleton className="w-full h-40 rounded-none bg-primary/25" />
-          <Skeleton className="w-full h-40 rounded-none bg-primary/25" />
         </View>
       </View>
     </StableSafeAreaView>

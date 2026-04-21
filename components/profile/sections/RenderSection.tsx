@@ -6,7 +6,15 @@ import { cn } from "@/lib/utils";
 import { router } from "expo-router";
 import { Pen, Plus } from "lucide-react-native";
 import { View } from "react-native";
-import { ProfileSection } from "./profile-section";
+
+export interface ProfileSection<T = unknown> {
+  key: string;
+  title: string;
+  data: T[];
+  editable: boolean;
+  userId?: string;
+  renderItem: (item: any) => React.ReactNode;
+}
 
 export const RenderSection = (section: ProfileSection) => {
   const isBadge = section.key === "industries";

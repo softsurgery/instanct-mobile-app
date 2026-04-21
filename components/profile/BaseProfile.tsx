@@ -11,10 +11,13 @@ import {
   ResponseEducationDto,
   ResponseExperienceDto,
   ResponseRefParamDto,
+  ServerErrorResponse,
+  UpdateUserCoverDto,
+  Upload,
 } from "@/types";
 import { format } from "date-fns";
-import { useNavigation } from "expo-router";
-import { Image, View } from "react-native";
+import { router, useNavigation } from "expo-router";
+import { Image, Pressable, View } from "react-native";
 import { SeeMoreText } from "../shared/SeeMoreText";
 import { Badge } from "../ui/badge";
 import { ProfileStat } from "./ProfileStat";
@@ -30,6 +33,10 @@ import { ExperienceTab } from "./sections/ExperienceTab";
 import { InterestsTab } from "./sections/InterestsTab";
 import { RenderSection } from "./sections/RenderSection";
 import { ProfilePhotoPreview } from "../shared/ProfilePhotoPreview";
+import { useUploadMutation } from "@/hooks/useUploadMutation";
+import { toast } from "sonner-native";
+import { api } from "@/api";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface ProfileSection<T = unknown> {
   key: string;
@@ -51,6 +58,7 @@ export const InspectBaseProfile = ({
   id,
   coverExtra,
 }: InspectBaseProfileProps) => {
+  const queryClient = useQueryClient();
   const navigation = useNavigation();
 
   const storeRef = React.useRef(createClientStore());
@@ -96,16 +104,65 @@ export const InspectBaseProfile = ({
   const identity = React.useMemo(() => identifyUser(user), [user]);
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
 
+  //profile picture side-effect
   const { uploads: profileUploads, jsxArray: profilePictures } =
     useServerImages({
       ids: [user?.pictureId],
-      fallbacks: [fallback],
+      fallbacks: [fallback, ""],
       wrapperClassName:
         "border border-border bg-background rounded-full shadow-md",
       size: { width: 100, height: 100 },
-      enabled: !!user,
+      enabled: !!user && !!user.pictureId,
     });
   const profilePictureSource = profileUploads?.[0];
+
+  // cover picture side-effect
+  const { uploads: coverUploads } = useServerImages({
+    ids: [user?.coverId],
+    fallbacks: [""],
+    wrapperClassName: "",
+    size: { width: 100, height: 100 },
+    enabled: !!user && !!user.coverId,
+  });
+  const coverSource = coverUploads?.[0];
+
+  const { uploadFiles: uploadCover, isUploadPending: isCoverUploadPending } =
+    useUploadMutation({
+      onSuccess: (response: Upload[]) => {
+        userStore.setNested("updateCoverDto.coverId", response?.[0]?.id);
+      },
+      onError: (error: ServerErrorResponse) => {
+        toast.error(
+          error.response?.data?.message || "Failed to upload image",
+          {},
+        );
+      },
+    });
+
+  const { mutate: updateUserCover, isPending: isUpdateCoverPending } =
+    useMutation({
+      mutationFn: (coverDto: UpdateUserCoverDto) =>
+        api.user.updateCover(coverDto),
+      onSuccess: () => {
+        router.back();
+        toast.success("Cover updated successfully", {
+          description: "Your cover has been successfully updated.",
+        });
+        userStore.reset();
+        queryClient.invalidateQueries({ queryKey: ["user", currentUser?.id] });
+        queryClient.invalidateQueries({ queryKey: ["current-user"] });
+        queryClient.invalidateQueries({
+          queryKey: ["server-image", currentUser?.pictureId],
+        });
+        refetchCurrentUser();
+      },
+      onError: (error: ServerErrorResponse) => {
+        toast.error(
+          error.response?.data?.message || "Failed to update cover",
+          {},
+        );
+      },
+    });
 
   React.useEffect(() => {
     return () => {
@@ -118,6 +175,7 @@ export const InspectBaseProfile = ({
     setIsRefreshing(true);
     await Promise.allSettled([
       refetchUser(),
+      refetchCurrentUser(),
       refetchExperiences(),
       refetchEducations(),
       refetchUserIndustries(),
@@ -130,6 +188,7 @@ export const InspectBaseProfile = ({
     isUserPending ||
     isExperiencesPending ||
     isEducationsPending ||
+    isIndustriesSubTypePending ||
     isUserIndustriesPending;
 
   // ---------------------------------------------------------------
@@ -212,14 +271,21 @@ export const InspectBaseProfile = ({
       ) : (
         <>
           {/* Cover */}
-          <View className="relative w-full h-48 bg-card">
-            {coverExtra}
+          <Pressable
+            className="active:opacity-70 relative rounded-full z-99 w-full h-48"
+            onPress={() => {}}
+          >
             <Image
-              source={require("@/assets/images/partial-react-logo.png")}
+              source={
+                coverSource
+                  ? { uri: coverSource }
+                  : require("@/assets/images/partial-react-logo.png")
+              }
               className="w-full h-full"
               resizeMode="cover"
             />
-          </View>
+            {coverExtra}
+          </Pressable>
           {/* Header */}
           <View className="flex-row items-center px-5 -mt-12">
             <ProfilePhotoPreview source={profilePictureSource}>

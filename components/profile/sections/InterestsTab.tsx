@@ -1,5 +1,5 @@
 import { ScrollView, View } from "react-native";
-import { ProfileSection } from "./profile-section";
+import { ProfileSection } from "./RenderSection";
 
 export const InterestsTab = ({
   profileSections,
@@ -12,7 +12,9 @@ export const InterestsTab = ({
 }) => (
   <ScrollView className="flex-1 bg-background">
     <View className="flex flex-col gap-4">
-      {profileSections.filter((s) => s.key === "industries").map((section) => renderSection({ ...section, userId }))}
+      {profileSections
+        .filter((s) => s.key === "industries")
+        .map((section) => renderSection({ ...section, userId }))}
     </View>
   </ScrollView>
 );

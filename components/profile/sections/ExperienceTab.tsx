@@ -1,5 +1,5 @@
 import { ScrollView, View } from "react-native";
-import { ProfileSection } from "./profile-section";
+import { ProfileSection } from "./RenderSection";
 
 export const ExperienceTab = ({
   profileSections,
