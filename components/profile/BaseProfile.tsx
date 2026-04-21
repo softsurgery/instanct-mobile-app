@@ -16,7 +16,7 @@ import {
   Upload,
 } from "@/types";
 import { format } from "date-fns";
-import { router, useNavigation } from "expo-router";
+import { useNavigation } from "expo-router";
 import { Image, Pressable, View } from "react-native";
 import { SeeMoreText } from "../shared/SeeMoreText";
 import { Badge } from "../ui/badge";
@@ -37,6 +37,7 @@ import { useUploadMutation } from "@/hooks/useUploadMutation";
 import { toast } from "sonner-native";
 import { api } from "@/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import * as ImagePicker from "expo-image-picker";
 
 interface ProfileSection<T = unknown> {
   key: string;
@@ -129,7 +130,10 @@ export const InspectBaseProfile = ({
   const { uploadFiles: uploadCover, isUploadPending: isCoverUploadPending } =
     useUploadMutation({
       onSuccess: (response: Upload[]) => {
-        userStore.setNested("updateCoverDto.coverId", response?.[0]?.id);
+        const coverId = response?.[0]?.id;
+        if (coverId) {
+          updateUserCover({ coverId: coverId });
+        }
       },
       onError: (error: ServerErrorResponse) => {
         toast.error(
@@ -144,7 +148,6 @@ export const InspectBaseProfile = ({
       mutationFn: (coverDto: UpdateUserCoverDto) =>
         api.user.updateCover(coverDto),
       onSuccess: () => {
-        router.back();
         toast.success("Cover updated successfully", {
           description: "Your cover has been successfully updated.",
         });
@@ -152,7 +155,7 @@ export const InspectBaseProfile = ({
         queryClient.invalidateQueries({ queryKey: ["user", currentUser?.id] });
         queryClient.invalidateQueries({ queryKey: ["current-user"] });
         queryClient.invalidateQueries({
-          queryKey: ["server-image", currentUser?.pictureId],
+          queryKey: ["server-image", currentUser?.coverId],
         });
         refetchCurrentUser();
       },
@@ -170,6 +173,26 @@ export const InspectBaseProfile = ({
       storeRef.current = null as any;
     };
   }, []);
+
+  const handleCoverPress = async () => {
+    if (currentUser?.id !== id) return; // Prevent others from updating
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [16, 9],
+      quality: 0.8,
+    });
+    if (!result.canceled) {
+      const asset = result.assets[0];
+      const fileLike = {
+        uri: asset.uri,
+        name: asset.uri.split("/").pop() || "cover.jpg",
+        type: asset.type || "image/jpeg",
+      } as unknown as File;
+      uploadCover({ files: [fileLike] });
+    }
+  };
 
   const onRefresh = async () => {
     setIsRefreshing(true);
@@ -272,8 +295,13 @@ export const InspectBaseProfile = ({
         <>
           {/* Cover */}
           <Pressable
-            className="active:opacity-70 relative rounded-full z-99 w-full h-48"
-            onPress={() => {}}
+            className="active:opacity-50 relative  w-full h-48 overflow-hidden"
+            onPress={handleCoverPress}
+            disabled={
+              currentUser?.id !== id ||
+              isCoverUploadPending ||
+              isUpdateCoverPending
+            }
           >
             <Image
               source={
@@ -281,11 +309,16 @@ export const InspectBaseProfile = ({
                   ? { uri: coverSource }
                   : require("@/assets/images/partial-react-logo.png")
               }
-              className="w-full h-full"
+              className="w-full h-full opacity-50"
               resizeMode="cover"
             />
-            {coverExtra}
           </Pressable>
+          {coverExtra}
+          {(isCoverUploadPending || isUpdateCoverPending) && (
+            <View className="absolute inset-0 bg-black/40 flex items-center justify-center z-50">
+              <Loader isPending={true} size="large" />
+            </View>
+          )}
           {/* Header */}
           <View className="flex-row items-center px-5 -mt-12">
             <ProfilePhotoPreview source={profilePictureSource}>

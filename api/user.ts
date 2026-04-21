@@ -33,7 +33,7 @@ const updateCurrent = async (
 const updateCover = async (
   updateUserCoverDto: UpdateUserCoverDto,
 ): Promise<ResponseUserDto> => {
-  const response = await axios.post(`/current-user/cover`, updateUserCoverDto);
+  const response = await axios.put(`/current-user/cover`, updateUserCoverDto);
   return response.data;
 };
 
