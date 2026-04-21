@@ -38,6 +38,7 @@ import { toast } from "sonner-native";
 import { api } from "@/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as ImagePicker from "expo-image-picker";
+import { Skeleton } from "../ui/skeleton";
 
 interface ProfileSection<T = unknown> {
   key: string;
@@ -118,7 +119,7 @@ export const InspectBaseProfile = ({
   const profilePictureSource = profileUploads?.[0];
 
   // cover picture side-effect
-  const { uploads: coverUploads } = useServerImages({
+  const { uploads: coverUploads, isPending: isCoverPending } = useServerImages({
     ids: [user?.coverId],
     fallbacks: [""],
     wrapperClassName: "",
@@ -294,25 +295,29 @@ export const InspectBaseProfile = ({
       ) : (
         <>
           {/* Cover */}
-          <Pressable
-            className="active:opacity-50 relative  w-full h-48 overflow-hidden"
-            onPress={handleCoverPress}
-            disabled={
-              currentUser?.id !== id ||
-              isCoverUploadPending ||
-              isUpdateCoverPending
-            }
-          >
-            <Image
-              source={
-                coverSource
-                  ? { uri: coverSource }
-                  : require("@/assets/images/partial-react-logo.png")
+          {!isCoverPending ? (
+            <Pressable
+              className="active:opacity-70 relative w-full h-48 overflow-hidden"
+              onPress={handleCoverPress}
+              disabled={
+                currentUser?.id !== id ||
+                isCoverUploadPending ||
+                isUpdateCoverPending
               }
-              className="w-full h-full opacity-50"
-              resizeMode="cover"
-            />
-          </Pressable>
+            >
+              <Image
+                source={
+                  coverSource
+                    ? { uri: coverSource }
+                    : require("@/assets/images/partial-react-logo.png")
+                }
+                className="w-full h-full opacity-70"
+                resizeMode="cover"
+              />
+            </Pressable>
+          ) : (
+            <Skeleton className="w-full h-48" />
+          )}
           {coverExtra}
           {(isCoverUploadPending || isUpdateCoverPending) && (
             <View className="absolute inset-0 bg-black/40 flex items-center justify-center z-50">
