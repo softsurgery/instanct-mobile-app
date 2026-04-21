@@ -84,10 +84,11 @@ export default function Select({
       >
         <Input
           pointerEvents="none"
+          editable={false}
           value={selectedOption?.label || ""}
           justify-center
           placeholder={placeholder || "Select an option"}
-          className={cn()}
+          className={cn("block opacity-100")}
         />
         <View className="absolute right-3 text-muted-foreground">
           <Icon as={ChevronDown} size={18} color={"gray"} />
