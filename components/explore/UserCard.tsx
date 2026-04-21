@@ -4,12 +4,7 @@ import { cn } from "@/lib/utils";
 import { ResponseConversationDto, ResponseUserDto } from "@/types";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import {
-  MessageCircle,
-  CalendarDays,
-  Bookmark,
-  Handshake,
-} from "lucide-react-native";
+import { MessageCircle, Bookmark, BellRing } from "lucide-react-native";
 import React from "react";
 import { Dimensions, View } from "react-native";
 import { Icon } from "../ui/icon";
@@ -135,11 +130,11 @@ export const UserCard = ({ user, className }: UserCardProps) => {
             </View>
           </View>
           {/* Fixed Footer Actions */}
-          <View className="flex flex-row gap-4 justify-between m-4">
+          <View className="flex flex-row gap-4 justify-between items-center m-4 px-4">
             <Button
               size={"sm"}
               className={cn(
-                `rounded-full h-16 w-16 transition-all duration-200`,
+                `rounded-full h-12 w-12 transition-all duration-200`,
                 isBookmarked
                   ? "bg-destructive shadow-lg shadow-red-500/40"
                   : "bg-violet-600 dark:bg-violet-500 active:bg-violet-700 dark:active:bg-violet-600",
@@ -151,23 +146,9 @@ export const UserCard = ({ user, className }: UserCardProps) => {
             >
               <Icon
                 as={Bookmark}
-                size={32}
+                size={26}
                 className="transition-all duration-200"
                 fill={isBookmarked ? "#fff" : "transparent"}
-                color={"white"}
-              />
-            </Button>
-            <Button
-              size={"sm"}
-              className="rounded-full h-16 w-16 bg-blue-600 dark:bg-blue-500 active:bg-blue-700 dark:active:bg-blue-600"
-              onPress={() => {
-                startConversation({ users: [user.id] });
-              }}
-            >
-              <Icon
-                as={MessageCircle}
-                size={32}
-                className="text-white"
                 color={"white"}
               />
             </Button>
@@ -182,8 +163,22 @@ export const UserCard = ({ user, className }: UserCardProps) => {
               }
             >
               <Icon
-                as={Handshake}
-                size={32}
+                as={BellRing}
+                size={30}
+                className="text-white"
+                color={"white"}
+              />
+            </Button>
+            <Button
+              size={"sm"}
+              className="rounded-full h-12 w-12 bg-blue-600 dark:bg-blue-500 active:bg-blue-700 dark:active:bg-blue-600"
+              onPress={() => {
+                startConversation({ users: [user.id] });
+              }}
+            >
+              <Icon
+                as={MessageCircle}
+                size={26}
                 className="text-white"
                 color={"white"}
               />
