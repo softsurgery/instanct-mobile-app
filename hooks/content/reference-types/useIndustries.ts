@@ -1,5 +1,4 @@
 import { api } from "@/api";
-import { ResponseRefParamDto } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
@@ -11,23 +10,28 @@ export const useIndustries = (
   { enabled }: useIndustriesProps = { enabled: true },
 ) => {
   const {
-    data: industriesResp,
-    isFetching: isIndustriesPending,
+    data: industriesSubTypeResp,
+    isPending: isIndustriesSubTypePending,
     refetch: refetchIndustries,
   } = useQuery({
     queryKey: ["industries"],
-    queryFn: () => api.refImpl.findAllIndustries(),
+    queryFn: async () =>
+      api.referenceTypes.refType.findAll({
+        filter: "parentId||$eq||industry",
+        join: "params",
+      }),
     enabled,
   });
 
   const industries = React.useMemo(() => {
-    if (!industriesResp) return [];
-    return industriesResp as ResponseRefParamDto<{ color: string }>[];
-  }, [industriesResp]);
+    if (!industriesSubTypeResp) return [];
+    return industriesSubTypeResp.flatMap((refType) => refType.params);
+  }, [industriesSubTypeResp]);
 
   return {
+    industriesSubTypeResp,
     industries,
-    isIndustriesPending,
+    isIndustriesSubTypePending,
     refetchIndustries,
   };
 };

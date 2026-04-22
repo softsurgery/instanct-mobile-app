@@ -5,10 +5,11 @@ import { NearbyUser } from "@/types";
 import _ from "lodash";
 import { useColorScheme } from "nativewind";
 import React from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, Platform, View } from "react-native";
 import MapView from "react-native-map-clustering";
 import { Marker, Region } from "react-native-maps";
 import Modal from "react-native-modal";
+import { MarkerCaptureLayer } from "./AndroidMarker";
 import { UsersCarousel } from "./UserCarousel/UsersCarousel";
 import { UserMarker } from "./UserMarker";
 import { UserModalContent } from "./UserModalContent";
@@ -16,6 +17,7 @@ import { UsersMarker } from "./UsersMarker";
 import { UsersModalContent } from "./UsersModalContent";
 import { AndroidDarkMapStyle } from "./utils/AndroidDarkMapStyle";
 import { useLiveGeolocationParameters } from "@/hooks/content/geolocation/useLiveGeolocationParamters";
+import { MapModes } from "./MapModes";
 
 interface MapRendererProps {
   className?: string;
@@ -49,6 +51,16 @@ export const MapRenderer = ({
   const [prevRegion, setPrevRegion] = React.useState<Region | null>(null);
   const [modalVisible, setModalVisible] = React.useState(false);
 
+  // Android marker image capture state
+  const [markerImages, setMarkerImages] = React.useState<
+    Record<string, string>
+  >({});
+  const isAndroid = Platform.OS === "android";
+
+  const handleMarkerCapture = React.useCallback((id: string, uri: string) => {
+    setMarkerImages((prev) => ({ ...prev, [id]: uri }));
+  }, []);
+
   const nearbyUsersAndMyself = React.useMemo(() => {
     const myself: NearbyUser = {
       latitude,
@@ -81,7 +93,7 @@ export const MapRenderer = ({
           latitudeDelta: 0.0002,
           longitudeDelta: 0.0002,
         },
-        500,
+        1000,
       );
     }
 
@@ -89,6 +101,21 @@ export const MapRenderer = ({
     const user = mapStore.users.find((u) => u.id === userId);
     if (nearbyUser && user) setSelectedUser({ ...nearbyUser, user });
     setModalVisible(true);
+  };
+
+  const handleMoveToCurrentLocation = () => {
+    if (mapRef.current) {
+      //@ts-ignore
+      mapRef.current.animateToRegion(
+        {
+          latitude: latitude,
+          longitude: longitude,
+          latitudeDelta: 0.0002,
+          longitudeDelta: 0.0002,
+        },
+        1000,
+      );
+    }
   };
 
   const handleClusterPress = (nearbyUser: NearbyUser[] | null) => {
@@ -119,7 +146,7 @@ export const MapRenderer = ({
   const handleCloseModal = () => {
     if (prevRegion && mapRef.current && clusterUsers == null) {
       // @ts-ignore
-      mapRef.current?.animateToRegion(prevRegion, 500);
+      mapRef.current?.animateToRegion(prevRegion, 1000);
     }
     setModalVisible(false);
     setSelectedUser(null);
@@ -134,8 +161,26 @@ export const MapRenderer = ({
   );
 
   if (!currentUser || isPending) return <ActivityIndicator />;
+
+  const markerCaptureItems = nearbyUsersAndMyself.map((u) => ({
+    id: u.userId,
+    content: (
+      <UserMarker
+        userId={u.userId}
+        isOnline={u.isOnline}
+        isCurrentUser={u.userId === currentUser?.id}
+      />
+    ),
+  }));
+
   return (
     <View className={cn("flex-1", className)}>
+      {/* Android: offscreen capture layer for marker images */}
+      <MarkerCaptureLayer
+        items={markerCaptureItems}
+        onCapture={handleMarkerCapture}
+      />
+
       <MapView
         key={`${colorScheme}`}
         ref={mapRef}
@@ -152,7 +197,7 @@ export const MapRenderer = ({
         }
         onRegionChange={handleRegionChange}
         showsCompass={false}
-        mapType={mapStore.parameters.mode === "map" ? "standard" : "satellite"}
+        mapType={mapStore.settings.mode === "map" ? "standard" : "satellite"}
         clusteringEnabled={true}
         renderCluster={(cluster) => {
           const { geometry, properties } = cluster;
@@ -199,12 +244,21 @@ export const MapRenderer = ({
               if (u.userId !== currentUser?.id)
                 handleMarkerPress(u.latitude, u.longitude, u.userId);
             }}
+            tracksViewChanges={!isAndroid}
+            image={
+              isAndroid && markerImages[u.userId]
+                ? { uri: markerImages[u.userId] }
+                : undefined
+            }
           >
-            <UserMarker
-              userId={u.userId}
-              isOnline={u.isOnline}
-              isCurrentUser={u.userId === currentUser?.id}
-            />
+            {/* iOS: render children directly; Android: children hidden, image prop used */}
+            {!isAndroid && (
+              <UserMarker
+                userId={u.userId}
+                isOnline={u.isOnline}
+                isCurrentUser={u.userId === currentUser?.id}
+              />
+            )}
           </Marker>
         ))}
       </MapView>
@@ -243,6 +297,8 @@ export const MapRenderer = ({
           }
         />
       </View>
+      {/* Navigation Mode */}
+      <MapModes moveToCurrentLocation={handleMoveToCurrentLocation} />
     </View>
   );
 };

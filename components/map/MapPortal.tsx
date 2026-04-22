@@ -1,4 +1,3 @@
-import { useMapContext } from "@/contexts/MapContext";
 import { useNotificationContext } from "@/contexts/NotificationsContext";
 import { cn } from "@/lib/utils";
 import { useMapStore } from "@/stores/useMapStore";
@@ -7,14 +6,13 @@ import { router } from "expo-router";
 import { Bell, RefreshCcw, Settings } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, View } from "react-native";
+import { View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
-import { MapModes } from "./MapModes";
 import { MapRenderer } from "./MapRenderer";
-import { MapSessionStarter } from "./MapSessionStarter";
 import { MapStatus } from "./MapDebugging/MapStatus";
-import { MapDebugDialog } from "./MapDebugging/MapDebugDialog";
+import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
+import { Loader } from "../shared/Loader";
 
 interface MapPortalProps {
   className?: string;
@@ -22,15 +20,27 @@ interface MapPortalProps {
 
 export const MapPortal = ({ className }: MapPortalProps) => {
   const { t } = useTranslation("common");
-  const [sessionStarted, setSessionStarted] = React.useState(false);
   const mapStore = useMapStore();
   const { newCount, resetCount } = useNotificationContext();
-  const { restartSocket } = useMapContext();
+  const { restartSocket } = useLiveGeolocation();
 
   const { latitude, longitude } = mapStore?.location?.coords || {
     latitude: 0,
     longitude: 0,
   };
+
+  if (!mapStore.location) {
+    return (
+      <View
+        className={cn(
+          "flex-1 items-center justify-center bg-background",
+          className,
+        )}
+      >
+        <Loader size="large" />
+      </View>
+    );
+  }
 
   return (
     <View className={cn("flex-1 bg-background", className)}>
@@ -48,16 +58,19 @@ export const MapPortal = ({ className }: MapPortalProps) => {
           title={t("screens.map")}
           shortcuts={[
             {
+              key: "settings",
               icon: Settings,
               onPress: () => router.push("/main/maps/map-settings"),
             },
             {
+              key: "refresh",
               icon: RefreshCcw,
               onPress: () => {
                 restartSocket();
               },
             },
             {
+              key: "notifications",
               icon: Bell,
               onPress: () => {
                 router.push("/main/notifications");
@@ -66,6 +79,7 @@ export const MapPortal = ({ className }: MapPortalProps) => {
               badgeText: newCount > 0 ? `${newCount}` : undefined,
             },
             {
+              key: "chat",
               icon: IconMessageChatbot,
               onPress: () => {
                 router.push("/main/chat");
@@ -74,13 +88,11 @@ export const MapPortal = ({ className }: MapPortalProps) => {
           ]}
         />
         <MapStatus />
-        <MapDebugDialog className="m-4" />
+        {/* <MapDebugDialog className="m-4" /> */}
       </StableSafeAreaView>
-      {/* Navigation Mode */}
-      <MapModes setSessionStarted={setSessionStarted} />
-      {!sessionStarted && (
+      {/* {!sessionStarted && (
         <MapSessionStarter onStart={() => setSessionStarted(true)} />
-      )}
+      )} */}
     </View>
   );
 };

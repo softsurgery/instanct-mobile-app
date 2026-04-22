@@ -1,25 +1,19 @@
-import { cn } from "@/lib/utils";
 import { usePreferencePersistStore } from "@/stores/usePreferencePersistStore";
 import { useTranslation } from "react-i18next";
 import Select from "./form-builder/Select";
 
 interface LanguageSwitcherProps {
-  className?: string;
   classNames?: {
-    trigger: string;
-    content: string;
+    trigger?: string;
+    content?: string;
   };
 }
 
-export const LanguageSwitcher = ({
-  className,
-  classNames,
-}: LanguageSwitcherProps) => {
+export const LanguageSwitcher = ({ classNames }: LanguageSwitcherProps) => {
   const preferencePersistStore = usePreferencePersistStore();
   const { t, i18n } = useTranslation("common");
   return (
     <Select
-      className={cn("w-full", className)}
       classNames={classNames}
       title={t("language.select.title")}
       description={t("language.select.description").toString()}

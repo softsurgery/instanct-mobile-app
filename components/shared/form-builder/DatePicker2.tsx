@@ -134,11 +134,9 @@ export const DatePicker = ({
         break;
       case "month":
         newMonth = value;
-        newDay = "1";
         break;
       case "year":
         newYear = value;
-        newDay = "1";
         break;
     }
 
@@ -166,13 +164,13 @@ export const DatePicker = ({
       <Button
         disabled={disabled}
         variant="outline"
-        className={cn("w-full h-8 p-0 px-2", classNames?.trigger)}
+        className={cn("w-full h-9 p-0 px-2", classNames?.trigger)}
         onPress={toggle}
       >
         <View className="flex flex-row items-center justify-between w-full">
           <View className="flex flex-row items-center gap-2">
             <Icon as={Calendar} size={16} color={"gray"} />
-            <Text className="text-xs">{displayText}</Text>
+            <Text className="text-sm">{displayText}</Text>
           </View>
           <Animated.View style={chevronStyle}>
             <Icon as={ChevronDown} size={16} color={"gray"} />
@@ -198,19 +196,19 @@ export const DatePicker = ({
               options={days}
               value={day}
               onChange={(opt) => handleDateChange("day", opt.value)}
-              className="flex-1 h-12 border bg-card rounded-lg"
+              className="flex-1 h-12 bg-card rounded-lg"
             />
             <StableScrollable
               options={MONTHS}
               value={month}
               onChange={(opt) => handleDateChange("month", opt.value)}
-              className="flex-1 h-12 border bg-card rounded-lg"
+              className="flex-1 h-12 bg-card rounded-lg"
             />
             <StableScrollable
               options={years}
               value={year}
               onChange={(opt) => handleDateChange("year", opt.value)}
-              className="flex-1 h-12 border bg-card rounded-lg"
+              className="flex-1 h-12 bg-card rounded-lg"
             />
           </View>
           <Separator className="my-2" />

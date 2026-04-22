@@ -1,5 +1,4 @@
 import React from "react";
-import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { useEducations } from "@/hooks/content/users/useEducations";
@@ -12,26 +11,34 @@ import {
   ResponseEducationDto,
   ResponseExperienceDto,
   ResponseRefParamDto,
+  ServerErrorResponse,
+  UpdateUserCoverDto,
+  Upload,
 } from "@/types";
 import { format } from "date-fns";
-import { router, useNavigation } from "expo-router";
-import { Pen, Plus, Globe, Linkedin } from "lucide-react-native";
-import { Image, Linking, RefreshControl, ScrollView, View } from "react-native";
+import { useNavigation } from "expo-router";
+import { Image, Pressable, View } from "react-native";
 import { SeeMoreText } from "../shared/SeeMoreText";
-import { StablePressable } from "../shared/StablePressable";
-import { Separator } from "../ui/separator";
 import { Badge } from "../ui/badge";
 import { ProfileStat } from "./ProfileStat";
-import StableScrollView from "../shared/StableScrollView";
 import { useUserIndustries } from "@/hooks/content/users/useUserIndustries";
-import { useUserObjectives } from "@/hooks/content/users/useUserObjectives";
 import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
-import { useObjectives } from "@/hooks/content/reference-types/useObjectives";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { BaseProfileSkeleton } from "./BaseProfileSkeleton";
 import { Loader } from "../shared/Loader";
 import { useDebounce } from "@/hooks/useDebounce";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { AboutTab } from "./sections/AboutTab";
+import { ExperienceTab } from "./sections/ExperienceTab";
+import { InterestsTab } from "./sections/InterestsTab";
+import { RenderSection } from "./sections/RenderSection";
+import { ProfilePhotoPreview } from "../shared/ProfilePhotoPreview";
+import { useUploadMutation } from "@/hooks/useUploadMutation";
+import { toast } from "sonner-native";
+import { api } from "@/api";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import * as ImagePicker from "expo-image-picker";
+import { Skeleton } from "../ui/skeleton";
 
 interface ProfileSection<T = unknown> {
   key: string;
@@ -48,113 +55,12 @@ interface InspectBaseProfileProps {
   coverExtra?: React.ReactNode;
 }
 
-const Tab = createMaterialTopTabNavigator();
-
-// Tab Components - defined outside to prevent minification issues
-const AboutTab = ({ user }: { user: any }) => (
-  <ScrollView className="flex-1 bg-background">
-    <View className="flex flex-col gap-4 pb-8">
-      {/* Bio Section */}
-      {user?.bio ? (
-        <View className="bg-card border border-border overflow-hidden">
-          <View className="p-4 bg-primary/10">
-            <Text variant="h4">About</Text>
-          </View>
-          <Separator />
-          <View className="p-4">
-            <SeeMoreText
-              textClassname="text-sm leading-6 text-foreground"
-              numberOfLines={4}
-            >
-              {user.bio}
-            </SeeMoreText>
-          </View>
-        </View>
-      ) : (
-        <View className="bg-card border border-border p-4">
-          <Text className="text-sm text-muted-foreground italic text-center">
-            No bio added yet
-          </Text>
-        </View>
-      )}
-
-      {/* Links Section */}
-      {(user?.website || user?.linkedin) && (
-        <View className="flex flex-col gap-2">
-          {user?.website && (
-            <StablePressable
-              className="bg-card border border-border p-4 flex-row items-center gap-3"
-              onPress={() => {
-                if (user?.website) Linking.openURL(user?.website);
-              }}
-              onPressClassname="bg-muted"
-            >
-              <Icon as={Globe} size={20} className="text-primary" />
-              <Text
-                className="text-sm font-medium text-foreground flex-1"
-                numberOfLines={1}
-              >
-                {user.website}
-              </Text>
-            </StablePressable>
-          )}
-          {user?.linkedin && (
-            <StablePressable
-              className="bg-card border border-border p-4 flex-row items-center gap-3"
-              onPress={() => {
-                if (user?.linkedin) Linking.openURL(user?.linkedin);
-              }}
-              onPressClassname="bg-muted"
-            >
-              <Icon as={Linkedin} size={20} className="text-primary" />
-              <Text className="text-sm font-medium text-foreground">
-                LinkedIn Profile
-              </Text>
-            </StablePressable>
-          )}
-        </View>
-      )}
-    </View>
-  </ScrollView>
-);
-
-const ExperienceTab = ({
-  profileSections,
-  renderSection,
-}: {
-  profileSections: ProfileSection[];
-  renderSection: (section: ProfileSection) => React.ReactNode;
-}) => (
-  <ScrollView className="flex-1 bg-background">
-    <View className="flex flex-col gap-4 pb-8">
-      {profileSections
-        .filter((s) => s.key === "experience" || s.key === "education")
-        .map(renderSection)}
-    </View>
-  </ScrollView>
-);
-
-const InterestsTab = ({
-  profileSections,
-  renderSection,
-}: {
-  profileSections: ProfileSection[];
-  renderSection: (section: ProfileSection) => React.ReactNode;
-}) => (
-  <ScrollView className="flex-1 bg-background">
-    <View className="flex flex-col gap-4 pb-8">
-      {profileSections
-        .filter((s) => s.key === "industries" || s.key === "objectives")
-        .map(renderSection)}
-    </View>
-  </ScrollView>
-);
-
 export const InspectBaseProfile = ({
   className,
   id,
   coverExtra,
 }: InspectBaseProfileProps) => {
+  const queryClient = useQueryClient();
   const navigation = useNavigation();
 
   const storeRef = React.useRef(createClientStore());
@@ -193,29 +99,74 @@ export const InspectBaseProfile = ({
   const { userIndustries, isUserIndustriesPending, refetchUserIndustries } =
     useUserIndustries({ userId: id, enabled: !!user });
 
-  // objectives side-effects
-  const { userObjectives, isUserObjectivesPending, refetchUserObjectives } =
-    useUserObjectives({ userId: id, enabled: !!user });
-
-  const { industries, isIndustriesPending } = useIndustries({
-    enabled: !!user,
-  });
-
-  const { objectives, isObjectivesPending } = useObjectives({
+  const { industries, isIndustriesSubTypePending } = useIndustries({
     enabled: !!user,
   });
 
   const identity = React.useMemo(() => identifyUser(user), [user]);
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
 
-  const { jsxArray: profilePictures } = useServerImages({
-    ids: [user?.pictureId],
-    fallbacks: [fallback],
-    wrapperClassName:
-      "border border-border bg-background rounded-full shadow-md",
+  //profile picture side-effect
+  const { uploads: profileUploads, jsxArray: profilePictures } =
+    useServerImages({
+      ids: [user?.pictureId],
+      fallbacks: [fallback, ""],
+      wrapperClassName:
+        "border border-border bg-background rounded-full shadow-md",
+      size: { width: 100, height: 100 },
+      enabled: !!user && !!user.pictureId,
+    });
+  const profilePictureSource = profileUploads?.[0];
+
+  // cover picture side-effect
+  const { uploads: coverUploads, isPending: isCoverPending } = useServerImages({
+    ids: [user?.coverId],
+    fallbacks: [""],
+    wrapperClassName: "",
     size: { width: 100, height: 100 },
-    enabled: !!user,
+    enabled: !!user && !!user.coverId,
   });
+  const coverSource = coverUploads?.[0];
+
+  const { uploadFiles: uploadCover, isUploadPending: isCoverUploadPending } =
+    useUploadMutation({
+      onSuccess: (response: Upload[]) => {
+        const coverId = response?.[0]?.id;
+        if (coverId) {
+          updateUserCover({ coverId: coverId });
+        }
+      },
+      onError: (error: ServerErrorResponse) => {
+        toast.error(
+          error.response?.data?.message || "Failed to upload image",
+          {},
+        );
+      },
+    });
+
+  const { mutate: updateUserCover, isPending: isUpdateCoverPending } =
+    useMutation({
+      mutationFn: (coverDto: UpdateUserCoverDto) =>
+        api.user.updateCover(coverDto),
+      onSuccess: () => {
+        toast.success("Cover updated successfully", {
+          description: "Your cover has been successfully updated.",
+        });
+        userStore.reset();
+        queryClient.invalidateQueries({ queryKey: ["user", currentUser?.id] });
+        queryClient.invalidateQueries({ queryKey: ["current-user"] });
+        queryClient.invalidateQueries({
+          queryKey: ["server-image", currentUser?.coverId],
+        });
+        refetchCurrentUser();
+      },
+      onError: (error: ServerErrorResponse) => {
+        toast.error(
+          error.response?.data?.message || "Failed to update cover",
+          {},
+        );
+      },
+    });
 
   React.useEffect(() => {
     return () => {
@@ -224,14 +175,34 @@ export const InspectBaseProfile = ({
     };
   }, []);
 
+  const handleCoverPress = async () => {
+    if (currentUser?.id !== id) return; // Prevent others from updating
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [16, 9],
+      quality: 0.8,
+    });
+    if (!result.canceled) {
+      const asset = result.assets[0];
+      const fileLike = {
+        uri: asset.uri,
+        name: asset.uri.split("/").pop() || "cover.jpg",
+        type: asset.type || "image/jpeg",
+      } as unknown as File;
+      uploadCover({ files: [fileLike] });
+    }
+  };
+
   const onRefresh = async () => {
     setIsRefreshing(true);
     await Promise.allSettled([
       refetchUser(),
+      refetchCurrentUser(),
       refetchExperiences(),
       refetchEducations(),
       refetchUserIndustries(),
-      refetchUserObjectives(),
     ]);
     setIsRefreshing(false);
   };
@@ -241,8 +212,8 @@ export const InspectBaseProfile = ({
     isUserPending ||
     isExperiencesPending ||
     isEducationsPending ||
-    isUserIndustriesPending ||
-    isUserObjectivesPending;
+    isIndustriesSubTypePending ||
+    isUserIndustriesPending;
 
   // ---------------------------------------------------------------
   //  PROFILE SECTIONS CONFIG
@@ -300,142 +271,18 @@ export const InspectBaseProfile = ({
           </Badge>
         ),
       },
-      {
-        key: "objectives",
-        title: "Objectives",
-        data: objectives.filter((objective) =>
-          userObjectives?.some((id) => id === objective.id),
-        ) as unknown[],
-        editable: currentUser?.id === user?.id,
-        renderItem: (objective: ResponseRefParamDto) => (
-          <Badge variant={"outline"} className={cn("px-2 py-1 rounded-full")}>
-            <Text className="text-xs">{objective.label}</Text>
-          </Badge>
-        ),
-      },
     ],
     [
       experiences,
       educations,
       industries,
-      objectives,
       userIndustries,
-      userObjectives,
       currentUser?.id,
       user?.id,
     ],
   );
 
-  // ---------------------------------------------------------------
-  //  SECTION RENDERER
-  // ---------------------------------------------------------------
-  const isBadgeSection = (key: string) =>
-    key === "industries" || key === "objectives";
-
-  const renderSection = React.useCallback(
-    (section: ProfileSection) => {
-      const isBadge = isBadgeSection(section.key);
-
-      return (
-        <View key={section.key}>
-          <View className={cn("pt-x bg-card border border-border")}>
-            <View className="flex flex-row items-center justify-between bg-primary/10">
-              <View className="px-4">
-                <Text variant="h4">{section.title}</Text>
-              </View>
-
-              {section.editable && (
-                <View className="flex flex-row gap-1 items-center p-2">
-                  {!isBadge && (
-                    <StablePressable
-                      className="p-2"
-                      onPress={() => {
-                        switch (section.key) {
-                          case "experience":
-                            router.push("/main/profile/create-experience");
-                            break;
-                          case "education":
-                            router.push("/main/profile/create-education");
-                            break;
-                        }
-                      }}
-                      onPressClassname="bg-primary/25 rounded-full"
-                    >
-                      <Icon
-                        as={Plus}
-                        size={20}
-                        className="text-muted-foreground"
-                      />
-                    </StablePressable>
-                  )}
-
-                  <StablePressable
-                    className="p-2"
-                    onPress={() => {
-                      switch (section.key) {
-                        case "experience":
-                          router.push("/main/profile/update-experiences");
-                          break;
-                        case "education":
-                          router.push("/main/profile/update-educations");
-                          break;
-                        case "industries":
-                          router.push({
-                            pathname: "/main/profile/industries",
-                            params: { userId: id },
-                          });
-                          break;
-                        case "objectives":
-                          router.push({
-                            pathname: "/main/profile/objectives",
-                            params: { userId: id },
-                          });
-                          break;
-                      }
-                    }}
-                    onPressClassname="bg-primary/25 rounded-full"
-                  >
-                    <Icon
-                      as={Pen}
-                      size={18}
-                      className="text-muted-foreground"
-                    />
-                  </StablePressable>
-                </View>
-              )}
-            </View>
-
-            <Separator />
-
-            <View className="p-4">
-              {section.data?.length === 0 ? (
-                <View key={section.key}>
-                  <Text className="text-sm text-muted-foreground italic text-center my-4">
-                    No {section.title} added yet
-                  </Text>
-                </View>
-              ) : isBadge ? (
-                <View className="flex-row flex-wrap gap-2">
-                  {Array.isArray(section.data) &&
-                    section.data.map((item, idx) => (
-                      <View key={idx}>{section.renderItem(item)}</View>
-                    ))}
-                </View>
-              ) : (
-                <View className="flex flex-col gap-4">
-                  {Array.isArray(section.data) &&
-                    section.data.map((item, idx) => (
-                      <View key={idx}>{section.renderItem(item)}</View>
-                    ))}
-                </View>
-              )}
-            </View>
-          </View>
-        </View>
-      );
-    },
-    [id],
-  );
+  const Tab = createMaterialTopTabNavigator();
 
   return (
     <View className={cn("flex-1 bg-background", className)}>
@@ -443,103 +290,121 @@ export const InspectBaseProfile = ({
         <Loader isPending={isRefreshing} size="small" />
       </View>
 
-      <StableScrollView
-        className="flex-1"
-        refreshControl={
-          <RefreshControl
-            progressViewOffset={50}
-            refreshing={isRefreshing}
-            onRefresh={onRefresh}
-            tintColor="transparent"
-            colors={["transparent"]}
-          />
-        }
-      >
-        {isInitialLoading ? (
-          <BaseProfileSkeleton className={className} />
-        ) : (
-          <>
-            {/* Cover */}
-            <View className="relative w-full h-48 bg-card">
-              {coverExtra}
+      {isInitialLoading ? (
+        <BaseProfileSkeleton className={className} />
+      ) : (
+        <>
+          {/* Cover */}
+          {!isCoverPending ? (
+            <Pressable
+              className="active:opacity-70 relative w-full h-48 overflow-hidden"
+              onPress={handleCoverPress}
+              disabled={
+                currentUser?.id !== id ||
+                isCoverUploadPending ||
+                isUpdateCoverPending
+              }
+            >
               <Image
-                source={require("@/assets/images/partial-react-logo.png")}
-                className="w-full h-full"
+                source={
+                  coverSource
+                    ? { uri: coverSource }
+                    : require("@/assets/images/partial-react-logo.png")
+                }
+                className="w-full h-full opacity-70"
                 resizeMode="cover"
               />
+            </Pressable>
+          ) : (
+            <Skeleton className="w-full h-48" />
+          )}
+          {coverExtra}
+          {(isCoverUploadPending || isUpdateCoverPending) && (
+            <View className="absolute inset-0 bg-black/40 flex items-center justify-center z-50">
+              <Loader isPending={true} size="large" />
             </View>
-            {/* Header */}
-            <View className="flex-row items-center px-5 -mt-12">
+          )}
+          {/* Header */}
+          <View className="flex-row items-center px-5 -mt-12">
+            <ProfilePhotoPreview source={profilePictureSource}>
               <View>{profilePictures[0]}</View>
-
-              <View className="flex-1 mt-16">
-                <View className="flex-row items-center justify-between mx-2">
-                  <View>
-                    <Text className="text-xl font-semibold text-foreground">
-                      {identity}
+            </ProfilePhotoPreview>
+            <View className="flex-1 mt-16">
+              <View className="flex-row items-center justify-between mx-2">
+                <View>
+                  <Text className="text-xl font-semibold text-foreground">
+                    {identity}
+                  </Text>
+                  {id && (
+                    <Text className="text-sm text-muted-foreground">
+                      @{user?.username}
                     </Text>
-                    {id && (
-                      <Text className="text-sm text-muted-foreground">
-                        @{user?.username}
-                      </Text>
-                    )}
-                  </View>
-                  {currentUser?.id === id && (
-                    <ProfileStat className="flex flex-row gap-4" />
                   )}
                 </View>
+                {currentUser?.id === id && (
+                  <ProfileStat className="flex flex-row gap-4" />
+                )}
               </View>
             </View>
-            {/* Tabs */}
-            <View className="flex-1 mt-4" style={{ minHeight: 400 }}>
-              <Tab.Navigator
-                screenOptions={{
-                  tabBarScrollEnabled: false,
-                  tabBarLabelStyle: {
-                    fontSize: 12,
-                    fontWeight: "600",
-                    textTransform: "none",
-                  },
-                  tabBarIndicatorStyle: { backgroundColor: "#6366f1" },
-                  tabBarStyle: { backgroundColor: "transparent" },
+          </View>
+          {/* Tabs */}
+          <View className="flex-1 mt-4" style={{ minHeight: 400 }}>
+            <Tab.Navigator
+              screenOptions={{
+                tabBarScrollEnabled: false,
+                tabBarLabelStyle: {
+                  fontSize: 12,
+                  fontWeight: "600",
+                  textTransform: "none",
+                },
+                tabBarIndicatorStyle: { backgroundColor: "#6366f1" },
+                tabBarStyle: { backgroundColor: "transparent" },
+              }}
+              commonOptions={{
+                sceneStyle: {
+                  flex: 1,
+                },
+              }}
+            >
+              <Tab.Screen
+                name="About"
+                options={{
+                  tabBarLabel: "About",
                 }}
               >
-                <Tab.Screen
-                  name="About"
-                  options={{
-                    tabBarLabel: "About",
-                  }}
-                  component={() => <AboutTab user={user} />}
-                />
-                <Tab.Screen
-                  name="Career"
-                  options={{
-                    tabBarLabel: "Career",
-                  }}
-                  component={() => (
-                    <ExperienceTab
-                      profileSections={profileSections}
-                      renderSection={renderSection}
-                    />
-                  )}
-                />
-                <Tab.Screen
-                  name="Interests"
-                  options={{
-                    tabBarLabel: "Interests",
-                  }}
-                  component={() => (
-                    <InterestsTab
-                      profileSections={profileSections}
-                      renderSection={renderSection}
-                    />
-                  )}
-                />
-              </Tab.Navigator>
-            </View>
-          </>
-        )}
-      </StableScrollView>
+                {() => <AboutTab user={user} />}
+              </Tab.Screen>
+              <Tab.Screen
+                name="Career"
+                options={{
+                  tabBarLabel: "Career",
+                }}
+              >
+                {() => (
+                  <ExperienceTab
+                    profileSections={profileSections}
+                    renderSection={RenderSection}
+                  />
+                )}
+              </Tab.Screen>
+              <Tab.Screen
+                name="Interests"
+                options={{
+                  tabBarLabel: "Interests",
+                }}
+              >
+                {() => (
+                  <InterestsTab
+                    profileSections={profileSections}
+                    renderSection={RenderSection}
+                    userId={id}
+                  />
+                )}
+              </Tab.Screen>
+            </Tab.Navigator>
+          </View>
+        </>
+      )}
     </View>
   );
 };

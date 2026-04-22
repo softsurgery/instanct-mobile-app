@@ -14,6 +14,8 @@ import { Field, FieldVariant } from "./types";
 import { DatePicker } from "./DatePicker2";
 import { TimePicker } from "./TimePicker";
 import { ChoicePicker } from "../ChoicePicker";
+import MultiSelect from "./MultiSelect";
+import MapPinField from "./MapPinField";
 
 interface FieldBuilderProps {
   field?: Field<any>;
@@ -83,6 +85,21 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           options={field?.props?.options}
         />
       );
+    case "multi-select":
+      return (
+        <MultiSelect
+          {...field?.props}
+          classNames={{ trigger: cn(field?.error && "border-red-500") }}
+          title={field.label}
+          description={field.description}
+          placeholder={field?.placeholder}
+          value={field?.props?.value || []}
+          onSelect={(value) => field?.props?.onSelect?.(value)}
+          disabled={field?.props?.other}
+          options={field?.props?.options}
+          max={field?.props?.max || Infinity}
+        />
+      );
     case "date":
       return (
         <DatePicker
@@ -115,7 +132,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
             }}
             className={cn(field?.className, field?.error && "border-red-500")}
           />
-          <Text className="text-xs">{field.description}</Text>
+          <Text className="text-sm">{field.description}</Text>
         </View>
       );
     case "password":
@@ -144,15 +161,15 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
             onPress={() => setShowPassword(!showPassword)}
             style={{
               position: "absolute",
-              right: 10,
-              top: 7,
+              right: 4,
+              top: 4,
               padding: 4,
             }}
             disabled={!field?.props?.editable}
           >
             <Feather
               name={showPassword ? "eye-off" : "eye"}
-              size={20}
+              size={16}
               color="gray"
             />
           </TouchableOpacity>
@@ -231,6 +248,23 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           onSelect={field?.props?.onSelectChange}
           disabled={field?.props?.disabled}
         />
+      );
+    case "map-pin":
+      return (
+        <MapPinField
+          {...field?.props}
+          className={cn(field?.className, field?.error && "border-red-500")}
+          placeholder={field?.placeholder}
+          latitude={field?.props?.latitude}
+          longitude={field?.props?.longitude}
+          locationName={field?.props?.locationName}
+          onLocationChange={field?.props?.onLocationChange}
+          editable={field?.props?.editable}
+        />
+      );
+    case "custom":
+      return (
+        <View className={cn(field?.className)}>{field?.props?.children}</View>
       );
     default:
       return (

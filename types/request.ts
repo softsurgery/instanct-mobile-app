@@ -1,21 +1,21 @@
+import { ResponseSessionDto } from "./session";
 import { ResponseUserDto } from "./user-management";
 import { DatabaseEntity } from "./utils";
 
 export interface ResponseRequestDto extends DatabaseEntity {
   id: number;
-  senderId: string;
-  sender: ResponseUserDto;
+  sessionId: number;
+  session: ResponseSessionDto;
   receivers: ResponseUserDto[];
-  description?: string;
-  place?: string;
+  message?: string;
+  location?: string;
   time?: Date;
 }
 
 export interface CreateRequestDto {
-  senderId: string;
-  receivers: string[];
-  description?: string;
-  place?: string;
+  receiverIds: string[];
+  message?: string;
+  location?: string;
   time?: Date;
 }
 

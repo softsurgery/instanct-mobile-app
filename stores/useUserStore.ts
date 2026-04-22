@@ -8,12 +8,14 @@ import {
   ResponseUserDto,
   UpdateEducationDto,
   UpdateExperienceDto,
+  UpdateUserCoverDto,
   UpdateUserDto,
 } from "~/types";
 
 interface UserData {
   response?: ResponseUserDto;
   updateDto: UpdateUserDto;
+  updateCoverDto: UpdateUserCoverDto;
 
   //experiences
   experiences?: ResponseExperienceDto[];
@@ -61,6 +63,9 @@ const initialState: UserData = {
     linkedin: "",
     isPrivate: true,
   },
+  updateCoverDto: {
+    coverId: undefined,
+  },
   createExperienceDto: {
     title: "",
     company: "",
@@ -91,6 +96,7 @@ const initialState: UserData = {
     institution: "",
     description: "",
   },
+
   picture: undefined,
   hasInitializedPicture: false,
   progress: 0,

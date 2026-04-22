@@ -40,9 +40,11 @@ export enum FieldVariant {
   TEL = "tel",
   NUMBER = "number",
   PASSWORD = "password",
+  MAPPIN = "map-pin",
   DATE = "date",
   TIME = "time",
   SELECT = "select",
+  MULTISELECT = "multi-select",
   CHECKBOX = "checkbox",
   CHECK = "check",
   RADIO = "radio",
@@ -91,6 +93,18 @@ export interface PasswordFieldProps {
   editable?: boolean;
 }
 
+export interface MapPinFieldProps {
+  latitude?: number;
+  longitude?: number;
+  locationName?: string;
+  onLocationChange?: (location: {
+    latitude: number;
+    longitude: number;
+    name: string;
+  }) => void;
+  editable?: boolean;
+}
+
 export interface DateFieldProps {
   value?: Date;
   onDateChange?: (date: Date) => void;
@@ -113,6 +127,14 @@ export interface SelectFieldProps {
   onSelect?: (value: string) => void;
   options?: SelectOption[];
   editable?: boolean;
+}
+
+export interface MultiSelectFieldProps {
+  value?: string[];
+  onSelect?: (value: string[]) => void;
+  options?: SelectOption[];
+  editable?: boolean;
+  max?: number;
 }
 
 export interface RatingFieldProps {
@@ -155,4 +177,8 @@ export interface ChoicePickerFieldProps {
   onSelectChange?: (value: string) => void;
   options?: SelectOption[];
   editable?: boolean;
+}
+
+export interface CustomFieldProps {
+  children?: React.ReactNode;
 }

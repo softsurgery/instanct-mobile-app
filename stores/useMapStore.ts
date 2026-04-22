@@ -5,13 +5,16 @@ import { create } from "zustand";
 
 interface MapData {
   parameters: {
+    radius: number;
     rangeMin: number;
     rangeMax: number;
-    radius: number;
-    clusters: boolean;
-    showUsernames: boolean;
-    mode: "sattelite" | "map";
     updateInterval: number;
+  };
+  settings: {
+    radius: number;
+    showUsernames: boolean;
+    clusters: boolean;
+    mode: "sattelite" | "map";
   };
   hasInitializedParameters: boolean;
   connected: boolean;
@@ -25,6 +28,7 @@ interface MapData {
     reconnectDelay: number;
   };
   loading: boolean;
+  restartSignal: number;
 }
 
 interface MapStore extends MapData {
@@ -32,6 +36,7 @@ interface MapStore extends MapData {
   set: <K extends keyof MapData>(name: K, value: MapData[K]) => void;
   setNested: <T>(path: string, value: T) => void;
   reset: () => void;
+  triggerRestart: () => void;
   //additional
   addNearbyUser: (user: NearbyUser) => void;
   addUser: (user: ResponseUserDto) => void;
@@ -48,12 +53,15 @@ interface MapStore extends MapData {
 
 const initialState: MapData = {
   parameters: {
+    radius: 50,
     rangeMax: 100,
     rangeMin: 0,
-    radius: 0,
-    clusters: true,
-    showUsernames: true,
     updateInterval: 5,
+  },
+  settings: {
+    radius: 50,
+    showUsernames: true,
+    clusters: true,
     mode: "map",
   },
   hasInitializedParameters: false,
@@ -68,6 +76,7 @@ const initialState: MapData = {
     reconnectDelay: 0,
   },
   loading: true,
+  restartSignal: 0,
 };
 
 export const useMapStore = create<MapStore>((set, get) => ({
@@ -196,6 +205,9 @@ export const useMapStore = create<MapStore>((set, get) => ({
       clusters: [],
       connected: false,
     });
+  },
+  triggerRestart: () => {
+    set((state) => ({ restartSignal: state.restartSignal + 1 }));
   },
   reset: () => {
     set({ ...initialState });

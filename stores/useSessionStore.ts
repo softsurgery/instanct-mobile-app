@@ -1,12 +1,20 @@
 import { setDeepValue } from "@/lib/object";
-import { CreateSessionDto, SessionType } from "@/types/session";
+import {
+  CreateSessionDto,
+  MapSessionPayload,
+  SessionType,
+  UpdateSessionDto,
+} from "@/types/session";
 import { create } from "zustand";
 
 interface SessionData {
-  createDto: CreateSessionDto;
-
+  createDto: CreateSessionDto<MapSessionPayload>;
+  updateDto: UpdateSessionDto<MapSessionPayload>;
+  flags: {
+    startNow: boolean;
+  };
   //errors
-  createDtoErrors: Record<string, string[]>;
+  errors: Record<string, any>;
 }
 
 export interface SessionStore extends SessionData {
@@ -18,12 +26,22 @@ export interface SessionStore extends SessionData {
 const initialState: SessionData = {
   createDto: {
     sessionType: SessionType.MAP_SESSION,
-    payload: {},
+    payload: {
+      objectives: [],
+    },
     plannedStart: undefined,
     plannedEnd: undefined,
   },
-
-  createDtoErrors: {},
+  updateDto: {
+    plannedEnd: undefined,
+    payload: {
+      objectives: [],
+    },
+  },
+  flags: {
+    startNow: true,
+  },
+  errors: {},
 };
 
 export const useSessionStore = create<SessionStore>((set, get) => ({
@@ -34,28 +52,15 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
       [name]: value,
     }));
   },
-  setNested: (path: string, value: unknown) => {
-    if (!path.includes(".")) {
-      // No nesting — set directly
-      set((state) => ({
-        ...state,
-        [path]: value,
-      }));
-      return;
-    }
-
-    // Nested path case
+  setNested: (path, value) => {
     const [rootKey, ...restPath] = path.split(".");
     const nestedPath = restPath.join(".");
-
     set((state) => {
-      const rootValue = state[rootKey as keyof SessionData];
-      if (typeof rootValue !== "object" || rootValue === null) {
-        throw new Error(`Cannot set nested path on non-object: ${rootKey}`);
-      }
-
-      const updatedRoot = setDeepValue(rootValue, nestedPath, value);
-
+      const updatedRoot = setDeepValue(
+        { ...state[rootKey as keyof SessionData] },
+        nestedPath,
+        value,
+      );
       return {
         ...state,
         [rootKey]: updatedRoot,

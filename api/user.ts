@@ -2,6 +2,7 @@ import {
   QueryParams,
   ResponseConfigurationNamespaceDto,
   ResponseUserDto,
+  UpdateUserCoverDto,
   UpdateUserDto,
   UpdateUserMapConfigurationDto,
 } from "@/types";
@@ -29,6 +30,13 @@ const updateCurrent = async (
   return response.data;
 };
 
+const updateCover = async (
+  updateUserCoverDto: UpdateUserCoverDto,
+): Promise<ResponseUserDto> => {
+  const response = await axios.put(`/current-user/cover`, updateUserCoverDto);
+  return response.data;
+};
+
 const findAll = async ({
   join = "",
 }: Pick<QueryParams, "join">): Promise<ResponseUserDto[]> => {
@@ -36,16 +44,6 @@ const findAll = async ({
     params: {
       join,
     },
-  });
-  return response.data;
-};
-
-const updateObjectives = async (
-  id: string,
-  objectives: number[],
-): Promise<ResponseUserDto> => {
-  const response = await axios.put(`/admin/user/objectives/${id}`, {
-    objectives,
   });
   return response.data;
 };
@@ -68,11 +66,6 @@ const getCurrentMapConfiguration =
     return response.data;
   };
 
-const getObjectives = async (id: string): Promise<number[] | null> => {
-  const response = await axios.get(`/admin/user/objectives/${id}`);
-  return response.data;
-};
-
 const getIndustries = async (id: string): Promise<number[] | null> => {
   const response = await axios.get(`/admin/user/industries/${id}`);
   return response.data;
@@ -94,9 +87,8 @@ export const user = {
   findById,
   updateCurrent,
   updateIndustries,
-  updateObjectives,
+  updateCover,
   getIndustries,
-  getObjectives,
   getCurrentMapConfiguration,
   updateMapConfiguration,
 };

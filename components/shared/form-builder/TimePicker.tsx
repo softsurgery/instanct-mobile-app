@@ -58,8 +58,8 @@ const PERIODS = [
 ];
 
 function formatTime(date: Date): string {
-  let hours = date.getHours();
-  const minutes = date.getMinutes();
+  let hours = date?.getHours();
+  const minutes = date?.getMinutes();
   const period = hours >= 12 ? "PM" : "AM";
   hours = hours % 12 || 12;
   return `${hours}:${String(minutes).padStart(2, "0")} ${period}`;
@@ -168,13 +168,13 @@ export const TimePicker = ({
       <Button
         disabled={disabled}
         variant="outline"
-        className={cn("w-full h-8 p-0 px-2", classNames?.trigger)}
+        className={cn("w-full h-9 p-0 px-2", classNames?.trigger)}
         onPress={toggle}
       >
         <View className="flex flex-row items-center justify-between w-full">
           <View className="flex flex-row items-center gap-2">
             <Icon as={Clock} size={16} color={"gray"} />
-            <Text className="text-xs">{displayText}</Text>
+            <Text className="text-sm">{displayText}</Text>
           </View>
           <Animated.View style={chevronStyle}>
             <Icon as={ChevronDown} size={16} color={"gray"} />
@@ -199,19 +199,19 @@ export const TimePicker = ({
               options={HOURS}
               value={hour}
               onChange={(opt) => handleTimeChange("hour", opt.value)}
-              className="flex-1 h-12 border bg-card rounded-lg"
+              className="flex-1 h-12 bg-card rounded-lg"
             />
             <StableScrollable
               options={MINUTES}
               value={minute}
               onChange={(opt) => handleTimeChange("minute", opt.value)}
-              className="flex-1 h-12 border bg-card rounded-lg"
+              className="flex-1 h-12 bg-card rounded-lg"
             />
             <StableScrollable
               options={PERIODS}
               value={period}
               onChange={(opt) => handleTimeChange("period", opt.value)}
-              className="flex-1 h-12 border bg-card rounded-lg"
+              className="flex-1 h-12 bg-card rounded-lg"
             />
           </View>
           <Separator className="my-2" />

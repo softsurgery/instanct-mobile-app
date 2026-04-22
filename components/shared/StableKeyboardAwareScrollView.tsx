@@ -1,7 +1,7 @@
 import { ScrollViewContext } from "@/contexts/ScrollViewContext";
 import { cn } from "@/lib/utils";
 import React, { forwardRef, ReactNode, useCallback, useRef } from "react";
-import { Dimensions, StyleProp, View, ViewStyle } from "react-native";
+import { Dimensions, Keyboard, StyleProp, View, ViewStyle } from "react-native";
 import {
   KeyboardAwareScrollView,
   KeyboardAwareScrollViewProps,
@@ -89,6 +89,7 @@ export const StableKeyboardAwareScrollView = forwardRef<
         enableOnAndroid={true}
         onScroll={handleScroll}
         scrollEventThrottle={16}
+        enableResetScrollToCoords={false}
         {...rest}
       >
         {children}

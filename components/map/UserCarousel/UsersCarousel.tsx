@@ -1,10 +1,5 @@
-import { Avatar } from "@/components/shared/StableAvatar";
-import { StablePressable } from "@/components/shared/StablePressable";
-import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 import { NearbyUser } from "@/types";
-import * as Haptics from "expo-haptics";
-import { Search } from "lucide-react-native";
 import React from "react";
 import { ScrollView } from "react-native";
 import { UserCarouselEntry } from "./UserCarouselEntry";
@@ -20,31 +15,19 @@ export const UsersCarousel = ({
   users,
   onUserPress,
 }: UsersCarouselProps) => {
-  const onSearchAvatarPress = () => {
-    alert("Search");
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-  };
-
   return (
     <ScrollView
       className={cn(className)}
       horizontal
       showsHorizontalScrollIndicator={false}
     >
-      <StablePressable onPress={onSearchAvatarPress}>
-        <Avatar
-          className={cn("mx-1 ml-5 my-auto bg-card", className)}
-          style={{
-            width: 50,
-            height: 50,
-          }}
-        >
-          <Icon as={Search} size={24} className="text-primary-foreground" />
-        </Avatar>
-      </StablePressable>
       {users.map((item, index) => (
         <UserCarouselEntry
-          className={cn("mx-1 my-auto")}
+          className={cn(
+            "mx-1 my-auto",
+            index === 0 && "ml-3",
+            index === users.length - 1 && "mr-3",
+          )}
           key={item.userId}
           userId={item.userId}
           onPress={onUserPress}

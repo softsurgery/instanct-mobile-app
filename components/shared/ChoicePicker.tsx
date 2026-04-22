@@ -47,12 +47,17 @@ export const ChoicePicker = ({
                       onSelectChange(option.value);
                     }
                   }}
-                  className={cn(
-                    "size-8 rounded-full",
-                    !isSelected && "border-foreground/70",
-                  )}
-                  checkedClassName="rounded-full border-primary"
-                  indicatorClassName="rounded-full"
+                  classNames={{
+                    root: cn(
+                      "size-8 rounded-full",
+                      !isSelected && "border-foreground/70",
+                    ),
+                    checked: "rounded-full border-primary",
+                    indicator: "rounded-full",
+                  }}
+                  icon={{
+                    size: 18,
+                  }}
                 />
               </View>
               <Text

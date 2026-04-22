@@ -1,5 +1,9 @@
 import { Paginated, QueryParams } from "@/types";
-import { CreateSessionDto, ResponseSessionDto } from "@/types/session";
+import {
+  CreateSessionDto,
+  ResponseSessionDto,
+  UpdateSessionDto,
+} from "@/types/session";
 import axios from "./axios";
 
 const findAllPaginated = async ({
@@ -96,6 +100,17 @@ const start = async (
   return response.data;
 };
 
+const update = async (
+  sessionId: number,
+  updateSessionDto: UpdateSessionDto,
+): Promise<ResponseSessionDto> => {
+  const response = await axios.put<ResponseSessionDto>(
+    `/current-session/update/${sessionId}`,
+    updateSessionDto,
+  );
+  return response.data;
+};
+
 const end = async (sessionId: number): Promise<void> => {
   await axios.put(`/current-session/end/${sessionId}`);
 };
@@ -106,5 +121,6 @@ export const session = {
   findAllActivePaginated,
   findAllActive,
   start,
+  update,
   end,
 };

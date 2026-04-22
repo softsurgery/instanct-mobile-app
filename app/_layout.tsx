@@ -1,6 +1,6 @@
 import { NotificationContext } from "@/contexts/NotificationsContext";
 import { useNotifications } from "@/hooks/content/notification/useNotifications";
-import { NAV_THEME } from "@/lib/theme";
+import { NAV_THEME, THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@react-navigation/native";
 import { PortalHost } from "@rn-primitives/portal";
@@ -12,10 +12,10 @@ import { useColorScheme } from "nativewind";
 import React from "react";
 import { View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import Toastable from "react-native-toastable";
 import "../global.css";
 import "../i18n";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Toaster } from "sonner-native";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -44,7 +44,6 @@ export default function RootLayout() {
           >
             <GestureHandlerRootView style={{ flex: 1 }}>
               <View className={cn("flex-1 light dark:dark")}>
-                <Toastable position="top" />
                 <StatusBar
                   style={colorScheme === "dark" ? "light" : "dark"}
                   translucent
@@ -61,8 +60,8 @@ export default function RootLayout() {
                     keyboardHandlingEnabled: true,
                     headerStyle: {
                       backgroundColor: isDarkColorScheme
-                        ? NAV_THEME.dark.colors.card
-                        : NAV_THEME.light.colors.card,
+                        ? NAV_THEME.dark.colors.background
+                        : NAV_THEME.light.colors.background,
                     },
                     headerTintColor: isDarkColorScheme
                       ? NAV_THEME.dark.colors.text
@@ -73,6 +72,14 @@ export default function RootLayout() {
                         ? NAV_THEME.dark.colors.text
                         : NAV_THEME.light.colors.text,
                     },
+                  }}
+                />
+                <Toaster
+                  duration={1000}
+                  style={{
+                    backgroundColor: isDarkColorScheme
+                      ? THEME.dark.card
+                      : THEME.light.card,
                   }}
                 />
                 <PortalHost />

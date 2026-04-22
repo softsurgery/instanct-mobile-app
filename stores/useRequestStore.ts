@@ -4,6 +4,15 @@ import { CreateRequestDto } from "~/types";
 
 interface RequestData {
   createDto: CreateRequestDto;
+
+  flags: {
+    initialLocationSet: boolean;
+    location: {
+      latitude: number;
+      longitude: number;
+    };
+    mentionTimeAndPlace: boolean;
+  };
   errors: Record<string, string[]>;
 }
 
@@ -15,11 +24,18 @@ export interface RequestStore extends RequestData {
 
 const initialState: RequestData = {
   createDto: {
-    senderId: "",
-    receivers: [],
-    description: "",
-    place: "",
-    time: new Date(),
+    receiverIds: [],
+    message: "",
+    location: undefined,
+    time: undefined,
+  },
+  flags: {
+    initialLocationSet: false,
+    location: {
+      latitude: 0,
+      longitude: 0,
+    },
+    mentionTimeAndPlace: false,
   },
   errors: {},
 };

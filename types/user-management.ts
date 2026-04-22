@@ -41,9 +41,10 @@ export interface ResponseUserDto extends ResponseAbstractUsertDto {
   isPrivate?: boolean;
   pictureId?: number;
   picture?: Upload;
+  coverId?: number;
+  cover?: Upload;
   experiences?: ResponseExperienceDto[];
   educations?: ResponseEducationDto[];
-  objectives?: ResponseRefParamDto[];
   industries?: ResponseRefParamDto[];
 }
 
@@ -63,6 +64,10 @@ export interface CreateUserDto extends CreateAbstractUserDto {
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface UpdateUserDto extends Partial<CreateUserDto> {}
+
+export interface UpdateUserCoverDto {
+  coverId?: number;
+}
 
 export enum Gender {
   Male = "Male",

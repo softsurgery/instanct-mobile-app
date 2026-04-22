@@ -6,7 +6,14 @@ export enum SessionType {
   MAP_SESSION = "map-session",
 }
 
-export interface ResponseSessionDto extends DatabaseEntity {
+export enum SessionStatus {
+  SCHEDULED = "scheduled",
+  ACTIVE = "active",
+  COMPLETED = "completed",
+  CANCELLED = "cancelled",
+}
+
+export interface ResponseSessionDto<T = any> extends DatabaseEntity {
   id: number;
   userId?: string;
   user: ResponseUserDto;
@@ -15,12 +22,22 @@ export interface ResponseSessionDto extends DatabaseEntity {
   plannedEnd?: Date;
   started?: Date;
   ended?: Date;
-  payload?: object;
+  payload?: T;
+  status: SessionStatus;
 }
 
-export interface CreateSessionDto {
+export interface CreateSessionDto<T = any> {
   sessionType: SessionType;
   plannedStart?: Date;
   plannedEnd?: Date;
-  payload?: object;
+  payload?: T;
+}
+
+export interface UpdateSessionDto<T = any> {
+  plannedEnd?: Date;
+  payload?: T;
+}
+
+export interface MapSessionPayload {
+  objectives: string[];
 }

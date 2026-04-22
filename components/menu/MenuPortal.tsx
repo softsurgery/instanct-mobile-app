@@ -8,6 +8,7 @@ import { View } from "react-native";
 import { InspectBaseProfile } from "../profile/BaseProfile";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
+import { IconMessageChatbot } from "@tabler/icons-react-native";
 
 interface MenuPortalProps {
   className?: string;
@@ -30,14 +31,6 @@ export const MenuPortal = ({ className }: MenuPortalProps) => {
               title={t("screens.menu")}
               shortcuts={[
                 {
-                  icon: Bell,
-                  onPress: () => {
-                    router.push("/main/notifications");
-                    resetCount();
-                  },
-                  badgeText: newCount > 0 ? `${newCount}` : undefined,
-                },
-                {
                   key: "settings",
                   icon: Settings,
                   onPress: () => router.push("/main/settings"),
@@ -51,6 +44,20 @@ export const MenuPortal = ({ className }: MenuPortalProps) => {
                       },
                     ]
                   : []),
+                {
+                  key: "notifications",
+                  icon: Bell,
+                  onPress: () => {
+                    router.push("/main/notifications");
+                    resetCount();
+                  },
+                  badgeText: newCount > 0 ? `${newCount}` : undefined,
+                },
+                {
+                  key: "chat",
+                  icon: IconMessageChatbot,
+                  onPress: () => router.push("/main/chat"),
+                },
               ]}
             />
           </StableSafeAreaView>

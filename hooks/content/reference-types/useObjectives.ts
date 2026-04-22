@@ -1,5 +1,4 @@
 import { api } from "@/api";
-import { ResponseRefParamDto } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
@@ -11,23 +10,29 @@ export const useObjectives = (
   { enabled }: useObjectivesProps = { enabled: true },
 ) => {
   const {
-    data: objectivesResp,
-    isFetching: isObjectivesPending,
+    data: objectivesSubTypeResp,
+    isPending: isObjectivesSubTypePending,
     refetch: refetchObjectives,
   } = useQuery({
     queryKey: ["objectives"],
-    queryFn: () => api.refImpl.findAllObjectives(),
+    queryFn: async () =>
+      api.referenceTypes.refType.findAll({
+        filter: "parentId||$eq||objectif",
+        join: "params",
+      }),
     enabled,
   });
 
   const objectives = React.useMemo(() => {
-    if (!objectivesResp) return [];
-    return objectivesResp as ResponseRefParamDto<{ color: string }>[];
-  }, [objectivesResp]);
+    if (!objectivesSubTypeResp) return [];
+    return objectivesSubTypeResp.flatMap((refType) => refType.params);
+  }, [objectivesSubTypeResp]);
+
 
   return {
+    objectivesSubTypeResp,
     objectives,
-    isObjectivesPending,
+    isObjectivesSubTypePending,
     refetchObjectives,
   };
 };
