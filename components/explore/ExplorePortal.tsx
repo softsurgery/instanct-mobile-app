@@ -76,9 +76,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   );
 
   return (
-    <StableSafeAreaView
-      className={cn("flex flex-1 flex-col bg-background", className)}
-    >
+    <StableSafeAreaView className={cn("flex-1", className)}>
       <ApplicationHeader
         title={
           <View key="session-countdown" className="flex flex-col items-center">
@@ -86,13 +84,13 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
             {mapSession && <SessionCountdown session={mapSession} />}
           </View>
         }
-        className={cn(mapSession ? "items-start" : "")}
+        className={cn("z-10", mapSession ? "items-start" : "")}
         shortcuts={[
           {
             key: "end-session",
             hidden: !mapSession,
             icon: CalendarCog,
-            color: hslToHex(color),
+            // color: hslToHex(color),
             onPress: () => router.push("/main/sessions/manage"),
           },
           {
@@ -123,32 +121,34 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
             </Text>
           </View>
         ) : (
-          <View className="flex-1 bg-transparent mt-2">
-            <LegendList
-              className="flex-1"
-              data={users}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              pagingEnabled
-              recycleItems={true}
-              bounces={false}
-              alwaysBounceVertical={false}
-              alwaysBounceHorizontal={false}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={renderItem}
-              onScroll={handleScroll}
-              contentContainerStyle={{
-                paddingHorizontal: 0,
-              }}
-            />
-            <View className="mx-4 mb-4 items-center">
+          <>
+            <View className="flex-1 bg-transparent absolute top-0 border border-border bg-red-500">
+              <LegendList
+                className="flex-1"
+                data={users}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                pagingEnabled
+                // recycleItems={true}
+                bounces={false}
+                alwaysBounceVertical={false}
+                alwaysBounceHorizontal={false}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={renderItem}
+                onScroll={handleScroll}
+                contentContainerStyle={{
+                  paddingHorizontal: 0,
+                }}
+              />
+            </View>
+            <View className="absolute bottom-4 right-1/2 translate-x-1/2 px-4 py-2 bg-background bg-opacity-70 rounded-full border border-border">
               <View className="flex flex-row justify-between items-center">
                 <Text className="text-lg font-bold">
                   {currentIndex + 1} / {users.length}
                 </Text>
               </View>
             </View>
-          </View>
+          </>
         )
       ) : (
         <SessionStarter className="px-4" />
