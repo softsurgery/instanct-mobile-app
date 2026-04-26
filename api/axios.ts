@@ -1,8 +1,12 @@
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
+import { delay } from "@/lib/time";
 import _axios from "axios";
 import { router } from "expo-router";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
+const GLOBAL_DELAY = process.env.EXPO_PUBLIC_GLOBAL_DELAY
+  ? parseInt(process.env.EXPO_PUBLIC_GLOBAL_DELAY)
+  : 0;
 
 const axios = _axios.create({
   baseURL: BASE_URL,
@@ -14,7 +18,8 @@ const axios = _axios.create({
 
 // Request interceptor
 axios.interceptors.request.use(
-  function (config) {
+  async function (config) {
+    await delay(GLOBAL_DELAY);
     const authStore = useAuthPersistStore.getState();
 
     if (authStore.accessToken) {
