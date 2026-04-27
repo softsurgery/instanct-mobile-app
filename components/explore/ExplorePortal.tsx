@@ -122,25 +122,27 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
           </View>
         ) : (
           <>
-            <View className="flex-1 bg-transparent absolute top-0 border border-border bg-red-500">
-              <LegendList
-                className="flex-1"
-                data={users}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                pagingEnabled
-                // recycleItems={true}
-                bounces={false}
-                alwaysBounceVertical={false}
-                alwaysBounceHorizontal={false}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={renderItem}
-                onScroll={handleScroll}
-                contentContainerStyle={{
-                  paddingHorizontal: 0,
-                }}
-              />
-            </View>
+            <LegendList
+              data={users}
+              style={{
+                flex: 1,
+                position: "absolute",
+                top: 0,
+                left: 0,
+                height: "100%",
+                width: "100%",
+              }}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              pagingEnabled
+              recycleItems={true}
+              bounces={false}
+              alwaysBounceVertical={false}
+              alwaysBounceHorizontal={false}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={renderItem}
+              onScroll={handleScroll}
+            />
             <View className="absolute bottom-4 right-1/2 translate-x-1/2 px-4 py-2 bg-background bg-opacity-70 rounded-full border border-border">
               <View className="flex flex-row justify-between items-center">
                 <Text className="text-lg font-bold">
