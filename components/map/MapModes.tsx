@@ -2,10 +2,11 @@ import { cn } from "@/lib/utils";
 import { View } from "react-native";
 import { Icon } from "../ui/icon";
 import * as Haptics from "expo-haptics";
-import { Crosshair, Eye, SatelliteDish } from "lucide-react-native";
+import { Crosshair, Eye, RefreshCcw, SatelliteDish } from "lucide-react-native";
 import { useMapStore } from "@/stores/useMapStore";
 import { THEME } from "@/lib/theme";
 import { useColorScheme } from "nativewind";
+import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
 
 interface MapModesProps {
   className?: string;
@@ -17,12 +18,20 @@ export const MapModes = ({
   moveToCurrentLocation,
 }: MapModesProps) => {
   const { colorScheme } = useColorScheme();
+  const { restartSocket } = useLiveGeolocation();
   const active =
     colorScheme === "dark" ? THEME.dark.primary : THEME.light.primary;
   const inactive =
     colorScheme === "dark" ? THEME.dark.foreground : THEME.light.foreground;
   const mapStore = useMapStore();
   const modes = [
+    {
+      key: "refresh",
+      icon: RefreshCcw,
+      onPress: () => {
+        restartSocket();
+      },
+    },
     {
       key: "globe",
       icon: SatelliteDish,

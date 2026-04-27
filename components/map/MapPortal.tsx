@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { useMapStore } from "@/stores/useMapStore";
 import { IconMessageChatbot } from "@tabler/icons-react-native";
 import { router } from "expo-router";
-import { Bell, RefreshCcw, Settings } from "lucide-react-native";
+import { Bell, Settings } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
@@ -11,7 +11,6 @@ import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { MapRenderer } from "./MapRenderer";
 import { MapStatus } from "./MapDebugging/MapStatus";
-import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
 import { Loader } from "../shared/Loader";
 
 interface MapPortalProps {
@@ -22,7 +21,6 @@ export const MapPortal = ({ className }: MapPortalProps) => {
   const { t } = useTranslation("common");
   const mapStore = useMapStore();
   const { newCount, resetCount } = useNotificationContext();
-  const { restartSocket } = useLiveGeolocation();
 
   const { latitude, longitude } = mapStore?.location?.coords || {
     latitude: 0,
@@ -61,13 +59,6 @@ export const MapPortal = ({ className }: MapPortalProps) => {
               key: "settings",
               icon: Settings,
               onPress: () => router.push("/main/maps/map-settings"),
-            },
-            {
-              key: "refresh",
-              icon: RefreshCcw,
-              onPress: () => {
-                restartSocket();
-              },
             },
             {
               key: "notifications",
