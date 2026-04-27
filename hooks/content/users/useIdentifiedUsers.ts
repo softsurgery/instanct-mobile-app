@@ -3,7 +3,7 @@ import { useQueries } from "@tanstack/react-query";
 import React from "react";
 
 interface UseIdentifiedUsersProps {
-  ids: string[];
+  ids: (string | undefined)[];
 }
 
 export const useIdentifiedUsers = ({ ids }: UseIdentifiedUsersProps) => {
@@ -11,28 +11,40 @@ export const useIdentifiedUsers = ({ ids }: UseIdentifiedUsersProps) => {
     () => Array.from(new Set(ids.filter(Boolean))),
     [ids],
   );
+
   const userQueries = useQueries({
     queries: uniqueIds.map((id) => ({
       queryKey: ["user", id],
-      queryFn: () => api.user.findById(id),
+      queryFn: () => api.user.findById(id!),
       enabled: !!id,
     })),
   });
 
-  const users = React.useMemo(
+  const usersMap = React.useMemo(() => {
+    const map = new Map<string, any>();
+
+    uniqueIds.forEach((id, index) => {
+      map.set(id!, userQueries[index]?.data);
+    });
+
+    return map;
+  }, [uniqueIds, userQueries]);
+
+  const userResolvedQueries = React.useMemo(
     () =>
-      userQueries.map(({ data, isPending, refetch }, index) => ({
-        id: ids[index],
-        user: data,
-        isPending,
-        refetch,
+      ids.map((id) => ({
+        id,
+        user: id ? usersMap.get(id) : undefined,
+        isPending: id ? userQueries[uniqueIds.indexOf(id)]?.isPending : false,
       })),
-    [userQueries, ids],
+    [ids, usersMap, userQueries, uniqueIds],
   );
 
   const refetchAll = React.useCallback(() => {
     userQueries.forEach((query) => query.refetch());
   }, [userQueries]);
 
-  return { users, refetchAll };
+  const isPending = userQueries.some((query) => query.isPending);
+
+  return { userResolvedQueries, isPending, refetchAll };
 };
