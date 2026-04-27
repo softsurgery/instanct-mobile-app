@@ -65,6 +65,13 @@ const findAllIncomingPaginated = async (
   return response.data;
 };
 
+const findOneById = async (id: string, join: string): Promise<ResponseRequestDto> => {
+  const response = await axios.get<ResponseRequestDto>(`/requests/${id}`, {
+    params: { join },
+  });
+  return response.data;
+};
+
 const send = async (
   createRequestDto: CreateRequestDto,
 ): Promise<ResponseRequestDto> => {
@@ -77,6 +84,7 @@ const send = async (
 
 export const request = {
   findAllPaginated,
+  findOneById,
   findAllIncomingPaginated,
   send,
 };

@@ -1,10 +1,12 @@
 {
   "titles": {
     "TEST": "This is a test notification",
-    "NEW_SIGNIN": "New Sign-in!"
+    "NEW_SIGNIN": "New Sign-in!",
+    "REQUEST_RECEIVED": "New Request Received"
   },
   "descriptions": {
     "TEST": "This is a test notification description designed to verify that the notification system is working properly.",
-    "NEW_SIGNIN": "We noticed a new sigin from a new device"
+    "NEW_SIGNIN": "We noticed a new sigin from a new device",
+    "REQUEST_RECEIVED": "You have received a new request from {{senderIdentification}}. Click to view the request details and respond."
   }
 }

@@ -292,7 +292,7 @@ export default function MainLayout() {
         }}
       />
       <Stack.Screen
-        name="request/index"
+        name="request/answer"
         options={{
           title: "Accept",
           headerShown: false,

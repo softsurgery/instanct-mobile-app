@@ -1,10 +1,10 @@
 import { LegendList } from "@legendapp/list";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { ArrowLeft } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, RefreshControl, View } from "react-native";
+import { RefreshControl, View } from "react-native";
 import { api } from "~/api";
 import { cn } from "~/lib/utils";
 import { ResponseNotificationDto } from "~/types/notifications";
@@ -12,12 +12,14 @@ import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { Text } from "../ui/text";
 import { NotificationEntry } from "./NotificationEntry";
+import { Loader } from "../shared/Loader";
 
 interface NotificationPortalProps {
   className?: string;
 }
 
 export const NotificationsPortal = ({ className }: NotificationPortalProps) => {
+  const queryClient = useQueryClient();
   const { t } = useTranslation("common");
   const {
     data,
@@ -33,7 +35,7 @@ export const NotificationsPortal = ({ className }: NotificationPortalProps) => {
     queryFn: ({ pageParam = 1 }) =>
       api.notifications.findPaginatedUserConversations({
         page: String(pageParam),
-        limit: "5",
+        limit: "20",
         sort: "createdAt,desc",
       }),
     getNextPageParam: (lastPage) =>
@@ -49,7 +51,11 @@ export const NotificationsPortal = ({ className }: NotificationPortalProps) => {
   const renderItem = React.useCallback(
     ({ item }: { item: ResponseNotificationDto }) => {
       return (
-        <NotificationEntry className="mt-1" key={item.id} notification={item} />
+        <NotificationEntry
+          className="px-4 mt-1"
+          key={item.id}
+          notification={item}
+        />
       );
     },
     [],
@@ -73,34 +79,26 @@ export const NotificationsPortal = ({ className }: NotificationPortalProps) => {
       />
       <View className="flex-1 bg-background">
         <LegendList
-          className={cn("flex-1 py-4")}
+          style={{ flex: 1 }}
           data={notifications}
           renderItem={renderItem}
           keyExtractor={(item) => item.id.toString()}
           showsVerticalScrollIndicator={false}
           recycleItems={true}
           maintainVisibleContentPosition
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefetching}
-              onRefresh={refetch}
-              tintColor="transparent"
-              colors={["transparent"]}
-            />
-          }
+          onRefresh={async () => {
+            await queryClient.invalidateQueries({
+              queryKey: ["notifications"],
+            });
+          }}
           onEndReached={() => {
             if (hasNextPage && !isFetchingNextPage) {
               fetchNextPage();
             }
           }}
           onEndReachedThreshold={0.5}
-          ListHeaderComponent={
-            isNotificationsPending || isFetchingNextPage ? (
-              <ActivityIndicator
-                size="small"
-                className="flex items-center h-fit"
-              />
-            ) : null
+          refreshControl={
+            <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
           }
           ListEmptyComponent={
             !isPending ? (
@@ -112,16 +110,13 @@ export const NotificationsPortal = ({ className }: NotificationPortalProps) => {
             ) : null
           }
           ListFooterComponent={
-            <View className="items-center">
+            <View className="items-center mb-8">
               {isPending ? (
-                <ActivityIndicator
-                  size="small"
-                  className="flex items-center h-fit"
-                />
+                <Loader size="small" className="flex items-center h-fit" />
               ) : hasNextPage ? null : (
                 <View className="flex flex-row items-center justify-center gap-2 p-6">
                   <Text variant={"p"} className="text-muted-foreground">
-                    You have catched up with all notifications
+                    You have caught up with all notifications
                   </Text>
                 </View>
               )}
