@@ -1,5 +1,6 @@
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
 import { ProfileSection } from "./RenderSection";
+import StableScrollView from "@/components/shared/StableScrollView";
 
 export const InterestsTab = ({
   profileSections,
@@ -10,11 +11,11 @@ export const InterestsTab = ({
   renderSection: (section: ProfileSection) => React.ReactNode;
   userId?: string;
 }) => (
-  <ScrollView className="flex-1 bg-background">
+  <StableScrollView className="flex-1 bg-background">
     <View className="flex flex-col gap-4">
       {profileSections
         .filter((s) => s.key === "industries")
         .map((section) => renderSection({ ...section, userId }))}
     </View>
-  </ScrollView>
+  </StableScrollView>
 );

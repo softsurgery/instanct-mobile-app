@@ -1,13 +1,14 @@
 import { SeeMoreText } from "@/components/shared/SeeMoreText";
 import { StablePressable } from "@/components/shared/StablePressable";
+import StableScrollView from "@/components/shared/StableScrollView";
 import { Icon } from "@/components/ui/icon";
 import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
 import { Globe, Linkedin } from "lucide-react-native";
-import { Linking, ScrollView, View } from "react-native";
+import { Linking, View } from "react-native";
 
 export const AboutTab = ({ user }: { user: any }) => (
-  <ScrollView className="flex-1 bg-background">
+  <StableScrollView className="flex-1">
     <View className="flex flex-col gap-4 pb-8">
       {/* Bio Section */}
       {user?.bio ? (
@@ -70,5 +71,5 @@ export const AboutTab = ({ user }: { user: any }) => (
         </View>
       )}
     </View>
-  </ScrollView>
+  </StableScrollView>
 );

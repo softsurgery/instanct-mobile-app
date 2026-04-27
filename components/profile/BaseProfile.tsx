@@ -17,14 +17,20 @@ import {
 } from "@/types";
 import { format } from "date-fns";
 import { useNavigation } from "expo-router";
-import { Image, Pressable, View } from "react-native";
+import {
+  Image,
+  ImageSourcePropType,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  View,
+} from "react-native";
 import { SeeMoreText } from "../shared/SeeMoreText";
 import { Badge } from "../ui/badge";
 import { ProfileStat } from "./ProfileStat";
 import { useUserIndustries } from "@/hooks/content/users/useUserIndustries";
 import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
 import { useServerImages } from "@/hooks/content/useServerImages";
-import { BaseProfileSkeleton } from "./BaseProfileSkeleton";
 import { Loader } from "../shared/Loader";
 import { useDebounce } from "@/hooks/useDebounce";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
@@ -39,6 +45,8 @@ import { api } from "@/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as ImagePicker from "expo-image-picker";
 import { Skeleton } from "../ui/skeleton";
+import { ActionSheetRef } from "react-native-actions-sheet";
+import { ProfileCoverActionSheet } from "./ProfileCoverActionSheet";
 
 interface ProfileSection<T = unknown> {
   key: string;
@@ -62,6 +70,9 @@ export const InspectBaseProfile = ({
 }: InspectBaseProfileProps) => {
   const queryClient = useQueryClient();
   const navigation = useNavigation();
+  const coverSheetRef = React.useRef<ActionSheetRef>(null);
+  const [draftCoverUri, setDraftCoverUri] = React.useState<string | null>(null);
+  const [draftCoverFile, setDraftCoverFile] = React.useState<File | null>(null);
 
   const storeRef = React.useRef(createClientStore());
   const [isRefreshing, setIsRefreshing] = React.useState(false);
@@ -149,16 +160,18 @@ export const InspectBaseProfile = ({
       mutationFn: (coverDto: UpdateUserCoverDto) =>
         api.user.updateCover(coverDto),
       onSuccess: () => {
-        toast.success("Cover updated successfully", {
-          description: "Your cover has been successfully updated.",
-        });
         userStore.reset();
         queryClient.invalidateQueries({ queryKey: ["user", currentUser?.id] });
         queryClient.invalidateQueries({ queryKey: ["current-user"] });
         queryClient.invalidateQueries({
           queryKey: ["server-image", currentUser?.coverId],
         });
+        setDraftCoverUri(null);
+        setDraftCoverFile(null);
         refetchCurrentUser();
+        toast.success("Cover updated successfully", {
+          description: "Your cover has been successfully updated.",
+        });
       },
       onError: (error: ServerErrorResponse) => {
         toast.error(
@@ -175,7 +188,7 @@ export const InspectBaseProfile = ({
     };
   }, []);
 
-  const handleCoverPress = async () => {
+  const handlePickCover = async () => {
     if (currentUser?.id !== id) return; // Prevent others from updating
 
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -191,9 +204,55 @@ export const InspectBaseProfile = ({
         name: asset.uri.split("/").pop() || "cover.jpg",
         type: asset.type || "image/jpeg",
       } as unknown as File;
-      uploadCover({ files: [fileLike] });
+      setDraftCoverUri(asset.uri);
+      setDraftCoverFile(fileLike);
     }
   };
+
+  const handleCoverPress = () => {
+    setDraftCoverUri(null);
+    setDraftCoverFile(null);
+    coverSheetRef.current?.show();
+  };
+
+  const handleCloseCoverSheet = () => {
+    coverSheetRef.current?.hide();
+    setDraftCoverUri(null);
+    setDraftCoverFile(null);
+  };
+
+  const handleConfirmCover = () => {
+    if (!draftCoverFile) {
+      toast.error("Please choose an image first");
+      return;
+    }
+
+    uploadCover({ files: [draftCoverFile] });
+    coverSheetRef.current?.hide();
+  };
+
+  const coverImageSource = React.useMemo<
+    ImageSourcePropType | undefined
+  >(() => {
+    switch (typeof coverSource) {
+      case "string":
+        return { uri: coverSource };
+      case "number":
+        return coverSource;
+      case "object": {
+        if (!coverSource || !("uri" in coverSource)) return undefined;
+        const uri = String(coverSource.uri ?? "");
+        return uri ? { uri } : undefined;
+      }
+      default:
+        return undefined;
+    }
+  }, [coverSource]);
+
+  const coverPreviewSource = React.useMemo<ImageSourcePropType | undefined>(
+    () => (draftCoverUri ? { uri: draftCoverUri } : coverImageSource),
+    [draftCoverUri, coverImageSource],
+  );
 
   const onRefresh = async () => {
     setIsRefreshing(true);
@@ -285,30 +344,30 @@ export const InspectBaseProfile = ({
   const Tab = createMaterialTopTabNavigator();
 
   return (
-    <View className={cn("flex-1 bg-background", className)}>
-      <View className="absolute top-2 left-0 right-0 items-center z-20 pointer-events-none">
-        <Loader isPending={isRefreshing} size="small" />
-      </View>
-
-      {isInitialLoading ? (
+    <ScrollView
+      className={cn("flex-1 bg-background h-full", className)}
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+      }
+    >
+      {/* {isInitialLoading ? (
         <BaseProfileSkeleton className={className} />
       ) : (
-        <>
+       
+      )} */}
+      <>
+        <View className="max-h-[40vh]">
           {/* Cover */}
           {!isCoverPending ? (
             <Pressable
               className="active:opacity-70 relative w-full h-48 overflow-hidden"
               onPress={handleCoverPress}
-              disabled={
-                currentUser?.id !== id ||
-                isCoverUploadPending ||
-                isUpdateCoverPending
-              }
             >
               <Image
                 source={
-                  coverSource
-                    ? { uri: coverSource }
+                  coverImageSource
+                    ? coverImageSource
                     : require("@/assets/images/partial-react-logo.png")
                 }
                 className="w-full h-full opacity-70"
@@ -319,6 +378,16 @@ export const InspectBaseProfile = ({
             <Skeleton className="w-full h-48" />
           )}
           {coverExtra}
+          <ProfileCoverActionSheet
+            ref={coverSheetRef}
+            coverPreviewSource={coverPreviewSource}
+            onPickImage={handlePickCover}
+            onConfirm={handleConfirmCover}
+            onClose={handleCloseCoverSheet}
+            canUpload={currentUser?.id === id}
+            canConfirm={!!draftCoverFile}
+            isPending={isCoverUploadPending || isUpdateCoverPending}
+          />
           {(isCoverUploadPending || isUpdateCoverPending) && (
             <View className="absolute inset-0 bg-black/40 flex items-center justify-center z-50">
               <Loader isPending={true} size="large" />
@@ -347,64 +416,65 @@ export const InspectBaseProfile = ({
               </View>
             </View>
           </View>
-          {/* Tabs */}
-          <View className="flex-1 mt-4" style={{ minHeight: 400 }}>
-            <Tab.Navigator
-              screenOptions={{
-                tabBarScrollEnabled: false,
-                tabBarLabelStyle: {
-                  fontSize: 12,
-                  fontWeight: "600",
-                  textTransform: "none",
-                },
-                tabBarIndicatorStyle: { backgroundColor: "#6366f1" },
-                tabBarStyle: { backgroundColor: "transparent" },
-              }}
-              commonOptions={{
-                sceneStyle: {
-                  flex: 1,
-                },
+        </View>
+
+        {/* Tabs */}
+        <View className="flex-1 mt-4 h-full min-h-[65vh]">
+          <Tab.Navigator
+            screenOptions={{
+              tabBarScrollEnabled: false,
+              tabBarLabelStyle: {
+                fontSize: 12,
+                fontWeight: "600",
+                textTransform: "none",
+              },
+              tabBarIndicatorStyle: { backgroundColor: "#6366f1" },
+              tabBarStyle: { backgroundColor: "transparent" },
+            }}
+            commonOptions={{
+              sceneStyle: {
+                flex: 1,
+              },
+            }}
+          >
+            <Tab.Screen
+              name="About"
+              options={{
+                tabBarLabel: "About",
               }}
             >
-              <Tab.Screen
-                name="About"
-                options={{
-                  tabBarLabel: "About",
-                }}
-              >
-                {() => <AboutTab user={user} />}
-              </Tab.Screen>
-              <Tab.Screen
-                name="Career"
-                options={{
-                  tabBarLabel: "Career",
-                }}
-              >
-                {() => (
-                  <ExperienceTab
-                    profileSections={profileSections}
-                    renderSection={RenderSection}
-                  />
-                )}
-              </Tab.Screen>
-              <Tab.Screen
-                name="Interests"
-                options={{
-                  tabBarLabel: "Interests",
-                }}
-              >
-                {() => (
-                  <InterestsTab
-                    profileSections={profileSections}
-                    renderSection={RenderSection}
-                    userId={id}
-                  />
-                )}
-              </Tab.Screen>
-            </Tab.Navigator>
-          </View>
-        </>
-      )}
-    </View>
+              {() => <AboutTab user={user} />}
+            </Tab.Screen>
+            <Tab.Screen
+              name="Career"
+              options={{
+                tabBarLabel: "Career",
+              }}
+            >
+              {() => (
+                <ExperienceTab
+                  profileSections={profileSections}
+                  renderSection={RenderSection}
+                />
+              )}
+            </Tab.Screen>
+            <Tab.Screen
+              name="Interests"
+              options={{
+                tabBarLabel: "Interests",
+              }}
+            >
+              {() => (
+                <InterestsTab
+                  profileSections={profileSections}
+                  renderSection={RenderSection}
+                  userId={id}
+                />
+              )}
+            </Tab.Screen>
+          </Tab.Navigator>
+        </View>
+      </>
+    </ScrollView>
   );
 };
