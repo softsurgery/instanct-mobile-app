@@ -54,7 +54,7 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
     return () => {
       requestStore.reset();
     };
-  }, [id]);
+  }, [id, user]);
 
   const identity = React.useMemo(() => identifyUser(user), [user]);
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);

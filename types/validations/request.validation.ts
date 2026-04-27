@@ -17,8 +17,8 @@ export const CreateRequestDtoSchema = (mention: boolean) =>
       : z.string().optional(),
 
     time: mention
-      ? z.coerce.date({
+      ? z.date({
           message: "Time is required.",
         })
-      : z.coerce.date().optional(),
+      : z.date().optional(),
   });
