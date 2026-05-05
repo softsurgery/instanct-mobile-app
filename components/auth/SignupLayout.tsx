@@ -57,11 +57,6 @@ export const SignupLayout = ({ className }: SignupProps) => {
                 component: null,
               },
               {
-                title: "Objectives",
-                description: "Select the objectives relevant to you.",
-                component: null,
-              },
-              {
                 title: "Show us your face",
                 description:
                   "Upload a profile picture to personalize your account.",
