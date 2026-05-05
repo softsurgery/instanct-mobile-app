@@ -1,3 +1,4 @@
+import React from "react";
 import { useNotificationContext } from "@/contexts/NotificationsContext";
 import { cn } from "@/lib/utils";
 import { ResponseUserDto } from "@/types/user-management";
@@ -5,7 +6,6 @@ import { LegendList } from "@legendapp/list";
 import { IconMessageChatbot } from "@tabler/icons-react-native";
 import { router, useFocusEffect } from "expo-router";
 import { ArrowDownNarrowWide, Bell, CalendarCog } from "lucide-react-native";
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
@@ -18,33 +18,38 @@ import { SessionStarter } from "../session/SessionStarter";
 import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { Loader } from "../shared/Loader";
-import { hslToHex, THEME } from "@/lib/theme";
-import { useColorScheme } from "nativewind";
+import { useExploreFilterStore } from "@/stores/userExploreFilterStore";
+import { NotFound } from "../shared/NotFound";
 
 interface ExplorePortalProps {
   className?: string;
 }
 
 export const ExplorePortal = ({ className }: ExplorePortalProps) => {
-  const { colorScheme } = useColorScheme();
-  const isDarkColorScheme = colorScheme === "dark";
-  const color = hslToHex(
-    isDarkColorScheme ? THEME.dark.primary : THEME.light.primary,
-  );
   const usersFilterPath = "/main/explore/users-filter" as any;
   const { t } = useTranslation("common");
   const { currentUser } = useCurrentUser();
+  const userFilerStore = useExploreFilterStore();
   const { newCount, resetCount } = useNotificationContext();
   const { mapSession, refetchSessions } = useActiveSessions();
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const { users: liveUsers } = useLiveGeolocation({
     enabled: true,
-    join: ["user", "user.industries"],
+    join: ["user", "user.industries", "user.sessions"],
   });
 
   const users = React.useMemo(() => {
-    return liveUsers.filter((user) => user.id !== currentUser?.id);
-  }, [liveUsers, currentUser]);
+    const targetedIndustries = userFilerStore.dto.industry;
+    return liveUsers.filter(
+      (user) =>
+        user.id !== currentUser?.id &&
+        (!targetedIndustries ||
+          targetedIndustries.length === 0 ||
+          user.industries?.some((industry) =>
+            targetedIndustries.includes(industry.id),
+          )),
+    );
+  }, [liveUsers, currentUser, userFilerStore.dto.industry]);
 
   const handleNotificationsPress = React.useCallback(() => {
     resetCount();
@@ -113,11 +118,19 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
         ].filter(Boolean)}
       />
       {mapSession ? (
-        users.length === 0 ? (
+        liveUsers.length === 0 ? (
           <View className="flex flex-col flex-1 justify-center items-center px-4">
             <Loader />
             <Text variant={"large"} className="text-center">
               Nearby people will be available shortly, if any are around.
+            </Text>
+          </View>
+        ) : users.length === 0 ? (
+          <View className="flex flex-col flex-1 justify-center items-center px-4">
+            <NotFound />
+            <Text variant={"large"} className="text-center">
+              No one matches your filters right now. Try adjusting or removing
+              some filters to see more people around you.
             </Text>
           </View>
         ) : (

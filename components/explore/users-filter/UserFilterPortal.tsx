@@ -1,14 +1,61 @@
 import { ApplicationHeader } from "@/components/shared/AppHeader";
+import { FormBuilder } from "@/components/shared/form-builder/FormBuilder";
 import { StableSafeAreaView } from "@/components/shared/StableSafeAreaView";
 import { router } from "expo-router";
 import { ArrowLeft } from "lucide-react-native";
 import { View } from "react-native";
-import { UsersFilter } from "./UsersFilter";
+import { useExploreFilterFormStructure } from "./useExploreFilterFormStructure";
+import { StableKeyboardAwareScrollView } from "@/components/shared/StableKeyboardAwareScrollView";
+import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
+import { useObjectives } from "@/hooks/content/reference-types/useObjectives";
+import { mapToSelectOptions } from "@/components/shared/form-builder/utils/map-select-options";
+import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
+import { useExploreFilterStore } from "@/stores/userExploreFilterStore";
+import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
 
-export const UserFilterPortal = () => {
+interface UserFilterPortalProps {
+  className?: string;
+}
+
+export const UserFilterPortal = ({ className }: UserFilterPortalProps) => {
+  const isKeyboardVisible = useKeyboardVisible();
+  const exploreFilterStore = useExploreFilterStore();
+  const { t } = useTranslation();
+
+  const { objectives, isObjectivesSubTypePending } = useObjectives();
+  const { industries, isIndustriesSubTypePending } = useIndustries();
+
+  const handleApplyFilters = () => {
+    exploreFilterStore.apply();
+    router.back();
+  };
+
+  const handleResetFilters = () => {
+    exploreFilterStore.reset();
+  };
+
+  const structure = useExploreFilterFormStructure({
+    store: exploreFilterStore,
+    objectives: mapToSelectOptions({
+      data: objectives,
+      labelKey: "label",
+      valueKey: "id",
+    }),
+    industries: mapToSelectOptions({
+      data: industries,
+      labelKey: "label",
+      valueKey: "id",
+    }),
+    isPending: isObjectivesSubTypePending || isIndustriesSubTypePending,
+  });
+
   return (
-    <StableSafeAreaView className="flex-1 bg-background">
+    <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
+        className="border-b border-border pb-2"
         title={"User Filters"}
         titleVariant="large"
         reverse
@@ -16,13 +63,46 @@ export const UserFilterPortal = () => {
           {
             key: "back",
             icon: ArrowLeft,
-            onPress: () => router.back(),
+            onPress: () => {
+              exploreFilterStore.reset();
+              router.back();
+            },
           },
         ]}
       />
-      <View className="flex-1 mt-2">
-        <UsersFilter onApplyPress={() => router.back()} />
+      <View className="flex-1 bg-background">
+        <View className="px-5 pt-4 pb-2">
+          <Text className="text-sm text-muted-foreground leading-relaxed">
+            You can apply filters to find users that match specific criteria.
+            These filters will help you discover users based on their
+            objectives, industries, and more.
+          </Text>
+        </View>
+        <StableKeyboardAwareScrollView className="flex-1 bg-background">
+          <FormBuilder structure={structure} className="mt-4 px-2" />
+        </StableKeyboardAwareScrollView>
       </View>
+      {!isKeyboardVisible && (
+        <View className="absolute bottom-0 left-0 right-0 border-t border-border bg-card p-8 pt-4 gap-4">
+          <View className="flex flex-row justify-between gap-4">
+            <Button
+              size="sm"
+              className="flex-1 rounded-full"
+              onPress={handleApplyFilters}
+            >
+              <Text>Apply Filters</Text>
+            </Button>
+            <Button
+              size="sm"
+              variant="destructive"
+              className="flex-1 rounded-full"
+              onPress={handleResetFilters}
+            >
+              <Text>Reset Filters</Text>
+            </Button>
+          </View>
+        </View>
+      )}
     </StableSafeAreaView>
   );
 };
