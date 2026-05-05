@@ -22,91 +22,83 @@ interface SettingRowProps extends SettingRowConfig {
   className?: string;
 }
 
-export const SettingRow = React.memo(
-  ({
-    className,
-    title,
-    description,
-    leftIcon,
-    rightIcon,
-    rightComponent,
-    disabled = false,
-    Component,
-    onPress,
-  }: SettingRowProps) => {
-    const isPressable = !!onPress && !disabled;
+export const SettingRow = ({
+  className,
+  title,
+  description,
+  leftIcon,
+  rightIcon,
+  rightComponent,
+  disabled = false,
+  Component,
+  onPress,
+}: SettingRowProps) => {
+  const isPressable = !!onPress && !disabled;
 
-    const renderedComponent = useMemo(() => {
-      if (!Component) return null;
-      return <Component />;
-    }, [Component]);
+  const renderedComponent = useMemo(() => {
+    if (!Component) return null;
+    return <Component />;
+  }, [Component]);
 
-    if (Component) {
-      return isPressable ? (
-        <StablePressable
-          onPress={onPress}
-          className={cn("w-full", disabled && "opacity-50")}
-        >
-          <View className={cn(className)}>{renderedComponent}</View>
-        </StablePressable>
-      ) : (
-        <View className={cn(disabled && "opacity-50")}>
-          <View className={cn(className)}>{renderedComponent}</View>
-        </View>
-      );
-    }
+  if (Component) {
+    return isPressable ? (
+      <StablePressable
+        onPress={onPress}
+        className={cn("w-full", disabled && "opacity-50")}
+      >
+        <View className={cn(className)}>{renderedComponent}</View>
+      </StablePressable>
+    ) : (
+      <View className={cn(disabled && "opacity-50")}>
+        <View className={cn(className)}>{renderedComponent}</View>
+      </View>
+    );
+  }
 
-    const content = (
-      <View className="flex flex-row justify-between items-center w-full">
-        {/* Left side */}
-        <View className="flex flex-row items-center gap-3 flex-1">
-          {leftIcon ? (
-            <Icon as={leftIcon} size={20} className="text-foreground" />
-          ) : null}
-          {title || description ? (
-            <View className="flex-1">
-              {title ? (
-                <Text className="font-semibold text-base">{title}</Text>
-              ) : null}
-              {description ? (
-                <Text className="text-xs text-muted-foreground">
-                  {description}
-                </Text>
-              ) : null}
-            </View>
-          ) : null}
-        </View>
-
-        {/* Right side */}
-        {rightComponent || rightIcon ? (
-          <View className="flex flex-row items-center gap-2">
-            {rightComponent}
-            {rightIcon ? (
-              <Icon
-                as={rightIcon}
-                size={18}
-                className="text-muted-foreground"
-              />
+  const content = (
+    <View className="flex flex-row justify-between items-center w-full">
+      {/* Left side */}
+      <View className="flex flex-row items-center gap-3 flex-1">
+        {leftIcon ? (
+          <Icon as={leftIcon} size={20} className="text-foreground" />
+        ) : null}
+        {title || description ? (
+          <View className="flex-1">
+            {title ? (
+              <Text className="font-semibold text-base">{title}</Text>
+            ) : null}
+            {description ? (
+              <Text className="text-xs text-muted-foreground">
+                {description}
+              </Text>
             ) : null}
           </View>
         ) : null}
       </View>
-    );
 
-    return isPressable ? (
-      <StablePressable
-        onPress={onPress}
-        className={cn("w-full", disabled && "opacity-50", className)}
-      >
-        {content}
-      </StablePressable>
-    ) : (
-      <View className={cn(disabled && "opacity-50", className)}>{content}</View>
-    );
-  },
-);
+      {/* Right side */}
+      {rightComponent || rightIcon ? (
+        <View className="flex flex-row items-center gap-2">
+          {rightComponent}
+          {rightIcon ? (
+            <Icon as={rightIcon} size={18} className="text-muted-foreground" />
+          ) : null}
+        </View>
+      ) : null}
+    </View>
+  );
 
-SettingRow.displayName = "SettingRow";
+  return isPressable ? (
+    <StablePressable
+      onPress={onPress}
+      className={cn("w-full", disabled && "opacity-50", className)}
+    >
+      {content}
+    </StablePressable>
+  ) : (
+    <View className={cn(disabled && "opacity-50", className)}>{content}</View>
+  );
+};
 
 // Builder function for creating typed row configurations
 export const createSettingRow = (config: SettingRowConfig): SettingRowConfig =>
