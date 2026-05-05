@@ -1,3 +1,4 @@
+import React from "react";
 import { api } from "@/api";
 import { ApplicationHeader } from "@/components/shared/AppHeader";
 import { Tappable } from "@/components/shared/Tappable";
@@ -18,8 +19,9 @@ import {
   FileText,
 } from "lucide-react-native";
 import { View } from "react-native";
-import { DeleteEducationDialog } from "./DeleteEducationDialog";
 import { toast } from "sonner-native";
+import { DeleteEducationActionSheet } from "./DeleteEducationActionSheet";
+import { ActionSheetRef } from "react-native-actions-sheet";
 
 interface UpdateEducationsProps {
   className?: string;
@@ -28,6 +30,10 @@ interface UpdateEducationsProps {
 export const UpdateEducations = ({ className }: UpdateEducationsProps) => {
   const userStore = useUserStore();
   const queryClient = useQueryClient();
+  const deleteSheetRef = React.useRef<ActionSheetRef>(null);
+  const [selectedEducationId, setSelectedEducationId] = React.useState<
+    number | null
+  >(null);
 
   const onUpdateEducationPress = (edu: ResponseEducationDto) => {
     userStore.set("responseEducation", edu);
@@ -50,11 +56,33 @@ export const UpdateEducations = ({ className }: UpdateEducationsProps) => {
       queryClient.invalidateQueries({
         queryKey: ["educations", userStore.response?.id],
       });
+      deleteSheetRef.current?.hide();
+      setSelectedEducationId(null);
     },
+
     onError: (error: ServerErrorResponse) => {
       toast.error(error.response?.data?.message || "An error occurred", {});
     },
   });
+
+  const onDeleteEducationPress = (educationId: number) => {
+    setSelectedEducationId(educationId);
+    deleteSheetRef.current?.show();
+  };
+
+  const onCloseDeleteEducationSheet = () => {
+    deleteSheetRef.current?.hide();
+    setSelectedEducationId(null);
+  };
+
+  const onConfirmDeleteEducation = () => {
+    if (!selectedEducationId) {
+      toast.error("No education selected");
+      return;
+    }
+
+    deleteEducation(selectedEducationId);
+  };
 
   return (
     <StableSafeAreaView className={cn("flex flex-1", className)}>
@@ -115,23 +143,6 @@ export const UpdateEducations = ({ className }: UpdateEducationsProps) => {
                         </Text>
                       </View>
 
-                      {/* Duration */}
-                      {/* <View className="flex flex-row items-center gap-3">
-                        <Icon as={Calendar} size={18} />
-                        <View>
-                          <Text className="text-sm text-foreground font-medium">
-                            {format(new Date(edu.startDate!), "MMM yyyy")} -{" "}
-                            {edu.endDate
-                              ? format(new Date(edu.endDate), "MMM yyyy")
-                              : "Present"}
-                          </Text>
-                          <Text className="text-xs text-muted-foreground">
-                            {getExperienceYears(edu.startDate!, edu.endDate)}{" "}
-                            years
-                          </Text>
-                        </View>
-                      </View> */}
-
                       {/* Description */}
                       {edu.description && (
                         <View className="flex flex-row gap-3 mt-1">
@@ -155,21 +166,16 @@ export const UpdateEducations = ({ className }: UpdateEducationsProps) => {
                       >
                         Edit education
                       </Tappable>
-                      <DeleteEducationDialog
-                        handleDelete={() => deleteEducation(edu.id)}
-                        loading={isDeletePending}
-                        trigger={
-                          <Tappable
-                            className="p-4 flex flex-row"
-                            classNames={{
-                              content: "font-semibold text-sm",
-                              pressable: "bg-destructive/50",
-                            }}
-                          >
-                            Delete education
-                          </Tappable>
-                        }
-                      />
+                      <Tappable
+                        className="p-4 flex flex-row"
+                        classNames={{
+                          content: "font-semibold text-sm",
+                          pressable: "bg-destructive/50",
+                        }}
+                        onPress={() => onDeleteEducationPress(edu.id)}
+                      >
+                        Delete education
+                      </Tappable>
                     </View>
                   </View>
                 );
@@ -196,6 +202,12 @@ export const UpdateEducations = ({ className }: UpdateEducationsProps) => {
           )}
         </View>
       </StableScrollView>
+      <DeleteEducationActionSheet
+        ref={deleteSheetRef}
+        onConfirm={onConfirmDeleteEducation}
+        onClose={onCloseDeleteEducationSheet}
+        isPending={isDeletePending}
+      />
     </StableSafeAreaView>
   );
 };

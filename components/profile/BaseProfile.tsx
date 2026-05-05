@@ -118,15 +118,18 @@ export const InspectBaseProfile = ({
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
 
   //profile picture side-effect
-  const { uploads: profileUploads, jsxArray: profilePictures } =
-    useServerImages({
-      ids: [user?.pictureId],
-      fallbacks: [fallback, ""],
-      wrapperClassName:
-        "border border-border bg-background rounded-full shadow-md",
-      size: { width: 100, height: 100 },
-      enabled: !!user && !!user.pictureId,
-    });
+  const {
+    uploads: profileUploads,
+    jsxArray: profilePictures,
+    isPending: isProfilePicturePending,
+  } = useServerImages({
+    ids: [user?.pictureId],
+    fallbacks: [fallback, ""],
+    wrapperClassName:
+      "border border-border bg-background rounded-full shadow-md",
+    size: { width: 100, height: 100 },
+    enabled: !!user && !!user.pictureId,
+  });
   const profilePictureSource = profileUploads?.[0];
 
   // cover picture side-effect
@@ -359,24 +362,20 @@ export const InspectBaseProfile = ({
       <>
         <View className="max-h-[40vh]">
           {/* Cover */}
-          {!isCoverPending ? (
-            <Pressable
-              className="active:opacity-70 relative w-full h-48 overflow-hidden"
-              onPress={handleCoverPress}
-            >
+          <Pressable
+            className="active:opacity-70 relative w-full h-48 overflow-hidden"
+            onPress={handleCoverPress}
+          >
+            {!isCoverPending ? (
               <Image
-                source={
-                  coverImageSource
-                    ? coverImageSource
-                    : require("@/assets/images/partial-react-logo.png")
-                }
+                source={coverImageSource}
                 className="w-full h-full opacity-70"
                 resizeMode="cover"
               />
-            </Pressable>
-          ) : (
-            <Skeleton className="w-full h-48" />
-          )}
+            ) : (
+              <Skeleton className="w-full h-48" />
+            )}
+          </Pressable>
           {coverExtra}
           <ProfileCoverActionSheet
             ref={coverSheetRef}
@@ -395,9 +394,13 @@ export const InspectBaseProfile = ({
           )}
           {/* Header */}
           <View className="flex-row items-center px-5 -mt-12">
-            <ProfilePhotoPreview source={profilePictureSource}>
-              <View>{profilePictures[0]}</View>
-            </ProfilePhotoPreview>
+            {isProfilePicturePending ? (
+              <Skeleton className="w-[100px] h-[100px] rounded-full" />
+            ) : (
+              <ProfilePhotoPreview source={profilePictureSource}>
+                <View>{profilePictures[0]}</View>
+              </ProfilePhotoPreview>
+            )}
             <View className="flex-1 mt-16">
               <View className="flex-row items-center justify-between mx-2">
                 <View>

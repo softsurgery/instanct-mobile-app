@@ -1,3 +1,4 @@
+import React from "react";
 import { api } from "@/api";
 import { ApplicationHeader } from "@/components/shared/AppHeader";
 import { Tappable } from "@/components/shared/Tappable";
@@ -21,8 +22,9 @@ import {
   FileText,
 } from "lucide-react-native";
 import { View } from "react-native";
-import { DeleteExperienceDialog } from "./DeleteExperienceDialog";
 import { toast } from "sonner-native";
+import { ActionSheetRef } from "react-native-actions-sheet";
+import { DeleteExperienceActionSheet } from "./DeleteExperienceActionSheet";
 
 interface UpdateExperiencesProps {
   className?: string;
@@ -31,6 +33,10 @@ interface UpdateExperiencesProps {
 export const UpdateExperiences = ({ className }: UpdateExperiencesProps) => {
   const userStore = useUserStore();
   const queryClient = useQueryClient();
+  const deleteSheetRef = React.useRef<ActionSheetRef>(null);
+  const [selectedExperienceId, setSelectedExperienceId] = React.useState<
+    number | null
+  >(null);
 
   const onUpdateExperiencePress = (exp: ResponseExperienceDto) => {
     userStore.set("responseExperience", exp);
@@ -50,17 +56,38 @@ export const UpdateExperiences = ({ className }: UpdateExperiencesProps) => {
   const { mutate: deleteExperience, isPending: isDeletePending } = useMutation({
     mutationFn: (id: number) => api.experience.remove(id),
     onSuccess: () => {
-      toast.success("Experience deleted successfully", {
-        description: "Your experience has been successfully deleted.",
-      });
       queryClient.invalidateQueries({
         queryKey: ["experiences", userStore.response?.id],
       });
+      toast.success("Experience deleted successfully", {
+        description: "Your experience has been successfully deleted.",
+      });
+      deleteSheetRef.current?.hide();
+      setSelectedExperienceId(null);
     },
     onError: (error: ServerErrorResponse) => {
       toast.error(error.response?.data?.message || "An error occurred", {});
     },
   });
+
+  const onDeleteExperiencePress = (experienceId: number) => {
+    setSelectedExperienceId(experienceId);
+    deleteSheetRef.current?.show();
+  };
+
+  const onCloseDeleteExperienceSheet = () => {
+    deleteSheetRef.current?.hide();
+    setSelectedExperienceId(null);
+  };
+
+  const onConfirmDeleteExperience = () => {
+    if (!selectedExperienceId) {
+      toast.error("No experience selected");
+      return;
+    }
+
+    deleteExperience(selectedExperienceId);
+  };
 
   return (
     <StableSafeAreaView className={cn("flex flex-1", className)}>
@@ -166,21 +193,16 @@ export const UpdateExperiences = ({ className }: UpdateExperiencesProps) => {
                       >
                         Edit experience
                       </Tappable>
-                      <DeleteExperienceDialog
-                        handleDelete={() => deleteExperience(exp.id)}
-                        loading={isDeletePending}
-                        trigger={
-                          <Tappable
-                            className="p-4 flex flex-row"
-                            classNames={{
-                              content: "font-semibold text-sm",
-                              pressable: "bg-destructive/50",
-                            }}
-                          >
-                            Delete experience
-                          </Tappable>
-                        }
-                      />
+                      <Tappable
+                        className="p-4 flex flex-row"
+                        classNames={{
+                          content: "font-semibold text-sm",
+                          pressable: "bg-destructive/50",
+                        }}
+                        onPress={() => onDeleteExperiencePress(exp.id)}
+                      >
+                        Delete experience
+                      </Tappable>
                     </View>
                   </View>
                 );
@@ -207,6 +229,12 @@ export const UpdateExperiences = ({ className }: UpdateExperiencesProps) => {
           )}
         </View>
       </StableScrollView>
+      <DeleteExperienceActionSheet
+        ref={deleteSheetRef}
+        onConfirm={onConfirmDeleteExperience}
+        onClose={onCloseDeleteExperienceSheet}
+        isPending={isDeletePending}
+      />
     </StableSafeAreaView>
   );
 };
