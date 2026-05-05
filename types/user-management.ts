@@ -1,4 +1,5 @@
 import { ResponseRefParamDto } from "./reference-types";
+import { ResponseSessionDto } from "./session";
 import { Upload } from "./upload";
 import { DatabaseEntity } from "./utils/database-entity";
 
@@ -13,6 +14,7 @@ interface ResponseAbstractUsertDto extends DatabaseEntity {
   username: string;
   email: string;
   emailVerified?: Date;
+  sessions?: ResponseSessionDto[];
 }
 
 interface CreateAbstractUserDto {
@@ -46,6 +48,7 @@ export interface ResponseUserDto extends ResponseAbstractUsertDto {
   experiences?: ResponseExperienceDto[];
   educations?: ResponseEducationDto[];
   industries?: ResponseRefParamDto[];
+  activeSession?: ResponseSessionDto;
 }
 
 export interface CreateUserDto extends CreateAbstractUserDto {
