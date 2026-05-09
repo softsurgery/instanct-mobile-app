@@ -14,10 +14,10 @@ import { ResponseConversationDto } from "~/types";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StablePressable } from "../shared/StablePressable";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
-import { Input } from "../ui/input";
 import { Text } from "../ui/text";
 import { UserEntry } from "./UserEntry";
-import { Icon } from "../ui/icon";
+import { MarkedInput } from "../shared/MarkedInput";
+import { Separator } from "../ui/separator";
 
 interface ChatPortalProps {
   className?: string;
@@ -44,7 +44,7 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
     queryFn: ({ pageParam = 1 }) =>
       api.chat.conversation.findPaginatedUserConversations({
         page: String(pageParam),
-        limit: "5",
+        limit: "20",
         search: debouncedSearchQuery,
       }),
     getNextPageParam: (lastPage) =>
@@ -65,7 +65,7 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
       if (!user) return null;
       return (
         <StablePressable
-          key={new Date().getTime()}
+          key={item.id}
           className="flex flex-col gap-4"
           onPress={() =>
             router.navigate({
@@ -92,12 +92,6 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
     [currentUser?.id],
   );
 
-  const [dragging, setDragging] = React.useState(false);
-  const { value: debouncedDragging, loading: isDragging } = useDebounce(
-    dragging,
-    1000,
-  );
-
   return (
     <StableSafeAreaView
       className={cn("flex flex-1 flex-col bg-card", className)}
@@ -120,23 +114,15 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
 
       <View className="flex-1 bg-background">
         {/* Search Bar */}
-        <View className="flex flex-row items-center gap-2 border-b border-border px-3 py-4">
-          <Icon as={Search} size={18} className="text-muted-foreground" />
-          <Input
-            placeholder={"Search conversations..."}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            className="flex-1 border-0 bg-transparent placeholder:text-muted-foreground py-0 h-9"
-            placeholderTextColor="rgba(109, 114, 120, 0.7)"
-          />
-          {searchQuery !== "" && (
-            <StablePressable onPress={() => setSearchQuery("")}>
-              <Icon as={X} size={18} className="text-muted-foreground" />
-            </StablePressable>
-          )}
-        </View>
+        <MarkedInput
+          icon={Search}
+          placeholder={t("Search conversations...")}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          className="m-4"
+        />
+        <Separator />
         {/* Manual Tabs */}
-
         <View className="flex-1 px-3">
           <LegendList
             className={cn("flex-1")}
@@ -146,8 +132,6 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
             showsVerticalScrollIndicator={false}
             recycleItems={true}
             maintainVisibleContentPosition
-            onScrollBeginDrag={() => setDragging(true)}
-            onScrollEndDrag={() => setDragging(false)}
             refreshControl={
               <RefreshControl
                 refreshing={isRefetching}

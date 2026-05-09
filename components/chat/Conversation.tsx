@@ -16,7 +16,7 @@ import {
 } from "react-native";
 import { io } from "socket.io-client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { ChatBubble } from "./conversation/ChatBubble";
@@ -47,6 +47,7 @@ type FlatListItem =
   | { type: "message"; message: ResponseMessageDto };
 
 export const Conversation = ({ id }: ConversationProps) => {
+  const queryClient = useQueryClient();
   const soundPlayer = useAudioPlayer(
     require("~/assets/sounds/receive-message.wav"),
   );
@@ -188,6 +189,8 @@ export const Conversation = ({ id }: ConversationProps) => {
 
     s.on("message", (message: ResponseMessageDto) => {
       setMessages((prev) => [message, ...prev]);
+      //has to be changed later to only invalidate the specific conversation query instead of all conversations
+      queryClient.invalidateQueries({ queryKey: ["conversations"] });
       playSound();
     });
 
