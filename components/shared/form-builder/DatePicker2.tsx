@@ -66,10 +66,11 @@ export const DatePicker = ({
       duration: 250,
       easing: Easing.out(Easing.ease),
     });
+    if (!date) onDateChange(new Date());
     if (next) {
       setTimeout(() => {
         scrollToView(contentRef);
-      }, 350);
+      }, 100);
     }
   };
 

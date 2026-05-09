@@ -88,6 +88,7 @@ export const TimePicker = ({
       duration: 250,
       easing: Easing.out(Easing.ease),
     });
+    if (!time) onTimeChange(new Date());
     if (next) {
       setTimeout(() => {
         scrollToView(contentRef);
