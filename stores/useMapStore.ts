@@ -16,6 +16,12 @@ interface MapData {
     clusters: boolean;
     mode: "sattelite" | "map";
   };
+  draftSettings: {
+    radius: number;
+    showUsernames: boolean;
+    clusters: boolean;
+    mode: "sattelite" | "map";
+  };
   hasInitializedParameters: boolean;
   connected: boolean;
   location: Location.LocationObject | null;
@@ -59,6 +65,12 @@ const initialState: MapData = {
     updateInterval: 5,
   },
   settings: {
+    radius: 50,
+    showUsernames: true,
+    clusters: true,
+    mode: "map",
+  },
+  draftSettings: {
     radius: 50,
     showUsernames: true,
     clusters: true,
