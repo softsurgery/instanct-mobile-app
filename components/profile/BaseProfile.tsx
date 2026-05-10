@@ -38,7 +38,7 @@ import { AboutTab } from "./sections/AboutTab";
 import { ExperienceTab } from "./sections/ExperienceTab";
 import { InterestsTab } from "./sections/InterestsTab";
 import { RenderSection } from "./sections/RenderSection";
-import { ProfilePhotoPreview } from "../shared/ProfilePhotoPreview";
+import { PhotoPreview } from "../shared/PhotoPreview";
 import { useUploadMutation } from "@/hooks/useUploadMutation";
 import { toast } from "sonner-native";
 import { api } from "@/api";
@@ -46,7 +46,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as ImagePicker from "expo-image-picker";
 import { Skeleton } from "../ui/skeleton";
 import { ActionSheetRef } from "react-native-actions-sheet";
-import { ProfileCoverActionSheet } from "./ProfileCoverActionSheet";
+import { Button } from "../ui/button";
+import { Icon } from "../ui/icon";
+import { Pencil } from "lucide-react-native";
 
 interface ProfileSection<T = unknown> {
   key: string;
@@ -70,9 +72,7 @@ export const InspectBaseProfile = ({
 }: InspectBaseProfileProps) => {
   const queryClient = useQueryClient();
   const navigation = useNavigation();
-  const coverSheetRef = React.useRef<ActionSheetRef>(null);
   const [draftCoverUri, setDraftCoverUri] = React.useState<string | null>(null);
-  const [draftCoverFile, setDraftCoverFile] = React.useState<File | null>(null);
 
   const storeRef = React.useRef(createClientStore());
   const [isRefreshing, setIsRefreshing] = React.useState(false);
@@ -133,7 +133,11 @@ export const InspectBaseProfile = ({
   const profilePictureSource = profileUploads?.[0];
 
   // cover picture side-effect
-  const { uploads: coverUploads, isPending: isCoverPending } = useServerImages({
+  const {
+    jsxArray: coverImages,
+    uploads: coverUploads,
+    isPending: isCoverPending,
+  } = useServerImages({
     ids: [user?.coverId],
     fallbacks: [""],
     wrapperClassName: "",
@@ -169,8 +173,6 @@ export const InspectBaseProfile = ({
         queryClient.invalidateQueries({
           queryKey: ["server-image", currentUser?.coverId],
         });
-        setDraftCoverUri(null);
-        setDraftCoverFile(null);
         refetchCurrentUser();
         toast.success("Cover updated successfully", {
           description: "Your cover has been successfully updated.",
@@ -192,7 +194,7 @@ export const InspectBaseProfile = ({
   }, []);
 
   const handlePickCover = async () => {
-    if (currentUser?.id !== id) return; // Prevent others from updating
+    if (currentUser?.id !== id) return;
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
@@ -200,38 +202,24 @@ export const InspectBaseProfile = ({
       aspect: [16, 9],
       quality: 0.8,
     });
-    if (!result.canceled) {
-      const asset = result.assets[0];
-      const fileLike = {
-        uri: asset.uri,
-        name: asset.uri.split("/").pop() || "cover.jpg",
-        type: asset.type || "image/jpeg",
-      } as unknown as File;
-      setDraftCoverUri(asset.uri);
-      setDraftCoverFile(fileLike);
-    }
-  };
 
-  const handleCoverPress = () => {
-    setDraftCoverUri(null);
-    setDraftCoverFile(null);
-    coverSheetRef.current?.show();
-  };
+    if (result.canceled) return;
 
-  const handleCloseCoverSheet = () => {
-    coverSheetRef.current?.hide();
-    setDraftCoverUri(null);
-    setDraftCoverFile(null);
-  };
+    const asset = result.assets[0];
 
-  const handleConfirmCover = () => {
-    if (!draftCoverFile) {
-      toast.error("Please choose an image first");
-      return;
-    }
+    // INSTANT UI PREVIEW
+    setDraftCoverUri(asset.uri);
 
-    uploadCover({ files: [draftCoverFile] });
-    coverSheetRef.current?.hide();
+    const fileLike = {
+      uri: asset.uri,
+      name: asset.uri.split("/").pop() || "cover.jpg",
+      type: asset.mimeType || "image/jpeg",
+    } as unknown as File;
+
+    // AUTO UPLOAD
+    uploadCover({
+      files: [fileLike],
+    });
   };
 
   const coverImageSource = React.useMemo<
@@ -362,7 +350,7 @@ export const InspectBaseProfile = ({
       <>
         <View className="max-h-[40vh]">
           {/* Cover */}
-          <Pressable
+          {/* <Pressable
             className="active:opacity-70 relative w-full h-48 overflow-hidden"
             onPress={handleCoverPress}
           >
@@ -375,18 +363,33 @@ export const InspectBaseProfile = ({
             ) : (
               <Skeleton className="w-full h-48" />
             )}
-          </Pressable>
+          </Pressable> */}
           {coverExtra}
-          <ProfileCoverActionSheet
-            ref={coverSheetRef}
-            coverPreviewSource={coverPreviewSource}
-            onPickImage={handlePickCover}
-            onConfirm={handleConfirmCover}
-            onClose={handleCloseCoverSheet}
-            canUpload={currentUser?.id === id}
-            canConfirm={!!draftCoverFile}
-            isPending={isCoverUploadPending || isUpdateCoverPending}
-          />
+          <PhotoPreview
+            className="active:opacity-70 relative w-full h-48 overflow-hidden"
+            source={coverPreviewSource}
+            footer={() => {
+              if (currentUser?.id !== id) return null;
+
+              return (
+                <Pressable
+                  className="flex flex-row gap-2 items-center px-4 py-2 m-4 mb-12 mx-auto border border-border rounded-full active:bg-muted"
+                  onPress={() => {
+                    handlePickCover();
+                  }}
+                >
+                  <Icon as={Pencil} />
+                  <Text>Change Cover</Text>
+                </Pressable>
+              );
+            }}
+          >
+            <Image
+              source={coverImageSource}
+              className="w-full h-full opacity-70"
+              resizeMode="cover"
+            />
+          </PhotoPreview>
           {(isCoverUploadPending || isUpdateCoverPending) && (
             <View className="absolute inset-0 bg-black/40 flex items-center justify-center z-50">
               <Loader isPending={true} size="large" />
@@ -397,9 +400,9 @@ export const InspectBaseProfile = ({
             {isProfilePicturePending ? (
               <Skeleton className="w-[100px] h-[100px] rounded-full" />
             ) : (
-              <ProfilePhotoPreview source={profilePictureSource}>
+              <PhotoPreview source={profilePictureSource}>
                 <View>{profilePictures[0]}</View>
-              </ProfilePhotoPreview>
+              </PhotoPreview>
             )}
             <View className="flex-1 mt-16">
               <View className="flex-row items-center justify-between mx-2">
