@@ -34,41 +34,69 @@ export const UserEntry = ({
   return (
     <View
       className={cn(
-        "flex flex-row justify-between items-center gap-2 w-full",
+        "w-full flex-row items-center justify-between rounded-2xl px-3 py-3",
         className,
       )}
     >
-      <View className="flex flex-row gap-2 items-center">
-        {profilePictures[0]}
-        <View className="flex flex-col justify-between items-start">
-          <Text className="text-lg font-semibold">{identifyUser(user)}</Text>
-          <View className="flex flex-row gap-2 items-center">
-            {!!lastMessage ? (
-              <Text
-                className="text-xs font-semibold"
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
-                {lastMessage.replaceAll("\n", " ").replace("  ", " ")}
-              </Text>
-            ) : (
-              <Text className="text-xs font-poppins-bold">
-                You can start a conversation now
+      {/* Left Content */}
+      <View className="flex-1 flex-row items-center gap-3">
+        {/* Avatar */}
+        <View className="overflow-hidden rounded-full">
+          {profilePictures[0]}
+        </View>
+
+        {/* Text Content */}
+        <View className="flex-1">
+          {/* Top Row */}
+          <View className="flex-row items-center justify-between gap-2">
+            <Text
+              className="flex-1 text-base font-semibold text-black dark:text-white"
+              numberOfLines={1}
+            >
+              {identifyUser(user)}
+            </Text>
+
+            {!!sentAt && (
+              <Text className="text-[11px] text-gray-500 dark:text-gray-400">
+                {sentAt}
               </Text>
             )}
-            {!!lastMessage && (
-              <Text className="text-xs font-thin">{sentAt}</Text>
-            )}
+          </View>
+
+          {/* Bottom Row */}
+          <View className="mt-1 flex-row items-center justify-between gap-2">
+            <Text
+              className={cn(
+                "flex-1 text-sm",
+                lastMessage
+                  ? "text-gray-600 dark:text-gray-300"
+                  : "text-primary font-medium",
+              )}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {lastMessage
+                ? lastMessage.replaceAll("\n", " ").replace(/\s+/g, " ").trim()
+                : "Start a conversation"}
+            </Text>
+
+            {/* Status */}
+            <View className="flex-row items-center gap-1">
+              {isPending && (
+                <View className="h-2 w-2 rounded-full bg-orange-400" />
+              )}
+
+              {seen && (
+                <Icon
+                  as={MessageCircleMoreIcon}
+                  size={16}
+                  className="text-primary"
+                />
+              )}
+            </View>
           </View>
         </View>
       </View>
-
-      {/* Message Row */}
-      {seen && (
-        <Text className="text-sm text-gray-600 dark:text-gray-400">
-          <Icon as={MessageCircleMoreIcon} />
-        </Text>
-      )}
     </View>
   );
 };
