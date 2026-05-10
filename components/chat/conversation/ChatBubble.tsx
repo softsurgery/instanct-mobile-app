@@ -1,11 +1,7 @@
 import { format } from "date-fns";
 import React from "react";
-import { Alert } from "react-native";
-import {
-  Gesture,
-  GestureDetector,
-  GestureHandlerRootView,
-} from "react-native-gesture-handler";
+import { Alert, Pressable } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   runOnJS,
   useAnimatedStyle,
@@ -13,7 +9,6 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 
-import { StablePressable } from "~/components/shared/StablePressable";
 import { Text } from "~/components/ui/text";
 import { cn } from "~/lib/utils";
 
@@ -36,7 +31,6 @@ export const ChatBubble = ({
     transform: [{ scale: scale.value }],
   }));
 
-  // JS function for alert
   const handleLongPress = () => {
     Alert.alert("Message Options", message || "", [
       { text: "Copy", onPress: () => console.log("Copy") },
@@ -45,7 +39,6 @@ export const ChatBubble = ({
     ]);
   };
 
-  // Gesture
   const longPressGesture = Gesture.LongPress()
     .minDuration(300)
     .onStart(() => {
@@ -59,29 +52,37 @@ export const ChatBubble = ({
     });
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <GestureDetector gesture={longPressGesture}>
-        <Animated.View
-          style={animatedStyle}
-          className={cn(
-            "max-w-[80%] mx-2 rounded-lg mt-2",
-            right
-              ? "self-end rounded-bl-xl rounded-br-none bg-primary"
-              : "self-start rounded-br-xl rounded-bl-none bg-secondary",
-          )}
-        >
-          <StablePressable
-            className="p-2"
-            onPressClassname="bg-muted/50"
-            onPress={() => console.log("Pressed")}
+    <GestureDetector gesture={longPressGesture}>
+      <Animated.View
+        style={[animatedStyle, isPending && { opacity: 0.5 }]}
+        className={cn(
+          "max-w-[80%] mx-3 rounded-2xl mt-1.5",
+          right
+            ? "self-end rounded-br-sm bg-primary"
+            : "self-start rounded-bl-sm bg-secondary",
+        )}
+      >
+        <Pressable className="px-3 py-2 active:opacity-80">
+          <Text
+            className={cn(
+              "text-[15px] leading-5",
+              right ? "text-primary-foreground" : "text-secondary-foreground",
+            )}
           >
-            <Text className="font-semibold pb-0.5">{message}</Text>
-            <Text className="text-xs text-right">
-              {format(timestamp, "hh:mm a")}
-            </Text>
-          </StablePressable>
-        </Animated.View>
-      </GestureDetector>
-    </GestureHandlerRootView>
+            {message}
+          </Text>
+          <Text
+            className={cn(
+              "text-[10px] text-right mt-1",
+              right
+                ? "text-primary-foreground/70"
+                : "text-secondary-foreground/60",
+            )}
+          >
+            {format(timestamp, "hh:mm a")}
+          </Text>
+        </Pressable>
+      </Animated.View>
+    </GestureDetector>
   );
 };

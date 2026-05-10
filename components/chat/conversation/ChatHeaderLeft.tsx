@@ -24,34 +24,33 @@ export const ChatHeaderLeft = ({
 }: ChatHeaderLeftProps) => {
   const navigation = useNavigation<NavigationProps>();
   return (
-    <View
-      className={cn(
-        "flex flex-row items-center justify-center gap-2 py-2",
-        className,
-      )}
-    >
-      {/* backbuttin */}
+    <View className={cn("flex flex-row items-center flex-1 gap-1", className)}>
       <StablePressable
-        className="mx-4"
-        onPress={() => {
-          navigation.goBack();
-        }}
+        className="p-2 rounded-full"
+        onPress={() => navigation.goBack()}
+        onPressClassname="bg-muted"
       >
-        <Icon as={ArrowLeft} size={28} />
+        <Icon as={ArrowLeft} size={24} />
       </StablePressable>
+
       <StablePressable
-        className="flex flex-row gap-2"
+        className="flex flex-row items-center gap-3 flex-1 py-1 px-1 rounded-lg"
         onPress={() =>
           router.push({
             pathname: "/main/profile/inspect-profile",
             params: { id },
           })
         }
+        onPressClassname="bg-muted/50"
       >
         <View>{profilePicture}</View>
         <View className="flex flex-col justify-center">
-          <Text className="font-bold">{identifier}</Text>
-          <Text className="text-xs">{lastSeen}</Text>
+          <Text className="font-semibold text-[15px]" numberOfLines={1}>
+            {identifier}
+          </Text>
+          <Text className="text-xs text-muted-foreground" numberOfLines={1}>
+            {lastSeen}
+          </Text>
         </View>
       </StablePressable>
     </View>

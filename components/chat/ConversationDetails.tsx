@@ -75,24 +75,24 @@ const SettingItem = ({
   return (
     <TouchableOpacity
       onPress={onPress}
-      className="flex-row items-center px-4 py-3 active:bg-muted/50"
+      className="flex-row items-center px-4 py-3.5 active:bg-muted/50"
     >
       <View
         className={cn(
-          "w-10 items-center",
-          destructive ? "text-destructive" : "text-foreground",
+          "w-9 h-9 items-center justify-center rounded-lg",
+          destructive ? "bg-destructive/10" : "bg-muted",
         )}
       >
         <Icon
           as={icon}
-          size={22}
+          size={20}
           color={destructive ? destructiveColor : iconColor}
         />
       </View>
-      <View className="flex-1 ml-2">
+      <View className="flex-1 ml-3">
         <Text
           className={cn(
-            "text-[17px]",
+            "text-[15px]",
             destructive ? "text-destructive" : "text-foreground",
           )}
         >
@@ -113,12 +113,12 @@ const SettingItem = ({
         ) : (
           <>
             {value && (
-              <Text className="text-muted-foreground text-[17px] mr-2">
+              <Text className="text-muted-foreground text-sm mr-2">
                 {value}
               </Text>
             )}
             {showChevron && (
-              <Icon as={ChevronRight} size={20} color={iconColor} />
+              <Icon as={ChevronRight} size={18} color={iconColor} />
             )}
           </>
         )}
@@ -355,20 +355,20 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
           reverse
           className="border-b border-border pb-2 bg-transparent"
         />
-        <View className="pt-12 px-4 pb-3 border-b border-border bg-background">
-          <View className="flex-row items-center">
+        <View className="pt-12 px-3 pb-3 border-b border-border bg-background">
+          <View className="flex-row items-center gap-2">
             <TouchableOpacity
               onPress={() => {
                 setIsSearching(false);
                 setSearchQuery("");
                 setSearchResults([]);
               }}
-              className="p-2 mr-2"
+              className="p-2 rounded-full"
             >
-              <Icon as={ArrowLeft} size={24} color={iconColor} />
+              <Icon as={ArrowLeft} size={22} color={iconColor} />
             </TouchableOpacity>
-            <View className="flex-1 flex-row items-center bg-muted rounded-lg px-4 py-2">
-              <Icon as={Search} size={20} color={mutedIconColor} />
+            <View className="flex-1 flex-row items-center bg-muted rounded-full px-4 py-2.5">
+              <Icon as={Search} size={18} color={mutedIconColor} />
               <TextInput
                 ref={searchInputRef}
                 className="flex-1 text-foreground ml-3 text-base"
@@ -380,14 +380,14 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
                 onChangeText={setSearchQuery}
               />
               {searchQuery.length > 0 && (
-                <TouchableOpacity onPress={() => setSearchQuery("")}>
-                  <Icon as={X} size={20} color={mutedIconColor} />
+                <TouchableOpacity
+                  onPress={() => setSearchQuery("")}
+                  className="p-1"
+                >
+                  <Icon as={X} size={18} color={mutedIconColor} />
                 </TouchableOpacity>
               )}
             </View>
-            <TouchableOpacity className="p-2 ml-2">
-              <Icon as={MoreVertical} size={24} color={iconColor} />
-            </TouchableOpacity>
           </View>
         </View>
 
@@ -455,34 +455,38 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
         className="border-b border-border pb-2 bg-card"
       />
       <StableScrollView className="bg-background">
-        <View className="items-center m-4 p-4 bg-card rounded-lg">
+        <View className="items-center mx-4 mt-6 mb-4 p-6 bg-card rounded-2xl">
           <View className="relative">
             {profilePicture}
-            <View className="absolute bottom-0 right-0 w-6 h-6 bg-green-500 border-2 border-background rounded-full" />
+            <View className="absolute bottom-0 right-0 w-6 h-6 bg-green-500 border-2 border-card rounded-full" />
           </View>
-          <Text className="text-foreground text-2xl font-bold mt-4">
+          <Text className="text-foreground text-xl font-bold mt-4">
             {nickname}
           </Text>
-          <View className="flex-row items-center bg-muted px-3 py-1 rounded-full mt-2">
+          <View className="flex-row items-center bg-muted/60 px-3 py-1.5 rounded-full mt-3">
             <Icon as={ShieldCheck} size={14} color={mutedIconColor} />
-            <Text className="text-muted-foreground text-xs ml-1 font-medium">
+            <Text className="text-muted-foreground text-xs ml-1.5 font-medium">
               End-to-end encrypted
             </Text>
           </View>
         </View>
 
-        <View className="flex-row justify-center gap-8 mb-4">
+        <View className="flex-row justify-center gap-6 mb-6 px-4">
           <View className="items-center">
-            <TouchableOpacity className="w-12 h-12 bg-muted rounded-full items-center justify-center mb-1">
-              <Icon as={User} size={24} color={iconColor} />
+            <TouchableOpacity className="w-14 h-14 bg-card rounded-2xl items-center justify-center mb-1.5 border border-border">
+              <Icon as={User} size={22} color={iconColor} />
             </TouchableOpacity>
-            <Text className="text-muted-foreground text-xs">Profile</Text>
+            <Text className="text-muted-foreground text-xs font-medium">
+              Profile
+            </Text>
           </View>
           <View className="items-center">
-            <TouchableOpacity className="w-12 h-12 bg-muted rounded-full items-center justify-center mb-1">
-              <Icon as={Bell} size={24} color={iconColor} />
+            <TouchableOpacity className="w-14 h-14 bg-card rounded-2xl items-center justify-center mb-1.5 border border-border">
+              <Icon as={Bell} size={22} color={iconColor} />
             </TouchableOpacity>
-            <Text className="text-muted-foreground text-xs">Mute</Text>
+            <Text className="text-muted-foreground text-xs font-medium">
+              Mute
+            </Text>
           </View>
         </View>
 
@@ -491,7 +495,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
             Customization
           </Text>
         </View>
-        <View className="bg-card mx-3 rounded-2xl">
+        <View className="bg-card mx-4 rounded-2xl overflow-hidden">
           <SettingItem
             icon={Type}
             label="Nicknames"
@@ -522,8 +526,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
             Other actions
           </Text>
         </View>
-        <View className="bg-card mx-3 rounded-2xl overflow-hidden">
-          <View className="h-[0.5px] bg-zinc-800 ml-14" />
+        <View className="bg-card mx-4 rounded-2xl overflow-hidden">
           <SettingItem
             icon={ImageIcon}
             label="View media, files, and links"
@@ -534,7 +537,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
               )
             }
           />
-          <View className="h-[0.5px] bg-zinc-800 ml-14" />
+          <View className="h-[0.5px] bg-border ml-16" />
           <SettingItem
             icon={Download}
             label="Save photos automatically"
@@ -547,7 +550,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
             label="Search in conversation"
             onPress={() => setIsSearching(true)}
           />
-          <View className="h-[0.5px] bg-zinc-800 ml-14" />
+          <View className="h-[0.5px] bg-border ml-16" />
           <SettingItem
             icon={Bell}
             label="Sounds and notifications"
@@ -566,12 +569,13 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
           </Text>
         </View>
 
-        <View className="bg-card mx-3 rounded-2xl mb-12">
+        <View className="bg-card mx-4 rounded-2xl mb-12 overflow-hidden">
           <SettingItem icon={Slash} label="Restrict" />
-          <View className="h-[0.5px] bg-zinc-800 ml-14" />
+          <View className="h-[0.5px] bg-border ml-16" />
           <SettingItem icon={Ban} label="Block" />
-          <View className="h-[0.5px] bg-zinc-800 ml-14" />
+          <View className="h-[0.5px] bg-border ml-16" />
           <SettingItem icon={AlertTriangle} label="Report" />
+          <View className="h-[0.5px] bg-border ml-16" />
           <SettingItem
             icon={Trash2}
             label="Delete conversation"

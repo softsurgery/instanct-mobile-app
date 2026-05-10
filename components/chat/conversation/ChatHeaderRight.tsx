@@ -15,16 +15,16 @@ export const ChatHeaderRight = ({
 }: ChatHeaderRightProps) => {
   return (
     <StablePressable
-      className={cn("mx-2 p-2", className)}
+      className={cn("p-2 mr-1 rounded-full", className)}
       onPress={() => {
         router.push({
           pathname: "/main/chat/conversation-details",
           params: { id: String(conversationId) },
         });
       }}
-      onPressClassname="bg-secondary"
+      onPressClassname="bg-muted"
     >
-      <Icon as={EllipsisVertical} size={24} />
+      <Icon as={EllipsisVertical} size={22} />
     </StablePressable>
   );
 };

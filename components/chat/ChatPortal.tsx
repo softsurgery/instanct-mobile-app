@@ -5,7 +5,7 @@ import { LegendList } from "@legendapp/list";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { router } from "expo-router";
-import { ArrowLeft, Search, X } from "lucide-react-native";
+import { ArrowLeft, Search } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { RefreshControl, View } from "react-native";
 import { api } from "~/api";
@@ -18,6 +18,8 @@ import { Text } from "../ui/text";
 import { UserEntry } from "./UserEntry";
 import { MarkedInput } from "../shared/MarkedInput";
 import { Separator } from "../ui/separator";
+import { Loader } from "../shared/Loader";
+import { NotFound } from "../shared/NotFound";
 
 interface ChatPortalProps {
   className?: string;
@@ -123,40 +125,53 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
         />
         <Separator />
         {/* Manual Tabs */}
-        <View className="flex-1 px-3">
-          <LegendList
-            className={cn("flex-1")}
-            data={conversations}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id.toString()}
-            showsVerticalScrollIndicator={false}
-            recycleItems={true}
-            maintainVisibleContentPosition
-            refreshControl={
-              <RefreshControl
-                refreshing={isRefetching}
-                onRefresh={refetch}
-                progressViewOffset={0}
-                enabled={true}
-              />
-            }
-            onEndReached={() => {
-              if (hasNextPage && !isFetchingNextPage) {
-                fetchNextPage();
+        {isConversationsPending ? (
+          <View className="flex flex-col flex-1 justify-center items-center px-4">
+            <Loader />
+          </View>
+        ) : conversations.length === 0 ? (
+          <View className="flex flex-col flex-1 justify-center items-center px-4">
+            <NotFound />
+            <Text variant={"large"} className="text-center">
+              No conversations found. Start a new chat by searching for a user.
+            </Text>
+          </View>
+        ) : (
+          <View className="flex-1 px-3">
+            <LegendList
+              className={cn("flex-1")}
+              data={conversations}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.id.toString()}
+              showsVerticalScrollIndicator={false}
+              recycleItems={true}
+              maintainVisibleContentPosition
+              refreshControl={
+                <RefreshControl
+                  refreshing={isRefetching}
+                  onRefresh={refetch}
+                  progressViewOffset={0}
+                  enabled={true}
+                />
               }
-            }}
-            onEndReachedThreshold={0.5}
-            ListEmptyComponent={
-              !isPending ? (
-                <View className="p-6 items-center">
-                  <Text className="text-muted-foreground">
-                    No conversations available
-                  </Text>
-                </View>
-              ) : null
-            }
-          />
-        </View>
+              onEndReached={() => {
+                if (hasNextPage && !isFetchingNextPage) {
+                  fetchNextPage();
+                }
+              }}
+              onEndReachedThreshold={0.5}
+              ListEmptyComponent={
+                !isPending ? (
+                  <View className="p-6 items-center">
+                    <Text className="text-muted-foreground">
+                      No conversations available
+                    </Text>
+                  </View>
+                ) : null
+              }
+            />
+          </View>
+        )}
       </View>
     </StableSafeAreaView>
   );
