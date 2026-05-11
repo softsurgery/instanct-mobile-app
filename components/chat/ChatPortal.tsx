@@ -47,7 +47,9 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
       api.chat.conversation.findPaginatedUserConversations({
         page: String(pageParam),
         limit: "20",
+        sort: "lastMessage.createdAt,desc",
         search: debouncedSearchQuery,
+        join: "participants.user,lastMessage",
       }),
     getNextPageParam: (lastPage) =>
       lastPage.meta.hasNextPage ? lastPage.meta.page + 1 : undefined,
@@ -61,9 +63,8 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
 
   const renderItem = React.useCallback(
     ({ item }: { item: ResponseConversationDto }) => {
-      const user = item.participants.find(
-        (user) => user.id !== currentUser?.id,
-      );
+      const user = item.participants.find((p) => p.userId !== currentUser?.id);
+
       if (!user) return null;
       return (
         <StablePressable
@@ -78,13 +79,11 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
         >
           <UserEntry
             className="py-2"
-            user={user}
-            lastMessage={
-              item.messages?.length > 0 ? item.messages[0].content : ""
-            }
+            user={user.user}
+            lastMessage={item.lastMessage ? item.lastMessage.content : ""}
             sentAt={
-              item.messages?.length > 0
-                ? format(item.messages[0].createdAt, "hh:mm a")
+              item.lastMessage
+                ? format(item.lastMessage.createdAt, "dd/MM/yy hh:mm a")
                 : ""
             }
           />
@@ -137,9 +136,9 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
             </Text>
           </View>
         ) : (
-          <View className="flex-1 px-3">
+          <View className="flex-1 px-2">
             <LegendList
-              className={cn("flex-1")}
+              style={{ flex: 1, paddingVertical: 4 }}
               data={conversations}
               renderItem={renderItem}
               keyExtractor={(item) => item.id.toString()}

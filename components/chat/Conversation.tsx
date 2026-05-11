@@ -49,9 +49,9 @@ export const Conversation = ({ id }: ConversationProps) => {
 
   const user = React.useMemo(() => {
     if (!conversation || !currentUser) return null;
-    return conversation.participants.find(
-      (participant) => participant.id !== currentUser.id,
-    );
+    return conversation.participants?.find(
+      (participant) => participant.userId !== currentUser.id,
+    )?.user;
   }, [conversation, currentUser]);
 
   const { jsxArray: profilePictures } = useServerImages({

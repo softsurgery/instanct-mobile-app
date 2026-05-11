@@ -1,5 +1,5 @@
-import React from "react";
 import { api } from "@/api";
+import React from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { io, type Socket } from "socket.io-client";
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
@@ -43,7 +43,11 @@ export const useChatFeature = ({ id }: useChatFeatureProps) => {
 
   const { data: conversation, isPending: isConversationPending } = useQuery({
     queryKey: ["conversation", id],
-    queryFn: () => api.chat.conversation.findById(id),
+    queryFn: () =>
+      api.chat.conversation.findById(
+        id,
+        ["participants", "participants.user", "lastMessage"].join(","),
+      ),
   });
 
   // Play sound function

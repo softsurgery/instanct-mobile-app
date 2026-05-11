@@ -3,8 +3,10 @@ import { DatabaseEntity } from "./utils";
 
 export interface ResponseConversationDto extends DatabaseEntity {
   id: number;
-  participants: ResponseUserDto[];
+  participants: ResponseConversationUserDto[];
   messages: ResponseMessageDto[];
+  seenAt: Date;
+  lastMessage: ResponseMessageDto;
 }
 
 export interface ResponseMessageDto extends DatabaseEntity {
@@ -18,6 +20,13 @@ export interface ResponseMessageDto extends DatabaseEntity {
 
 export interface CreateConversationDto {
   users: string[];
+}
+
+export interface ResponseConversationUserDto extends DatabaseEntity {
+  id: number;
+  userId: string;
+  conversationId: number;
+  user: ResponseUserDto;
 }
 
 export interface GroupedMessages {

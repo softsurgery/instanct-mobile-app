@@ -213,15 +213,19 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
 
   const { data: conversation } = useQuery({
     queryKey: ["conversation", conversationId],
-    queryFn: () => api.chat.conversation.findById(conversationId),
+    queryFn: () =>
+      api.chat.conversation.findById(
+        conversationId,
+        ["participants", "participants.user", "lastMessage"].join(","),
+      ),
     enabled: Number.isFinite(conversationId) && conversationId > 0,
   });
 
   const user = React.useMemo(() => {
     if (!conversation || !currentUser) return null;
     return conversation.participants.find(
-      (participant) => participant.id !== currentUser.id,
-    );
+      (participant) => participant.userId !== currentUser.id,
+    )?.user;
   }, [conversation, currentUser]);
 
   const identification = identifyUser(user);
@@ -443,7 +447,8 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
   return (
     <StableSafeAreaView className="flex-1 bg-card">
       <ApplicationHeader
-        title=""
+        title="Conversation details"
+        titleVariant="large"
         shortcuts={[
           {
             key: "back",
