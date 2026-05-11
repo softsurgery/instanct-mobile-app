@@ -47,6 +47,7 @@ import * as ImagePicker from "expo-image-picker";
 import { Skeleton } from "../ui/skeleton";
 import { Icon } from "../ui/icon";
 import { Pencil } from "lucide-react-native";
+import { BaseProfileSkeleton } from "./BaseProfileSkeleton";
 
 interface ProfileSection<T = unknown> {
   key: string;
@@ -332,6 +333,10 @@ export const InspectBaseProfile = ({
 
   const Tab = createMaterialTopTabNavigator();
 
+  if (isInitialLoading || !user) {
+    return <BaseProfileSkeleton className={className} />;
+  }
+
   return (
     <ScrollView
       className={cn("flex-1 bg-background h-full", className)}
@@ -340,131 +345,124 @@ export const InspectBaseProfile = ({
         <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
       }
     >
-      {/* {isInitialLoading ? (
-        <BaseProfileSkeleton className={className} />
-      ) : (
-       
-      )} */}
-      <>
-        <View className="max-h-[40vh]">
-          {/* Cover */}
-          {coverExtra}
-          <PhotoPreview
-            className="active:opacity-70 relative w-full h-48 overflow-hidden"
-            source={coverPreviewSource}
-            footer={() => {
-              if (currentUser?.id !== id) return null;
+      <View className="max-h-[40vh]">
+        {/* Cover */}
+        {coverExtra}
+        <PhotoPreview
+          className="active:opacity-70 relative w-full h-48 overflow-hidden"
+          source={coverPreviewSource}
+          footer={() => {
+            if (currentUser?.id !== id) return null;
 
-              return (
-                <Pressable
-                  className="flex flex-row gap-2 items-center px-4 py-2 m-4 mb-12 mx-auto border border-border rounded-full active:bg-muted"
-                  onPress={() => {
-                    handlePickCover();
-                  }}
-                >
-                  <Icon as={Pencil} />
-                  <Text>Change Cover</Text>
-                </Pressable>
-              );
-            }}
-          >
-            <Image
-              source={coverImageSource}
-              className="w-full h-full opacity-70"
-              resizeMode="cover"
-            />
-          </PhotoPreview>
-          {(isCoverUploadPending || isUpdateCoverPending) && (
-            <View className="absolute inset-0 bg-black/40 flex items-center justify-center z-50">
-              <Loader isPending={true} size="large" />
-            </View>
+            return (
+              <Pressable
+                className="flex flex-row gap-2 items-center px-4 py-2 m-4 mb-12 mx-auto border border-border rounded-full active:bg-muted"
+                onPress={() => {
+                  handlePickCover();
+                }}
+              >
+                <Icon as={Pencil} />
+                <Text>Change Cover</Text>
+              </Pressable>
+            );
+          }}
+        >
+          <Image
+            source={coverImageSource}
+            className="w-full h-full opacity-70"
+            resizeMode="cover"
+          />
+        </PhotoPreview>
+        {(isCoverUploadPending || isUpdateCoverPending) && (
+          <View className="absolute inset-0 bg-black/40 flex items-center justify-center z-50">
+            <Loader isPending={true} size="large" />
+          </View>
+        )}
+        {/* Header */}
+        <View className="flex-row items-center px-5 -mt-12">
+          {isProfilePicturePending ? (
+            <Skeleton className="w-[100px] h-[100px] rounded-full" />
+          ) : (
+            <PhotoPreview source={profilePictureSource}>
+              <View>{profilePictures[0]}</View>
+            </PhotoPreview>
           )}
-          {/* Header */}
-          <View className="flex-row items-center px-5 -mt-12">
-            {isProfilePicturePending ? (
-              <Skeleton className="w-[100px] h-[100px] rounded-full" />
-            ) : (
-              <PhotoPreview source={profilePictureSource}>
-                <View>{profilePictures[0]}</View>
-              </PhotoPreview>
-            )}
-            <View className="flex-1 mt-16">
-              <View className="flex-row items-center justify-between mx-2">
-                <View>
-                  <Text className="text-xl font-semibold text-foreground">
-                    {identity}
+          <View className="flex-1 mt-16">
+            <View className="flex-row items-center justify-between mx-2">
+              <View>
+                <Text className="text-xl font-semibold text-foreground">
+                  {identity}
+                </Text>
+                {id && (
+                  <Text className="text-sm text-muted-foreground">
+                    @{user?.username}
                   </Text>
-                  {id && (
-                    <Text className="text-sm text-muted-foreground">
-                      @{user?.username}
-                    </Text>
-                  )}
-                </View>
-                {currentUser?.id === id && (
-                  <ProfileStat className="flex flex-row gap-4" />
                 )}
               </View>
+              {currentUser?.id === id && (
+                <ProfileStat className="flex flex-row gap-4" />
+              )}
             </View>
           </View>
         </View>
+      </View>
 
-        {/* Tabs */}
-        <View className="flex-1 mt-4 h-full min-h-[65vh]">
-          <Tab.Navigator
-            screenOptions={{
-              tabBarScrollEnabled: false,
-              tabBarLabelStyle: {
-                fontSize: 12,
-                fontWeight: "600",
-                textTransform: "none",
-              },
-              tabBarIndicatorStyle: { backgroundColor: "#6366f1" },
-              tabBarStyle: { backgroundColor: "transparent" },
-            }}
-            commonOptions={{
-              sceneStyle: {
-                flex: 1,
-              },
+      {/* Tabs */}
+      <View className="flex-1 mt-4 h-full min-h-[65vh]">
+        <Tab.Navigator
+          screenOptions={{
+            tabBarScrollEnabled: false,
+            tabBarLabelStyle: {
+              fontSize: 12,
+              fontWeight: "600",
+              textTransform: "none",
+            },
+            tabBarIndicatorStyle: { backgroundColor: "#6366f1" },
+            tabBarStyle: { backgroundColor: "transparent" },
+          }}
+          commonOptions={{
+            sceneStyle: {
+              flex: 1,
+            },
+          }}
+        >
+          <Tab.Screen
+            name="About"
+            options={{
+              tabBarLabel: "About",
             }}
           >
-            <Tab.Screen
-              name="About"
-              options={{
-                tabBarLabel: "About",
-              }}
-            >
-              {() => <AboutTab user={user} />}
-            </Tab.Screen>
-            <Tab.Screen
-              name="Career"
-              options={{
-                tabBarLabel: "Career",
-              }}
-            >
-              {() => (
-                <ExperienceTab
-                  profileSections={profileSections}
-                  renderSection={RenderSection}
-                />
-              )}
-            </Tab.Screen>
-            <Tab.Screen
-              name="Interests"
-              options={{
-                tabBarLabel: "Interests",
-              }}
-            >
-              {() => (
-                <InterestsTab
-                  profileSections={profileSections}
-                  renderSection={RenderSection}
-                  userId={id}
-                />
-              )}
-            </Tab.Screen>
-          </Tab.Navigator>
-        </View>
-      </>
+            {() => <AboutTab user={user} />}
+          </Tab.Screen>
+          <Tab.Screen
+            name="Career"
+            options={{
+              tabBarLabel: "Career",
+            }}
+          >
+            {() => (
+              <ExperienceTab
+                profileSections={profileSections}
+                renderSection={RenderSection}
+              />
+            )}
+          </Tab.Screen>
+          <Tab.Screen
+            name="Interests"
+            options={{
+              tabBarLabel: "Interests",
+            }}
+          >
+            {() => (
+              <InterestsTab
+                profileSections={profileSections}
+                renderSection={RenderSection}
+                userId={id}
+              />
+            )}
+          </Tab.Screen>
+        </Tab.Navigator>
+      </View>
     </ScrollView>
   );
 };
