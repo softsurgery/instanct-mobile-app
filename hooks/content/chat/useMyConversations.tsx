@@ -1,16 +1,18 @@
 import React from "react";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/api";
+import { ResponseConversationDto } from "@/types";
 import { io, Socket } from "socket.io-client";
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
 
+const CHAT_SERVER_URL = process.env.EXPO_PUBLIC_API_SOCKET_URL;
+
 interface useMyConversationsProps {
-  search?: string;
+  search: string;
   limit?: number;
   join?: string;
-  enabled?: boolean;
+  enabled: boolean;
 }
-
-const CHAT_SERVER_URL = process.env.EXPO_PUBLIC_API_SOCKET_URL;
 
 export const useMyConversations = (
   {
@@ -28,63 +30,7 @@ export const useMyConversations = (
   const queryClient = useQueryClient();
   const authPersistStore = useAuthPersistStore();
 
-  /**
-   * Create socket instance
-   */
-  const socket = React.useMemo<Socket>(() => {
-    return io(CHAT_SERVER_URL, {
-      extraHeaders: {
-        Authorization: `Bearer ${authPersistStore.accessToken}`,
-      },
-    });
-  }, [authPersistStore.accessToken]);
-
-  /**
-   * Cleanup socket on unmount
-   */
-  React.useEffect(() => {
-    return () => {
-      socket.disconnect();
-    };
-  }, [socket]);
-
-  /**
-   * Fetch conversations through socket
-   */
-  const fetchConversations = React.useCallback(
-    (pageParam: number) => {
-      return new Promise<any>((resolve, reject) => {
-        if (!socket.connected) {
-          socket.connect();
-        }
-
-        const timeout = setTimeout(() => {
-          socket.off("my-conversations", handleResponse);
-          reject(new Error("Socket request timeout"));
-        }, 10000);
-
-        const handleResponse = (response: any) => {
-          clearTimeout(timeout);
-          socket.off("my-conversations", handleResponse);
-
-          resolve(response);
-        };
-
-        socket.on("my-conversations", handleResponse);
-
-        socket.emit("get-my-conversations", {
-          query: {
-            page: String(pageParam),
-            limit: String(limit),
-            sort: "lastMessage.createdAt,DESC",
-            search,
-            join,
-          },
-        });
-      });
-    },
-    [socket, limit, search, join],
-  );
+  const socketRef = React.useRef<Socket | null>(null);
 
   const {
     data,
@@ -95,33 +41,43 @@ export const useMyConversations = (
     isRefetching,
     isPending: isConversationsPending,
   } = useInfiniteQuery({
-    queryKey: ["socket-conversations", limit, search, join],
-    enabled,
+    queryKey: ["conversations", limit, search],
     initialPageParam: 1,
-    queryFn: ({ pageParam }) => fetchConversations(pageParam),
+    queryFn: ({ pageParam = 1 }) =>
+      api.chat.conversation.findPaginatedUserConversations({
+        page: String(pageParam),
+        limit: String(limit),
+        sort: "lastMessage.createdAt,desc",
+        search: search,
+        join,
+      }),
     getNextPageParam: (lastPage) =>
       lastPage.meta.hasNextPage ? lastPage.meta.page + 1 : undefined,
   });
 
-  /**
-   * Flatten pages
-   */
   const conversations = React.useMemo(() => {
     return data?.pages.flatMap((page) => page.data) ?? [];
   }, [data]);
 
-  /**
-   * Pending state
-   */
   const isPending = isConversationsPending || isFetchingNextPage;
 
-  /**
-   * Optional realtime updates
-   */
   React.useEffect(() => {
-    const handleConversationUpdated = (updatedConversation: any) => {
+    const s = io(CHAT_SERVER_URL, {
+      extraHeaders: {
+        Authorization: `Bearer ${authPersistStore.accessToken}`,
+      },
+    });
+
+    socketRef.current = s;
+
+    s.on("connect", () => {
+      console.log("Connected to chat server");
+    });
+
+    s.on("conversation-updated", (updated: ResponseConversationDto) => {
+      console.log("Conversation updated:", updated);
       queryClient.setQueryData(
-        ["socket-conversations", limit, search, join],
+        ["conversations", limit, search],
         (oldData: any) => {
           if (!oldData) return oldData;
 
@@ -129,23 +85,19 @@ export const useMyConversations = (
             ...oldData,
             pages: oldData.pages.map((page: any) => ({
               ...page,
-              data: page.data.map((conversation: any) =>
-                conversation.id === updatedConversation.id
-                  ? updatedConversation
-                  : conversation,
+              data: page.data.map((conv: ResponseConversationDto) =>
+                conv.id === updated.id ? updated : conv,
               ),
             })),
           };
         },
       );
-    };
-
-    socket.on("conversation-updated", handleConversationUpdated);
+    });
 
     return () => {
-      socket.off("conversation-updated", handleConversationUpdated);
+      s.disconnect();
     };
-  }, [socket, queryClient, limit, search, join]);
+  }, [limit, search, authPersistStore.accessToken]);
 
   return {
     conversations,
