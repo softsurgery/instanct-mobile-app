@@ -45,8 +45,6 @@ import { api } from "@/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as ImagePicker from "expo-image-picker";
 import { Skeleton } from "../ui/skeleton";
-import { ActionSheetRef } from "react-native-actions-sheet";
-import { Button } from "../ui/button";
 import { Icon } from "../ui/icon";
 import { Pencil } from "lucide-react-native";
 
@@ -350,20 +348,6 @@ export const InspectBaseProfile = ({
       <>
         <View className="max-h-[40vh]">
           {/* Cover */}
-          {/* <Pressable
-            className="active:opacity-70 relative w-full h-48 overflow-hidden"
-            onPress={handleCoverPress}
-          >
-            {!isCoverPending ? (
-              <Image
-                source={coverImageSource}
-                className="w-full h-full opacity-70"
-                resizeMode="cover"
-              />
-            ) : (
-              <Skeleton className="w-full h-48" />
-            )}
-          </Pressable> */}
           {coverExtra}
           <PhotoPreview
             className="active:opacity-70 relative w-full h-48 overflow-hidden"
