@@ -24,7 +24,6 @@ import {
   Trash2,
   X,
   ArrowLeft,
-  MoreVertical,
 } from "lucide-react-native";
 import { Icon } from "~/components/ui/icon";
 
@@ -357,7 +356,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
             },
           ]}
           reverse
-          className="border-b border-border pb-2 bg-transparent"
+          classNames={{ wrapper: "border-b border-border pb-2 bg-transparent" }}
         />
         <View className="pt-12 px-3 pb-3 border-b border-border bg-background">
           <View className="flex-row items-center gap-2">
@@ -457,7 +456,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
           },
         ]}
         reverse
-        className="border-b border-border pb-2 bg-card"
+        classNames={{ wrapper: "border-b border-border pb-2 bg-card" }}
       />
       <StableScrollView className="bg-background">
         <View className="items-center mx-4 mt-6 mb-4 p-6 bg-card rounded-2xl">

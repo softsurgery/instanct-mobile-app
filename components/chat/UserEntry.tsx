@@ -48,7 +48,7 @@ export const UserEntry = ({
         {/* Text Content */}
         <View className="flex-1">
           {/* Top Row */}
-          <View className="flex-row items-center justify-between gap-2">
+          <View className="flex-row items-center justify-between gap-4">
             <Text
               className="flex-1 text-base font-semibold text-black dark:text-white"
               numberOfLines={1}
@@ -64,7 +64,7 @@ export const UserEntry = ({
           </View>
 
           {/* Bottom Row */}
-          <View className="mt-1 flex-row items-center justify-between gap-2">
+          <View className="mt-1 flex-row items-center justify-between gap-4">
             <Text
               className={cn(
                 "flex-1 text-sm",

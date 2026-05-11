@@ -67,7 +67,7 @@ export const CreateEducation = ({ className }: CreateEducationProps) => {
   return (
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
-        className="border-b border-border pb-2"
+        classNames={{ wrapper: "border-b border-border pb-2" }}
         title={t("screens.education")}
         titleVariant="large"
         reverse

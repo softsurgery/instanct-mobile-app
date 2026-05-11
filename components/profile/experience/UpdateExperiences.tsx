@@ -92,7 +92,7 @@ export const UpdateExperiences = ({ className }: UpdateExperiencesProps) => {
   return (
     <StableSafeAreaView className={cn("flex flex-1", className)}>
       <ApplicationHeader
-        className="border-b border-border pb-2 bg-transparent"
+        classNames={{ wrapper: "border-b border-border pb-2 bg-transparent" }}
         title="Experiences"
         titleVariant="large"
         reverse

@@ -37,7 +37,11 @@ export default function Page() {
         router.replace("/main");
       }, 100);
     }
-  }, [preferencePersistStore.theme, preferencePersistStore.isReady]);
+  }, [
+    isDarkMode,
+    preferencePersistStore.theme,
+    preferencePersistStore.isReady,
+  ]);
 
   return <ActivityIndicator className="flex-1" size="large" />;
 }

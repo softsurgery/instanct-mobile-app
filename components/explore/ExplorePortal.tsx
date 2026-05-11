@@ -105,7 +105,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
             )}
           </View>
         }
-        className={cn("z-10", mapSession ? "items-start" : "")}
+        classNames={{ wrapper: cn("z-10", mapSession ? "items-start" : "") }}
         shortcuts={[
           {
             key: "end-session",

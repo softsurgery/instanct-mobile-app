@@ -188,7 +188,7 @@ export const UserCalendar = ({
     <StableSafeAreaView className="flex-1 bg-card">
       {/* Custom Header */}
       <ApplicationHeader
-        className="border-b border-border pb-2"
+        classNames={{ wrapper: "border-b border-border pb-2" }}
         title={"Calendar"}
         titleVariant="large"
         reverse

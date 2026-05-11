@@ -124,19 +124,14 @@ export const InspectBaseProfile = ({
   } = useServerImages({
     ids: [user?.pictureId],
     fallbacks: [fallback, ""],
-    wrapperClassName:
-      "border border-border bg-background rounded-full shadow-md",
+    wrapperClassName: "border border-border bg-background rounded-full",
     size: { width: 100, height: 100 },
     enabled: !!user && !!user.pictureId,
   });
   const profilePictureSource = profileUploads?.[0];
 
   // cover picture side-effect
-  const {
-    jsxArray: coverImages,
-    uploads: coverUploads,
-    isPending: isCoverPending,
-  } = useServerImages({
+  const { uploads: coverUploads, isPending: isCoverPending } = useServerImages({
     ids: [user?.coverId],
     fallbacks: [""],
     wrapperClassName: "",
@@ -333,7 +328,7 @@ export const InspectBaseProfile = ({
 
   const Tab = createMaterialTopTabNavigator();
 
-  if (isInitialLoading || !user) {
+  if (isInitialLoading || !user || isCoverPending) {
     return <BaseProfileSkeleton className={className} />;
   }
 

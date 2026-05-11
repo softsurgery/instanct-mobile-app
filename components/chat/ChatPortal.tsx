@@ -98,7 +98,7 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
       className={cn("flex flex-1 flex-col bg-card", className)}
     >
       <ApplicationHeader
-        className="border-b border-border pb-2"
+        classNames={{ wrapper: "border-b border-border pb-2" }}
         title={t("screens.messages")}
         titleVariant="large"
         reverse

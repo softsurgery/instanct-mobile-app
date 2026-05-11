@@ -87,7 +87,7 @@ export const UpdateEducations = ({ className }: UpdateEducationsProps) => {
   return (
     <StableSafeAreaView className={cn("flex flex-1", className)}>
       <ApplicationHeader
-        className="border-b border-border pb-2 bg-transparent"
+        classNames={{ wrapper: "border-b border-border pb-2 bg-transparent" }}
         title="Educations"
         titleVariant="large"
         reverse

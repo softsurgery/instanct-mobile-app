@@ -186,7 +186,7 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
   return (
     <StableSafeAreaView className={cn("flex flex-1 bg-card", className)}>
       <ApplicationHeader
-        className="border-b border-border pb-2"
+        classNames={{ wrapper: "border-b border-border pb-2" }}
         title={t("screens.mapSettings")}
         titleVariant="large"
         reverse

@@ -29,7 +29,7 @@ export const MenuPortal = ({ className }: MenuPortalProps) => {
           >
             <ApplicationHeader
               title={t("screens.menu")}
-              titleClassName="text-white"
+              classNames={{ title: "text-white" }}
               shortcuts={[
                 {
                   key: "settings",
