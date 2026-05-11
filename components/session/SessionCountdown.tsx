@@ -6,7 +6,10 @@ import { Text } from "../ui/text";
 
 interface SessionCountdownProps {
   session: ResponseSessionDto;
-  className?: string;
+  classNames?: {
+    wrapper?: string;
+    text?: string;
+  };
 }
 
 interface TimeLeft {
@@ -35,7 +38,7 @@ const pad = (n: number): string => String(n).padStart(2, "0");
 
 export const SessionCountdown = ({
   session,
-  className,
+  classNames,
 }: SessionCountdownProps) => {
   const targetDate = session.plannedEnd ?? session.ended;
 
@@ -74,11 +77,12 @@ export const SessionCountdown = ({
       : `${pad(timeLeft.hours)}:${pad(timeLeft.minutes)}:${pad(timeLeft.seconds)}`;
 
   return (
-    <View className={cn("flex-row items-center gap-1", className)}>
+    <View className={cn("flex-row items-center gap-1", classNames?.wrapper)}>
       <Text
         className={cn(
           "font-bold tabular-nums",
           isExpired ? "text-destructive" : "text-foreground",
+          classNames?.text,
         )}
       >
         {isExpired ? "00:00:00" : formatted}

@@ -20,12 +20,15 @@ import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { Loader } from "../shared/Loader";
 import { useExploreFilterStore } from "@/stores/userExploreFilterStore";
 import { NotFound } from "../shared/NotFound";
+import { hslToHex } from "@/lib/theme";
+import { useColorPalette } from "@/hooks/useColorPalette";
 
 interface ExplorePortalProps {
   className?: string;
 }
 
 export const ExplorePortal = ({ className }: ExplorePortalProps) => {
+  const { palette } = useColorPalette();
   const usersFilterPath = "/main/explore/users-filter" as any;
   const { t } = useTranslation("common");
   const { currentUser } = useCurrentUser();
@@ -80,13 +83,26 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
     }, [refetchSessions]),
   );
 
+  const color = React.useMemo(() => {
+    if (!mapSession) return hslToHex(palette.foreground);
+    if (mapSession && users.length === 0) return hslToHex(palette.foreground);
+    return "white";
+  }, [mapSession, users, palette]);
+
   return (
     <StableSafeAreaView className={cn("flex-1", className)}>
       <ApplicationHeader
         title={
           <View key="session-countdown" className="flex flex-col items-center">
-            <Text variant={"h1"}>{t("screens.explore")}</Text>
-            {mapSession && <SessionCountdown session={mapSession} />}
+            <Text variant={"h1"} style={{ color }}>
+              {t("screens.explore")}
+            </Text>
+            {mapSession && users.length !== 0 && (
+              <SessionCountdown
+                classNames={{ text: `text-${color}` }}
+                session={mapSession}
+              />
+            )}
           </View>
         }
         className={cn("z-10", mapSession ? "items-start" : "")}
@@ -95,23 +111,26 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
             key: "end-session",
             hidden: !mapSession,
             icon: CalendarCog,
-            // color: hslToHex(color),
+            color,
             onPress: () => router.push("/main/sessions/manage"),
           },
           {
             key: "filter",
             hidden: !mapSession,
+            color,
             icon: ArrowDownNarrowWide,
             onPress: () => router.push(usersFilterPath),
           },
           {
             key: "notifications",
+            color,
             icon: Bell,
-            onPress: handleNotificationsPress,
             badgeText: newCount > 0 ? String(newCount) : undefined,
+            onPress: handleNotificationsPress,
           },
           {
             key: "chat",
+            color,
             icon: IconMessageChatbot,
             onPress: handleChatPress,
           },
