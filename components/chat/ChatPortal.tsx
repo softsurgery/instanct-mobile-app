@@ -2,13 +2,11 @@ import React from "react";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { useDebounce } from "@/hooks/useDebounce";
 import { LegendList } from "@legendapp/list";
-import { useInfiniteQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { router } from "expo-router";
 import { ArrowLeft, Search } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { RefreshControl, View } from "react-native";
-import { api } from "~/api";
 import { cn } from "~/lib/utils";
 import { ResponseConversationDto } from "~/types";
 import { ApplicationHeader } from "../shared/AppHeader";
@@ -20,6 +18,7 @@ import { MarkedInput } from "../shared/MarkedInput";
 import { Separator } from "../ui/separator";
 import { Loader } from "../shared/Loader";
 import { NotFound } from "../shared/NotFound";
+import { useMyConversations } from "@/hooks/content/chat/useMyConversations";
 
 interface ChatPortalProps {
   className?: string;
@@ -33,33 +32,18 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
   const { currentUser } = useCurrentUser();
 
   const {
-    data,
-    fetchNextPage,
+    conversations,
     hasNextPage,
+    isPending,
     isFetchingNextPage,
-    refetch,
     isRefetching,
-    isPending: isConversationsPending,
-  } = useInfiniteQuery({
-    queryKey: ["conversations", debouncedSearchQuery],
-    initialPageParam: 1,
-    queryFn: ({ pageParam = 1 }) =>
-      api.chat.conversation.findPaginatedUserConversations({
-        page: String(pageParam),
-        limit: "20",
-        sort: "lastMessage.createdAt,desc",
-        search: debouncedSearchQuery,
-        join: "participants.user,lastMessage",
-      }),
-    getNextPageParam: (lastPage) =>
-      lastPage.meta.hasNextPage ? lastPage.meta.page + 1 : undefined,
+    fetchNextPage,
+    refetch,
+  } = useMyConversations({
+    search: debouncedSearchQuery,
+    join: ["participants", "participants.user", "lastMessage"].join(","),
+    enabled: !!currentUser,
   });
-
-  const conversations = React.useMemo(() => {
-    return data?.pages.flatMap((page) => page.data) ?? [];
-  }, [data]);
-
-  const isPending = isConversationsPending || isFetchingNextPage;
 
   const renderItem = React.useCallback(
     ({ item }: { item: ResponseConversationDto }) => {
@@ -124,7 +108,7 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
         />
         <Separator />
         {/* Manual Tabs */}
-        {isConversationsPending ? (
+        {isPending ? (
           <View className="flex flex-col flex-1 justify-center items-center px-4">
             <Loader />
           </View>

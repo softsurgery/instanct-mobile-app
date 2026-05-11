@@ -1,12 +1,10 @@
 import { format } from "date-fns";
-import { ImageBackground } from "expo-image";
 import React from "react";
 import {
   ActivityIndicator,
   FlatList,
   KeyboardAvoidingView,
   Platform,
-  StyleSheet,
   View,
 } from "react-native";
 
@@ -17,7 +15,6 @@ import { ChatHeaderRight } from "./conversation/ChatHeaderRight";
 
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
-import { usePreferencePersistStore } from "@/stores/usePreferencePersistStore";
 import { ConversationInput } from "./conversation/ConversationInput";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { Text } from "~/components/ui/text";
@@ -42,7 +39,6 @@ export const Conversation = ({ id }: ConversationProps) => {
     loadMore,
   } = useChatFeature({ id });
 
-  const preferencePersistStore = usePreferencePersistStore();
   const { currentUser } = useCurrentUser();
 
   const flatListRef = React.useRef<FlatList>(null);
@@ -66,16 +62,6 @@ export const Conversation = ({ id }: ConversationProps) => {
 
   return (
     <StableSafeAreaView className="flex-1 bg-card">
-      {/* Background image - absolute so it doesn't shrink with keyboard */}
-      {/* <ImageBackground
-        source={
-          preferencePersistStore.theme === "dark"
-            ? require("~/assets/images/message-cover-dark.png")
-            : require("~/assets/images/message-cover.png")
-        }
-        style={StyleSheet.absoluteFill}
-      /> */}
-
       {/* HEADER */}
       <View className="flex flex-row justify-between items-center px-2 py-2.5 bg-card">
         <ChatHeaderLeft

@@ -7,13 +7,13 @@ import { cn } from "~/lib/utils";
 import { ResponseUserDto } from "~/types";
 import { Icon } from "../ui/icon";
 import { useServerImages } from "@/hooks/content/useServerImages";
+import { differenceInCalendarDays } from "date-fns";
 
 interface UserCardProps {
   className?: string;
   user: ResponseUserDto;
   lastMessage?: string;
   sentAt?: string;
-  seen?: boolean;
   isPending?: boolean;
 }
 
@@ -22,7 +22,6 @@ export const UserEntry = ({
   user,
   lastMessage,
   sentAt,
-  seen,
   isPending,
 }: UserCardProps) => {
   const { jsxArray: profilePictures } = useServerImages({
@@ -30,6 +29,15 @@ export const UserEntry = ({
     fallbacks: [identifyUserAvatar(user)],
     size: { width: 60, height: 60 },
   });
+
+  const seen = React.useMemo(() => {
+    if (!sentAt) return false;
+
+    const sentDate = new Date(sentAt);
+    const now = new Date();
+
+    return differenceInCalendarDays(now, sentDate) === 0;
+  }, [sentAt]);
 
   return (
     <View

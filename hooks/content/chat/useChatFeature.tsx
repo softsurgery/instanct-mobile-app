@@ -104,19 +104,19 @@ export const useChatFeature = ({ id }: useChatFeatureProps) => {
     });
 
     socketRef.current = s;
-
     s.on("connect", () => {
-      s.emit("joinConversation", { conversationId: id });
+      s.emit("join-conversation", { conversationId: id });
       pageRef.current = 1;
       setIsMoreMessagesLoading(true);
-      s.emit("getConversationMessages", {
+      s.emit("get-conversation-messages", {
         conversationId: id,
         limit: 20,
         page: "1",
       });
+      setIsInitialPending(true);
     });
 
-    s.on("conversationMessages", (newMessages: ResponseMessageDto[]) => {
+    s.on("conversation-messages", (newMessages: ResponseMessageDto[]) => {
       if (newMessages.length === 0) {
         setHasMore(false);
       } else {
@@ -136,20 +136,19 @@ export const useChatFeature = ({ id }: useChatFeatureProps) => {
       playSound();
     });
 
-    s.on("error", (err: any) => console.error("Socket error:", err));
+    s.on("error", (err: any) => {
+      console.error("Socket error:", err);
+      setIsMoreMessagesLoading(false);
+      setIsInitialPending(false);
+    });
 
     return () => {
       setMessages([]);
-      socketRef.current = null;
       s.disconnect();
     };
-  }, [id, authPersistStore.accessToken, queryClient, playSound]);
+  }, [id, authPersistStore.accessToken]);
 
-  const flattenedMessages = React.useMemo(
-    () => groupMessagesByDay(messages),
-    [messages, groupMessagesByDay],
-  );
-
+  // Send Message *******************************************************************************************************************
   const sendMessage = React.useCallback(() => {
     const s = socketRef.current;
     if (!input.trim() || !s) return;
@@ -157,6 +156,7 @@ export const useChatFeature = ({ id }: useChatFeatureProps) => {
     setInput("");
   }, [input, id]);
 
+  // Load More Messages *************************************************************************************************************
   const loadMore = React.useCallback(() => {
     const s = socketRef.current;
     if (isMoreMessagesLoading || !hasMore || messages.length === 0 || !s)
@@ -165,12 +165,17 @@ export const useChatFeature = ({ id }: useChatFeatureProps) => {
     pageRef.current = nextPage;
 
     setIsMoreMessagesLoading(true);
-    s.emit("getConversationMessages", {
+    s.emit("get-conversation-messages", {
       conversationId: id,
       limit: 20,
       page: nextPage.toString(),
     });
   }, [isMoreMessagesLoading, hasMore, messages.length, id]);
+
+  const flattenedMessages = React.useMemo(
+    () => groupMessagesByDay(messages),
+    [messages, groupMessagesByDay],
+  );
 
   return {
     conversation,
