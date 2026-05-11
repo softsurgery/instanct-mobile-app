@@ -60,9 +60,9 @@ export default function Select({
 
   const handleSelect = async (v: string) => {
     await Haptics.selectionAsync();
-    onSelect?.(v);
     sheetRef.current?.hide();
     setSearch("");
+    onSelect?.(v);
   };
 
   const handleClose = () => {
