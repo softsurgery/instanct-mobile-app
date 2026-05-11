@@ -29,10 +29,12 @@ export const MenuPortal = ({ className }: MenuPortalProps) => {
           >
             <ApplicationHeader
               title={t("screens.menu")}
+              titleClassName="text-white"
               shortcuts={[
                 {
                   key: "settings",
                   icon: Settings,
+                  color: "white",
                   onPress: () => router.push("/main/settings"),
                 },
                 ...(process.env.NODE_ENV === "development"
@@ -40,6 +42,7 @@ export const MenuPortal = ({ className }: MenuPortalProps) => {
                       {
                         key: "flask",
                         icon: FlaskConical,
+                        color: "white",
                         onPress: () => router.push("/main/test"),
                       },
                     ]
@@ -51,11 +54,13 @@ export const MenuPortal = ({ className }: MenuPortalProps) => {
                     router.push("/main/notifications");
                     resetCount();
                   },
+                  color: "white",
                   badgeText: newCount > 0 ? `${newCount}` : undefined,
                 },
                 {
                   key: "chat",
                   icon: IconMessageChatbot,
+                  color: "white",
                   onPress: () => router.push("/main/chat"),
                 },
               ]}
