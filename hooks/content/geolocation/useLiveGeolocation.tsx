@@ -20,8 +20,6 @@ export function useLiveGeolocation(
 ) {
   const { refetchMapConfiguration } = useLiveGeolocationParameters();
 
-  const apiUrl =
-    process.env.EXPO_PUBLIC_API_SOCKET_URL || "http://localhost:8080";
   const { accessToken } = useAuthPersistStore();
 
   const mapStore = useMapStore();
@@ -71,7 +69,7 @@ export function useLiveGeolocation(
       return;
     }
 
-    const socket = getSocket("geolocation", apiUrl, {
+    const socket = getSocket("geolocation", {
       token: accessToken,
       reconnection: true,
       reconnectionAttempts: Infinity,

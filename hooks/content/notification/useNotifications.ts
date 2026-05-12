@@ -1,4 +1,5 @@
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
+import { getSocket } from "@/lib/socket";
 import { sanitizeText } from "@/lib/string";
 import * as Notifications from "expo-notifications";
 import React from "react";
@@ -42,10 +43,8 @@ export function useNotifications() {
   }, []);
 
   React.useEffect(() => {
-    if (!accessToken) return;
-
-    const socket = io(SOCKET_URL, {
-      extraHeaders: { Authorization: `Bearer ${accessToken}` },
+    const socket = getSocket("notifications", {
+      token: accessToken,
     });
 
     socketRef.current = socket;
@@ -56,13 +55,13 @@ export function useNotifications() {
       await Notifications.scheduleNotificationAsync({
         content: {
           title: sanitizeText(
-            t(`titles.${notification.type}`, notification.payload).toString()
+            t(`titles.${notification.type}`, notification.payload).toString(),
           ),
           body: sanitizeText(
             t(
               `descriptions.${notification.type}`,
-              notification.payload
-            ).toString()
+              notification.payload,
+            ).toString(),
           ),
           sound: true,
         },
