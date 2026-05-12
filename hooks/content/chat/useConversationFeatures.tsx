@@ -1,7 +1,7 @@
 import { api } from "@/api";
 import React from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { io, type Socket } from "socket.io-client";
+import { type Socket } from "socket.io-client";
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
 import { ResponseMessageDto } from "@/types";
 import { useAudioPlayer } from "expo-audio";
@@ -11,18 +11,19 @@ import {
   isToday,
   isYesterday,
 } from "date-fns";
-
-const CHAT_SERVER_URL = process.env.EXPO_PUBLIC_API_SOCKET_URL;
+import { disconnectSocket, getSocket } from "@/lib/socket";
 
 type FlatListItem =
   | { type: "header"; date: string; key: string }
   | { type: "message"; message: ResponseMessageDto };
 
-interface useChatFeatureProps {
+interface useConversationFeaturesProps {
   id: number;
 }
 
-export const useChatFeature = ({ id }: useChatFeatureProps) => {
+export const useConversationFeatures = ({
+  id,
+}: useConversationFeaturesProps) => {
   const soundPlayer = useAudioPlayer(
     require("~/assets/sounds/receive-message.wav"),
   );
@@ -97,13 +98,9 @@ export const useChatFeature = ({ id }: useChatFeatureProps) => {
   );
 
   React.useEffect(() => {
-    const s = io(CHAT_SERVER_URL, {
-      extraHeaders: {
-        Authorization: `Bearer ${authPersistStore.accessToken}`,
-      },
-    });
-
+    const s = getSocket("chat", { token: authPersistStore.accessToken });
     socketRef.current = s;
+
     s.on("connect", () => {
       s.emit("join-conversation", { conversationId: id });
       pageRef.current = 1;
@@ -143,7 +140,7 @@ export const useChatFeature = ({ id }: useChatFeatureProps) => {
 
     return () => {
       setMessages([]);
-      s.disconnect();
+      disconnectSocket("chat");
     };
   }, [id, authPersistStore.accessToken]);
 

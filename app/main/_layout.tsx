@@ -1,3 +1,4 @@
+import { useChat } from "@/hooks/content/chat/useChat";
 import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
 import { useCheckHealth } from "@/hooks/content/useCheckHealth";
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
@@ -14,6 +15,7 @@ export default function MainLayout() {
     enabled: authPersistStore.isAuthenticated,
     join: ["user", "user.industries"],
   });
+  const {} = useChat();
   useCheckHealth({
     enabled: authPersistStore.isAuthenticated,
   });

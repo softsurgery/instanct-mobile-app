@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { format, isToday, isThisWeek, isThisYear } from "date-fns";
 
 export function toDateOnly(date: Date) {
   if (isNaN(date.getTime())) {
@@ -45,4 +45,12 @@ export function getExperienceYears(
   const end = endDate ? new Date(endDate).getTime() : Date.now();
 
   return Math.round((end - start) / (1000 * 60 * 60 * 24 * 365.25));
+}
+
+export function formatSmartDate(dateInput: Date | string | number): string {
+  const date = new Date(dateInput);
+  if (isToday(date)) return format(date, "HH:mm");
+  if (isThisWeek(date, { weekStartsOn: 1 })) return format(date, "EEEE");
+  if (isThisYear(date)) return format(date, "d MMM");
+  return format(date, "d MMM yyyy");
 }

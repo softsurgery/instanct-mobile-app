@@ -2,33 +2,28 @@ import React from "react";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api";
 import { PageMeta, ResponseConversationDto } from "@/types";
-import { io, Socket } from "socket.io-client";
+import { Socket } from "socket.io-client";
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
+import { disconnectSocket, getSocket } from "@/lib/socket";
+import { auth } from "@/api/auth";
 
-const CHAT_SERVER_URL = process.env.EXPO_PUBLIC_API_SOCKET_URL;
-
-interface useMyConversationsProps {
-  search: string;
+interface useChatProps {
+  search?: string;
   limit?: number;
   join?: string;
-  enabled: boolean;
+  enabled?: boolean;
 }
 
-export const useMyConversations = (
-  {
-    search = "",
-    limit = 20,
-    join = "",
-    enabled = true,
-  }: useMyConversationsProps = {
+export const useChat = (
+  { search = "", limit = 20, join = "", enabled = true }: useChatProps = {
     search: "",
     limit: 20,
-    join: "",
+    join: ["participants", "participants.user", "lastMessage"].join(","),
     enabled: true,
   },
 ) => {
-  const queryClient = useQueryClient();
   const authPersistStore = useAuthPersistStore();
+  const queryClient = useQueryClient();
 
   const socketRef = React.useRef<Socket | null>(null);
 
@@ -53,6 +48,7 @@ export const useMyConversations = (
       }),
     getNextPageParam: (lastPage) =>
       lastPage.meta.hasNextPage ? lastPage.meta.page + 1 : undefined,
+    enabled,
   });
 
   const conversations = React.useMemo(() => {
@@ -62,36 +58,38 @@ export const useMyConversations = (
   const isPending = isConversationsPending || isFetchingNextPage;
 
   React.useEffect(() => {
-    const s = io(CHAT_SERVER_URL, {
-      extraHeaders: {
-        Authorization: `Bearer ${authPersistStore.accessToken}`,
-      },
-    });
+    const s = getSocket("chat", { token: authPersistStore.accessToken });
 
     socketRef.current = s;
 
     s.on("connect", () => {});
 
-    s.on("conversation-updated-message", (updated) => {
+    const handleUpdatedMessage = (updated: ResponseConversationDto) => {
       queryClient.setQueryData(
         ["conversations", limit, search, join],
         (oldData: InfiniteConversationData | undefined) =>
           moveConversationToTop(oldData, updated),
       );
-    });
+    };
 
-    s.on("conversation-updated-last-check", (updated) => {
+    const handleUpdatedLastCheck = (updated: ResponseConversationDto) => {
       queryClient.setQueryData(
         ["conversations", limit, search, join],
         (oldData: InfiniteConversationData | undefined) =>
           replaceConversationInPages(oldData, updated),
       );
-    });
+    };
+
+    s.on("conversation-updated-message", handleUpdatedMessage);
+    s.on("conversation-updated-last-check", handleUpdatedLastCheck);
 
     return () => {
-      s.disconnect();
+      s.off("conversation-updated-message", handleUpdatedMessage);
+      s.off("conversation-updated-last-check", handleUpdatedLastCheck);
+
+      disconnectSocket("chat");
     };
-  }, [limit, search, join, authPersistStore.accessToken, queryClient]);
+  }, [limit, search, join, queryClient, authPersistStore.accessToken]);
 
   const seeConversation = React.useCallback((id: number) => {
     const s = socketRef.current;

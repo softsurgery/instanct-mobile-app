@@ -2,7 +2,7 @@ import React from "react";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { useDebounce } from "@/hooks/useDebounce";
 import { LegendList } from "@legendapp/list";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { ArrowLeft, Search } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { Pressable, RefreshControl, View } from "react-native";
@@ -16,7 +16,7 @@ import { MarkedInput } from "../shared/MarkedInput";
 import { Separator } from "../ui/separator";
 import { Loader } from "../shared/Loader";
 import { NotFound } from "../shared/NotFound";
-import { useMyConversations } from "@/hooks/content/chat/useMyConversations";
+import { useChat } from "@/hooks/content/chat/useChat";
 
 interface ChatPortalProps {
   className?: string;
@@ -38,7 +38,7 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
     fetchNextPage,
     refetch,
     seeConversation,
-  } = useMyConversations({
+  } = useChat({
     search: debouncedSearchQuery,
     join: ["participants", "participants.user", "lastMessage"].join(","),
     enabled: !!currentUser,
@@ -66,6 +66,14 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
       );
     },
     [currentUser?.id, seeConversation],
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      return () => {
+        setSearchQuery("");
+      };
+    }, []),
   );
 
   return (

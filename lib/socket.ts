@@ -10,8 +10,8 @@ interface SocketConfig extends Partial<ManagerOptions & SocketOptions> {
 
 export function getSocket(
   namespace: SocketNamespace,
-  apiUrl: string,
-  config: SocketConfig = {}
+  config: SocketConfig = {},
+  apiUrl: string = process.env.EXPO_PUBLIC_API_SOCKET_URL || "",
 ): Socket {
   if (sockets[namespace]) return sockets[namespace];
 

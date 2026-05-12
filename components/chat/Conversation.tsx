@@ -19,7 +19,7 @@ import { ConversationInput } from "./conversation/ConversationInput";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { Text } from "~/components/ui/text";
 
-import { useChatFeature } from "@/hooks/content/chat/useChatFeature";
+import { useConversationFeatures } from "@/hooks/content/chat/useConversationFeatures";
 import { ImageBackground } from "expo-image";
 import { useColorScheme } from "nativewind";
 
@@ -40,7 +40,7 @@ export const Conversation = ({ id }: ConversationProps) => {
     setInput,
     sendMessage,
     loadMore,
-  } = useChatFeature({ id });
+  } = useConversationFeatures({ id });
 
   const { currentUser } = useCurrentUser();
 

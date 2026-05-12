@@ -5,8 +5,9 @@ import { Text } from "~/components/ui/text";
 import { cn } from "~/lib/utils";
 import { ResponseConversationDto } from "~/types";
 import { useServerImages } from "@/hooks/content/useServerImages";
-import { differenceInMilliseconds, format } from "date-fns";
+import { differenceInMilliseconds } from "date-fns";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
+import { formatSmartDate } from "@/lib/date";
 
 interface UserCardProps {
   className?: string;
@@ -79,7 +80,7 @@ export const UserEntry = ({
 
             {!!lastMessage && (
               <Text className="text-[11px] text-gray-500 dark:text-gray-400">
-                {format(lastMessage.createdAt, "dd/MM/yyyy hh:mm a")}
+                {formatSmartDate(lastMessage.createdAt)}
               </Text>
             )}
           </View>
