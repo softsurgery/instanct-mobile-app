@@ -5,7 +5,6 @@ export interface ResponseConversationDto extends DatabaseEntity {
   id: number;
   participants: ResponseConversationUserDto[];
   messages: ResponseMessageDto[];
-  seenAt: Date;
   lastMessage: ResponseMessageDto;
 }
 
@@ -27,6 +26,7 @@ export interface ResponseConversationUserDto extends DatabaseEntity {
   userId: string;
   conversationId: number;
   user: ResponseUserDto;
+  lastCheck: Date;
 }
 
 export interface GroupedMessages {

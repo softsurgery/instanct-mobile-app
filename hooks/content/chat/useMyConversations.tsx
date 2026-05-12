@@ -70,11 +70,9 @@ export const useMyConversations = (
 
     socketRef.current = s;
 
-    s.on("connect", () => {
-      console.log("Connected to chat server");
-    });
+    s.on("connect", () => {});
 
-    s.on("conversation-updated", (updated: ResponseConversationDto) => {
+    s.on("conversation-updated-message", (updated: ResponseConversationDto) => {
       queryClient.setQueryData(
         ["conversations", limit, search],
         (oldData: any) => {
@@ -114,10 +112,48 @@ export const useMyConversations = (
       );
     });
 
+    s.on(
+      "conversation-updated-last-check",
+      (updated: ResponseConversationDto) => {
+        queryClient.setQueryData(
+          ["conversations", limit, search],
+          (oldData: any) => {
+            if (!oldData) return oldData;
+
+            const newPages = oldData.pages.map((page: any) => {
+              const newData = page.data.map((conv: ResponseConversationDto) => {
+                if (conv.id === updated.id) {
+                  return updated;
+                }
+                return conv;
+              });
+
+              return {
+                ...page,
+                data: newData,
+              };
+            });
+
+            return {
+              ...oldData,
+              pages: newPages,
+            };
+          },
+        );
+      },
+    );
+
     return () => {
       s.disconnect();
     };
   }, [limit, search, authPersistStore.accessToken]);
+
+  const seeConversation = React.useCallback((id: number) => {
+    const s = socketRef.current;
+    if (!s) return;
+    console.log("Emitting see-conversation for conversationId:", id);
+    s.emit("see-conversation", { conversationId: id });
+  }, []);
 
   return {
     conversations,
@@ -127,5 +163,6 @@ export const useMyConversations = (
     isFetchingNextPage,
     fetchNextPage,
     refetch,
+    seeConversation,
   };
 };

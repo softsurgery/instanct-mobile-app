@@ -2,15 +2,13 @@ import React from "react";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { useDebounce } from "@/hooks/useDebounce";
 import { LegendList } from "@legendapp/list";
-import { format } from "date-fns";
 import { router } from "expo-router";
 import { ArrowLeft, Search } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
-import { RefreshControl, View } from "react-native";
+import { Pressable, RefreshControl, View } from "react-native";
 import { cn } from "~/lib/utils";
 import { ResponseConversationDto } from "~/types";
 import { ApplicationHeader } from "../shared/AppHeader";
-import { StablePressable } from "../shared/StablePressable";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { Text } from "../ui/text";
 import { UserEntry } from "./UserEntry";
@@ -39,6 +37,7 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
     isRefetching,
     fetchNextPage,
     refetch,
+    seeConversation,
   } = useMyConversations({
     search: debouncedSearchQuery,
     join: ["participants", "participants.user", "lastMessage"].join(","),
@@ -51,30 +50,22 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
 
       if (!user) return null;
       return (
-        <StablePressable
+        <Pressable
           key={item.id}
-          className="flex flex-col gap-4"
-          onPress={() =>
+          className="flex flex-col gap-4 active:bg-muted"
+          onPress={() => {
+            seeConversation(item.id);
             router.navigate({
               pathname: "/main/chat/conversation",
               params: { id: item.id },
-            })
-          }
+            });
+          }}
         >
-          <UserEntry
-            className="py-2"
-            user={user.user}
-            lastMessage={item.lastMessage ? item.lastMessage.content : ""}
-            sentAt={
-              item.lastMessage
-                ? format(item.lastMessage.createdAt, "dd/MM/yy hh:mm a")
-                : ""
-            }
-          />
-        </StablePressable>
+          <UserEntry className="py-2" conversation={item} />
+        </Pressable>
       );
     },
-    [currentUser?.id],
+    [currentUser?.id, seeConversation],
   );
 
   return (

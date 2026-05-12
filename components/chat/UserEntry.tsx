@@ -4,26 +4,39 @@ import React from "react";
 import { View } from "react-native";
 import { Text } from "~/components/ui/text";
 import { cn } from "~/lib/utils";
-import { ResponseUserDto } from "~/types";
+import { ResponseConversationDto } from "~/types";
 import { Icon } from "../ui/icon";
 import { useServerImages } from "@/hooks/content/useServerImages";
-import { differenceInCalendarDays } from "date-fns";
+import { differenceInSeconds, format } from "date-fns";
+import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 
 interface UserCardProps {
   className?: string;
-  user: ResponseUserDto;
-  lastMessage?: string;
-  sentAt?: string;
+  conversation: ResponseConversationDto;
   isPending?: boolean;
 }
 
 export const UserEntry = ({
   className,
-  user,
-  lastMessage,
-  sentAt,
+  conversation,
   isPending,
 }: UserCardProps) => {
+  const { currentUser } = useCurrentUser();
+  const user = React.useMemo(
+    () =>
+      conversation.participants.find((p) => p.userId !== currentUser?.id)?.user,
+    [conversation.participants, currentUser?.id],
+  );
+
+  const lastMessage = React.useMemo(
+    () => conversation.lastMessage,
+    [conversation.lastMessage],
+  );
+
+  const lastCheck = conversation.participants.find(
+    (p) => p.userId !== currentUser?.id,
+  )?.lastCheck;
+
   const { jsxArray: profilePictures } = useServerImages({
     ids: [user?.pictureId],
     fallbacks: [identifyUserAvatar(user)],
@@ -31,13 +44,10 @@ export const UserEntry = ({
   });
 
   const seen = React.useMemo(() => {
-    if (!sentAt) return false;
+    if (!lastCheck) return false;
 
-    const sentDate = new Date(sentAt);
-    const now = new Date();
-
-    return differenceInCalendarDays(now, sentDate) === 0;
-  }, [sentAt]);
+    return differenceInSeconds(lastCheck, new Date(lastMessage?.createdAt)) > 0;
+  }, [conversation.participants, currentUser?.id]);
 
   return (
     <View
@@ -64,13 +74,17 @@ export const UserEntry = ({
               {identifyUser(user)}
             </Text>
 
-            {!!sentAt && (
+            {!!lastMessage && (
               <Text className="text-[11px] text-gray-500 dark:text-gray-400">
-                {sentAt}
+                {format(lastMessage.createdAt, "dd/MM/yyyy hh:mm a")}
               </Text>
             )}
           </View>
-
+          {!!lastMessage && (
+            <Text className="text-[11px] text-gray-500 dark:text-gray-400">
+              {seen ? "Seen" : "Unseen"}
+            </Text>
+          )}
           {/* Bottom Row */}
           <View className="mt-1 flex-row items-center justify-between gap-4">
             <Text
@@ -84,7 +98,10 @@ export const UserEntry = ({
               ellipsizeMode="tail"
             >
               {lastMessage
-                ? lastMessage.replaceAll("\n", " ").replace(/\s+/g, " ").trim()
+                ? lastMessage.content
+                    .replaceAll("\n", " ")
+                    .replace(/\s+/g, " ")
+                    .trim()
                 : "Start a conversation"}
             </Text>
 
@@ -101,6 +118,14 @@ export const UserEntry = ({
                   className="text-primary"
                 />
               )}
+              <View className="flex flex-col">
+                <Text className="text-xs">
+                  Last {format(lastMessage?.createdAt, "dd/MM/yyyy hh:mm:ss a")}
+                </Text>
+                <Text className="text-xs">
+                  Check {format(lastCheck, "dd/MM/yyyy hh:mm:ss a")}
+                </Text>
+              </View>
             </View>
           </View>
         </View>
