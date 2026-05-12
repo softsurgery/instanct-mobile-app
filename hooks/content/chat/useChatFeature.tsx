@@ -132,7 +132,6 @@ export const useChatFeature = ({ id }: useChatFeatureProps) => {
 
     s.on("message", (message: ResponseMessageDto) => {
       setMessages((prev) => [message, ...prev]);
-      queryClient.invalidateQueries({ queryKey: ["conversations"] });
       playSound();
     });
 

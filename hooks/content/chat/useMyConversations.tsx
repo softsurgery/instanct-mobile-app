@@ -75,20 +75,40 @@ export const useMyConversations = (
     });
 
     s.on("conversation-updated", (updated: ResponseConversationDto) => {
-      console.log("Conversation updated:", updated);
       queryClient.setQueryData(
         ["conversations", limit, search],
         (oldData: any) => {
           if (!oldData) return oldData;
 
+          let updatedConversation: ResponseConversationDto | null = null;
+
+          const newPages = oldData.pages.map((page: any) => {
+            const filteredData = page.data.filter(
+              (conv: ResponseConversationDto) => {
+                if (conv.id === updated.id) {
+                  updatedConversation = updated;
+                  return false;
+                }
+                return true;
+              },
+            );
+
+            return {
+              ...page,
+              data: filteredData,
+            };
+          });
+
+          if (updatedConversation) {
+            newPages[0] = {
+              ...newPages[0],
+              data: [updatedConversation, ...newPages[0].data],
+            };
+          }
+
           return {
             ...oldData,
-            pages: oldData.pages.map((page: any) => ({
-              ...page,
-              data: page.data.map((conv: ResponseConversationDto) =>
-                conv.id === updated.id ? updated : conv,
-              ),
-            })),
+            pages: newPages,
           };
         },
       );
