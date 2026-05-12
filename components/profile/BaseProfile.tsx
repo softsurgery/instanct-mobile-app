@@ -356,8 +356,8 @@ export const InspectBaseProfile = ({
                   handlePickCover();
                 }}
               >
-                <Icon as={Pencil} />
-                <Text>Change Cover</Text>
+                <Icon as={Pencil} color="white" />
+                <Text className="text-white">Change Cover</Text>
               </Pressable>
             );
           }}
