@@ -20,12 +20,15 @@ import { useServerImages } from "@/hooks/content/useServerImages";
 import { Text } from "~/components/ui/text";
 
 import { useChatFeature } from "@/hooks/content/chat/useChatFeature";
+import { ImageBackground } from "expo-image";
+import { useColorScheme } from "nativewind";
 
 interface ConversationProps {
   id: number;
 }
 
 export const Conversation = ({ id }: ConversationProps) => {
+  const { colorScheme } = useColorScheme();
   const {
     conversation,
     isConversationPending,
@@ -72,79 +75,91 @@ export const Conversation = ({ id }: ConversationProps) => {
         />
         <ChatHeaderRight conversationId={id} />
       </View>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 24}
+      <ImageBackground
+        source={
+          colorScheme === "dark"
+            ? require("~/assets/images/message-background-dark.png")
+            : require("~/assets/images/message-background.png")
+        }
+        style={{
+          flex: 1,
+        }}
+        resizeMode="cover"
       >
-        <View className="flex-1 bg-background">
-          {/* MESSAGES */}
-          {isLoading ? (
-            <View className="flex-1 justify-center items-center gap-2">
-              <ActivityIndicator size="large" />
-              <Text className="text-sm text-muted-foreground">
-                Loading conversation...
-              </Text>
-            </View>
-          ) : (
-            <FlatList
-              ref={flatListRef}
-              data={flattenedMessages}
-              inverted
-              keyboardDismissMode="interactive"
-              keyboardShouldPersistTaps="handled"
-              contentContainerStyle={{ paddingVertical: 16 }}
-              keyExtractor={(item) =>
-                item.type === "header" ? item.key : `m-${item.message.id}`
-              }
-              renderItem={({ item }) => {
-                if (item.type === "header") {
-                  return (
-                    <View className="items-center py-3">
-                      <View className="bg-card/80 px-4 py-1.5 rounded-full">
-                        <Text className="text-xs font-semibold text-muted-foreground">
-                          {item.date}
-                        </Text>
-                      </View>
-                    </View>
-                  );
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 24}
+        >
+          <View className="flex-1">
+            {/* MESSAGES */}
+            {isLoading ? (
+              <View className="flex-1 justify-center items-center gap-2">
+                <ActivityIndicator size="large" />
+                <Text className="text-sm text-muted-foreground">
+                  Loading conversation...
+                </Text>
+              </View>
+            ) : (
+              <FlatList
+                ref={flatListRef}
+                data={flattenedMessages}
+                inverted
+                keyboardDismissMode="interactive"
+                keyboardShouldPersistTaps="handled"
+                contentContainerStyle={{ paddingVertical: 16 }}
+                keyExtractor={(item) =>
+                  item.type === "header" ? item.key : `m-${item.message.id}`
                 }
+                renderItem={({ item }) => {
+                  if (item.type === "header") {
+                    return (
+                      <View className="items-center py-3">
+                        <View className="bg-card/80 px-4 py-1.5 rounded-full">
+                          <Text className="text-xs font-semibold text-muted-foreground">
+                            {item.date}
+                          </Text>
+                        </View>
+                      </View>
+                    );
+                  }
 
-                return (
-                  <ChatBubble
-                    message={item.message.content}
-                    timestamp={item.message.createdAt}
-                    right={item.message.userId === currentUser?.id}
-                  />
-                );
-              }}
-              onEndReached={loadMore}
-              onEndReachedThreshold={0.3}
-              ListFooterComponent={
-                isMoreMessagesLoading ? (
-                  <View className="py-4 items-center">
-                    <ActivityIndicator size="small" />
+                  return (
+                    <ChatBubble
+                      message={item.message.content}
+                      timestamp={item.message.createdAt}
+                      right={item.message.userId === currentUser?.id}
+                    />
+                  );
+                }}
+                onEndReached={loadMore}
+                onEndReachedThreshold={0.3}
+                ListFooterComponent={
+                  isMoreMessagesLoading ? (
+                    <View className="py-4 items-center">
+                      <ActivityIndicator size="small" />
+                    </View>
+                  ) : null
+                }
+                ListEmptyComponent={
+                  <View className="flex-1 justify-center items-center py-20">
+                    <Text className="text-muted-foreground text-sm">
+                      No messages yet. Say hello!
+                    </Text>
                   </View>
-                ) : null
-              }
-              ListEmptyComponent={
-                <View className="flex-1 justify-center items-center py-20">
-                  <Text className="text-muted-foreground text-sm">
-                    No messages yet. Say hello!
-                  </Text>
-                </View>
-              }
-            />
-          )}
+                }
+              />
+            )}
 
-          {/* INPUT */}
-          <ConversationInput
-            input={input}
-            setInput={setInput}
-            sendMessage={sendMessage}
-          />
-        </View>
-      </KeyboardAvoidingView>
+            {/* INPUT */}
+            <ConversationInput
+              input={input}
+              setInput={setInput}
+              sendMessage={sendMessage}
+            />
+          </View>
+        </KeyboardAvoidingView>
+      </ImageBackground>
     </StableSafeAreaView>
   );
 };
