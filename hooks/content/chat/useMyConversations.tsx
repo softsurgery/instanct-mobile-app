@@ -1,7 +1,7 @@
 import React from "react";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api";
-import { ResponseConversationDto } from "@/types";
+import { PageMeta, ResponseConversationDto } from "@/types";
 import { io, Socket } from "socket.io-client";
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
 
@@ -41,7 +41,7 @@ export const useMyConversations = (
     isRefetching,
     isPending: isConversationsPending,
   } = useInfiniteQuery({
-    queryKey: ["conversations", limit, search],
+    queryKey: ["conversations", limit, search, join],
     initialPageParam: 1,
     queryFn: ({ pageParam = 1 }) =>
       api.chat.conversation.findPaginatedUserConversations({
@@ -72,86 +72,30 @@ export const useMyConversations = (
 
     s.on("connect", () => {});
 
-    s.on("conversation-updated-message", (updated: ResponseConversationDto) => {
+    s.on("conversation-updated-message", (updated) => {
       queryClient.setQueryData(
-        ["conversations", limit, search],
-        (oldData: any) => {
-          if (!oldData) return oldData;
-
-          let updatedConversation: ResponseConversationDto | null = null;
-
-          const newPages = oldData.pages.map((page: any) => {
-            const filteredData = page.data.filter(
-              (conv: ResponseConversationDto) => {
-                if (conv.id === updated.id) {
-                  updatedConversation = updated;
-                  return false;
-                }
-                return true;
-              },
-            );
-
-            return {
-              ...page,
-              data: filteredData,
-            };
-          });
-
-          if (updatedConversation) {
-            newPages[0] = {
-              ...newPages[0],
-              data: [updatedConversation, ...newPages[0].data],
-            };
-          }
-
-          return {
-            ...oldData,
-            pages: newPages,
-          };
-        },
+        ["conversations", limit, search, join],
+        (oldData: InfiniteConversationData | undefined) =>
+          moveConversationToTop(oldData, updated),
       );
     });
 
-    s.on(
-      "conversation-updated-last-check",
-      (updated: ResponseConversationDto) => {
-        queryClient.setQueryData(
-          ["conversations", limit, search],
-          (oldData: any) => {
-            if (!oldData) return oldData;
-
-            const newPages = oldData.pages.map((page: any) => {
-              const newData = page.data.map((conv: ResponseConversationDto) => {
-                if (conv.id === updated.id) {
-                  return updated;
-                }
-                return conv;
-              });
-
-              return {
-                ...page,
-                data: newData,
-              };
-            });
-
-            return {
-              ...oldData,
-              pages: newPages,
-            };
-          },
-        );
-      },
-    );
+    s.on("conversation-updated-last-check", (updated) => {
+      queryClient.setQueryData(
+        ["conversations", limit, search, join],
+        (oldData: InfiniteConversationData | undefined) =>
+          replaceConversationInPages(oldData, updated),
+      );
+    });
 
     return () => {
       s.disconnect();
     };
-  }, [limit, search, authPersistStore.accessToken]);
+  }, [limit, search, join, authPersistStore.accessToken, queryClient]);
 
   const seeConversation = React.useCallback((id: number) => {
     const s = socketRef.current;
     if (!s) return;
-    console.log("Emitting see-conversation for conversationId:", id);
     s.emit("see-conversation", { conversationId: id });
   }, []);
 
@@ -164,5 +108,60 @@ export const useMyConversations = (
     fetchNextPage,
     refetch,
     seeConversation,
+  };
+};
+
+type InfiniteConversationData = {
+  pages: {
+    data: ResponseConversationDto[];
+  }[];
+  pageParams: PageMeta[];
+};
+
+const replaceConversationInPages = (
+  oldData: InfiniteConversationData | undefined,
+  updated: ResponseConversationDto,
+): InfiniteConversationData | undefined => {
+  if (!oldData) return oldData;
+
+  return {
+    ...oldData,
+    pages: oldData.pages.map((page) => ({
+      ...page,
+      data: page.data.map((conv) => (conv.id === updated.id ? updated : conv)),
+    })),
+  };
+};
+
+const moveConversationToTop = (
+  oldData: InfiniteConversationData | undefined,
+  updated: ResponseConversationDto,
+): InfiniteConversationData | undefined => {
+  if (!oldData) return oldData;
+
+  const allConversations = oldData.pages.flatMap((p) => p.data);
+
+  const filtered = allConversations.filter((conv) => conv.id !== updated.id);
+
+  const reordered = [updated, ...filtered];
+
+  let cursor = 0;
+
+  const rebuiltPages = oldData.pages.map((page) => {
+    const pageSize = page.data.length;
+
+    const data = reordered.slice(cursor, cursor + pageSize);
+
+    cursor += pageSize;
+
+    return {
+      ...page,
+      data,
+    };
+  });
+
+  return {
+    ...oldData,
+    pages: rebuiltPages,
   };
 };

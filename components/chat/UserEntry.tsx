@@ -1,13 +1,11 @@
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
-import { MessageCircleMoreIcon } from "lucide-react-native";
 import React from "react";
 import { View } from "react-native";
 import { Text } from "~/components/ui/text";
 import { cn } from "~/lib/utils";
 import { ResponseConversationDto } from "~/types";
-import { Icon } from "../ui/icon";
 import { useServerImages } from "@/hooks/content/useServerImages";
-import { differenceInSeconds, format } from "date-fns";
+import { differenceInMilliseconds, format } from "date-fns";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 
 interface UserCardProps {
@@ -28,14 +26,14 @@ export const UserEntry = ({
     [conversation.participants, currentUser?.id],
   );
 
-  const lastMessage = React.useMemo(
-    () => conversation.lastMessage,
-    [conversation.lastMessage],
-  );
+  const lastMessage = conversation.lastMessage;
 
-  const lastCheck = conversation.participants.find(
-    (p) => p.userId !== currentUser?.id,
-  )?.lastCheck;
+  const lastCheck = React.useMemo(
+    () =>
+      conversation.participants.find((p) => p.userId === currentUser?.id)
+        ?.lastCheck,
+    [conversation.participants, currentUser?.id],
+  );
 
   const { jsxArray: profilePictures } = useServerImages({
     ids: [user?.pictureId],
@@ -44,10 +42,15 @@ export const UserEntry = ({
   });
 
   const seen = React.useMemo(() => {
-    if (!lastCheck) return false;
+    if (!lastCheck || !lastMessage?.createdAt) return false;
 
-    return differenceInSeconds(lastCheck, new Date(lastMessage?.createdAt)) > 0;
-  }, [conversation.participants, currentUser?.id]);
+    return (
+      differenceInMilliseconds(
+        new Date(lastCheck),
+        new Date(lastMessage.createdAt),
+      ) >= 0
+    );
+  }, [lastCheck, lastMessage?.createdAt]);
 
   return (
     <View
@@ -80,11 +83,7 @@ export const UserEntry = ({
               </Text>
             )}
           </View>
-          {!!lastMessage && (
-            <Text className="text-[11px] text-gray-500 dark:text-gray-400">
-              {seen ? "Seen" : "Unseen"}
-            </Text>
-          )}
+
           {/* Bottom Row */}
           <View className="mt-1 flex-row items-center justify-between gap-4">
             <Text
@@ -92,7 +91,8 @@ export const UserEntry = ({
                 "flex-1 text-sm",
                 lastMessage
                   ? "text-gray-600 dark:text-gray-300"
-                  : "text-primary font-medium",
+                  : "text-primary font-bold",
+                seen ? "font-base" : "font-bold",
               )}
               numberOfLines={1}
               ellipsizeMode="tail"
@@ -102,7 +102,7 @@ export const UserEntry = ({
                     .replaceAll("\n", " ")
                     .replace(/\s+/g, " ")
                     .trim()
-                : "Start a conversation"}
+                : "You can send a message to start the conversation"}
             </Text>
 
             {/* Status */}
@@ -110,23 +110,10 @@ export const UserEntry = ({
               {isPending && (
                 <View className="h-2 w-2 rounded-full bg-orange-400" />
               )}
-
-              {seen && (
-                <Icon
-                  as={MessageCircleMoreIcon}
-                  size={16}
-                  className="text-primary"
-                />
-              )}
-              <View className="flex flex-col">
-                <Text className="text-xs">
-                  Last {format(lastMessage?.createdAt, "dd/MM/yyyy hh:mm:ss a")}
-                </Text>
-                <Text className="text-xs">
-                  Check {format(lastCheck, "dd/MM/yyyy hh:mm:ss a")}
-                </Text>
-              </View>
             </View>
+            {!seen && lastMessage && (
+              <View className="h-4 w-4 rounded-full bg-primary" />
+            )}
           </View>
         </View>
       </View>
