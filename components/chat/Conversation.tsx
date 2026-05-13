@@ -22,6 +22,7 @@ import { Text } from "~/components/ui/text";
 import { useConversationFeatures } from "@/hooks/content/chat/useConversationFeatures";
 import { ImageBackground } from "expo-image";
 import { useColorScheme } from "nativewind";
+import { Loader } from "../shared/Loader";
 
 interface ConversationProps {
   id: number;
@@ -97,11 +98,9 @@ export const Conversation = ({ id }: ConversationProps) => {
             {/* MESSAGES */}
             {isLoading ? (
               <View className="flex-1 justify-center items-center gap-2">
-                <ActivityIndicator size="large" />
+                <Loader size="large" />
                 <Text className="text-sm text-muted-foreground">
-                  Loading conversation... initial{" "}
-                  {isInitialPending ? "yes" : "no"}
-                  convo {isConversationPending ? "yes" : "no"}
+                  Loading conversation...
                 </Text>
               </View>
             ) : (
