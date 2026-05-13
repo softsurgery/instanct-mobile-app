@@ -6,18 +6,16 @@ import {
   Alert,
   TextInput,
   useColorScheme,
+  Pressable,
 } from "react-native";
 import { LegendList } from "@legendapp/list";
 import { useQuery } from "@tanstack/react-query";
 import {
-  User,
   Bell,
   Type,
   Image as ImageIcon,
   Download,
   Search,
-  ChevronRight,
-  ShieldCheck,
   Slash,
   Ban,
   AlertTriangle,
@@ -27,108 +25,19 @@ import {
 } from "lucide-react-native";
 import { Icon } from "~/components/ui/icon";
 
-import { cn } from "~/lib/utils";
 import { router } from "expo-router";
 import axios from "~/api/axios";
 import { api } from "~/api";
 import { message as messageApi } from "~/api/chat/message";
 import { ResponseMessageDto } from "~/types";
-import { StableSafeAreaView } from "../shared/StableSafeAreaView";
-import { ApplicationHeader } from "../shared/AppHeader";
-import StableScrollView from "../shared/StableScrollView";
-import { Switch } from "../ui/switch";
+import { StableSafeAreaView } from "../../shared/StableSafeAreaView";
+import { ApplicationHeader } from "../../shared/AppHeader";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
+import { ScrollView } from "react-native-gesture-handler";
+import { ConversationDetailsRow } from "./ConversationDetailsRow";
 
-// --------------------------------------
-// SettingItem Component
-// --------------------------------------
-interface SettingItemProps {
-  icon: any;
-  label: string;
-  value?: string;
-  showChevron?: boolean;
-  destructive?: boolean;
-  onPress?: () => void;
-  description?: string;
-  toggleValue?: boolean;
-  onToggle?: (value: boolean) => void;
-}
-
-const SettingItem = ({
-  icon,
-  label,
-  value,
-  showChevron = true,
-  destructive,
-  onPress,
-  description,
-  toggleValue,
-  onToggle,
-}: SettingItemProps) => {
-  const colorScheme = useColorScheme();
-  const iconColor = colorScheme === "dark" ? "#FFFFFF" : "#000000";
-  const destructiveColor = colorScheme === "dark" ? "#FF6B6B" : "#DC2626";
-
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      className="flex-row items-center px-4 py-3.5 active:bg-muted/50"
-    >
-      <View
-        className={cn(
-          "w-9 h-9 items-center justify-center rounded-lg",
-          destructive ? "bg-destructive/10" : "bg-muted",
-        )}
-      >
-        <Icon
-          as={icon}
-          size={20}
-          color={destructive ? destructiveColor : iconColor}
-        />
-      </View>
-      <View className="flex-1 ml-3">
-        <Text
-          className={cn(
-            "text-[15px]",
-            destructive ? "text-destructive" : "text-foreground",
-          )}
-        >
-          {label}
-        </Text>
-        {description && (
-          <Text className="text-muted-foreground text-sm mt-0.5">
-            {description}
-          </Text>
-        )}
-      </View>
-      <View className="flex-row items-center">
-        {toggleValue !== undefined ? (
-          <Switch
-            checked={toggleValue}
-            onCheckedChange={(checked) => onToggle?.(checked)}
-          />
-        ) : (
-          <>
-            {value && (
-              <Text className="text-muted-foreground text-sm mr-2">
-                {value}
-              </Text>
-            )}
-            {showChevron && (
-              <Icon as={ChevronRight} size={18} color={iconColor} />
-            )}
-          </>
-        )}
-      </View>
-    </TouchableOpacity>
-  );
-};
-
-// --------------------------------------
-// Message Result Item Component
-// --------------------------------------
 interface MessageResultItemProps {
   message: ResponseMessageDto;
   searchQuery: string;
@@ -458,49 +367,33 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
         reverse
         classNames={{ wrapper: "border-b border-border pb-2 bg-card" }}
       />
-      <StableScrollView className="bg-background">
-        <View className="items-center mx-4 mt-6 mb-4 p-6 bg-card rounded-2xl">
+      <ScrollView
+        className="bg-background"
+        showsVerticalScrollIndicator={false}
+      >
+        <Pressable
+          className="flex flex-col items-center gap-4 m-4 pt-4 px-4 rounded-xl"
+          onPress={() => {
+            router.push({
+              pathname: "/main/profile/inspect-profile",
+              params: { id: user?.id },
+            });
+          }}
+        >
           <View className="relative">
             {profilePicture}
             <View className="absolute bottom-0 right-0 w-6 h-6 bg-green-500 border-2 border-card rounded-full" />
           </View>
-          <Text className="text-foreground text-xl font-bold mt-4">
-            {nickname}
-          </Text>
-          <View className="flex-row items-center bg-muted/60 px-3 py-1.5 rounded-full mt-3">
-            <Icon as={ShieldCheck} size={14} color={mutedIconColor} />
-            <Text className="text-muted-foreground text-xs ml-1.5 font-medium">
-              End-to-end encrypted
-            </Text>
-          </View>
-        </View>
-
-        <View className="flex-row justify-center gap-6 mb-6 px-4">
-          <View className="items-center">
-            <TouchableOpacity className="w-14 h-14 bg-card rounded-2xl items-center justify-center mb-1.5 border border-border">
-              <Icon as={User} size={22} color={iconColor} />
-            </TouchableOpacity>
-            <Text className="text-muted-foreground text-xs font-medium">
-              Profile
-            </Text>
-          </View>
-          <View className="items-center">
-            <TouchableOpacity className="w-14 h-14 bg-card rounded-2xl items-center justify-center mb-1.5 border border-border">
-              <Icon as={Bell} size={22} color={iconColor} />
-            </TouchableOpacity>
-            <Text className="text-muted-foreground text-xs font-medium">
-              Mute
-            </Text>
-          </View>
-        </View>
+          <Text className="text-foreground text-xl font-bold">{nickname}</Text>
+        </Pressable>
 
         <View className="px-4 pt-6 pb-2">
-          <Text className="text-primary text-xs font-semibold uppercase tracking-wider">
+          <Text className="text-primary text-sm font-semibold uppercase tracking-wider">
             Customization
           </Text>
         </View>
         <View className="bg-card mx-4 rounded-2xl overflow-hidden">
-          <SettingItem
+          <ConversationDetailsRow
             icon={Type}
             label="Nicknames"
             value={nickname}
@@ -526,12 +419,12 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
         </View>
 
         <View className="px-4 pt-6 pb-2">
-          <Text className="text-primary text-xs font-semibold uppercase tracking-wider">
+          <Text className="text-primary text-sm font-semibold uppercase tracking-wider">
             Other actions
           </Text>
         </View>
         <View className="bg-card mx-4 rounded-2xl overflow-hidden">
-          <SettingItem
+          <ConversationDetailsRow
             icon={ImageIcon}
             label="View media, files, and links"
             onPress={() =>
@@ -542,20 +435,20 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
             }
           />
           <View className="h-[0.5px] bg-border ml-16" />
-          <SettingItem
+          <ConversationDetailsRow
             icon={Download}
             label="Save photos automatically"
             toggleValue={autoSavePhotos}
             onToggle={setAutoSavePhotos}
             showChevron={false}
           />
-          <SettingItem
+          <ConversationDetailsRow
             icon={Search}
             label="Search in conversation"
             onPress={() => setIsSearching(true)}
           />
           <View className="h-[0.5px] bg-border ml-16" />
-          <SettingItem
+          <ConversationDetailsRow
             icon={Bell}
             label="Sounds and notifications"
             onPress={() =>
@@ -568,26 +461,26 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
         </View>
 
         <View className="px-4 pt-6 pb-2">
-          <Text className="text-primary text-xs font-semibold uppercase tracking-wider">
+          <Text className="text-primary text-sm font-semibold uppercase tracking-wider">
             Privacy and support
           </Text>
         </View>
 
         <View className="bg-card mx-4 rounded-2xl mb-12 overflow-hidden">
-          <SettingItem icon={Slash} label="Restrict" />
+          <ConversationDetailsRow icon={Slash} label="Restrict" />
           <View className="h-[0.5px] bg-border ml-16" />
-          <SettingItem icon={Ban} label="Block" />
+          <ConversationDetailsRow icon={Ban} label="Block" />
           <View className="h-[0.5px] bg-border ml-16" />
-          <SettingItem icon={AlertTriangle} label="Report" />
+          <ConversationDetailsRow icon={AlertTriangle} label="Report" />
           <View className="h-[0.5px] bg-border ml-16" />
-          <SettingItem
+          <ConversationDetailsRow
             icon={Trash2}
             label="Delete conversation"
             destructive
             onPress={handleDeleteConversation}
           />
         </View>
-      </StableScrollView>
+      </ScrollView>
     </StableSafeAreaView>
   );
 };
