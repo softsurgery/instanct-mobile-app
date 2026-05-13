@@ -2,13 +2,15 @@ import { useNotificationContext } from "@/contexts/NotificationsContext";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { cn } from "@/lib/utils";
 import { router } from "expo-router";
-import { Bell, FlaskConical, Settings } from "lucide-react-native";
+import { Bell, Clock, FlaskConical, Settings } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { InspectBaseProfile } from "../profile/BaseProfile";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { IconMessageChatbot } from "@tabler/icons-react-native";
+import React from "react";
+import { useChatContext } from "@/contexts/ChatContext";
 
 interface MenuPortalProps {
   className?: string;
@@ -17,7 +19,14 @@ interface MenuPortalProps {
 export const MenuPortal = ({ className }: MenuPortalProps) => {
   const { t } = useTranslation("common");
   const { currentUser } = useCurrentUser();
-  const { newCount, resetCount } = useNotificationContext();
+  const { count, resetCount } = useNotificationContext();
+  const { count: chatCount, resetCount: resetChatCount } = useChatContext();
+
+  const handleChatPress = React.useCallback(() => {
+    resetChatCount();
+    router.push("/main/chat");
+  }, [resetChatCount]);
+
   return (
     <View className={cn("flex-1", className)}>
       <InspectBaseProfile
@@ -37,6 +46,18 @@ export const MenuPortal = ({ className }: MenuPortalProps) => {
                   color: "white",
                   onPress: () => router.push("/main/settings"),
                 },
+                {
+                  key: "sessions",
+                  icon: Clock,
+                  color: "white",
+                  onPress: () =>
+                    router.push({
+                      pathname: "/main/sessions/details",
+                      params: {
+                        session: currentUser?.id,
+                      },
+                    }),
+                },
                 ...(process.env.NODE_ENV === "development"
                   ? [
                       {
@@ -55,13 +76,13 @@ export const MenuPortal = ({ className }: MenuPortalProps) => {
                     resetCount();
                   },
                   color: "white",
-                  badgeText: newCount > 0 ? `${newCount}` : undefined,
+                  badgeText: count > 0 ? `${count}` : undefined,
                 },
                 {
                   key: "chat",
                   icon: IconMessageChatbot,
-                  color: "white",
-                  onPress: () => router.push("/main/chat"),
+                  badgeText: chatCount > 0 ? String(chatCount) : undefined,
+                  onPress: handleChatPress,
                 },
               ]}
             />

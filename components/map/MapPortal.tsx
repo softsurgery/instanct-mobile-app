@@ -12,6 +12,7 @@ import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { MapRenderer } from "./MapRenderer";
 import { MapStatus } from "./MapDebugging/MapStatus";
 import { Loader } from "../shared/Loader";
+import { useChatContext } from "@/contexts/ChatContext";
 
 interface MapPortalProps {
   className?: string;
@@ -20,7 +21,13 @@ interface MapPortalProps {
 export const MapPortal = ({ className }: MapPortalProps) => {
   const { t } = useTranslation("common");
   const mapStore = useMapStore();
+  const { count: chatCount, resetCount: resetChatCount } = useChatContext();
   const { count, resetCount } = useNotificationContext();
+
+  const handleChatPress = React.useCallback(() => {
+    resetChatCount();
+    router.push("/main/chat");
+  }, [resetChatCount]);
 
   const { latitude, longitude } = mapStore?.location?.coords || {
     latitude: 0,
@@ -72,9 +79,8 @@ export const MapPortal = ({ className }: MapPortalProps) => {
             {
               key: "chat",
               icon: IconMessageChatbot,
-              onPress: () => {
-                router.push("/main/chat");
-              },
+              badgeText: chatCount > 0 ? String(chatCount) : undefined,
+              onPress: handleChatPress,
             },
           ]}
         />

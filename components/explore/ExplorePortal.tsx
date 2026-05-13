@@ -46,6 +46,8 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
 
   const users = React.useMemo(() => {
     const targetedIndustries = userFilerStore.dto.industry;
+    setCurrentIndex(0);
+
     return liveUsers.filter(
       (user) =>
         user.id !== currentUser?.id &&
@@ -55,7 +57,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
             targetedIndustries.includes(industry.id),
           )),
     );
-  }, [liveUsers, currentUser, userFilerStore.dto.industry]);
+  }, [liveUsers, currentUser, userFilerStore.dto]);
 
   const handleNotificationsPress = React.useCallback(() => {
     resetNotificationCount();
