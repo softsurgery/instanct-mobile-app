@@ -1,11 +1,22 @@
 import React from "react";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api";
-import { PageMeta, ResponseConversationDto } from "@/types";
+import { ResponseConversationDto } from "@/types";
 import { Socket } from "socket.io-client";
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
-import { disconnectSocket, getSocket } from "@/lib/socket";
-import { auth } from "@/api/auth";
+import { getSocket } from "@/lib/socket";
+import {
+  createAndroidChannel,
+  requestNotificationPermissions,
+} from "@/lib/notification";
+import * as Notifications from "expo-notifications";
+import { useCurrentUser } from "../users/useCurrentUser";
+import { identifyUser } from "@/lib/user";
+import {
+  InfiniteConversationData,
+  moveConversationToTop,
+  replaceConversationInPages,
+} from "@/lib/chat";
 
 interface useChatProps {
   search?: string;
@@ -13,6 +24,9 @@ interface useChatProps {
   join?: string;
   enabled?: boolean;
 }
+
+let activeInstances = 0;
+let listenersInitialized = false;
 
 export const useChat = (
   { search = "", limit = 20, join = "", enabled = true }: useChatProps = {
@@ -22,10 +36,19 @@ export const useChat = (
     enabled: true,
   },
 ) => {
+  const { currentUser } = useCurrentUser();
+  const [count, setCount] = React.useState(0);
   const authPersistStore = useAuthPersistStore();
   const queryClient = useQueryClient();
 
   const socketRef = React.useRef<Socket | null>(null);
+
+  React.useEffect(() => {
+    (async () => {
+      await requestNotificationPermissions();
+      await createAndroidChannel();
+    })();
+  }, []);
 
   const {
     data,
@@ -62,9 +85,27 @@ export const useChat = (
 
     socketRef.current = s;
 
-    s.on("connect", () => {});
+    activeInstances++;
 
-    const handleUpdatedMessage = (updated: ResponseConversationDto) => {
+    const onConversationUpdatedMessage = async (
+      updated: ResponseConversationDto,
+    ) => {
+      const user = updated.participants.find(
+        (p) => p.user.id === updated.lastMessage.userId,
+      )?.user;
+
+      if (user?.id !== currentUser?.id) {
+        setCount((prev) => prev + 1);
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: identifyUser(user),
+            body: updated.lastMessage.content,
+            sound: true,
+          },
+          trigger: null,
+        });
+      }
+
       queryClient.setQueryData(
         ["conversations", limit, search, join],
         (oldData: InfiniteConversationData | undefined) =>
@@ -72,7 +113,9 @@ export const useChat = (
       );
     };
 
-    const handleUpdatedLastCheck = (updated: ResponseConversationDto) => {
+    const onConversationUpdatedLastCheck = (
+      updated: ResponseConversationDto,
+    ) => {
       queryClient.setQueryData(
         ["conversations", limit, search, join],
         (oldData: InfiniteConversationData | undefined) =>
@@ -80,22 +123,42 @@ export const useChat = (
       );
     };
 
-    s.on("conversation-updated-message", handleUpdatedMessage);
-    s.on("conversation-updated-last-check", handleUpdatedLastCheck);
+    if (!listenersInitialized) {
+      listenersInitialized = true;
+      s.on("conversation-updated-message", onConversationUpdatedMessage);
+      s.on("conversation-updated-last-check", onConversationUpdatedLastCheck);
+    }
 
     return () => {
-      s.off("conversation-updated-message", handleUpdatedMessage);
-      s.off("conversation-updated-last-check", handleUpdatedLastCheck);
+      activeInstances--;
 
-      disconnectSocket("chat");
+      if (activeInstances === 0) {
+        s.off("conversation-updated-message", onConversationUpdatedMessage);
+
+        s.off(
+          "conversation-updated-last-check",
+          onConversationUpdatedLastCheck,
+        );
+
+        listenersInitialized = false;
+      }
     };
-  }, [limit, search, join, queryClient, authPersistStore.accessToken]);
+  }, [
+    limit,
+    search,
+    join,
+    queryClient,
+    authPersistStore.accessToken,
+    currentUser?.id,
+  ]);
 
   const seeConversation = React.useCallback((id: number) => {
     const s = socketRef.current;
     if (!s) return;
     s.emit("see-conversation", { conversationId: id });
   }, []);
+
+  const resetCount = React.useCallback(() => setCount(0), []);
 
   return {
     conversations,
@@ -106,60 +169,8 @@ export const useChat = (
     fetchNextPage,
     refetch,
     seeConversation,
-  };
-};
 
-type InfiniteConversationData = {
-  pages: {
-    data: ResponseConversationDto[];
-  }[];
-  pageParams: PageMeta[];
-};
-
-const replaceConversationInPages = (
-  oldData: InfiniteConversationData | undefined,
-  updated: ResponseConversationDto,
-): InfiniteConversationData | undefined => {
-  if (!oldData) return oldData;
-
-  return {
-    ...oldData,
-    pages: oldData.pages.map((page) => ({
-      ...page,
-      data: page.data.map((conv) => (conv.id === updated.id ? updated : conv)),
-    })),
-  };
-};
-
-const moveConversationToTop = (
-  oldData: InfiniteConversationData | undefined,
-  updated: ResponseConversationDto,
-): InfiniteConversationData | undefined => {
-  if (!oldData) return oldData;
-
-  const allConversations = oldData.pages.flatMap((p) => p.data);
-
-  const filtered = allConversations.filter((conv) => conv.id !== updated.id);
-
-  const reordered = [updated, ...filtered];
-
-  let cursor = 0;
-
-  const rebuiltPages = oldData.pages.map((page) => {
-    const pageSize = page.data.length;
-
-    const data = reordered.slice(cursor, cursor + pageSize);
-
-    cursor += pageSize;
-
-    return {
-      ...page,
-      data,
-    };
-  });
-
-  return {
-    ...oldData,
-    pages: rebuiltPages,
+    count,
+    resetCount,
   };
 };

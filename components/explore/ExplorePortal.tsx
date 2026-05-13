@@ -22,6 +22,7 @@ import { useExploreFilterStore } from "@/stores/userExploreFilterStore";
 import { NotFound } from "../shared/NotFound";
 import { hslToHex } from "@/lib/theme";
 import { useColorPalette } from "@/hooks/useColorPalette";
+import { useChatContext } from "@/contexts/ChatContext";
 
 interface ExplorePortalProps {
   className?: string;
@@ -33,7 +34,9 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   const { t } = useTranslation("common");
   const { currentUser } = useCurrentUser();
   const userFilerStore = useExploreFilterStore();
-  const { newCount, resetCount } = useNotificationContext();
+  const { count: notificationCount, resetCount: resetNotificationCount } =
+    useNotificationContext();
+  const { count: chatCount, resetCount: resetChatCount } = useChatContext();
   const { mapSession, refetchSessions } = useActiveSessions();
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const { users: liveUsers } = useLiveGeolocation({
@@ -55,13 +58,14 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   }, [liveUsers, currentUser, userFilerStore.dto.industry]);
 
   const handleNotificationsPress = React.useCallback(() => {
-    resetCount();
+    resetNotificationCount();
     router.push("/main/notifications");
-  }, [resetCount]);
+  }, [resetNotificationCount]);
 
   const handleChatPress = React.useCallback(() => {
+    resetChatCount();
     router.push("/main/chat");
-  }, []);
+  }, [resetChatCount]);
 
   const handleScroll = React.useCallback((event: any) => {
     const contentOffsetX = event.nativeEvent.contentOffset.x;
@@ -125,13 +129,15 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
             key: "notifications",
             color,
             icon: Bell,
-            badgeText: newCount > 0 ? String(newCount) : undefined,
+            badgeText:
+              notificationCount > 0 ? String(notificationCount) : undefined,
             onPress: handleNotificationsPress,
           },
           {
             key: "chat",
             color,
             icon: IconMessageChatbot,
+            badgeText: chatCount > 0 ? String(chatCount) : undefined,
             onPress: handleChatPress,
           },
         ].filter(Boolean)}

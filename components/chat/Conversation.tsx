@@ -75,21 +75,23 @@ export const Conversation = ({ id }: ConversationProps) => {
         />
         <ChatHeaderRight conversationId={id} />
       </View>
-      <ImageBackground
-        source={
-          colorScheme === "dark"
-            ? require("~/assets/images/message-background-dark.png")
-            : require("~/assets/images/message-background.png")
-        }
-        style={{
-          flex: 1,
-        }}
-        resizeMode="cover"
+
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 24}
       >
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 24}
+        <ImageBackground
+          source={
+            colorScheme === "dark"
+              ? require("~/assets/images/message-background-dark.png")
+              : require("~/assets/images/message-background.png")
+          }
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
+          imageStyle={{ opacity: 0.7 }}
         >
           <View className="flex-1">
             {/* MESSAGES */}
@@ -97,7 +99,9 @@ export const Conversation = ({ id }: ConversationProps) => {
               <View className="flex-1 justify-center items-center gap-2">
                 <ActivityIndicator size="large" />
                 <Text className="text-sm text-muted-foreground">
-                  Loading conversation...
+                  Loading conversation... initial{" "}
+                  {isInitialPending ? "yes" : "no"}
+                  convo {isConversationPending ? "yes" : "no"}
                 </Text>
               </View>
             ) : (
@@ -158,8 +162,8 @@ export const Conversation = ({ id }: ConversationProps) => {
               sendMessage={sendMessage}
             />
           </View>
-        </KeyboardAvoidingView>
-      </ImageBackground>
+        </ImageBackground>
+      </KeyboardAvoidingView>
     </StableSafeAreaView>
   );
 };

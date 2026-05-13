@@ -126,7 +126,6 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
               renderItem={renderItem}
               keyExtractor={(item) => item.id.toString()}
               showsVerticalScrollIndicator={false}
-              recycleItems={true}
               refreshControl={
                 <RefreshControl
                   refreshing={isRefetching}

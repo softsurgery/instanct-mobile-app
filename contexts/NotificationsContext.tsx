@@ -3,14 +3,14 @@ import React from "react";
 
 interface NotificationContextProps {
   notifications: ResponseNotificationDto[];
-  newCount: number;
+  count: number;
   resetCount: () => void;
 }
 
 export const NotificationContext =
   React.createContext<NotificationContextProps>({
     notifications: [],
-    newCount: 0,
+    count: 0,
     resetCount: () => {},
   });
 

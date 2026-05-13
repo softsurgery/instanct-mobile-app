@@ -20,7 +20,7 @@ interface MapPortalProps {
 export const MapPortal = ({ className }: MapPortalProps) => {
   const { t } = useTranslation("common");
   const mapStore = useMapStore();
-  const { newCount, resetCount } = useNotificationContext();
+  const { count, resetCount } = useNotificationContext();
 
   const { latitude, longitude } = mapStore?.location?.coords || {
     latitude: 0,
@@ -67,7 +67,7 @@ export const MapPortal = ({ className }: MapPortalProps) => {
                 router.push("/main/notifications");
                 resetCount();
               },
-              badgeText: newCount > 0 ? `${newCount}` : undefined,
+              badgeText: count > 0 ? `${count}` : undefined,
             },
             {
               key: "chat",

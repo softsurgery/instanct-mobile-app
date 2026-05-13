@@ -11,7 +11,7 @@ import {
   isToday,
   isYesterday,
 } from "date-fns";
-import { disconnectSocket, getSocket } from "@/lib/socket";
+import { getSocket } from "@/lib/socket";
 
 type FlatListItem =
   | { type: "header"; date: string; key: string }
@@ -19,10 +19,14 @@ type FlatListItem =
 
 interface useConversationFeaturesProps {
   id: number;
+  limit?: number;
+  enabled?: boolean;
 }
 
 export const useConversationFeatures = ({
   id,
+  limit = 20,
+  enabled = true,
 }: useConversationFeaturesProps) => {
   const soundPlayer = useAudioPlayer(
     require("~/assets/sounds/receive-message.wav"),
@@ -49,6 +53,7 @@ export const useConversationFeatures = ({
         id,
         ["participants", "participants.user", "lastMessage"].join(","),
       ),
+    enabled: !!id && enabled,
   });
 
   // Play sound function
@@ -101,19 +106,18 @@ export const useConversationFeatures = ({
     const s = getSocket("chat", { token: authPersistStore.accessToken });
     socketRef.current = s;
 
-    s.on("connect", () => {
+    const joinAndFetch = () => {
       s.emit("join-conversation", { conversationId: id });
       pageRef.current = 1;
       setIsMoreMessagesLoading(true);
-      s.emit("get-conversation-messages", {
-        conversationId: id,
-        limit: 20,
-        page: "1",
-      });
       setIsInitialPending(true);
-    });
+    };
 
-    s.on("conversation-messages", (newMessages: ResponseMessageDto[]) => {
+    const onConnect = () => {
+      joinAndFetch();
+    };
+
+    const onConversationMessages = (newMessages: ResponseMessageDto[]) => {
       if (newMessages.length === 0) {
         setHasMore(false);
       } else {
@@ -125,24 +129,37 @@ export const useConversationFeatures = ({
       }
       setIsMoreMessagesLoading(false);
       setIsInitialPending(false);
-    });
+    };
 
-    s.on("message", (message: ResponseMessageDto) => {
+    const onMessage = (message: ResponseMessageDto) => {
       setMessages((prev) => [message, ...prev]);
       playSound();
-    });
+    };
 
-    s.on("error", (err: any) => {
+    const onError = (err: any) => {
       console.error("Socket error:", err);
       setIsMoreMessagesLoading(false);
       setIsInitialPending(false);
-    });
+    };
+
+    s.on("connect", onConnect);
+    s.on("conversation-messages", onConversationMessages);
+    s.on("message", onMessage);
+    s.on("error", onError);
+
+    // If already connected, join immediately instead of waiting for "connect"
+    if (s.connected) {
+      joinAndFetch();
+    }
 
     return () => {
+      s.off("connect", onConnect);
+      s.off("conversation-messages", onConversationMessages);
+      s.off("message", onMessage);
+      s.off("error", onError);
       setMessages([]);
-      disconnectSocket("chat");
     };
-  }, [id, authPersistStore.accessToken]);
+  }, [id, authPersistStore.accessToken, limit, enabled, playSound]);
 
   // Send Message *******************************************************************************************************************
   const sendMessage = React.useCallback(() => {
@@ -162,11 +179,11 @@ export const useConversationFeatures = ({
 
     setIsMoreMessagesLoading(true);
     s.emit("get-conversation-messages", {
-      conversationId: id,
-      limit: 20,
       page: nextPage.toString(),
+      limit,
+      conversationId: id,
     });
-  }, [isMoreMessagesLoading, hasMore, messages.length, id]);
+  }, [isMoreMessagesLoading, hasMore, messages.length, id, limit]);
 
   const flattenedMessages = React.useMemo(
     () => groupMessagesByDay(messages),
