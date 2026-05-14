@@ -75,7 +75,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
       return (
         <Select
           {...field?.props}
-          className={cn(field?.error && "border-red-500")}
+          classNames={{ input: cn(field?.error && "border border-red-500") }}
           title={field.label}
           description={field.description}
           placeholder={field?.placeholder}

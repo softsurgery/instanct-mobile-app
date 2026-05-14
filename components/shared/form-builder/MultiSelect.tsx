@@ -20,8 +20,8 @@ import { toast } from "sonner-native";
 
 interface MultiSelectProps {
   classNames?: {
-    trigger: string;
-    content: string;
+    trigger?: string;
+    content?: string;
   };
   title?: string;
   description?: string;
@@ -33,7 +33,7 @@ interface MultiSelectProps {
 
   options?: SelectOption[];
   searchable?: boolean;
-  max: number;
+  max?: number;
 }
 
 export default function MultiSelect({

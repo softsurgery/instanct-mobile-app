@@ -21,6 +21,7 @@ interface SelectProps {
   classNames?: {
     trigger?: string;
     content?: string;
+    input?: string;
   };
   title?: string;
   description?: string;
@@ -88,7 +89,7 @@ export default function Select({
           value={selectedOption?.label || ""}
           justify-center
           placeholder={placeholder || "Select an option"}
-          className={cn("block opacity-100")}
+          className={cn("block opacity-100", classNames?.input)}
         />
         <View className="absolute right-3 text-muted-foreground">
           <Icon as={ChevronDown} size={18} color={"gray"} />
