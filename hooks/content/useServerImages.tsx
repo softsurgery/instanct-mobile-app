@@ -180,5 +180,10 @@ export const useServerImages = ({
     fallbackClassName,
   ]);
 
-  return { uploads, isPending, jsxArray };
+  return {
+    uploads,
+    isPending,
+    jsxArray,
+    refetch: () => queries.forEach((q) => q.refetch()),
+  };
 };
