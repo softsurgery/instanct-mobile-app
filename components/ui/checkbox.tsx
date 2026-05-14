@@ -46,7 +46,7 @@ function Checkbox({
     >
       <CheckboxPrimitive.Indicator
         className={cn(
-          "bg-primary h-full w-full items-center justify-center",
+          "bg-primary w-full items-center justify-center",
           classNames?.indicator,
         )}
       >
