@@ -230,7 +230,7 @@ export const InspectBaseProfile = ({
         return uri ? { uri } : undefined;
       }
       default:
-        return undefined;
+        return require("~/assets/images/partial-react-logo.png");
     }
   }, [coverSource]);
 

@@ -11,7 +11,8 @@ interface PhotoPreviewProps {
   children: React.ReactNode;
   source?: ImageProps["source"] | null;
   index?: number;
-
+  color?: string;
+  presentationStyle?: "fullScreen" | "overFullScreen" | "pageSheet";
   footer?: (helpers: {
     close: () => void;
     open: () => void;
@@ -22,6 +23,8 @@ export const PhotoPreview = ({
   className,
   children,
   source,
+  color = "rgba(0, 0, 0, 0.8)",
+  presentationStyle = "overFullScreen",
   footer,
   index = 0,
 }: PhotoPreviewProps) => {
@@ -100,6 +103,8 @@ export const PhotoPreview = ({
           imageIndex={index}
           visible={isVisible}
           onRequestClose={closePreview}
+          backgroundColor={color}
+          presentationStyle={presentationStyle}
           FooterComponent={() => (
             <>
               {footer?.({
