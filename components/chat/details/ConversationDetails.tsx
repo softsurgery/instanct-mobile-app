@@ -149,7 +149,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
   const { jsxArray: profilePictures } = useServerImages({
     ids: [user?.pictureId],
     fallbacks: [identifyUserAvatar(user)],
-    size: { width: 90, height: 90 },
+    size: { width: 150, height: 150 },
     enabled: !!user,
   });
   const profilePicture = profilePictures[0];
@@ -351,7 +351,6 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
     );
   }
 
-  // ------------------- MODE NORMAL -------------------
   return (
     <StableSafeAreaView className="flex-1 bg-card">
       <ApplicationHeader
@@ -382,7 +381,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
         >
           <View className="relative">
             {profilePicture}
-            <View className="absolute bottom-0 right-0 w-6 h-6 bg-green-500 border-2 border-card rounded-full" />
+            <View className="absolute bottom-0 right-0 w-10 h-10 bg-green-500 border-2 border-card rounded-full" />
           </View>
           <Text className="text-foreground text-xl font-bold">{nickname}</Text>
         </Pressable>

@@ -98,6 +98,7 @@ export const UserEntry = ({
               numberOfLines={1}
               ellipsizeMode="tail"
             >
+              {lastMessage.userId === currentUser?.id && `You: `}
               {lastMessage
                 ? lastMessage.content
                     .replaceAll("\n", " ")
