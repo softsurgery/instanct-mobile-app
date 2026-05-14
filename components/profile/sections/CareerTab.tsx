@@ -1,24 +1,22 @@
-import { View, ScrollView, RefreshControl } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import { ProfileSection } from "./RenderSection";
 import { cn } from "@/lib/utils";
 
-interface InterestsTabProps {
+interface CarreerTabProps {
   className?: string;
   profileSections: ProfileSection[];
   renderSection: (section: ProfileSection) => React.ReactNode;
-  userId?: string;
   onRefresh?: () => void;
   refreshing?: boolean;
 }
 
-export const InterestsTab = ({
+export const CareerTab = ({
   className,
   profileSections,
   renderSection,
-  userId,
   onRefresh,
   refreshing,
-}: InterestsTabProps) => (
+}: CarreerTabProps) => (
   <ScrollView
     className={cn("flex-1 bg-background", className)}
     refreshControl={
@@ -27,8 +25,8 @@ export const InterestsTab = ({
   >
     <View className="flex flex-col gap-4">
       {profileSections
-        .filter((s) => s.key === "industries")
-        .map((section) => renderSection({ ...section, userId }))}
+        .filter((s) => s.key === "experience" || s.key === "education")
+        .map(renderSection)}
     </View>
   </ScrollView>
 );

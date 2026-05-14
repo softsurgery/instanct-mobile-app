@@ -15,27 +15,17 @@ import {
   UpdateUserCoverDto,
   Upload,
 } from "@/types";
-import { format } from "date-fns";
-import { useNavigation } from "expo-router";
-import {
-  Image,
-  ImageSourcePropType,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  View,
-} from "react-native";
-import { SeeMoreText } from "../shared/SeeMoreText";
+import { useFocusEffect, useNavigation } from "expo-router";
+import { Image, ImageSourcePropType, Pressable, View } from "react-native";
 import { Badge } from "../ui/badge";
 import { ProfileStat } from "./ProfileStat";
 import { useUserIndustries } from "@/hooks/content/users/useUserIndustries";
 import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { Loader } from "../shared/Loader";
-import { useDebounce } from "@/hooks/useDebounce";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { AboutTab } from "./sections/AboutTab";
-import { ExperienceTab } from "./sections/ExperienceTab";
+import { CareerTab } from "./sections/CareerTab";
 import { InterestsTab } from "./sections/InterestsTab";
 import { RenderSection } from "./sections/RenderSection";
 import { PhotoPreview } from "../shared/PhotoPreview";
@@ -76,8 +66,6 @@ export const InspectBaseProfile = ({
   const [draftCoverUri, setDraftCoverUri] = React.useState<string | null>(null);
 
   const storeRef = React.useRef(createClientStore());
-  const [isRefreshing, setIsRefreshing] = React.useState(false);
-  const { loading: isRefreshDebounced } = useDebounce(isRefreshing, 500);
 
   const userStore = useUserStore();
 
@@ -123,17 +111,22 @@ export const InspectBaseProfile = ({
     uploads: profileUploads,
     jsxArray: profilePictures,
     isPending: isProfilePicturePending,
+    refetch: refetchProfilePictures,
   } = useServerImages({
     ids: [user?.pictureId],
     fallbacks: [fallback, ""],
-    wrapperClassName: "border border-border bg-background rounded-full",
+    className: "border border-border bg-background rounded-full",
     size: { width: 100, height: 100 },
     enabled: !!user && !!user.pictureId,
   });
   const profilePictureSource = profileUploads?.[0];
 
   // cover picture side-effect
-  const { uploads: coverUploads, isPending: isCoverPending } = useServerImages({
+  const {
+    uploads: coverUploads,
+    isPending: isCoverPending,
+    refetch: refetchCover,
+  } = useServerImages({
     ids: [user?.coverId],
     fallbacks: [""],
     wrapperClassName: "",
@@ -241,25 +234,34 @@ export const InspectBaseProfile = ({
     [draftCoverUri, coverImageSource],
   );
 
-  const onRefresh = async () => {
-    setIsRefreshing(true);
+  const onRefresh = React.useCallback(async () => {
     await Promise.allSettled([
       refetchUser(),
       refetchCurrentUser(),
       refetchExperiences(),
       refetchEducations(),
       refetchUserIndustries(),
+      refetchCover(),
+      refetchProfilePictures(),
     ]);
-    setIsRefreshing(false);
-  };
+  }, []);
 
-  const isInitialLoading =
-    isRefreshDebounced ||
+  const refreshing =
     isUserPending ||
     isExperiencesPending ||
     isEducationsPending ||
     isIndustriesSubTypePending ||
-    isUserIndustriesPending;
+    isUserIndustriesPending ||
+    isCoverPending ||
+    isProfilePicturePending;
+
+  useFocusEffect(
+    React.useCallback(() => {
+      return () => {
+        onRefresh();
+      };
+    }, [onRefresh]),
+  );
 
   // ---------------------------------------------------------------
   //  PROFILE SECTIONS CONFIG
@@ -310,82 +312,77 @@ export const InspectBaseProfile = ({
 
   const Tab = createMaterialTopTabNavigator();
 
-  if (isInitialLoading || !user || isCoverPending) {
+  if (refreshing || !user) {
     return <BaseProfileSkeleton className={className} />;
   }
 
   return (
-    <ScrollView
-      className={cn("flex-1 bg-background h-full", className)}
-      showsVerticalScrollIndicator={false}
-      refreshControl={
-        <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-      }
-    >
-      <View className="max-h-[40vh]">
-        {/* Cover */}
-        {coverExtra}
-        <PhotoPreview
-          className="active:opacity-70 relative w-full h-48 overflow-hidden"
-          source={coverPreviewSource}
-          footer={() => {
-            if (currentUser?.id !== id) return null;
+    <View className={cn("bg-background flex-1", className)}>
+      <View>
+        <View>
+          {/* Cover */}
+          {coverExtra}
+          <PhotoPreview
+            className="active:opacity-70 relative w-full h-48 overflow-hidden"
+            source={coverPreviewSource}
+            footer={() => {
+              if (currentUser?.id !== id) return null;
 
-            return (
-              <Pressable
-                className="flex flex-row gap-2 items-center px-4 py-2 m-4 mb-12 mx-auto border border-border rounded-full active:bg-muted"
-                onPress={() => {
-                  handlePickCover();
-                }}
-              >
-                <Icon as={Pencil} color="white" />
-                <Text className="text-white">Change Cover</Text>
-              </Pressable>
-            );
-          }}
-        >
-          <Image
-            source={coverImageSource}
-            className="w-full h-full opacity-70"
-            resizeMode="cover"
-          />
-        </PhotoPreview>
-        {(isCoverUploadPending || isUpdateCoverPending) && (
-          <View className="absolute inset-0 bg-black/40 flex items-center justify-center z-50">
-            <Loader isPending={true} size="large" />
-          </View>
-        )}
-        {/* Header */}
-        <View className="flex-row items-center px-5 -mt-12">
-          {isProfilePicturePending ? (
-            <Skeleton className="w-[100px] h-[100px] rounded-full" />
-          ) : (
-            <PhotoPreview source={profilePictureSource}>
-              <View>{profilePictures[0]}</View>
-            </PhotoPreview>
+              return (
+                <Pressable
+                  className="flex flex-row gap-2 items-center px-4 py-2 m-4 mb-12 mx-auto border border-border rounded-full active:bg-muted"
+                  onPress={() => {
+                    handlePickCover();
+                  }}
+                >
+                  <Icon as={Pencil} color="white" />
+                  <Text className="text-white">Change Cover</Text>
+                </Pressable>
+              );
+            }}
+          >
+            <Image
+              source={coverImageSource}
+              className="w-full h-full opacity-70"
+              resizeMode="cover"
+            />
+          </PhotoPreview>
+          {(isCoverUploadPending || isUpdateCoverPending) && (
+            <View className="absolute inset-0 bg-black/40 flex items-center justify-center z-50">
+              <Loader isPending={true} size="large" />
+            </View>
           )}
-          <View className="flex-1 mt-16">
-            <View className="flex-row items-center justify-between mx-2">
-              <View>
-                <Text className="text-xl font-semibold text-foreground">
-                  {identity}
-                </Text>
-                {id && (
-                  <Text className="text-sm text-muted-foreground">
-                    @{user?.username}
+          {/* Header */}
+          <View className="flex-row items-center px-5 -mt-12">
+            {isProfilePicturePending ? (
+              <Skeleton className="w-[100px] h-[100px] rounded-full" />
+            ) : (
+              <PhotoPreview source={profilePictureSource}>
+                {profilePictures[0]}
+              </PhotoPreview>
+            )}
+            <View className="flex-1 mt-16">
+              <View className="flex-row items-center justify-between mx-2">
+                <View>
+                  <Text className="text-xl font-semibold text-foreground">
+                    {identity}
                   </Text>
+                  {id && (
+                    <Text className="text-sm text-muted-foreground">
+                      @{user?.username}
+                    </Text>
+                  )}
+                </View>
+                {currentUser?.id === id && (
+                  <ProfileStat className="flex flex-row gap-4" />
                 )}
               </View>
-              {currentUser?.id === id && (
-                <ProfileStat className="flex flex-row gap-4" />
-              )}
             </View>
           </View>
         </View>
       </View>
-
       {/* Tabs */}
-      <View className="flex-1 mt-4 h-full min-h-[65vh]">
+      <View style={{ flex: 1 }}>
         <Tab.Navigator
           screenOptions={{
             tabBarScrollEnabled: false,
@@ -396,11 +393,9 @@ export const InspectBaseProfile = ({
             },
             tabBarIndicatorStyle: { backgroundColor: "#6366f1" },
             tabBarStyle: { backgroundColor: "transparent" },
-          }}
-          commonOptions={{
-            sceneStyle: {
-              flex: 1,
-            },
+            sceneStyle: { flex: 1 },
+            swipeEnabled: true,
+            animationEnabled: true,
           }}
         >
           <Tab.Screen
@@ -409,7 +404,14 @@ export const InspectBaseProfile = ({
               tabBarLabel: "About",
             }}
           >
-            {() => <AboutTab user={user} />}
+            {() => (
+              <AboutTab
+                className="flex-1"
+                user={user}
+                onRefresh={onRefresh}
+                refreshing={refreshing}
+              />
+            )}
           </Tab.Screen>
           <Tab.Screen
             name="Career"
@@ -418,9 +420,11 @@ export const InspectBaseProfile = ({
             }}
           >
             {() => (
-              <ExperienceTab
+              <CareerTab
                 profileSections={profileSections}
                 renderSection={RenderSection}
+                onRefresh={onRefresh}
+                refreshing={refreshing}
               />
             )}
           </Tab.Screen>
@@ -435,11 +439,13 @@ export const InspectBaseProfile = ({
                 profileSections={profileSections}
                 renderSection={RenderSection}
                 userId={id}
+                onRefresh={onRefresh}
+                refreshing={refreshing}
               />
             )}
           </Tab.Screen>
         </Tab.Navigator>
       </View>
-    </ScrollView>
+    </View>
   );
 };
