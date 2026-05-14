@@ -111,18 +111,6 @@ export const UpdateEducations = ({ className }: UpdateEducationsProps) => {
                     key={edu.id}
                     className="bg-card border border-border overflow-hidden shadow-sm"
                   >
-                    {/* Header with index badge */}
-                    <View className="flex flex-row items-center justify-between px-4 pt-4 pb-3 border-b border-border">
-                      <View className="flex flex-row items-center gap-2">
-                        <View className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                          <Icon as={GraduationCap} size={16} />
-                        </View>
-                        <Text className="text-base font-semibold">
-                          Education {index + 1}
-                        </Text>
-                      </View>
-                    </View>
-
                     {/* Content */}
                     <View className="px-4 py-4 gap-3.5">
                       {/* Degree/Title */}

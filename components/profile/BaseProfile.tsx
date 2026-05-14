@@ -48,6 +48,8 @@ import { Skeleton } from "../ui/skeleton";
 import { Icon } from "../ui/icon";
 import { Pencil } from "lucide-react-native";
 import { BaseProfileSkeleton } from "./BaseProfileSkeleton";
+import { ExperienceInstance } from "./experience/ExperienceInstance";
+import { EducationInstance } from "./education/EducationInstance";
 
 interface ProfileSection<T = unknown> {
   key: string;
@@ -270,19 +272,7 @@ export const InspectBaseProfile = ({
         data: experiences as unknown[],
         editable: currentUser?.id === user?.id,
         renderItem: (experience: ResponseExperienceDto) => (
-          <View className="flex flex-col mb-4 mt-2">
-            <Text className="font-semibold">{experience.title}</Text>
-            <Text className="text-sm text-muted-foreground font-bold">
-              {experience.company}
-            </Text>
-            <Text className="text-xs text-muted-foreground my-1">
-              {format(new Date(experience.startDate!), "MMM yyyy")} —{" "}
-              {format(new Date(experience.endDate!), "MMM yyyy")}
-            </Text>
-            <SeeMoreText textClassname="text-sm" numberOfLines={2}>
-              {experience.description || "No description provided."}
-            </SeeMoreText>
-          </View>
+          <ExperienceInstance className="mb-4" experience={experience} />
         ),
       },
       {
@@ -291,15 +281,7 @@ export const InspectBaseProfile = ({
         data: educations as unknown[],
         editable: currentUser?.id === user?.id,
         renderItem: (education: ResponseEducationDto) => (
-          <View className="flex flex-col mb-4 gap-4">
-            <Text className="font-semibold">{education.title}</Text>
-            <Text className="text-sm text-muted-foreground">
-              {education.institution}
-            </Text>
-            <SeeMoreText textClassname="text-sm" numberOfLines={2}>
-              {education.description || "No description provided."}
-            </SeeMoreText>
-          </View>
+          <EducationInstance className="mb-4" education={education} />
         ),
       },
       {

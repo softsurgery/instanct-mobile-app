@@ -17,6 +17,7 @@ import { View } from "react-native";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 import { useCreateExperienceFormStructure } from "./useCreateExperienceFormStructure";
 import { toast } from "sonner-native";
+import React from "react";
 
 interface CreateExperienceProps {
   className?: string;
@@ -40,7 +41,7 @@ export const CreateExperience = ({ className }: CreateExperienceProps) => {
         description: "Your experience has been successfully created.",
       });
       queryClient.invalidateQueries({
-        queryKey: ["experiences", userStore.response?.id],
+        queryKey: ["experiences"],
       });
       router.back();
     },
@@ -52,6 +53,7 @@ export const CreateExperience = ({ className }: CreateExperienceProps) => {
   const handleCreateSubmit = () => {
     const data = userStore.createExperienceDto;
     const result = createExperienceSchema.safeParse(data);
+    console.log(result.error?.flatten().fieldErrors);
     if (!result.success) {
       userStore.set("experienceErrors", result.error.flatten().fieldErrors);
     } else {
@@ -63,6 +65,12 @@ export const CreateExperience = ({ className }: CreateExperienceProps) => {
       }
     }
   };
+
+  React.useEffect(() => {
+    return () => {
+      userStore.reset();
+    };
+  }, []);
 
   return (
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>

@@ -50,6 +50,7 @@ export const UpdateExperiences = ({ className }: UpdateExperiencesProps) => {
       endDate: exp.endDate ? new Date(exp.endDate) : undefined,
       description: exp.description,
     });
+    userStore.set("present", exp.endDate === null);
     router.push("/main/profile/update-experience");
   };
 
@@ -116,33 +117,27 @@ export const UpdateExperiences = ({ className }: UpdateExperiencesProps) => {
                     key={exp.id}
                     className="bg-card border border-border overflow-hidden shadow-sm"
                   >
-                    {/* Header with index badge */}
-                    <View className="flex flex-row items-center justify-between px-4 pt-4 pb-3 border-b border-border">
-                      <View className="flex flex-row items-center gap-2">
-                        <View className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                          <Icon as={Briefcase} size={16} />
-                        </View>
-                        <Text className="text-base font-semibold">
-                          Experience {index + 1}
-                        </Text>
-                      </View>
-                      {exp.endDate === null && (
-                        <View className="bg-green-500/20 px-2.5 py-1 rounded-full">
-                          <Text className="text-xs font-medium">Current</Text>
-                        </View>
-                      )}
-                    </View>
-
                     {/* Content */}
                     <View className="px-4 py-4 gap-3.5">
                       {/* Job Title */}
-                      <View className="gap-1.5">
-                        <Text className="text-xs font-semibold uppercase text-muted-foreground tracking-wide">
-                          Job Title
-                        </Text>
-                        <Text className="text-lg font-bold text-foreground">
-                          {exp.title}
-                        </Text>
+                      <View className="flex flex-row justify-between">
+                        <View className="gap-1.5">
+                          <Text className="text-xs font-semibold uppercase text-muted-foreground tracking-wide">
+                            Job Title
+                          </Text>
+                          <Text className="text-lg font-bold text-foreground">
+                            {exp.title}
+                          </Text>
+                        </View>
+                        <View className="flex flex-row items-center justify-between px-4">
+                          {exp.endDate === null && (
+                            <View className="bg-green-500/20 px-2.5 py-1 rounded-full">
+                              <Text className="text-xs font-medium">
+                                Current
+                              </Text>
+                            </View>
+                          )}
+                        </View>
                       </View>
 
                       {/* Company */}

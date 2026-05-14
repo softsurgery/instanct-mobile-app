@@ -23,6 +23,8 @@ interface UserData {
   createExperienceDto: CreateExperienceDto;
   updateExperienceDto: UpdateExperienceDto;
 
+  present: boolean;
+
   //educations
   educations?: ResponseEducationDto[];
   responseEducation?: ResponseEducationDto;
@@ -86,6 +88,7 @@ const initialState: UserData = {
     endDate: new Date(),
     description: "",
   },
+  present: false,
   createEducationDto: {
     title: "",
     institution: "",
