@@ -1,12 +1,11 @@
+import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Text } from "@/components/ui/text";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { Feather } from "@expo/vector-icons";
-import React from "react";
-import { TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 import StarRating from "react-native-star-rating-widget";
 import { PictureUploader } from "./PictureUploader";
 import Select from "./Select";
@@ -16,14 +15,13 @@ import { TimePicker } from "./TimePicker";
 import { ChoicePicker } from "../ChoicePicker";
 import MultiSelect from "./MultiSelect";
 import MapPinField from "./MapPinField";
+import { PasswordField } from "./PasswordField";
 
 interface FieldBuilderProps {
   field?: Field<any>;
 }
 
 export const FieldBuilder = ({ field }: FieldBuilderProps) => {
-  const [showPassword, setShowPassword] = React.useState(false);
-
   switch (field?.variant) {
     case "text":
     case "tel":
@@ -39,6 +37,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
             placeholder={field.placeholder}
             value={field?.props?.value?.toString() || ""}
             onChangeText={(text) => field?.props?.onChangeText?.(text)}
+            onBlur={() => field?.props?.onBlur?.()}
             className={cn("rounded-md", field?.error && "border-red-500")}
           />
         </View>
@@ -66,6 +65,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           placeholder={field.placeholder}
           value={field?.props?.value?.toString() || ""}
           onChangeText={(text) => field?.props?.onChangeText?.(text)}
+          onBlur={() => field?.props?.onBlur?.()}
           className={cn("rounded-md", field?.error && "border-red-500")}
           style={field?.error ? { borderColor: "red" } : {}}
           {...field.props?.other}
@@ -139,43 +139,17 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
       );
     case "password":
       return (
-        <View className="w-full" style={{ position: "relative" }}>
-          <Input
-            {...field?.props}
-            className={cn(field?.error && "border-red-500")}
-            style={{
-              flex: 1,
-              padding: 10,
-              paddingRight: 40,
-            }}
-            placeholder={field?.props?.placeholder || "••••••••"}
-            secureTextEntry={!showPassword}
-            value={field?.props?.value?.toString() || ""}
-            onChangeText={(text) => field?.props?.onChangeText?.(text)}
-            editable={field?.props?.editable}
-            autoComplete="off"
-            autoCorrect={false}
-            spellCheck={false}
-            textContentType="none"
-          />
-
-          <TouchableOpacity
-            onPress={() => setShowPassword(!showPassword)}
-            style={{
-              position: "absolute",
-              right: 4,
-              top: 4,
-              padding: 4,
-            }}
-            disabled={!field?.props?.editable}
-          >
-            <Feather
-              name={showPassword ? "eye-off" : "eye"}
-              size={16}
-              color="gray"
-            />
-          </TouchableOpacity>
-        </View>
+        <PasswordField
+          {...field.props}
+          className={cn(
+            field?.className,
+            field?.error && "border border-red-500",
+          )}
+          placeholder={field?.placeholder}
+          value={field?.props?.value?.toString() || ""}
+          onChangeText={(text) => field?.props?.onChangeText?.(text)}
+          editable={field?.props?.editable}
+        />
       );
     case "textarea":
       return (

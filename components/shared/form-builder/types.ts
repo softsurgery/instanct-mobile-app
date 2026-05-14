@@ -59,6 +59,7 @@ export enum FieldVariant {
 export interface TextFieldProps {
   value?: string;
   onChangeText?: (text: string) => void;
+  onBlur?: () => void;
   editable?: boolean;
 }
 
@@ -72,6 +73,7 @@ export interface TextareaFieldProps {
 export interface EmailFieldProps {
   value?: string;
   onChangeText?: (text: string) => void;
+  onBlur?: () => void;
   editable?: boolean;
 }
 
