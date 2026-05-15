@@ -13,7 +13,12 @@ interface StepperProps {
     wrapper?: string;
     controlsWrapper?: string;
   };
-  steps: { title?: string; description?: string; component: React.ReactNode }[];
+  steps: {
+    title?: string;
+    description?: string;
+    component: React.ReactNode;
+    validation?: boolean;
+  }[];
   initialStep?: number;
   forwaredAdditionalActions?: Record<number, () => void>;
   backwordAdditionalActions?: Record<number, () => void>;
@@ -35,7 +40,7 @@ export const Stepper = ({
   const [currentStep, setCurrentStep] = React.useState(initialStep);
 
   const nextStep = () => {
-    if (currentStep < steps.length - 1) {
+    if (currentStep < steps.length - 1 && steps[currentStep].validation) {
       setCurrentStep((prev) => prev + 1);
       if (forwaredAdditionalActions[currentStep]) {
         forwaredAdditionalActions[currentStep]();
@@ -98,7 +103,12 @@ export const Stepper = ({
               <Text className="font-semibold">{closingAction.label}</Text>
             </Button>
           ) : (
-            <Button size="sm" onPress={nextStep} className="rounded-xl">
+            <Button
+              size="sm"
+              onPress={nextStep}
+              className="rounded-xl"
+              disabled={!steps[currentStep].validation}
+            >
               <Text className="font-semibold">Next</Text>
               <Icon as={ArrowRight} size={16} />
             </Button>
