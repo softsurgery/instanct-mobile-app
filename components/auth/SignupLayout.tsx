@@ -10,6 +10,12 @@ import { ArrowLeft } from "lucide-react-native";
 import { Stepper } from "../shared/Stepper";
 import React from "react";
 import { useAuthValidation } from "@/hooks/useAuthValidation";
+import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
+import { useUploadMutation } from "@/hooks/useUploadMutation";
+import { ServerErrorResponse, Upload } from "@/types";
+import { toast } from "sonner-native";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/api";
 
 interface SignupLayoutProps {
   className?: string;
@@ -17,12 +23,39 @@ interface SignupLayoutProps {
 
 export const SignupLayout = ({ className }: SignupLayoutProps) => {
   const authStore = useAuthStore();
+  const { industries, isIndustriesSubTypePending } = useIndustries();
+
+  const {
+    uploadFiles: uploadProfilePicture,
+    isUploadPending: isProfilePictureUploadPending,
+  } = useUploadMutation({
+    onSuccess: (response: Upload[]) => {
+      authStore.setNested("signUpRequest.pictureId", response?.[0]?.id);
+    },
+    onError: (error: ServerErrorResponse) => {
+      toast.error(
+        error.response?.data?.message || "Failed to upload image",
+        {},
+      );
+    },
+  });
+
   const { usernameValidation, emailValidation } = useAuthValidation();
 
-  const { signUpFormStructure } = useSignUpFormStructure({
+  const {
+    signUpFormStructure,
+    industriesFormStructure,
+    profilePictureFieldset,
+  } = useSignUpFormStructure({
     store: authStore,
     usernameValidation,
     emailValidation,
+    industriesOptions: industries.map((industry) => ({
+      label: industry.label,
+      value: String(industry.id),
+    })),
+    uploadPicture: uploadProfilePicture,
+    isProfilePictureUploadPending,
   });
 
   React.useEffect(() => {
@@ -30,6 +63,19 @@ export const SignupLayout = ({ className }: SignupLayoutProps) => {
       authStore.reset();
     };
   }, []);
+
+  const { mutate: signUp, isPending: isSignUpPending } = useMutation({
+    mutationFn: async () => api.auth.signUp(authStore.signUpRequest),
+    onSuccess: () => {
+      toast.success("Account created successfully! Please sign in.");
+      router.push("/auth/sign-in");
+    },
+    onError: (error: ServerErrorResponse) => {
+      const message =
+        error.response?.data?.message || "Failed to create account";
+      toast.error(message);
+    },
+  });
 
   const step1Validation =
     !usernameValidation.isCheckingUsername &&
@@ -77,21 +123,24 @@ export const SignupLayout = ({ className }: SignupLayoutProps) => {
                 title: "Industries",
                 description:
                   "Select the industries and objectives relevant to you.",
-                component: null,
-                validation: true,
+                component: <FormBuilder structure={industriesFormStructure} />,
+                validation: !!authStore.signUpRequest.industries.length,
               },
               {
                 title: "Show us your face",
                 description:
                   "Upload a profile picture to personalize your account.",
-                component: true,
-                validation: true,
+                component: <FormBuilder structure={profilePictureFieldset} />,
+                validation: !!authStore.signUpRequest.pictureId,
               },
             ]}
-            closingAction={{
-              label: "Create My Account",
-              onPress: () => {},
-            }}
+            closingActions={[
+              {
+                label: "Create My Account",
+                onPress: () => signUp(),
+                disabled: isSignUpPending,
+              },
+            ]}
           />
         </View>
       </View>
