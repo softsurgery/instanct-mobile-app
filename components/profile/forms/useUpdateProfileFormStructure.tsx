@@ -13,6 +13,7 @@ import { UserStore } from "@/stores/useUserStore";
 
 interface useUpdateProfileFormStructureProps {
   store: UserStore;
+  fallback?: string;
   uploadPicture: (options: {
     files: File[];
     onProgress: (progress: number) => void;
@@ -23,6 +24,7 @@ interface useUpdateProfileFormStructureProps {
 
 export const useUpdateProfileFormStructure = ({
   store,
+  fallback,
   uploadPicture,
   isProfilePictureUploadPending,
   isPending = false,
@@ -37,7 +39,7 @@ export const useUpdateProfileFormStructure = ({
     wrapperClassName: "flex flex-row items-center justify-center",
     props: {
       image: store?.picture,
-      alt: "?",
+      alt: fallback,
       editable: !isProfilePictureUploadPending && !isPending,
       onFileChange: (value) => {
         store.set("picture", value);

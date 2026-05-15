@@ -29,7 +29,6 @@ interface UpdateProfileProps {
 
 export const UpdateProfile = ({ className }: UpdateProfileProps) => {
   const isKeyboardVisible = useKeyboardVisible();
-  const { t } = useTranslation("common");
   const userStore = useUserStore();
   const queryClient = useQueryClient();
 
@@ -83,14 +82,21 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
     },
   });
 
+  const { currentUser, refetchCurrentUser, isCurrentUserPending } =
+    useCurrentUser();
+
+  const fallback = React.useMemo(
+    () => identifyUserAvatar(currentUser),
+    [currentUser],
+  );
+
   const { structure } = useUpdateProfileFormStructure({
     store: userStore,
+    fallback,
     uploadPicture: uploadProfilePicture,
     isProfilePictureUploadPending,
   });
 
-  const { currentUser, refetchCurrentUser, isCurrentUserPending } =
-    useCurrentUser();
   React.useEffect(() => {
     if (currentUser) {
       userStore.set("updateDto", {
@@ -109,11 +115,6 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
       userStore.reset();
     };
   }, [currentUser]);
-
-  const fallback = React.useMemo(
-    () => identifyUserAvatar(currentUser),
-    [currentUser],
-  );
 
   const { uploads: profileUploads, isPending: isProfileUploadsPending } =
     useServerImages({
