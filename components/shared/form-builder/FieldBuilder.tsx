@@ -38,7 +38,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
             value={field?.props?.value?.toString() || ""}
             onChangeText={(text) => field?.props?.onChangeText?.(text)}
             onBlur={() => field?.props?.onBlur?.()}
-            className={cn("rounded-md", field?.error && "border-red-500")}
+            className={cn(field.className, field?.error && "border-red-500")}
           />
         </View>
       );
@@ -52,7 +52,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
             placeholder={field.placeholder}
             value={field?.props?.value}
             onChangeText={(text) => field?.props?.onChangeText?.(Number(text))}
-            className={cn("rounded-md", field?.error && "border-red-500")}
+            className={cn(field.className, field?.error && "border-red-500")}
           />
         </View>
       );
@@ -66,7 +66,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           value={field?.props?.value?.toString() || ""}
           onChangeText={(text) => field?.props?.onChangeText?.(text)}
           onBlur={() => field?.props?.onBlur?.()}
-          className={cn("rounded-md", field?.error && "border-red-500")}
+          className={cn(field.className, field?.error && "border-red-500")}
           style={field?.error ? { borderColor: "red" } : {}}
           {...field.props?.other}
         />
@@ -75,7 +75,9 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
       return (
         <Select
           {...field?.props}
-          classNames={{ input: cn(field?.error && "border border-red-500") }}
+          classNames={{
+            input: cn(field.className, field?.error && "border border-red-500"),
+          }}
           title={field.label}
           description={field.description}
           placeholder={field?.placeholder}
@@ -89,7 +91,9 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
       return (
         <MultiSelect
           {...field?.props}
-          classNames={{ trigger: cn(field?.error && "border-red-500") }}
+          classNames={{
+            trigger: cn(field.className, field?.error && "border-red-500"),
+          }}
           title={field.label}
           description={field.description}
           placeholder={field?.placeholder}
@@ -104,7 +108,10 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
       return (
         <DatePicker
           {...field?.props}
-          className={cn(field?.error && "border border-red-500 rounded-md")}
+          className={cn(
+            field.className,
+            field?.error && "border border-red-500 rounded-md",
+          )}
           value={field?.props?.value}
           onDateChange={(date) => field?.props?.onDateChange?.(date)}
           disabled={field?.props?.editable}
@@ -114,7 +121,10 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
       return (
         <TimePicker
           {...field?.props}
-          className={cn(field?.error && "border border-red-500 rounded-md")}
+          className={cn(
+            field.className,
+            field?.error && "border border-red-500 rounded-md",
+          )}
           value={field?.props?.value}
           onTimeChange={(time) => field?.props?.onTimeChange?.(time)}
           disabled={field?.props?.editable}
@@ -156,7 +166,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
         <View className="flex flex-col gap-2 w-full">
           <Textarea
             {...field?.props}
-            className={cn("h-32", field?.error && "border-red-500")}
+            className={cn(field.className, field?.error && "border-red-500")}
             editable={field?.props?.other}
             placeholder={field.placeholder}
             value={field?.props?.value?.toString() || ""}
@@ -171,6 +181,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           <View className="mx-auto">
             <StarRating
               {...field?.props}
+              className={cn(field.className, field?.error && "border-red-500")}
               rating={field?.props?.value || 0}
               onChange={(rating) => field.props?.onValueChange?.(rating)}
               maxStars={5}
@@ -184,7 +195,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
         <PictureUploader
           {...field?.props}
           wrapperClassName={field?.wrapperClassName}
-          className={field?.className}
+          className={cn(field.className, field?.error && "border-red-500")}
           image={field?.props?.image}
           fallback={field?.props?.alt}
           onFileChange={field?.props?.onFileChange}
@@ -208,7 +219,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
       return (
         <Switch
           {...field?.props}
-          className={field?.className}
+          className={cn(field.className, field?.error && "border-red-500")}
           checked={field?.props?.checked}
           onCheckedChange={field?.props?.onCheckedChange}
           disabled={field?.props?.disabled}
@@ -218,7 +229,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
       return (
         <ChoicePicker
           {...field?.props}
-          className={field?.className}
+          className={cn(field.className, field?.error && "border-red-500")}
           options={field?.props?.options || []}
           value={field?.props?.value}
           onSelect={field?.props?.onSelectChange}
