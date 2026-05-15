@@ -107,11 +107,13 @@ export const useAuthValidation = ({}: useAuthValidationProps = {}) => {
 
 export const validateFirstName = (value: string) => {
   if (!value.trim()) return "First name is required";
+
   if (value.trim().length < 2)
     return "First name must contain at least 2 characters";
 
-  if (!/^[a-zA-ZÀ-ÿ]+$/.test(value))
-    return "First name must contain only letters";
+  // Allow letters and spaces
+  if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(value))
+    return "First name must contain only letters and spaces";
 
   return null;
 };
@@ -122,8 +124,9 @@ export const validateLastName = (value: string) => {
   if (value.trim().length < 2)
     return "Last name must contain at least 2 characters";
 
-  if (!/^[a-zA-ZÀ-ÿ]+$/.test(value))
-    return "Last name must contain only letters";
+  // Allow letters and spaces
+  if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(value))
+    return "Last name must contain only letters and spaces";
 
   return null;
 };

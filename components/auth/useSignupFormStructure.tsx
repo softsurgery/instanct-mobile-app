@@ -3,6 +3,9 @@ import {
   Field,
   FieldVariant,
   FormStructure,
+  MultiSelectFieldProps,
+  PictureFieldProps,
+  SelectOption,
   TextFieldProps,
 } from "../shared/form-builder/types";
 import { cn } from "@/lib/utils";
@@ -20,6 +23,12 @@ interface useSignUpFormStructureProps {
     isEmailTaken: boolean;
     isCheckingEmail: boolean;
   };
+  industriesOptions: SelectOption[];
+  uploadPicture: (options: {
+    files: File[];
+    onProgress: (progress: number) => void;
+  }) => void;
+  isProfilePictureUploadPending: boolean;
 }
 
 export const useSignUpFormStructure = ({
@@ -27,6 +36,9 @@ export const useSignUpFormStructure = ({
   isPending,
   usernameValidation: { usernameError, isUsernameTaken, isCheckingUsername },
   emailValidation: { emailError, isEmailTaken, isCheckingEmail },
+  industriesOptions,
+  uploadPicture,
+  isProfilePictureUploadPending,
 }: useSignUpFormStructureProps) => {
   // firstName
   const firstnameField: Field = {
@@ -184,7 +196,8 @@ export const useSignUpFormStructure = ({
     placeholder: "Please confirm your password",
     variant: FieldVariant.PASSWORD,
     className:
-      store.utilities.confirmPassword && !store.signUpRequestErrors.confirmPassword?.[0]
+      store.utilities.confirmPassword &&
+      !store.signUpRequestErrors.confirmPassword?.[0]
         ? "border border-green-500"
         : "",
     error: store.signUpRequestErrors?.confirmPassword?.[0],
@@ -223,7 +236,85 @@ export const useSignUpFormStructure = ({
     ],
   };
 
+  const industriesFormStructure: FormStructure = {
+    title: "Industries",
+    fieldsets: [
+      {
+        rows: [
+          {
+            id: 1,
+            fields: [
+              {
+                id: "industries",
+                variant: FieldVariant.MULTISELECT,
+                label: "",
+                description:
+                  "Select the industries relevant to you. You can select up to 5 industries.",
+                props: {
+                  value: store.signUpRequest.industries.map(String),
+                  onSelect: (ids) =>
+                    store.setNested(
+                      "signUpRequest.industries",
+                      ids.map(Number),
+                    ),
+                  options: industriesOptions,
+                  max: 5,
+                } satisfies MultiSelectFieldProps,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+
+  const pictureField: Field<PictureFieldProps> = {
+    id: "picture",
+    label: "Profile Picture",
+    variant: FieldVariant.PICTURE,
+    description: "Upload a profile picture to personalize your account.",
+    className: "h-40 w-40 rounded-full mt-2",
+    wrapperClassName: "flex flex-row items-center justify-center",
+    fieldClassName: "flex flex-col items-center justify-center",
+    props: {
+      image: store?.utilities.picture,
+      alt: "?",
+      editable: !isProfilePictureUploadPending && !isPending,
+      onFileChange: (value) => {
+        store.setNested("utilities.picture", value);
+      },
+      onUpload: (file, onProgress) => {
+        store.setNested("utilities.progress", 0);
+        uploadPicture({
+          files: [file],
+          onProgress: (progress: number) => {
+            store.setNested("utilities.progress", progress);
+            onProgress(progress);
+          },
+        });
+      },
+    },
+  };
+
+  const profilePictureFieldset: FormStructure = {
+    title: "Show us your face",
+    description: "Upload a profile picture to personalize your account.",
+    fieldsets: [
+      {
+        title: "",
+        rows: [
+          {
+            id: 1,
+            fields: [pictureField],
+          },
+        ],
+      },
+    ],
+  };
+
   return {
     signUpFormStructure,
+    industriesFormStructure,
+    profilePictureFieldset,
   };
 };

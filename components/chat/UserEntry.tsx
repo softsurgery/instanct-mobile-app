@@ -48,7 +48,7 @@ export const UserEntry = ({
     return (
       differenceInMilliseconds(
         new Date(lastCheck),
-        new Date(lastMessage.createdAt),
+        new Date(lastMessage?.createdAt),
       ) >= 0
     );
   }, [lastCheck, lastMessage?.createdAt]);
@@ -80,7 +80,7 @@ export const UserEntry = ({
 
             {!!lastMessage && (
               <Text className="text-[11px] text-gray-500 dark:text-gray-400">
-                {formatSmartDate(lastMessage.createdAt)}
+                {formatSmartDate(lastMessage?.createdAt)}
               </Text>
             )}
           </View>
@@ -98,9 +98,9 @@ export const UserEntry = ({
               numberOfLines={1}
               ellipsizeMode="tail"
             >
-              {lastMessage.userId === currentUser?.id && `You: `}
+              {lastMessage?.userId === currentUser?.id && `You: `}
               {lastMessage
-                ? lastMessage.content
+                ? lastMessage?.content
                     .replaceAll("\n", " ")
                     .replace(/\s+/g, " ")
                     .trim()
