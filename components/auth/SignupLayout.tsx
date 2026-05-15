@@ -1,26 +1,48 @@
-import { Button } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { router } from "expo-router";
 import { View } from "react-native";
-import DividedText from "../shared/DividedText";
-import { StableKeyboardAwareScrollView } from "../shared/StableKeyboardAwareScrollView";
 import { FormBuilder } from "../shared/form-builder/FormBuilder";
 import { useSignUpFormStructure } from "./useSignupFormStructure";
-import { SSOButtons } from "./SSOButtons";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { ArrowLeft } from "lucide-react-native";
 import { Stepper } from "../shared/Stepper";
+import React from "react";
+import { useAuthValidation } from "@/hooks/useAuthValidation";
 
-interface SignupProps {
+interface SignupLayoutProps {
   className?: string;
 }
 
-export const SignupLayout = ({ className }: SignupProps) => {
+export const SignupLayout = ({ className }: SignupLayoutProps) => {
   const authStore = useAuthStore();
-  const { signUpFormStructure } = useSignUpFormStructure({ store: authStore });
+  const { usernameValidation, emailValidation } = useAuthValidation();
+
+  const { signUpFormStructure } = useSignUpFormStructure({
+    store: authStore,
+    usernameValidation,
+    emailValidation,
+  });
+
+  React.useEffect(() => {
+    return () => {
+      authStore.reset();
+    };
+  }, []);
+
+  const step1Validation =
+    !usernameValidation.isCheckingUsername &&
+    !emailValidation.isCheckingEmail &&
+    !usernameValidation.isUsernameTaken &&
+    !emailValidation.isEmailTaken &&
+    !!authStore.signUpRequest.username &&
+    !!authStore.signUpRequest.email &&
+    !!authStore.signUpRequest.firstName &&
+    !!authStore.signUpRequest.lastName &&
+    !!authStore.signUpRequest.password &&
+    authStore.signUpRequest.password.length >= 8 &&
+    authStore.signUpRequest.password === authStore.utilities.confirmPassword;
 
   return (
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
@@ -48,19 +70,22 @@ export const SignupLayout = ({ className }: SignupProps) => {
                 title: "Introduce Yourself",
                 description:
                   "Start by providing the basic details about yourself.",
-                component: null,
+                component: <FormBuilder structure={signUpFormStructure} />,
+                validation: step1Validation,
               },
               {
                 title: "Industries",
                 description:
                   "Select the industries and objectives relevant to you.",
                 component: null,
+                validation: true,
               },
               {
                 title: "Show us your face",
                 description:
                   "Upload a profile picture to personalize your account.",
-                component: null,
+                component: true,
+                validation: true,
               },
             ]}
             closingAction={{
@@ -69,51 +94,6 @@ export const SignupLayout = ({ className }: SignupProps) => {
             }}
           />
         </View>
-        {/* <StableKeyboardAwareScrollView>
-          <View
-            className={cn(
-              "flex flex-col justify-center gap-5 p-4 pb-6",
-              className,
-            )}
-          >
-            <View className="my-5">
-              <Text className="text-2xl font-extrabold text-center">
-                Create Account
-              </Text>
-              <Text className="text-2xl font-thin text-center">
-                Join us and get started!
-              </Text>
-            </View>
-
-            <View className="flex flex-col gap-2 px-2 w-fit">
-              <FormBuilder structure={signUpFormStructure} />
-
-              <Button
-                disabled={false}
-                className="flex flex-row justify-center gap-2 my-1"
-                onPress={() => {}}
-              >
-                <Text className="font-bold">Create My Account</Text>
-              </Button>
-
-              <DividedText text="OR" />
-
-              <SSOButtons isSignInPending={false} />
-            </View>
-
-            <View className="flex flex-row gap-1 items-center justify-center">
-              <Text variant={"muted"}>Already have an account?</Text>
-              <Text
-                variant={"small"}
-                onPress={() => {
-                  router.push("/auth/sign-in");
-                }}
-              >
-                Sign in
-              </Text>
-            </View>
-          </View>
-        </StableKeyboardAwareScrollView> */}
       </View>
     </StableSafeAreaView>
   );
