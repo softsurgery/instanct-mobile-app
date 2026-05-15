@@ -2,14 +2,14 @@ import { api } from "@/api";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
-interface useIdentifiedUserProps {
-  id?: string;
+interface useIdentifiedUserUsernameProps {
+  username?: string;
   join?: string;
   enabled?: boolean;
 }
 
-export const useIdentifiedUser = (
-  { id, join, enabled = true }: useIdentifiedUserProps = {
+export const useIdentifiedUserUsername = (
+  { username, join, enabled = true }: useIdentifiedUserUsernameProps = {
     join: "",
     enabled: true,
   },
@@ -19,14 +19,14 @@ export const useIdentifiedUser = (
     isPending: isUserPending,
     refetch: refetchUser,
   } = useQuery({
-    queryKey: ["user", id],
-    queryFn: () => api.user.findById(id!, { join }),
-    enabled: enabled && !!id,
+    queryKey: ["user-by-username", username],
+    queryFn: () => api.user.findByUsername(username!, { join }),
+    enabled: enabled && !!username,
   });
 
   const user = React.useMemo(() => {
     return userResp || null;
   }, [userResp]);
 
-  return { user, refetchUser, isUserPending };
+  return { user, isUserPending, refetchUser };
 };
