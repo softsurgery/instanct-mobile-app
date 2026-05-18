@@ -51,7 +51,12 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
             keyboardType="number-pad"
             placeholder={field.placeholder}
             value={field?.props?.value}
-            onChangeText={(text) => field?.props?.onChangeText?.(Number(text))}
+            onChangeText={(text) => {
+              const cleaned = text.replace(/[^0-9]/g, "");
+              field?.props?.onChangeText?.(
+                cleaned ? Number(cleaned) : undefined,
+              );
+            }}
             className={cn(field.className, field?.error && "border-red-500")}
           />
         </View>
