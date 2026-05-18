@@ -5,10 +5,10 @@ import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { cn } from "@/lib/utils";
 import { ApplicationHeader } from "../shared/AppHeader";
 import {
-  Bell,
   Map as MapIcon,
   ChevronRight,
   Calendar,
+  ArrowLeft,
 } from "lucide-react-native";
 import { router } from "expo-router";
 import { Text } from "../ui/text";
@@ -17,14 +17,10 @@ import {
   SessionType,
   type ResponseSessionDto,
 } from "@/types/session";
-import { IconMessageChatbot } from "@tabler/icons-react-native";
-import { useNotificationContext } from "@/contexts/NotificationsContext";
 import { toDateOnly, toTimeOnly } from "@/lib/date";
 import { Icon } from "../ui/icon";
 import { useInfiniteUserSessions } from "@/hooks/content/sessions/useInfiniteUserSessions";
-import { useScrollableElement } from "@/hooks/useScrollableElement";
 import { StablePressable } from "../shared/StablePressable";
-import Animated from "react-native-reanimated";
 import { SessionStarter } from "./SessionStarter";
 import { useTranslation } from "react-i18next";
 import { Loader } from "../shared/Loader";
@@ -50,21 +46,6 @@ export const SessionHistoryPortal = ({
     sessionType: SessionType.MAP_SESSION,
   });
 
-  const { animatedHeaderStyle, handleScroll } = useScrollableElement({
-    deltaThreshold: 60,
-    duration: 250,
-  });
-
-  const { newCount, resetCount } = useNotificationContext();
-
-  const handleNotificationsPress = React.useCallback(() => {
-    resetCount();
-    router.push("/main/notifications");
-  }, [resetCount]);
-
-  const handleChatPress = React.useCallback(() => {
-    router.push("/main/chat");
-  }, []);
 
   const formatSessionName = (
     startDate: Date | undefined,
@@ -131,66 +112,56 @@ export const SessionHistoryPortal = ({
     [],
   );
 
-  const applicationHeaderShortcuts = (
-    <ApplicationHeader
-      title={t("screens.sessions")}
-      shortcuts={[
-        {
-          key: "bell",
-          icon: Bell,
-          onPress: handleNotificationsPress,
-          badgeText: newCount > 0 ? String(newCount) : undefined,
-        },
-        {
-          key: "chat",
-          icon: IconMessageChatbot,
-          onPress: handleChatPress,
-        },
-      ]}
-    />
-  );
-
   return (
     <StableSafeAreaView
-      className={cn("flex flex-1 flex-col bg-background", className)}
+      className={cn("flex flex-1 flex-col bg-card", className)}
     >
-      {sessions.length !== 0 ? (
-        <Animated.View style={animatedHeaderStyle}>
-          {applicationHeaderShortcuts}
-          <SessionStatusLegend />
-        </Animated.View>
-      ) : (
-        applicationHeaderShortcuts
-      )}
-      {isSessionsPending ? (
-        <View className="flex flex-col flex-1 justify-center items-center">
-          <Loader />
-        </View>
-      ) : sessions.length !== 0 ? (
-        <View className="flex-1 bg-transparent mt-2">
-          <LegendList
-            className="flex-1"
-            data={sessions}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id.toString()}
-            showsVerticalScrollIndicator={false}
-            recycleItems={true}
-            onEndReached={() => {
-              if (hasNextPage && !isFetchingNextPage) {
-                fetchNextPage();
-              }
-            }}
-            onRefresh={refetchSessions}
-            onEndReachedThreshold={0.5}
-            onScroll={handleScroll}
-            contentContainerStyle={{
-              paddingHorizontal: 0,
-            }}
-          />
-        </View>
-      ) : (
-        <SessionStarter className="px-4" />
-      )}
+      <ApplicationHeader
+        classNames={{ wrapper: "border-b border-border pb-2" }}
+        titleVariant="large"
+        title={t("screens.sessions")}
+        reverse
+        shortcuts={[
+          {
+            key: "back",
+            icon: ArrowLeft,
+            onPress: () => {
+              router.back();
+            },
+          },
+        ]}
+      />
+      <View className="flex-1">
+        {isSessionsPending ? (
+          <View className="flex flex-col flex-1 justify-center items-center">
+            <Loader />
+          </View>
+        ) : sessions.length !== 0 ? (
+          <View className="flex-1 bg-background">
+            <SessionStatusLegend />
+            <LegendList
+              className="flex-1"
+              data={sessions}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.id.toString()}
+              showsVerticalScrollIndicator={false}
+              recycleItems={true}
+              onEndReached={() => {
+                if (hasNextPage && !isFetchingNextPage) {
+                  fetchNextPage();
+                }
+              }}
+              onRefresh={refetchSessions}
+              onEndReachedThreshold={0.5}
+              contentContainerStyle={{
+                paddingHorizontal: 0,
+              }}
+            />
+          </View>
+        ) : (
+          <SessionStarter className="px-4" />
+        )}
+      </View>
     </StableSafeAreaView>
   );
 };

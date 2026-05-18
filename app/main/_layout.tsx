@@ -70,6 +70,15 @@ export default function MainLayout() {
           }}
         />
         <Stack.Screen
+          name="sessions/index"
+          options={{
+            title: "Session History",
+            headerShown: false,
+            animation: "simple_push",
+            animationDuration: 200,
+          }}
+        />
+        <Stack.Screen
           name="sessions/details"
           options={{
             title: "Session Details",

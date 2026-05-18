@@ -2,7 +2,7 @@ import { useNotificationContext } from "@/contexts/NotificationsContext";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { cn } from "@/lib/utils";
 import { router } from "expo-router";
-import { Bell, Clock, FlaskConical, Settings } from "lucide-react-native";
+import { Bell, FlaskConical, Settings } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { InspectBaseProfile } from "../profile/BaseProfile";
@@ -46,18 +46,6 @@ export const MenuPortal = ({ className }: MenuPortalProps) => {
                   color: "white",
                   onPress: () => router.push("/main/settings"),
                 },
-                {
-                  key: "sessions",
-                  icon: Clock,
-                  color: "white",
-                  onPress: () =>
-                    router.push({
-                      pathname: "/main/sessions/details",
-                      params: {
-                        session: currentUser?.id,
-                      },
-                    }),
-                },
                 ...(process.env.NODE_ENV === "development"
                   ? [
                       {
@@ -82,6 +70,7 @@ export const MenuPortal = ({ className }: MenuPortalProps) => {
                   key: "chat",
                   icon: IconMessageChatbot,
                   badgeText: chatCount > 0 ? String(chatCount) : undefined,
+                  color: "white",
                   onPress: handleChatPress,
                 },
               ]}
