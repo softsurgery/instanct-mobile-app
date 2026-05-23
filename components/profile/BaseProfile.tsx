@@ -40,6 +40,8 @@ import { Pencil } from "lucide-react-native";
 import { BaseProfileSkeleton } from "./BaseProfileSkeleton";
 import { ExperienceInstance } from "./experience/ExperienceInstance";
 import { EducationInstance } from "./education/EducationInstance";
+import { hslToHex } from "@/lib/theme";
+import { useColorPalette } from "@/hooks/useColorPalette";
 
 interface ProfileSection<T = unknown> {
   key: string;
@@ -61,6 +63,7 @@ export const InspectBaseProfile = ({
   id,
   coverExtra,
 }: InspectBaseProfileProps) => {
+  const { palette } = useColorPalette();
   const queryClient = useQueryClient();
   const navigation = useNavigation();
   const [draftCoverUri, setDraftCoverUri] = React.useState<string | null>(null);
@@ -114,8 +117,9 @@ export const InspectBaseProfile = ({
     refetch: refetchProfilePictures,
   } = useServerImages({
     ids: [user?.pictureId],
-    fallbacks: [fallback, ""],
-    className: "border border-border bg-background rounded-full",
+    fallbacks: [fallback],
+    className: "rounded-full",
+    wrapperClassName: "border border-border bg-background rounded-full",
     size: { width: 100, height: 100 },
     enabled: !!user && !!user.pictureId,
   });
@@ -319,64 +323,68 @@ export const InspectBaseProfile = ({
   return (
     <View className={cn("bg-background flex-1", className)}>
       <View>
-        <View>
-          {/* Cover */}
-          {coverExtra}
-          <PhotoPreview
-            className="active:opacity-70 relative w-full h-48 overflow-hidden"
-            source={coverPreviewSource}
-            footer={() => {
-              if (currentUser?.id !== id) return null;
+        {/* Cover */}
+        {coverExtra}
+        <PhotoPreview
+          className="active:opacity-70 relative w-full h-48 overflow-hidden bg-muted items-center justify-center"
+          source={coverPreviewSource}
+          onPress={handlePickCover}
+          footer={() => {
+            if (currentUser?.id !== id) return null;
 
-              return (
-                <Pressable
-                  className="flex flex-row gap-2 items-center px-4 py-2 m-4 mb-12 mx-auto border border-border rounded-full active:bg-muted"
-                  onPress={() => {
-                    handlePickCover();
-                  }}
-                >
-                  <Icon as={Pencil} color="white" />
-                  <Text className="text-white">Change Cover</Text>
-                </Pressable>
-              );
-            }}
-          >
+            return (
+              <Pressable
+                className="flex flex-row gap-2 items-center px-4 py-2 m-4 mx-auto border border-border rounded-full active:bg-muted"
+                onPress={handlePickCover}
+              >
+                <Icon as={Pencil} color="white" />
+                <Text className="text-white">Change Cover</Text>
+              </Pressable>
+            );
+          }}
+        >
+          {coverImageSource ? (
             <Image
               source={coverImageSource}
               className="w-full h-full opacity-70"
               resizeMode="cover"
             />
-          </PhotoPreview>
-          {(isCoverUploadPending || isUpdateCoverPending) && (
-            <View className="absolute inset-0 bg-black/40 flex items-center justify-center z-50">
-              <Loader isPending={true} size="large" />
+          ) : (
+            <View className="flex flex-row gap-2 items-center pt-12">
+              <Icon as={Pencil} color="white" />
+              <Text className="text-white">Add Cover Photo</Text>
             </View>
           )}
-          {/* Header */}
-          <View className="flex-row items-center px-5 -mt-12">
-            {isProfilePicturePending ? (
-              <Skeleton className="w-[100px] h-[100px] rounded-full" />
-            ) : (
-              <PhotoPreview source={profilePictureSource}>
-                {profilePictures[0]}
-              </PhotoPreview>
-            )}
-            <View className="flex-1 mt-16">
-              <View className="flex-row items-center justify-between mx-2">
-                <View>
-                  <Text className="text-xl font-semibold text-foreground">
-                    {identity}
+        </PhotoPreview>
+        {(isCoverUploadPending || isUpdateCoverPending) && (
+          <View className="absolute inset-0 bg-black/40 flex items-center justify-center z-50">
+            <Loader isPending={true} size="large" />
+          </View>
+        )}
+        {/* Header */}
+        <View className="flex-row items-center px-5 -mt-12">
+          {isProfilePicturePending ? (
+            <Skeleton className="w-[100px] h-[100px] rounded-full" />
+          ) : (
+            <PhotoPreview source={profilePictureSource}>
+              {profilePictures[0]}
+            </PhotoPreview>
+          )}
+          <View className="flex-1 mt-16">
+            <View className="flex-row items-center justify-between mx-2">
+              <View>
+                <Text className="text-xl font-semibold text-foreground">
+                  {identity}
+                </Text>
+                {id && (
+                  <Text className="text-sm text-muted-foreground">
+                    @{user?.username}
                   </Text>
-                  {id && (
-                    <Text className="text-sm text-muted-foreground">
-                      @{user?.username}
-                    </Text>
-                  )}
-                </View>
-                {currentUser?.id === id && (
-                  <ProfileStat className="flex flex-row gap-4" />
                 )}
               </View>
+              {currentUser?.id === id && (
+                <ProfileStat className="flex flex-row gap-4" />
+              )}
             </View>
           </View>
         </View>
@@ -391,7 +399,9 @@ export const InspectBaseProfile = ({
               fontWeight: "600",
               textTransform: "none",
             },
-            tabBarIndicatorStyle: { backgroundColor: "#6366f1" },
+            tabBarIndicatorStyle: {
+              backgroundColor: hslToHex(palette.primary),
+            },
             tabBarStyle: { backgroundColor: "transparent" },
             sceneStyle: { flex: 1 },
             swipeEnabled: true,
