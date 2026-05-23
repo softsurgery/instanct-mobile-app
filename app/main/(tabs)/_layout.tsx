@@ -8,15 +8,13 @@ import { Map, Telescope, User } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Dimensions, Pressable, View } from "react-native";
+import { Pressable, View } from "react-native";
 import Animated, {
   interpolate,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-
-const height = Dimensions.get("window").height;
 
 export default function TabLayout() {
   const { colorScheme } = useColorScheme();
@@ -134,7 +132,7 @@ export default function TabLayout() {
           backgroundColor: colors.card,
           borderColor: colors.border,
           borderTopWidth: 0,
-          height: height * 0.1,
+          height: "9%",
         },
         tabBarLabelStyle: {
           fontSize: 11,
