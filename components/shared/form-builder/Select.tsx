@@ -14,8 +14,7 @@ import {
 import type { SelectOption } from "~/components/shared/form-builder/types";
 import { cn } from "~/lib/utils";
 import ActionSheet, { type ActionSheetRef } from "react-native-actions-sheet";
-import { useColorScheme } from "nativewind";
-import { THEME } from "@/lib/theme";
+import { useColorPalette } from "@/hooks/useColorPalette";
 
 interface SelectProps {
   classNames?: {
@@ -49,8 +48,7 @@ export default function Select({
   options = [],
   searchable = false,
 }: SelectProps) {
-  const { colorScheme } = useColorScheme();
-  const isDarkColorScheme = colorScheme === "dark";
+  const { palette } = useColorPalette();
   const sheetRef = React.useRef<ActionSheetRef>(null);
   const [search, setSearch] = React.useState("");
 
@@ -102,9 +100,7 @@ export default function Select({
         defaultOverlayOpacity={0.45}
         onClose={handleClose}
         containerStyle={{
-          backgroundColor: isDarkColorScheme
-            ? THEME.dark.background
-            : THEME.light.background,
+          backgroundColor: palette.background,
           borderTopLeftRadius: 24,
           borderTopRightRadius: 24,
           paddingHorizontal: 16,
