@@ -24,16 +24,9 @@ interface UserCardProps {
 }
 
 export const UserCard = ({ user, className }: UserCardProps) => {
-  const {
-    bookmark,
-    isBookmarkPending,
-    saveBookmark,
-    isSavingBookmark,
-    deleteBookmark,
-    isDeletingBookmark,
-  } = useBookmarkActions({ bookmarkId: user.id });
-
-  const isBookmarked = !!bookmark;
+  const { isBookmarked, toggleBookmark } = useBookmarkActions({
+    bookmarkId: user.id,
+  });
 
   const identity = React.useMemo(() => identifyUser(user), [user]);
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
@@ -42,6 +35,7 @@ export const UserCard = ({ user, className }: UserCardProps) => {
     useServerImages({
       ids: [user?.pictureId],
       fallbacks: [fallback],
+      className: "rounded-full",
       wrapperClassName: "border-4 border-white bg-white rounded-full shadow-lg",
       size: { width: 100, height: 100 },
     });
@@ -107,10 +101,7 @@ export const UserCard = ({ user, className }: UserCardProps) => {
                   ? "bg-destructive shadow-lg shadow-red-500/40"
                   : "bg-violet-600 dark:bg-violet-500 active:bg-violet-700 dark:active:bg-violet-600",
               )}
-              disabled={
-                isBookmarkPending || isSavingBookmark || isDeletingBookmark
-              }
-              onPress={() => (isBookmarked ? deleteBookmark() : saveBookmark())}
+              onPress={toggleBookmark}
             >
               <Icon
                 as={Bookmark}
