@@ -57,6 +57,7 @@ export const Conversation = ({ id }: ConversationProps) => {
   const { jsxArray: profilePictures } = useServerImages({
     ids: [user?.pictureId],
     fallbacks: [identifyUserAvatar(user)],
+    className: "rounded-full",
     wrapperClassName: "rounded-full border border-border",
     size: { width: 40, height: 40 },
     enabled: !!user?.pictureId,

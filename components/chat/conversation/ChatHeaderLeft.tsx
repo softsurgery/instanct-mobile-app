@@ -1,7 +1,6 @@
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 import { cn } from "~/lib/utils";
 import { Text } from "../../ui/text";
-import { StablePressable } from "~/components/shared/StablePressable";
 import { router, useNavigation } from "expo-router";
 import { NavigationProps } from "~/types/app.routes";
 import { ArrowLeft } from "lucide-react-native";
@@ -25,23 +24,21 @@ export const ChatHeaderLeft = ({
   const navigation = useNavigation<NavigationProps>();
   return (
     <View className={cn("flex flex-row items-center flex-1 gap-1", className)}>
-      <StablePressable
-        className="p-2 rounded-full"
+      <Pressable
+        className="p-2 rounded-full active:bg-muted"
         onPress={() => navigation.goBack()}
-        onPressClassname="bg-muted"
       >
         <Icon as={ArrowLeft} size={24} />
-      </StablePressable>
+      </Pressable>
 
-      <StablePressable
-        className="flex flex-row items-center gap-3 flex-1 py-1 px-1 rounded-lg"
+      <Pressable
+        className="flex flex-row items-center gap-3 flex-1 py-1 px-1 rounded-lg active:bg-muted/50"
         onPress={() =>
           router.push({
             pathname: "/main/profile/inspect-profile",
             params: { id },
           })
         }
-        onPressClassname="bg-muted/50"
       >
         <View>{profilePicture}</View>
         <View className="flex flex-col justify-center">
@@ -52,7 +49,7 @@ export const ChatHeaderLeft = ({
             {lastSeen}
           </Text>
         </View>
-      </StablePressable>
+      </Pressable>
     </View>
   );
 };

@@ -37,6 +37,8 @@ import { useServerImages } from "@/hooks/content/useServerImages";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import { ScrollView } from "react-native-gesture-handler";
 import { ConversationDetailsRow } from "./ConversationDetailsRow";
+import { useColorPalette } from "@/hooks/useColorPalette";
+import { hslToHex } from "@/lib/theme";
 
 interface MessageResultItemProps {
   message: ResponseMessageDto;
@@ -105,17 +107,12 @@ const MessageResultItem = ({
   );
 };
 
-// --------------------------------------
-// Main Screen
-// --------------------------------------
 interface ConversationDetailsProps {
   id: string;
 }
 
 export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
-  const colorScheme = useColorScheme();
-  const iconColor = colorScheme === "dark" ? "#FFFFFF" : "#000000";
-  const mutedIconColor = colorScheme === "dark" ? "#A1A1AA" : "#71717A";
+  const { palette } = useColorPalette();
   const conversationId = Number(id);
   const { currentUser } = useCurrentUser();
 
@@ -148,6 +145,8 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
 
   const { jsxArray: profilePictures } = useServerImages({
     ids: [user?.pictureId],
+    className: "rounded-full",
+    wrapperClassName: "rounded-full border border-border",
     fallbacks: [identifyUserAvatar(user)],
     size: { width: 150, height: 150 },
     enabled: !!user,
@@ -277,18 +276,22 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
               }}
               className="p-2 rounded-full"
             >
-              <Icon as={ArrowLeft} size={22} color={iconColor} />
+              <Icon
+                as={ArrowLeft}
+                size={22}
+                color={hslToHex(palette.foreground)}
+              />
             </TouchableOpacity>
             <View className="flex-1 flex-row items-center bg-muted rounded-full px-4 py-2.5">
-              <Icon as={Search} size={18} color={mutedIconColor} />
+              <Icon as={Search} size={18} color={hslToHex(palette.muted)} />
               <TextInput
                 ref={searchInputRef}
                 className="flex-1 text-foreground ml-3 text-base"
                 placeholder="Search in conversation"
-                placeholderTextColor={mutedIconColor}
+                placeholderTextColor={hslToHex(palette.muted)}
                 value={searchQuery}
                 autoFocus
-                selectionColor={colorScheme === "dark" ? "#3b82f6" : "#2563eb"}
+                selectionColor={hslToHex(palette.accent)}
                 onChangeText={setSearchQuery}
               />
               {searchQuery.length > 0 && (
@@ -296,7 +299,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
                   onPress={() => setSearchQuery("")}
                   className="p-1"
                 >
-                  <Icon as={X} size={18} color={mutedIconColor} />
+                  <Icon as={X} size={18} color={hslToHex(palette.muted)} />
                 </TouchableOpacity>
               )}
             </View>
@@ -330,7 +333,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
                 <Text className="text-muted-foreground">Searching...</Text>
               ) : searchQuery ? (
                 <>
-                  <Icon as={Search} size={60} color={mutedIconColor} />
+                  <Icon as={Search} size={60} color={hslToHex(palette.muted)} />
                   <Text className="text-muted-foreground text-lg mt-4 font-medium">
                     {`No results for "${searchQuery}"`}
                   </Text>
