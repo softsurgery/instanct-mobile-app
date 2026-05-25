@@ -11,6 +11,7 @@ interface PhotoPreviewProps {
   index?: number;
   color?: string;
   presentationStyle?: "fullScreen" | "overFullScreen" | "pageSheet";
+  onPress?: () => void;
   footer?: (helpers: {
     close: () => void;
     open: () => void;
@@ -23,6 +24,7 @@ export const PhotoPreview = ({
   source,
   color = "rgba(0, 0, 0, 0.8)",
   presentationStyle = "overFullScreen",
+  onPress,
   footer,
   index = 0,
 }: PhotoPreviewProps) => {
@@ -80,8 +82,22 @@ export const PhotoPreview = ({
     setIsVisible(false);
   }, []);
 
-  const trigger = hasImageSource ? (
-    <TouchableOpacity className={cn("z-10", className)} onPress={openPreview}>
+  const canPress = hasImageSource || !!onPress;
+
+  const handlePress = () => {
+    if (hasImageSource) {
+      openPreview();
+    } else {
+      onPress?.();
+    }
+  };
+
+  const trigger = canPress ? (
+    <TouchableOpacity
+      className={cn("z-10", className)}
+      onPress={handlePress}
+      activeOpacity={0.8}
+    >
       {children}
     </TouchableOpacity>
   ) : (
