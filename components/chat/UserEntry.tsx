@@ -38,6 +38,7 @@ export const UserEntry = ({
 
   const { jsxArray: profilePictures } = useServerImages({
     ids: [user?.pictureId],
+    className: "rounded-full",
     fallbacks: [identifyUserAvatar(user)],
     size: { width: 60, height: 60 },
   });
@@ -63,8 +64,9 @@ export const UserEntry = ({
       {/* Left Content */}
       <View className="flex-1 flex-row items-center gap-3">
         {/* Avatar */}
-        <View className="overflow-hidden rounded-full">
+        <View className="relative">
           {profilePictures[0]}
+          <View className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-card rounded-full" />
         </View>
 
         {/* Text Content */}
