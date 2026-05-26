@@ -30,7 +30,6 @@ interface ExplorePortalProps {
 
 export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   const { palette } = useColorPalette();
-  const usersFilterPath = "/main/explore/users-filter" as any;
   const { t } = useTranslation("common");
   const { currentUser } = useCurrentUser();
   const userFilerStore = useExploreFilterStore();
@@ -125,7 +124,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
             hidden: !mapSession,
             color,
             icon: ArrowDownNarrowWide,
-            onPress: () => router.push(usersFilterPath),
+            onPress: () => router.push("/main/explore/users-filter"),
           },
           {
             key: "notifications",
