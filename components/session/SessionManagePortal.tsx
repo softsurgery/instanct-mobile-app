@@ -165,25 +165,29 @@ export const SessionManagePortal = ({
           </StableKeyboardAwareScrollView>
           {!isKeyboardVisible && (
             <View className="absolute bottom-0 left-0 right-0 border-t border-border bg-card p-8 pt-4 gap-4">
-              <View className="flex flex-row justify-between gap-4">
+              <View className="flex flex-col justify-between gap-2">
                 <Button
-                  size="sm"
-                  className="rounded-full flex-1"
-                  onPress={() => handleSessionEdit()}
-                  disabled={isUpdatingSession}
-                >
-                  <Text>Confirm</Text>
-                </Button>
-                <Button
-                  variant="destructive"
+                  size="lg"
+                  variant="outline"
+                  className="rounded-full"
                   onPress={() => {
                     endSession();
                   }}
                   disabled={isPending}
-                  size="sm"
-                  className="rounded-full flex-1"
                 >
-                  <Text>{isPending ? "Ending..." : "Terminer la session"}</Text>
+                  <Text className="text-md font-bold">
+                    {isPending ? "Ending..." : "End Session"}
+                  </Text>
+                </Button>
+                <Button
+                  size="lg"
+                  className="rounded-full"
+                  onPress={() => handleSessionEdit()}
+                  disabled={isUpdatingSession}
+                >
+                  <Text className="text-md font-bold">
+                    {isUpdatingSession ? "Updating..." : "Confirm changes"}
+                  </Text>
                 </Button>
               </View>
             </View>
