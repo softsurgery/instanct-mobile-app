@@ -29,7 +29,7 @@ export const useExploreFilterFormStructure = ({
     disabled: isPending,
     props: {
       value: store.dto.objectives.map(String),
-      onSelect: (value) => store.set("objectives", value.map(Number)),
+      onSelect: (value) => store.setNested("dto.objectives", value.map(Number)),
       options: objectives,
     },
   };
@@ -44,7 +44,7 @@ export const useExploreFilterFormStructure = ({
     disabled: isPending,
     props: {
       value: store.dto.industry.map(String),
-      onSelect: (value) => store.set("industry", value.map(Number)),
+      onSelect: (value) => store.setNested("dto.industry", value.map(Number)),
       options: industries,
     },
   };

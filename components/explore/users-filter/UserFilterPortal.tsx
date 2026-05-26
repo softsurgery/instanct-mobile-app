@@ -15,6 +15,8 @@ import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
 import { useExploreFilterStore } from "@/stores/userExploreFilterStore";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
+import React from "react";
+import { toast } from "sonner-native";
 
 interface UserFilterPortalProps {
   className?: string;
@@ -23,6 +25,14 @@ interface UserFilterPortalProps {
 export const UserFilterPortal = ({ className }: UserFilterPortalProps) => {
   const isKeyboardVisible = useKeyboardVisible();
   const exploreFilterStore = useExploreFilterStore();
+
+  React.useEffect(() => {
+    exploreFilterStore.set("dto", structuredClone(exploreFilterStore.filters));
+    return () => {
+      exploreFilterStore.resetDto();
+    };
+  }, []);
+
   const { t } = useTranslation();
 
   const { objectives, isObjectivesSubTypePending } = useObjectives();
@@ -30,11 +40,14 @@ export const UserFilterPortal = ({ className }: UserFilterPortalProps) => {
 
   const handleApplyFilters = () => {
     exploreFilterStore.apply();
+    toast.success("Filters saved successfully");
     router.back();
   };
 
   const handleResetFilters = () => {
     exploreFilterStore.reset();
+    toast.success("Filters reset successfully");
+    router.back();
   };
 
   const structure = useExploreFilterFormStructure({
@@ -71,34 +84,34 @@ export const UserFilterPortal = ({ className }: UserFilterPortalProps) => {
         ]}
       />
       <View className="flex-1 bg-background">
-        <View className="px-5 pt-4 pb-2">
-          <Text className="text-sm text-muted-foreground leading-relaxed">
-            You can apply filters to find users that match specific criteria.
-            These filters will help you discover users based on their
-            objectives, industries, and more.
-          </Text>
-        </View>
         <StableKeyboardAwareScrollView className="flex-1 bg-background">
+          <View className="px-5 pt-4 pb-2">
+            <Text className="text-sm text-muted-foreground leading-relaxed">
+              You can apply filters to find users that match specific criteria.
+              These filters will help you discover users based on their
+              objectives, industries, and more.
+            </Text>
+          </View>
           <FormBuilder structure={structure} className="mt-4 px-2" />
         </StableKeyboardAwareScrollView>
       </View>
       {!isKeyboardVisible && (
         <View className="absolute bottom-0 left-0 right-0 border-t border-border bg-card p-8 pt-4 gap-4">
-          <View className="flex flex-row justify-between gap-4">
+          <View className="flex flex-col justify-between gap-2">
             <Button
-              size="sm"
-              className="flex-1 rounded-full"
-              onPress={handleApplyFilters}
-            >
-              <Text>Apply Filters</Text>
-            </Button>
-            <Button
-              size="sm"
-              variant="destructive"
-              className="flex-1 rounded-full"
+              size="lg"
+              variant="outline"
+              className="rounded-xl"
               onPress={handleResetFilters}
             >
-              <Text>Reset Filters</Text>
+              <Text className="text-md font-bold">Remove Filters</Text>
+            </Button>
+            <Button
+              size="lg"
+              className="rounded-xl"
+              onPress={handleApplyFilters}
+            >
+              <Text className="text-md font-bold">Save Filters</Text>
             </Button>
           </View>
         </View>

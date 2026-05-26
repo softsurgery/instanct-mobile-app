@@ -1,35 +1,44 @@
+import { setDeepValue } from "@/lib/object";
 import { create } from "zustand";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-export interface ExploreFilterData {
+export interface Filter {
   objectives: number[];
   industry: number[];
 }
 
-export interface ExploreFilterStore {
-  dto: ExploreFilterData;
-  initialState: ExploreFilterData;
-  // Store methods
+export interface ExploreFilterData {
+  dto: Filter;
+  filters: Filter;
+}
+
+export interface ExploreFilterStore extends ExploreFilterData {
   set: <K extends keyof ExploreFilterData>(
     name: K,
     value: ExploreFilterData[K],
   ) => void;
+  setNested: (path: string, value: unknown) => void;
   apply: () => void;
+  getFilterExpression: () => string[];
+  resetDto: () => void;
   reset: () => void;
-  setInitialState: (newInitialState: ExploreFilterData) => void;
 }
 
-const initialState: ExploreFilterData = {
+const emptyFilter: Filter = {
   objectives: [],
   industry: [],
 };
 
+const initialState: ExploreFilterData = {
+  dto: structuredClone(emptyFilter),
+  filters: structuredClone(emptyFilter),
+};
+
 export const useExploreFilterStore = create<ExploreFilterStore>()(
   persist(
-    (set) => ({
-      dto: initialState,
-      initialState: initialState,
-
+    (set, get) => ({
+      ...initialState,
       set: (name, value) =>
         set((state) => ({
           dto: {
@@ -37,29 +46,65 @@ export const useExploreFilterStore = create<ExploreFilterStore>()(
             [name]: value,
           },
         })),
+      setNested: (path: string, value: unknown) => {
+        if (!path.includes(".")) {
+          set((state) => ({
+            ...state,
+            [path]: value,
+          }));
+          return;
+        }
 
+        const [rootKey, ...restPath] = path.split(".");
+        const nestedPath = restPath.join(".");
+
+        set((state) => {
+          const rootValue = state[rootKey as keyof ExploreFilterStore];
+          if (typeof rootValue !== "object" || rootValue === null) {
+            throw new Error(`Cannot set nested path on non-object: ${rootKey}`);
+          }
+
+          const updatedRoot = setDeepValue(
+            { ...(rootValue as object) },
+            nestedPath,
+            value,
+          );
+          return {
+            ...state,
+            [rootKey]: updatedRoot,
+          };
+        });
+      },
       apply: () =>
         set((state) => ({
-          initialState: state.dto,
+          filters: state.dto,
         })),
 
-      reset: () =>
+      resetDto: () =>
         set((state) => ({
-          dto: state.initialState,
+          ...state,
+          dto: structuredClone(state.filters),
         })),
 
-      setInitialState: (newInitialState) =>
-        set({
-          initialState: newInitialState,
-          dto: newInitialState,
-        }),
+      reset: () => {
+        set({ ...initialState });
+      },
+
+      getFilterExpression: () => {
+        const state = get();
+
+        const filters: string[] = [];
+
+        return filters;
+      },
     }),
     {
-      name: "explore-filter-store", // localStorage key
-      storage: createJSONStorage(() => localStorage),
-      // Only persist dto and initialState, not methods
+      name: "explore-filter-store",
+      storage: createJSONStorage(() => AsyncStorage),
+
       partialize: (state) => ({
         dto: state.dto,
+        filters: state.filters,
       }),
     },
   ),
