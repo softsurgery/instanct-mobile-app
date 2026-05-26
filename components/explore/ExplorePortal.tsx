@@ -124,6 +124,10 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
             hidden: !mapSession,
             color,
             icon: ArrowDownNarrowWide,
+            badgeText: String(
+              userFilerStore.filters.industry?.length +
+                userFilerStore.filters.objectives?.length,
+            ),
             onPress: () => router.push("/main/explore/users-filter"),
           },
           {
