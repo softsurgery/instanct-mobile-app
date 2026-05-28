@@ -11,6 +11,7 @@ interface ChatHeaderLeftProps {
   id: string;
   identifier?: string;
   profilePicture?: React.ReactNode;
+  isOnline?: boolean;
   lastSeen?: string;
 }
 
@@ -19,6 +20,7 @@ export const ChatHeaderLeft = ({
   id,
   identifier,
   profilePicture,
+  isOnline,
   lastSeen,
 }: ChatHeaderLeftProps) => {
   const navigation = useNavigation<NavigationProps>();
@@ -40,7 +42,12 @@ export const ChatHeaderLeft = ({
           })
         }
       >
-        <View>{profilePicture}</View>
+        <View>
+          {profilePicture}
+          {isOnline && (
+            <View className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-card rounded-full" />
+          )}
+        </View>
         <View className="flex flex-col justify-center">
           <Text className="font-semibold text-[15px]" numberOfLines={1}>
             {identifier}

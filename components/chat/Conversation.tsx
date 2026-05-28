@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import React from "react";
 import {
   ActivityIndicator,
@@ -20,6 +20,7 @@ import { useServerImages } from "@/hooks/content/useServerImages";
 import { Text } from "~/components/ui/text";
 
 import { useConversationFeatures } from "@/hooks/content/chat/useConversationFeatures";
+import { useUserPresence } from "@/hooks/content/chat/useUserPresence";
 import { ImageBackground } from "expo-image";
 import { useColorScheme } from "nativewind";
 import { Loader } from "../shared/Loader";
@@ -63,6 +64,14 @@ export const Conversation = ({ id }: ConversationProps) => {
     enabled: !!user?.pictureId,
   });
 
+  const { isOnline, lastSeen } = useUserPresence({ userId: user?.id });
+
+  const presenceText = React.useMemo(() => {
+    if (isOnline) return "Online";
+    if (lastSeen) return formatDistanceToNow(lastSeen, { addSuffix: true });
+    return "";
+  }, [isOnline, lastSeen]);
+
   const isLoading = isConversationPending || isInitialPending;
 
   return (
@@ -73,7 +82,8 @@ export const Conversation = ({ id }: ConversationProps) => {
           id={user?.id as string}
           profilePicture={profilePictures[0]}
           identifier={identifyUser(user)}
-          lastSeen={format(new Date(), "hh:mm a")}
+          lastSeen={presenceText}
+          isOnline={isOnline}
         />
         <ChatHeaderRight conversationId={id} />
       </View>

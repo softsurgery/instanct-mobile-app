@@ -39,6 +39,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { ConversationDetailsRow } from "./ConversationDetailsRow";
 import { useColorPalette } from "@/hooks/useColorPalette";
 import { hslToHex } from "@/lib/theme";
+import { useUserPresence } from "@/hooks/content/chat/useUserPresence";
 
 interface MessageResultItemProps {
   message: ResponseMessageDto;
@@ -134,6 +135,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
   }, [conversation, currentUser]);
 
   const identification = identifyUser(user);
+  const { isOnline } = useUserPresence({ userId: user?.id });
 
   const [isSearching, setIsSearching] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -384,7 +386,9 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
         >
           <View className="relative">
             {profilePicture}
-            <View className="absolute bottom-0 right-0 w-10 h-10 bg-green-500 border-2 border-card rounded-full" />
+            {isOnline && (
+              <View className="absolute bottom-0 right-0 w-8 h-8 bg-green-500 border-2 border-card rounded-full" />
+            )}
           </View>
           <Text className="text-foreground text-xl font-bold">{nickname}</Text>
         </Pressable>

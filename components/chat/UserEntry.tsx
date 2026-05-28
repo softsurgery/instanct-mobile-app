@@ -8,6 +8,7 @@ import { useServerImages } from "@/hooks/content/useServerImages";
 import { differenceInMilliseconds } from "date-fns";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { formatSmartDate } from "@/lib/date";
+import { useUserPresence } from "@/hooks/content/chat/useUserPresence";
 
 interface UserCardProps {
   className?: string;
@@ -26,6 +27,8 @@ export const UserEntry = ({
       conversation.participants.find((p) => p.userId !== currentUser?.id)?.user,
     [conversation.participants, currentUser?.id],
   );
+
+  const { isOnline } = useUserPresence({ userId: user?.id });
 
   const lastMessage = conversation.lastMessage;
 
@@ -66,7 +69,9 @@ export const UserEntry = ({
         {/* Avatar */}
         <View className="relative">
           {profilePictures[0]}
-          <View className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-card rounded-full" />
+          {isOnline && (
+            <View className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-card rounded-full" />
+          )}
         </View>
 
         {/* Text Content */}
