@@ -60,11 +60,8 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
           title: "Privacy & Security",
           description: "Set your preferred privacy and security options",
           className: "p-1 px-4",
-          rightComponent: (
-            <Badge variant="outline">
-              <Text className="text-xs font-medium">Soon</Text>
-            </Badge>
-          ),
+          rightIcon: ChevronRight,
+          onPress: () => router.push("/main/profile/privacy-security"),
         }),
       ],
     },

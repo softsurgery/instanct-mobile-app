@@ -297,6 +297,27 @@ export default function MainLayout() {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="profile/privacy-security"
+          options={{
+            title: "Privacy & Security",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="profile/change-email"
+          options={{
+            title: "Change Email",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="profile/change-password"
+          options={{
+            title: "Change Password",
+            headerShown: false,
+          }}
+        />
         {/* *************************************************************************************************** */}
         {/* Map  ****************************************************************************************** */}
         <Stack.Screen
