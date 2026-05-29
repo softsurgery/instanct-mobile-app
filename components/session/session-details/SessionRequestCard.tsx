@@ -1,102 +1,138 @@
-import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
+import { Card, CardContent } from "@/components/ui/card";
+import { Icon } from "@/components/ui/icon";
 import { useServerImages } from "@/hooks/content/useServerImages";
-import { toTimeOnly } from "@/lib/date";
-import { identifyUserAvatar } from "@/lib/user";
+import { identifyUserAvatar, identifyUser } from "@/lib/user";
 import { cn } from "@/lib/utils";
 import { ResponseRequestDto } from "@/types";
-import { Clock3, MapPin, MessageSquare } from "lucide-react-native";
+import { ArrowRight, Clock, MapPin } from "lucide-react-native";
 import { View } from "react-native";
+import { timeAgo, toTimeOnly, toLongDateString } from "@/lib/date";
 
 interface SessionRequestCardProps {
   className?: string;
   request: ResponseRequestDto;
-  reverse?: boolean;
+  isIncoming?: boolean;
 }
 
 export const SessionRequestCard: React.FC<SessionRequestCardProps> = ({
   className,
   request,
-  reverse = true,
+  isIncoming = true,
 }) => {
-  const ids = [request.receivers[0]?.pictureId, request.session.user.pictureId];
-  const fallbacks = [
-    identifyUserAvatar(request.receivers[0]),
-    identifyUserAvatar(request.session.user),
-  ];
-  const { jsxArray: receiverImages, isPending: isReceiverImagePending } =
-    useServerImages({
-      ids: reverse ? [...ids].reverse() : ids,
-      fallbacks: reverse ? [...fallbacks].reverse() : fallbacks,
-      className: "w-10 h-10 rounded-full",
-      size: { width: 40, height: 40 },
-    });
+  const sender = request?.session?.user;
+  const receiver = request?.receivers?.[0];
+
+  const ids = [sender?.pictureId, receiver?.pictureId];
+  const fallbacks = [identifyUserAvatar(sender), identifyUserAvatar(receiver)];
+
+  const { jsxArray: images } = useServerImages({
+    ids: ids,
+    fallbacks: fallbacks,
+    className: "w-12 h-12 border border-border rounded-full",
+    size: { width: 48, height: 48 },
+  });
+
+  const requestTime = request?.time ? new Date(request.time) : null;
+  const createdAt = request?.createdAt ? new Date(request.createdAt) : null;
 
   return (
-    <View
-      className={cn(
-        "mx-4 my-2 border border-border rounded-lg shadow-sm overflow-hidden",
-        className,
-      )}
-    >
-      <View className="p-4 gap-3">
-        {/* Header */}
-        <View className="flex flex-row justify-between items-center gap-3 w-full">
-          <View>{receiverImages[0]}</View>
-          <View
-            className="flex-1 border-t border-dashed border-white"
-            style={{ borderTopWidth: 1.5 }}
-          />
-          <Text className="text-gray-400 text-lg leading-none -ml-0.5">▶</Text>
-          <View>{receiverImages[1]}</View>
+    <Card className={cn("mx-4 my-2 shadow-none border-border/50", className)}>
+      <CardContent className="p-4 flex flex-col gap-4">
+        {/* Header with time ago */}
+        <View className="flex-row justify-between items-center">
+          <Text className="text-sm font-medium text-foreground">
+            {isIncoming ? "Incoming request" : "Outgoing request"}
+          </Text>
+          {createdAt && (
+            <Text className="text-[10px] text-muted-foreground uppercase tracking-wider">
+              {timeAgo(createdAt)}
+            </Text>
+          )}
         </View>
-        {/* Message */}
-        {request.message && (
-          <View className="flex-row items-start gap-3">
-            <Icon
-              as={MessageSquare}
-              size={16}
-              className="text-muted-foreground mt-0.5"
+
+        {/* Avatars with connector */}
+        <View className="flex-row items-center">
+          <View className="items-center w-[70px]">
+            {images[0]}
+            <Text
+              className="text-xs mt-2 font-medium truncate w-full text-center"
+              numberOfLines={1}
+            >
+              {identifyUser(sender)}
+            </Text>
+          </View>
+
+          <View className="flex-1 flex-row items-center px-2">
+            <View
+              className="flex-1 border-t border-dashed border-muted-foreground/30"
+              style={{ borderTopWidth: 1 }}
             />
-            <View>
-              <Text className="text-xs text-muted-foreground">Message</Text>
-              <Text className="text-sm font-medium">{request.message}</Text>
-            </View>
+            <Icon
+              as={ArrowRight}
+              size={14}
+              className="text-muted-foreground mx-2"
+            />
+            <View
+              className="flex-1 border-t border-dashed border-muted-foreground/30"
+              style={{ borderTopWidth: 1 }}
+            />
+          </View>
+
+          <View className="items-center w-[70px]">
+            {images[1]}
+            <Text
+              className="text-xs mt-2 font-medium truncate w-full text-center"
+              numberOfLines={1}
+            >
+              {identifyUser(receiver)}
+            </Text>
+          </View>
+        </View>
+
+        {/* Additional info: Message, Location, Time */}
+        {(request?.message || request?.location || request?.time) && (
+          <View className="mt-2 p-3 bg-muted/20 rounded-xl flex col gap-3 border border-border/30">
+            {request.message && (
+              <Text className="text-sm text-foreground italic leading-5">
+                &quot;{request?.message}&quot;
+              </Text>
+            )}
+            {(request.location || request.time) && (
+              <View className="flex flex-col gap-2">
+                {requestTime && (
+                  <View className="flex-row items-center gap-2">
+                    <Icon
+                      as={Clock}
+                      size={14}
+                      className="text-muted-foreground"
+                    />
+                    <Text className="text-xs text-muted-foreground">
+                      {toLongDateString(requestTime)} at{" "}
+                      {toTimeOnly(requestTime)}
+                    </Text>
+                  </View>
+                )}
+                {request?.location && (
+                  <View className="flex-row items-center gap-2">
+                    <Icon
+                      as={MapPin}
+                      size={14}
+                      className="text-muted-foreground"
+                    />
+                    <Text
+                      className="text-xs text-muted-foreground flex-1"
+                      numberOfLines={2}
+                    >
+                      {request?.location}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            )}
           </View>
         )}
-
-        <View className="flex flex-row justify-between">
-          {/* Location */}
-          <View className="flex-row items-start gap-3">
-            <Icon
-              as={MapPin}
-              size={16}
-              className="text-muted-foreground mt-0.5"
-            />
-            <View>
-              <Text className="text-xs font-medium">
-                {request.location || "Not specified"}
-              </Text>
-            </View>
-          </View>
-
-          {/* Time */}
-          <View className="flex-row items-start gap-3">
-            <Icon
-              as={Clock3}
-              size={16}
-              className="text-muted-foreground mt-0.5"
-            />
-            <View>
-              <Text className="text-xs font-medium">
-                {request.time
-                  ? toTimeOnly(new Date(request.time))
-                  : "Not specified"}
-              </Text>
-            </View>
-          </View>
-        </View>
-      </View>
-    </View>
+      </CardContent>
+    </Card>
   );
 };

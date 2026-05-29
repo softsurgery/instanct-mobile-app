@@ -10,8 +10,8 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { Separator } from "@/components/ui/separator";
 import { ArrowRight } from "lucide-react-native";
 import { Icon } from "@/components/ui/icon";
-import { SessionIncomingRequests } from "./SessionIncomingRequests";
-import { SessionOutgoingRequests } from "./SessionOutgoingRequests";
+import { SessionIncomingRequests } from "../../activities/SessionIncomingRequests";
+import { SessionOutgoingRequests } from "../../activities/SessionOutgoingRequests";
 
 interface SessionDetailsContentProps {
   session: ResponseSessionDto<MapSessionPayload>;
@@ -177,7 +177,7 @@ export const SessionDetailsContent = ({
             )}
           </Tab.Screen>
           <Tab.Screen name="Incoming">
-            {() => <SessionIncomingRequests session={session} />}
+            {() => <SessionIncomingRequests />}
           </Tab.Screen>
           <Tab.Screen name="Outgoing">
             {() => <SessionOutgoingRequests session={session} />}

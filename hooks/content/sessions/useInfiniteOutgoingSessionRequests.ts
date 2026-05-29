@@ -2,13 +2,13 @@ import React from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { api } from "~/api";
 
-interface useInfiniteIncomingSessionRequestsProps {
+interface useInfiniteOutgoingSessionRequestsProps {
   join?: string[];
   enabled?: boolean;
 }
 
-export const useInfiniteIncomingSessionRequests = (
-  { join = [], enabled = true }: useInfiniteIncomingSessionRequestsProps = {
+export const useInfiniteOutgoingSessionRequests = (
+  { join = [], enabled = true }: useInfiniteOutgoingSessionRequestsProps = {
     join: [],
     enabled: true,
   },
@@ -18,11 +18,11 @@ export const useInfiniteIncomingSessionRequests = (
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    refetch: refetchIncomingRequests,
+    refetch: refetchOutgoingRequests,
     isRefetching,
-    isLoading: isIncomingRequestsPending,
+    isLoading: isOutgoingRequestsPending,
   } = useInfiniteQuery({
-    queryKey: ["incoming-requests"],
+    queryKey: ["outgoing-requests"],
     initialPageParam: 1,
     queryFn: ({ pageParam = 1 }) => {
       const queryParams = {
@@ -31,21 +31,21 @@ export const useInfiniteIncomingSessionRequests = (
         sort: "createdAt,desc",
         join: join.join(","),
       };
-      return api.request.findAllIncomingPaginated(queryParams);
+      return api.request.findAllOutgoingPaginated(queryParams);
     },
     getNextPageParam: (lastPage) =>
       lastPage.meta?.hasNextPage ? lastPage.meta.page + 1 : undefined,
     enabled,
   });
 
-  const incomingRequests = React.useMemo(() => {
+  const outgoingRequests = React.useMemo(() => {
     return data?.pages.flatMap((page) => page.data || []) ?? [];
   }, [data]);
 
   return {
-    incomingRequests,
-    isIncomingRequestsPending,
-    refetchIncomingRequests,
+    outgoingRequests,
+    isOutgoingRequestsPending,
+    refetchOutgoingRequests,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
