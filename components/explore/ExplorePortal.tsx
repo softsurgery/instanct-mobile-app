@@ -43,6 +43,13 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
     join: ["user", "user.industries", "user.sessions"],
   });
 
+  const filterCount = React.useMemo(() => {
+    return (
+      userFilerStore.filters.industry?.length +
+      userFilerStore.filters.objectives?.length
+    );
+  }, [userFilerStore.filters]);
+
   const users = React.useMemo(() => {
     const targetedIndustries = userFilerStore.dto.industry;
     setCurrentIndex(0);
@@ -124,10 +131,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
             hidden: !mapSession,
             color,
             icon: ArrowDownNarrowWide,
-            badgeText: String(
-              userFilerStore.filters.industry?.length +
-                userFilerStore.filters.objectives?.length,
-            ),
+            badgeText: filterCount > 0 ? String(filterCount) : undefined,
             onPress: () => router.push("/main/explore/users-filter"),
           },
           {
