@@ -140,11 +140,11 @@ export const ActivitiesDetailContent = ({
         </Tab.Screen>
 
         <Tab.Screen name="Incoming">
-          {() => <SessionIncomingRequests />}
+          {() => <SessionIncomingRequests handleScroll={handleScroll} />}
         </Tab.Screen>
 
         <Tab.Screen name="Outgoing">
-          {() => <SessionOutgoingRequests />}
+          {() => <SessionOutgoingRequests handleScroll={handleScroll} />}
         </Tab.Screen>
       </Tab.Navigator>
     </View>

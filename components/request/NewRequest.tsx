@@ -15,7 +15,7 @@ import { useCreateNewRequestFormStructure } from "./forms/useCreateRequestFormSt
 import { useRequestStore } from "@/stores/useRequestStore";
 import { StableKeyboardAwareScrollView } from "../shared/StableKeyboardAwareScrollView";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api";
 import { toast } from "sonner-native";
 import { ServerErrorResponse } from "@/types";
@@ -30,6 +30,7 @@ interface NewRequestProps {
 }
 
 export const NewRequest = ({ className, id }: NewRequestProps) => {
+  const queryClient = useQueryClient();
   const isKeyboardVisible = useKeyboardVisible();
   const requestStore = useRequestStore();
   const { user, isUserPending } = useIdentifiedUser({ id });
@@ -74,6 +75,7 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
       mutationFn: async () => api.request.send(requestStore.createDto),
       onSuccess: async () => {
         router.back();
+        queryClient.invalidateQueries({ queryKey: ["outgoing-requests"] });
         toast.success("Demande envoyée avec succès");
         requestStore.reset();
       },

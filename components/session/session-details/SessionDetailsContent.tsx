@@ -180,7 +180,7 @@ export const SessionDetailsContent = ({
             {() => <SessionIncomingRequests />}
           </Tab.Screen>
           <Tab.Screen name="Outgoing">
-            {() => <SessionOutgoingRequests session={session} />}
+            {() => <SessionOutgoingRequests />}
           </Tab.Screen>
         </Tab.Navigator>
       </View>
