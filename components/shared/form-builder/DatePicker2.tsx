@@ -31,6 +31,21 @@ if (
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
+const MONTHS = [
+  { label: "January", value: "jan" },
+  { label: "February", value: "feb" },
+  { label: "March", value: "mar" },
+  { label: "April", value: "apr" },
+  { label: "May", value: "may" },
+  { label: "June", value: "jun" },
+  { label: "July", value: "jul" },
+  { label: "August", value: "aug" },
+  { label: "September", value: "sep" },
+  { label: "October", value: "oct" },
+  { label: "November", value: "nov" },
+  { label: "December", value: "dec" },
+];
+
 interface DatePickerProps {
   className?: string;
   classNames?: {
@@ -59,7 +74,10 @@ export const DatePicker = ({
   const toggle = () => {
     if (disabled) return;
     Keyboard.dismiss();
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    LayoutAnimation.configureNext({
+      duration: 250,
+      update: { type: LayoutAnimation.Types.easeInEaseOut },
+    });
     const next = !expanded;
     setExpanded(next);
     rotation.value = withTiming(next ? 180 : 0, {
@@ -83,21 +101,6 @@ export const DatePicker = ({
     [date],
   );
 
-  const MONTHS = [
-    { label: "January", value: "jan" },
-    { label: "February", value: "feb" },
-    { label: "March", value: "mar" },
-    { label: "April", value: "apr" },
-    { label: "May", value: "may" },
-    { label: "June", value: "jun" },
-    { label: "July", value: "jul" },
-    { label: "August", value: "aug" },
-    { label: "September", value: "sep" },
-    { label: "October", value: "oct" },
-    { label: "November", value: "nov" },
-    { label: "December", value: "dec" },
-  ];
-
   const [year, setYear] = React.useState(
     date ? String(date.getFullYear()) : "2023",
   );
@@ -105,6 +108,17 @@ export const DatePicker = ({
     date ? MONTHS[date.getMonth()].value : "jan",
   );
   const [day, setDay] = React.useState(date ? String(date.getDate()) : "1");
+
+  // Sync local state when controlled date changes externally
+  const dateTime = date ? date.getTime() : null;
+  React.useEffect(() => {
+    if (date) {
+      setYear(String(date.getFullYear()));
+      setMonth(MONTHS[date.getMonth()].value);
+      setDay(String(date.getDate()));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dateTime]);
 
   const years = Array.from({ length: 50 }, (_, i) => {
     const y = new Date().getFullYear() - i;
