@@ -71,9 +71,9 @@ export const FaqsPortal = ({ className }: FaqsPortalProps) => {
   // if (isDataStorePending) return <Loader />;
 
   return (
-    <StableSafeAreaView className={cn("flex-1", className)}>
+    <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
-        className="border-b border-border pb-2 bg-transparent"
+        classNames={{ wrapper: "border-b border-border pb-2 bg-transparent" }}
         title={t("screens.faqs")}
         titleVariant="large"
         reverse
@@ -92,7 +92,7 @@ export const FaqsPortal = ({ className }: FaqsPortalProps) => {
       >
         <View className="px-6 py-6">
           <View className="mb-6 gap-2">
-            <Text className="text-muted-foreground text-base leading-relaxed">
+            <Text className="text-muted-foreground text-md leading-relaxed">
               Find quick answers to common questions and get the support you
               need.
             </Text>
@@ -106,7 +106,7 @@ export const FaqsPortal = ({ className }: FaqsPortalProps) => {
                 className="border-b border-border py-2"
               >
                 <AccordionTrigger className="py-4">
-                  <Text className="text-lg font-semibold text-foreground text-left">
+                  <Text className="text-md font-medium text-foreground text-left">
                     {faq.question}
                   </Text>
                 </AccordionTrigger>
