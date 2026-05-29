@@ -81,13 +81,17 @@ export const TimePicker = ({
   const toggle = () => {
     if (disabled) return;
     Keyboard.dismiss();
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    LayoutAnimation.configureNext({
+      duration: 250,
+      update: { type: LayoutAnimation.Types.easeInEaseOut },
+    });
     const next = !expanded;
     setExpanded(next);
     rotation.value = withTiming(next ? 180 : 0, {
       duration: 250,
       easing: Easing.out(Easing.ease),
     });
+    if (!time) onTimeChange(new Date());
     if (next) {
       setTimeout(() => {
         scrollToView(contentRef);
@@ -123,6 +127,18 @@ export const TimePicker = ({
   const [hour, setHour] = React.useState(getInitialHour);
   const [minute, setMinute] = React.useState(getInitialMinute);
   const [period, setPeriod] = React.useState(getInitialPeriod);
+
+  // Sync local state when controlled time changes externally
+  const timeStamp = time ? time.getTime() : null;
+  React.useEffect(() => {
+    if (time) {
+      const h = time.getHours() % 12 || 12;
+      setHour(String(h));
+      setMinute(String(time.getMinutes()));
+      setPeriod(time.getHours() >= 12 ? "PM" : "AM");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeStamp]);
 
   const handleTimeChange = (
     key: "hour" | "minute" | "period",

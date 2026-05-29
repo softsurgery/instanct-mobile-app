@@ -4,12 +4,9 @@ import { cn } from "@/lib/utils";
 import { NearbyUser } from "@/types";
 import { formatDistanceToNow } from "date-fns";
 import { router } from "expo-router";
-import { LucideMessageCircle } from "lucide-react-native";
 import React from "react";
 import { TouchableWithoutFeedback, View } from "react-native";
 import { StablePressable } from "../shared/StablePressable";
-import { Button } from "../ui/button";
-import { Icon } from "../ui/icon";
 import { Text } from "../ui/text";
 import { useServerImages } from "@/hooks/content/useServerImages";
 
@@ -77,10 +74,6 @@ export const UserModalContent = ({
               </Text>
             </View>
           </View>
-          <Button variant={"outline"} size="sm">
-            <Icon as={LucideMessageCircle} size={20} />
-            <Text>Send message</Text>
-          </Button>
         </View>
       </View>
     );
@@ -113,10 +106,6 @@ export const UserModalContent = ({
               </Text>
             </View>
           </View>
-          <Button variant={"outline"} size="sm">
-            <Icon as={LucideMessageCircle} size={20} />
-            <Text>Send message</Text>
-          </Button>
         </View>
       </View>
     </TouchableWithoutFeedback>

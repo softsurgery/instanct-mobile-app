@@ -21,3 +21,8 @@ export interface RequestClientSignUpDto {
 export interface ResponseClientSignupDto {
   user: ResponseUserDto;
 }
+
+export interface RequestSpecializedClientSignUpDto extends RequestClientSignUpDto {
+  industries: number[];
+  pictureId?: number;
+}

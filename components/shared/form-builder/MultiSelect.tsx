@@ -20,8 +20,8 @@ import { toast } from "sonner-native";
 
 interface MultiSelectProps {
   classNames?: {
-    trigger: string;
-    content: string;
+    trigger?: string;
+    content?: string;
   };
   title?: string;
   description?: string;
@@ -33,7 +33,7 @@ interface MultiSelectProps {
 
   options?: SelectOption[];
   searchable?: boolean;
-  max: number;
+  max?: number;
 }
 
 export default function MultiSelect({
@@ -109,7 +109,9 @@ export default function MultiSelect({
         }}
       >
         {selectedLabels.length === 0 ? (
-          <Text className="text-sm">{placeholder || "Select options"}</Text>
+          <Text className="text-sm text-muted-foreground/50 leading-5">
+            {placeholder || "Select options"}
+          </Text>
         ) : (
           <View className="flex-1 flex-row flex-wrap gap-2 pr-8">
             {selectedLabels.map((label) => (
@@ -123,8 +125,8 @@ export default function MultiSelect({
           </View>
         )}
 
-        <View className="absolute right-2 text-muted-foreground">
-          <Icon as={ChevronDown} size={16} color={"gray"} />
+        <View className="absolute right-3 text-muted-foreground">
+          <Icon as={ChevronDown} size={18} color={"gray"} />
         </View>
       </Pressable>
       <ActionSheet

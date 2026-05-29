@@ -1,4 +1,5 @@
 import {
+  CheckboxFieldProps,
   DateFieldProps,
   Field,
   FieldVariant,
@@ -149,6 +150,23 @@ export const useCreateExperienceFormStructure = ({
     },
   };
 
+  const stillWorkHereField: Field<CheckboxFieldProps> = {
+    id: "stillWorkHere",
+    label: "",
+    variant: FieldVariant.CHECKBOX,
+    required: false,
+    description:
+      "Currently work here? If checked, the end date will be set to 'Present'",
+    props: {
+      checked: store.present,
+      onCheckedChange: (value) => {
+        store.set("present", value);
+        store.setNested("createExperienceDto.endDate", null);
+        store.setNested("experienceErrors.endDate", []);
+      },
+    },
+  };
+
   const endDate: Field<DateFieldProps> = {
     id: "endDate",
     label: "End Date",
@@ -157,6 +175,7 @@ export const useCreateExperienceFormStructure = ({
     description:
       "The date you ended this position. Leave blank if it's your current role.",
     error: store.experienceErrors?.endDate?.[0],
+    hidden: store.present,
     props: {
       value: store.createExperienceDto?.endDate
         ? new Date(store.createExperienceDto.endDate)
@@ -199,7 +218,7 @@ export const useCreateExperienceFormStructure = ({
           },
           {
             id: 6,
-            fields: [startDate, endDate],
+            fields: [startDate, stillWorkHereField, endDate],
           },
         ],
       },

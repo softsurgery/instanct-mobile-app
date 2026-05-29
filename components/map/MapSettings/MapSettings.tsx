@@ -18,7 +18,7 @@ import { Text } from "../../ui/text";
 import { Button } from "../../ui/button";
 import { Icon } from "../../ui/icon";
 import { RadiusSlider } from "./RadiusSlider";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { api } from "@/api";
 import { toast } from "sonner-native";
 
@@ -34,28 +34,29 @@ interface SettingsSection {
 }
 
 export const MapSettings = ({ className }: MapSettingsProps) => {
-  const cardClass =
-    "border border-b-border border-t-border bg-card shadow-sm overflow-hidden";
-
-  const primaryCardClass =
-    "rounded-2xl border border-primary/10 bg-primary/5 shadow-sm overflow-hidden";
-
   const { t } = useTranslation("common");
   const mapStore = useMapStore();
-  const queryClient = useQueryClient();
 
-  const [draftRadius, setDraftRadius] = React.useState(
-    mapStore.settings.radius,
-  );
-  const [draftClusters, setDraftClusters] = React.useState(
-    mapStore.settings.clusters,
-  );
-  const [draftShowUsernames, setDraftShowUsernames] = React.useState(
-    mapStore.settings.showUsernames,
-  );
+  React.useEffect(() => {
+    mapStore.set("draftSettings", mapStore.settings);
+    return () => {
+      // Reset draft settings when unmounting the component
+      mapStore.setNested("draftSettings.radius", mapStore.settings.radius);
+      mapStore.setNested("draftSettings.clusters", mapStore.settings.clusters);
+      mapStore.setNested(
+        "draftSettings.showUsernames",
+        mapStore.settings.showUsernames,
+      );
+    };
+  }, []);
+
+  const step = React.useMemo(() => {
+    const range = mapStore.parameters.rangeMax - mapStore.parameters.rangeMin;
+    return Math.max(1, Math.floor(range / 20));
+  }, [mapStore.parameters.rangeMax, mapStore.parameters.rangeMin]);
 
   const handleDraftRadiusChange = React.useCallback((value: number) => {
-    setDraftRadius(value);
+    mapStore.setNested("draftSettings.radius", value);
   }, []);
 
   const savedRadiusRef = React.useRef(mapStore.settings.radius);
@@ -69,10 +70,11 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
           rangeMinValue={ms.parameters.rangeMin}
           rangeMaxValue={ms.parameters.rangeMax}
           onValueChange={handleDraftRadiusChange}
+          step={step}
         />
       );
     };
-  }, [handleDraftRadiusChange]);
+  }, [handleDraftRadiusChange, step]);
 
   const settingsRows: SettingsSection[] = [
     {
@@ -95,8 +97,10 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
           description: "Group nearby users into clusters",
           rightComponent: (
             <Switch
-              checked={draftClusters}
-              onCheckedChange={setDraftClusters}
+              checked={mapStore.draftSettings.clusters}
+              onCheckedChange={(value) =>
+                mapStore.setNested("draftSettings.clusters", value)
+              }
             />
           ),
         }),
@@ -105,8 +109,10 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
           description: "Display usernames on map markers",
           rightComponent: (
             <Switch
-              checked={draftShowUsernames}
-              onCheckedChange={setDraftShowUsernames}
+              checked={mapStore.draftSettings.showUsernames}
+              onCheckedChange={(value) =>
+                mapStore.setNested("draftSettings.showUsernames", value)
+              }
             />
           ),
         }),
@@ -153,15 +159,18 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
   } = useMutation({
     mutationFn: async () => {
       await api.user.updateMapConfiguration({
-        radius: draftRadius,
-        clusters: draftClusters,
-        showUsernames: draftShowUsernames,
+        radius: mapStore.draftSettings.radius,
+        clusters: mapStore.draftSettings.clusters,
+        showUsernames: mapStore.draftSettings.showUsernames,
       });
     },
     onSuccess: () => {
-      mapStore.setNested("settings.radius", draftRadius);
-      mapStore.setNested("settings.clusters", draftClusters);
-      mapStore.setNested("settings.showUsernames", draftShowUsernames);
+      mapStore.setNested("settings.radius", mapStore.draftSettings.radius);
+      mapStore.setNested("settings.clusters", mapStore.draftSettings.clusters);
+      mapStore.setNested(
+        "settings.showUsernames",
+        mapStore.draftSettings.showUsernames,
+      );
       mapStore.set("nearbyUsers", []);
       toast.success("Map configuration updated", {
         description: "Your map configuration has been successfully updated.",
@@ -177,7 +186,7 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
   return (
     <StableSafeAreaView className={cn("flex flex-1 bg-card", className)}>
       <ApplicationHeader
-        className="border-b border-border pb-2"
+        classNames={{ wrapper: "border-b border-border pb-2" }}
         title={t("screens.mapSettings")}
         titleVariant="large"
         reverse
@@ -195,7 +204,12 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
 
           {/* Settings Sections */}
           {settingsRows.map((section) => (
-            <View key={section.key} className={cardClass}>
+            <View
+              key={section.key}
+              className={
+                "border border-b-border border-t-border bg-card shadow-sm overflow-hidden"
+              }
+            >
               <View className="px-8 py-4 bg-background/75 mb-4">
                 <Text className="text-lg font-semibold">{section.title}</Text>
                 <Text className="text-sm text-muted-foreground mt-1">

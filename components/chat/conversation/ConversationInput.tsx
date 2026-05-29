@@ -1,9 +1,11 @@
 import { Plus, SendHorizonal } from "lucide-react-native";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StablePressable } from "~/components/shared/StablePressable";
 import { Icon } from "~/components/ui/icon";
 import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
+import { useKeyboardVisible } from "~/hooks/useKeyboardVisible";
 
 interface ConversationInputProps {
   className?: string;
@@ -18,6 +20,9 @@ export const ConversationInput = ({
   setInput,
   sendMessage,
 }: ConversationInputProps) => {
+  const insets = useSafeAreaInsets();
+  const isKeyboardVisible = useKeyboardVisible();
+
   const handleSend = () => {
     if (!input.trim()) return;
     sendMessage();
@@ -25,16 +30,17 @@ export const ConversationInput = ({
 
   return (
     <View
-      className={cn("flex flex-row items-end justify-between", className)}
+      className={cn("bg-background/95 border-t border-border", className)}
       style={{
         zIndex: 20,
         elevation: 10,
+        paddingBottom: isKeyboardVisible ? 4 : Math.max(insets.bottom, 8),
       }}
     >
-      <View className="flex flex-row items-center justify-between bg-background px-3 pt-3 pb-8 shadow-md flex-1 border border-border">
+      <View className="flex flex-row items-end gap-2 px-3 py-2">
         {/* Add Button */}
         <StablePressable
-          className="w-10 h-10 flex items-center justify-center bg-primary/20 rounded-lg"
+          className="w-10 h-10 flex items-center justify-center bg-primary/10 rounded-full mb-0.5"
           onPress={() => {}}
           accessibilityLabel="Add attachment"
         >
@@ -47,23 +53,26 @@ export const ConversationInput = ({
           onChangeText={setInput}
           placeholder="Aa"
           multiline
-          style={{ minHeight: 12, maxHeight: 120, height: "auto" }}
-          className="flex-1 mx-2 px-2 py-2 rounded-xl bg-input text-base"
+          style={{ minHeight: 40, maxHeight: 120, height: "auto" }}
+          className="flex-1 px-4 py-2 rounded-2xl bg-input text-base"
         />
 
         {/* Send Button */}
-        <StablePressable
-          className="h-10 flex items-center justify-center rounded-lg px-2"
+        <Pressable
+          className={cn(
+            "w-10 h-10 flex items-center justify-center rounded-full mb-0.5",
+            input.trim() ? "bg-primary" : "bg-muted",
+          )}
           onPress={handleSend}
           disabled={!input.trim()}
           accessibilityLabel="Send message"
         >
           <Icon
             as={SendHorizonal}
-            size={20}
-            color={input.trim() ? "#fff" : "#999"}
+            size={18}
+            color={input.trim() ? "white" : "gray"}
           />
-        </StablePressable>
+        </Pressable>
       </View>
     </View>
   );

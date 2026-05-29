@@ -15,13 +15,14 @@ import { useCreateNewRequestFormStructure } from "./forms/useCreateRequestFormSt
 import { useRequestStore } from "@/stores/useRequestStore";
 import { StableKeyboardAwareScrollView } from "../shared/StableKeyboardAwareScrollView";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api";
 import { toast } from "sonner-native";
 import { ServerErrorResponse } from "@/types";
 import { CreateRequestDtoSchema } from "@/types/validations/request.validation";
 import { zodErrorsToNested } from "@/lib/object";
 import { useMapStore } from "@/stores/useMapStore";
+import { Loader } from "../shared/Loader";
 
 interface NewRequestProps {
   className?: string;
@@ -29,9 +30,10 @@ interface NewRequestProps {
 }
 
 export const NewRequest = ({ className, id }: NewRequestProps) => {
+  const queryClient = useQueryClient();
   const isKeyboardVisible = useKeyboardVisible();
   const requestStore = useRequestStore();
-  const { user } = useIdentifiedUser({ id });
+  const { user, isUserPending } = useIdentifiedUser({ id });
   const mapStore = useMapStore();
 
   const { latitude, longitude } = mapStore?.location?.coords || {
@@ -53,25 +55,27 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
     return () => {
       requestStore.reset();
     };
-  }, [id]);
+  }, [id, user]);
 
   const identity = React.useMemo(() => identifyUser(user), [user]);
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
 
-  const { jsxArray: profilePictures } = useServerImages({
-    ids: [user?.pictureId],
-    fallbacks: [fallback],
-    wrapperClassName:
-      "border border-border bg-background rounded-full shadow-md",
-    size: { width: 70, height: 70 },
-    enabled: !!user,
-  });
+  const { jsxArray: profilePictures, isPending: isProfilePicturesPending } =
+    useServerImages({
+      ids: [user?.pictureId],
+      fallbacks: [fallback],
+      wrapperClassName:
+        "border border-border bg-background rounded-full shadow-md",
+      size: { width: 70, height: 70 },
+      enabled: !!user,
+    });
 
   const { mutate: sendRequest, isPending: isSendingRequestPending } =
     useMutation({
       mutationFn: async () => api.request.send(requestStore.createDto),
       onSuccess: async () => {
         router.back();
+        queryClient.invalidateQueries({ queryKey: ["outgoing-requests"] });
         toast.success("Demande envoyée avec succès");
         requestStore.reset();
       },
@@ -99,7 +103,7 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
   return (
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
-        className="border-b border-border pb-2"
+        classNames={{ wrapper: "border-b border-border pb-2" }}
         title={"Demande de rendez-vous"}
         titleVariant="large"
         reverse
@@ -112,38 +116,44 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
         ]}
       />
 
-      <StableKeyboardAwareScrollView className="flex-1 bg-background">
-        <View className="px-4 pt-4">
-          <Text className="text-lg font-semibold text-foreground">
-            Partenaire de réunion
-          </Text>
-
-          <View className="mt-4 flex-row items-center gap-4">
-            <View className="overflow-hidden rounded-full bg-muted">
-              {profilePictures}
-            </View>
-
-            <View className="flex-1">
+      {isUserPending || isProfilePicturesPending ? (
+        <Loader className="flex flex-1 h-full items-center justify-center" />
+      ) : (
+        <>
+          <StableKeyboardAwareScrollView className="flex-1 bg-background">
+            <View className="px-4 pt-4">
               <Text className="text-lg font-semibold text-foreground">
-                {identity}
+                Partenaire de réunion
               </Text>
-              <Text className="text-lg opacity-50">{user?.email}</Text>
+
+              <View className="mt-4 flex-row items-center gap-4">
+                <View className="overflow-hidden rounded-full bg-muted">
+                  {profilePictures}
+                </View>
+
+                <View className="flex-1">
+                  <Text className="text-lg font-semibold text-foreground">
+                    {identity}
+                  </Text>
+                  <Text className="text-lg opacity-50">{user?.email}</Text>
+                </View>
+              </View>
             </View>
-          </View>
-        </View>
-        <FormBuilder structure={structure} className="mt-4 px-2" />
-      </StableKeyboardAwareScrollView>
-      {!isKeyboardVisible && (
-        <View className="py-6 border-t border-border">
-          <Button
-            size={"sm"}
-            className="mx-6 mb-4 rounded-full"
-            onPress={() => handleSubmit()}
-            disabled={isSendingRequestPending}
-          >
-            <Text>Envoyer une demande</Text>
-          </Button>
-        </View>
+            <FormBuilder structure={structure} className="mt-4 px-2" />
+          </StableKeyboardAwareScrollView>
+          {!isKeyboardVisible && (
+            <View className="py-6 border-t border-border">
+              <Button
+                size={"sm"}
+                className="mx-6 mb-4 rounded-full"
+                onPress={() => handleSubmit()}
+                disabled={isSendingRequestPending}
+              >
+                <Text>Envoyer une demande</Text>
+              </Button>
+            </View>
+          )}
+        </>
       )}
     </StableSafeAreaView>
   );

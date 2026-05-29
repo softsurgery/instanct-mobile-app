@@ -17,6 +17,7 @@ import { useUpdateExperienceFormStructure } from "./useUpdateExperienceFormStruc
 import { View } from "react-native";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 import { toast } from "sonner-native";
+import React from "react";
 
 interface UpdateExperienceProps {
   className?: string;
@@ -40,8 +41,9 @@ export const UpdateExperience = ({ className }: UpdateExperienceProps) => {
         description: "Your experience has been successfully updated.",
       });
       queryClient.invalidateQueries({
-        queryKey: ["experiences", userStore.response?.id],
+        queryKey: ["experiences"],
       });
+
       router.back();
     },
     onError: (error: ServerErrorResponse) => {
@@ -64,10 +66,16 @@ export const UpdateExperience = ({ className }: UpdateExperienceProps) => {
     }
   };
 
+  React.useEffect(() => {
+    return () => {
+      userStore.reset();
+    };
+  }, []);
+
   return (
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
-        className="border-b border-border pb-2"
+        classNames={{ wrapper: "border-b border-border pb-2" }}
         title={t("screens.experience")}
         titleVariant="large"
         reverse

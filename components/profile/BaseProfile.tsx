@@ -15,30 +15,33 @@ import {
   UpdateUserCoverDto,
   Upload,
 } from "@/types";
-import { format } from "date-fns";
-import { useNavigation } from "expo-router";
-import { Image, Pressable, View } from "react-native";
-import { SeeMoreText } from "../shared/SeeMoreText";
+import { useFocusEffect, useNavigation } from "expo-router";
+import { Image, ImageSourcePropType, Pressable, View } from "react-native";
 import { Badge } from "../ui/badge";
 import { ProfileStat } from "./ProfileStat";
 import { useUserIndustries } from "@/hooks/content/users/useUserIndustries";
 import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
 import { useServerImages } from "@/hooks/content/useServerImages";
-import { BaseProfileSkeleton } from "./BaseProfileSkeleton";
 import { Loader } from "../shared/Loader";
-import { useDebounce } from "@/hooks/useDebounce";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { AboutTab } from "./sections/AboutTab";
-import { ExperienceTab } from "./sections/ExperienceTab";
+import { CareerTab } from "./sections/CareerTab";
 import { InterestsTab } from "./sections/InterestsTab";
 import { RenderSection } from "./sections/RenderSection";
-import { ProfilePhotoPreview } from "../shared/ProfilePhotoPreview";
+import { PhotoPreview } from "../shared/PhotoPreview";
 import { useUploadMutation } from "@/hooks/useUploadMutation";
 import { toast } from "sonner-native";
 import { api } from "@/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as ImagePicker from "expo-image-picker";
 import { Skeleton } from "../ui/skeleton";
+import { Icon } from "../ui/icon";
+import { Pencil } from "lucide-react-native";
+import { BaseProfileSkeleton } from "./BaseProfileSkeleton";
+import { ExperienceInstance } from "./experience/ExperienceInstance";
+import { EducationInstance } from "./education/EducationInstance";
+import { hslToHex } from "@/lib/theme";
+import { useColorPalette } from "@/hooks/useColorPalette";
 
 interface ProfileSection<T = unknown> {
   key: string;
@@ -60,12 +63,12 @@ export const InspectBaseProfile = ({
   id,
   coverExtra,
 }: InspectBaseProfileProps) => {
+  const { palette } = useColorPalette();
   const queryClient = useQueryClient();
   const navigation = useNavigation();
+  const [draftCoverUri, setDraftCoverUri] = React.useState<string | null>(null);
 
   const storeRef = React.useRef(createClientStore());
-  const [isRefreshing, setIsRefreshing] = React.useState(false);
-  const { loading: isRefreshDebounced } = useDebounce(isRefreshing, 500);
 
   const userStore = useUserStore();
 
@@ -107,19 +110,27 @@ export const InspectBaseProfile = ({
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
 
   //profile picture side-effect
-  const { uploads: profileUploads, jsxArray: profilePictures } =
-    useServerImages({
-      ids: [user?.pictureId],
-      fallbacks: [fallback, ""],
-      wrapperClassName:
-        "border border-border bg-background rounded-full shadow-md",
-      size: { width: 100, height: 100 },
-      enabled: !!user && !!user.pictureId,
-    });
+  const {
+    uploads: profileUploads,
+    jsxArray: profilePictures,
+    isPending: isProfilePicturePending,
+    refetch: refetchProfilePictures,
+  } = useServerImages({
+    ids: [user?.pictureId],
+    fallbacks: [fallback],
+    className: "rounded-full",
+    wrapperClassName: "border border-border bg-background rounded-full",
+    size: { width: 100, height: 100 },
+    enabled: !!user && !!user.pictureId,
+  });
   const profilePictureSource = profileUploads?.[0];
 
   // cover picture side-effect
-  const { uploads: coverUploads, isPending: isCoverPending } = useServerImages({
+  const {
+    uploads: coverUploads,
+    isPending: isCoverPending,
+    refetch: refetchCover,
+  } = useServerImages({
     ids: [user?.coverId],
     fallbacks: [""],
     wrapperClassName: "",
@@ -149,9 +160,6 @@ export const InspectBaseProfile = ({
       mutationFn: (coverDto: UpdateUserCoverDto) =>
         api.user.updateCover(coverDto),
       onSuccess: () => {
-        toast.success("Cover updated successfully", {
-          description: "Your cover has been successfully updated.",
-        });
         userStore.reset();
         queryClient.invalidateQueries({ queryKey: ["user", currentUser?.id] });
         queryClient.invalidateQueries({ queryKey: ["current-user"] });
@@ -159,6 +167,9 @@ export const InspectBaseProfile = ({
           queryKey: ["server-image", currentUser?.coverId],
         });
         refetchCurrentUser();
+        toast.success("Cover updated successfully", {
+          description: "Your cover has been successfully updated.",
+        });
       },
       onError: (error: ServerErrorResponse) => {
         toast.error(
@@ -175,8 +186,8 @@ export const InspectBaseProfile = ({
     };
   }, []);
 
-  const handleCoverPress = async () => {
-    if (currentUser?.id !== id) return; // Prevent others from updating
+  const handlePickCover = async () => {
+    if (currentUser?.id !== id) return;
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
@@ -184,36 +195,77 @@ export const InspectBaseProfile = ({
       aspect: [16, 9],
       quality: 0.8,
     });
-    if (!result.canceled) {
-      const asset = result.assets[0];
-      const fileLike = {
-        uri: asset.uri,
-        name: asset.uri.split("/").pop() || "cover.jpg",
-        type: asset.type || "image/jpeg",
-      } as unknown as File;
-      uploadCover({ files: [fileLike] });
-    }
+
+    if (result.canceled) return;
+
+    const asset = result.assets[0];
+
+    // INSTANT UI PREVIEW
+    setDraftCoverUri(asset.uri);
+
+    const fileLike = {
+      uri: asset.uri,
+      name: asset.uri.split("/").pop() || "cover.jpg",
+      type: asset.mimeType || "image/jpeg",
+    } as unknown as File;
+
+    // AUTO UPLOAD
+    uploadCover({
+      files: [fileLike],
+    });
   };
 
-  const onRefresh = async () => {
-    setIsRefreshing(true);
+  const coverImageSource = React.useMemo<
+    ImageSourcePropType | undefined
+  >(() => {
+    switch (typeof coverSource) {
+      case "string":
+        return { uri: coverSource };
+      case "number":
+        return coverSource;
+      case "object": {
+        if (!coverSource || !("uri" in coverSource)) return undefined;
+        const uri = String(coverSource.uri ?? "");
+        return uri ? { uri } : undefined;
+      }
+      default:
+        return require("~/assets/images/partial-react-logo.png");
+    }
+  }, [coverSource]);
+
+  const coverPreviewSource = React.useMemo<ImageSourcePropType | undefined>(
+    () => (draftCoverUri ? { uri: draftCoverUri } : coverImageSource),
+    [draftCoverUri, coverImageSource],
+  );
+
+  const onRefresh = React.useCallback(async () => {
     await Promise.allSettled([
       refetchUser(),
       refetchCurrentUser(),
       refetchExperiences(),
       refetchEducations(),
       refetchUserIndustries(),
+      refetchCover(),
+      refetchProfilePictures(),
     ]);
-    setIsRefreshing(false);
-  };
+  }, []);
 
-  const isInitialLoading =
-    isRefreshDebounced ||
+  const refreshing =
     isUserPending ||
     isExperiencesPending ||
     isEducationsPending ||
     isIndustriesSubTypePending ||
-    isUserIndustriesPending;
+    isUserIndustriesPending ||
+    isCoverPending ||
+    isProfilePicturePending;
+
+  useFocusEffect(
+    React.useCallback(() => {
+      return () => {
+        onRefresh();
+      };
+    }, [onRefresh]),
+  );
 
   // ---------------------------------------------------------------
   //  PROFILE SECTIONS CONFIG
@@ -226,19 +278,7 @@ export const InspectBaseProfile = ({
         data: experiences as unknown[],
         editable: currentUser?.id === user?.id,
         renderItem: (experience: ResponseExperienceDto) => (
-          <View className="flex flex-col mb-4 mt-2">
-            <Text className="font-semibold">{experience.title}</Text>
-            <Text className="text-sm text-muted-foreground font-bold">
-              {experience.company}
-            </Text>
-            <Text className="text-xs text-muted-foreground my-1">
-              {format(new Date(experience.startDate!), "MMM yyyy")} —{" "}
-              {format(new Date(experience.endDate!), "MMM yyyy")}
-            </Text>
-            <SeeMoreText textClassname="text-sm" numberOfLines={2}>
-              {experience.description || "No description provided."}
-            </SeeMoreText>
-          </View>
+          <ExperienceInstance className="mb-4" experience={experience} />
         ),
       },
       {
@@ -247,15 +287,7 @@ export const InspectBaseProfile = ({
         data: educations as unknown[],
         editable: currentUser?.id === user?.id,
         renderItem: (education: ResponseEducationDto) => (
-          <View className="flex flex-col mb-4 gap-4">
-            <Text className="font-semibold">{education.title}</Text>
-            <Text className="text-sm text-muted-foreground">
-              {education.institution}
-            </Text>
-            <SeeMoreText textClassname="text-sm" numberOfLines={2}>
-              {education.description || "No description provided."}
-            </SeeMoreText>
-          </View>
+          <EducationInstance className="mb-4" education={education} />
         ),
       },
       {
@@ -284,127 +316,146 @@ export const InspectBaseProfile = ({
 
   const Tab = createMaterialTopTabNavigator();
 
-  return (
-    <View className={cn("flex-1 bg-background", className)}>
-      <View className="absolute top-2 left-0 right-0 items-center z-20 pointer-events-none">
-        <Loader isPending={isRefreshing} size="small" />
-      </View>
+  if (refreshing || !user) {
+    return <BaseProfileSkeleton className={className} />;
+  }
 
-      {isInitialLoading ? (
-        <BaseProfileSkeleton className={className} />
-      ) : (
-        <>
-          {/* Cover */}
-          {!isCoverPending ? (
-            <Pressable
-              className="active:opacity-70 relative w-full h-48 overflow-hidden"
-              onPress={handleCoverPress}
-              disabled={
-                currentUser?.id !== id ||
-                isCoverUploadPending ||
-                isUpdateCoverPending
-              }
-            >
-              <Image
-                source={
-                  coverSource
-                    ? { uri: coverSource }
-                    : require("@/assets/images/partial-react-logo.png")
-                }
-                className="w-full h-full opacity-70"
-                resizeMode="cover"
-              />
-            </Pressable>
+  return (
+    <View className={cn("bg-background flex-1", className)}>
+      <View>
+        {/* Cover */}
+        {coverExtra}
+        <PhotoPreview
+          className="active:opacity-70 relative w-full h-48 overflow-hidden bg-muted items-center justify-center"
+          source={coverPreviewSource}
+          onPress={handlePickCover}
+          footer={() => {
+            if (currentUser?.id !== id) return null;
+
+            return (
+              <Pressable
+                className="flex flex-row gap-2 items-center px-4 py-2 m-4 mx-auto border border-border rounded-full active:bg-muted"
+                onPress={handlePickCover}
+              >
+                <Icon as={Pencil} color="white" />
+                <Text className="text-white">Change Cover</Text>
+              </Pressable>
+            );
+          }}
+        >
+          {coverImageSource ? (
+            <Image
+              source={coverImageSource}
+              className="w-full h-full opacity-70"
+              resizeMode="cover"
+            />
           ) : (
-            <Skeleton className="w-full h-48" />
-          )}
-          {coverExtra}
-          {(isCoverUploadPending || isUpdateCoverPending) && (
-            <View className="absolute inset-0 bg-black/40 flex items-center justify-center z-50">
-              <Loader isPending={true} size="large" />
+            <View className="flex flex-row gap-2 items-center pt-12">
+              <Icon as={Pencil} color="white" />
+              <Text className="text-white">Add Cover Photo</Text>
             </View>
           )}
-          {/* Header */}
-          <View className="flex-row items-center px-5 -mt-12">
-            <ProfilePhotoPreview source={profilePictureSource}>
-              <View>{profilePictures[0]}</View>
-            </ProfilePhotoPreview>
-            <View className="flex-1 mt-16">
-              <View className="flex-row items-center justify-between mx-2">
-                <View>
-                  <Text className="text-xl font-semibold text-foreground">
-                    {identity}
+        </PhotoPreview>
+        {(isCoverUploadPending || isUpdateCoverPending) && (
+          <View className="absolute inset-0 bg-black/40 flex items-center justify-center z-50">
+            <Loader isPending={true} size="large" />
+          </View>
+        )}
+        {/* Header */}
+        <View className="flex-row items-center px-5 -mt-12">
+          {isProfilePicturePending ? (
+            <Skeleton className="w-[100px] h-[100px] rounded-full" />
+          ) : (
+            <PhotoPreview source={profilePictureSource}>
+              {profilePictures[0]}
+            </PhotoPreview>
+          )}
+          <View className="flex-1 mt-16">
+            <View className="flex-row items-center justify-between mx-2">
+              <View>
+                <Text className="text-xl font-semibold text-foreground">
+                  {identity}
+                </Text>
+                {id && (
+                  <Text className="text-sm text-muted-foreground">
+                    @{user?.username}
                   </Text>
-                  {id && (
-                    <Text className="text-sm text-muted-foreground">
-                      @{user?.username}
-                    </Text>
-                  )}
-                </View>
-                {currentUser?.id === id && (
-                  <ProfileStat className="flex flex-row gap-4" />
                 )}
               </View>
+              {currentUser?.id === id && (
+                <ProfileStat className="flex flex-row gap-4" />
+              )}
             </View>
           </View>
-          {/* Tabs */}
-          <View className="flex-1 mt-4" style={{ minHeight: 400 }}>
-            <Tab.Navigator
-              screenOptions={{
-                tabBarScrollEnabled: false,
-                tabBarLabelStyle: {
-                  fontSize: 12,
-                  fontWeight: "600",
-                  textTransform: "none",
-                },
-                tabBarIndicatorStyle: { backgroundColor: "#6366f1" },
-                tabBarStyle: { backgroundColor: "transparent" },
-              }}
-              commonOptions={{
-                sceneStyle: {
-                  flex: 1,
-                },
-              }}
-            >
-              <Tab.Screen
-                name="About"
-                options={{
-                  tabBarLabel: "About",
-                }}
-              >
-                {() => <AboutTab user={user} />}
-              </Tab.Screen>
-              <Tab.Screen
-                name="Career"
-                options={{
-                  tabBarLabel: "Career",
-                }}
-              >
-                {() => (
-                  <ExperienceTab
-                    profileSections={profileSections}
-                    renderSection={RenderSection}
-                  />
-                )}
-              </Tab.Screen>
-              <Tab.Screen
-                name="Interests"
-                options={{
-                  tabBarLabel: "Interests",
-                }}
-              >
-                {() => (
-                  <InterestsTab
-                    profileSections={profileSections}
-                    renderSection={RenderSection}
-                    userId={id}
-                  />
-                )}
-              </Tab.Screen>
-            </Tab.Navigator>
-          </View>
-        </>
-      )}
+        </View>
+      </View>
+      {/* Tabs */}
+      <View style={{ flex: 1 }}>
+        <Tab.Navigator
+          screenOptions={{
+            tabBarScrollEnabled: false,
+            tabBarLabelStyle: {
+              fontSize: 12,
+              fontWeight: "600",
+              textTransform: "none",
+            },
+            tabBarIndicatorStyle: {
+              backgroundColor: hslToHex(palette.primary),
+            },
+            tabBarStyle: { backgroundColor: "transparent" },
+            sceneStyle: { flex: 1 },
+            swipeEnabled: true,
+            animationEnabled: true,
+          }}
+        >
+          <Tab.Screen
+            name="About"
+            options={{
+              tabBarLabel: "About",
+            }}
+          >
+            {() => (
+              <AboutTab
+                className="flex-1"
+                user={user}
+                onRefresh={onRefresh}
+                refreshing={refreshing}
+              />
+            )}
+          </Tab.Screen>
+          <Tab.Screen
+            name="Career"
+            options={{
+              tabBarLabel: "Career",
+            }}
+          >
+            {() => (
+              <CareerTab
+                profileSections={profileSections}
+                renderSection={RenderSection}
+                onRefresh={onRefresh}
+                refreshing={refreshing}
+              />
+            )}
+          </Tab.Screen>
+          <Tab.Screen
+            name="Interests"
+            options={{
+              tabBarLabel: "Interests",
+            }}
+          >
+            {() => (
+              <InterestsTab
+                profileSections={profileSections}
+                renderSection={RenderSection}
+                userId={id}
+                onRefresh={onRefresh}
+                refreshing={refreshing}
+              />
+            )}
+          </Tab.Screen>
+        </Tab.Navigator>
+      </View>
     </View>
   );
 };

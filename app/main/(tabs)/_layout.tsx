@@ -1,9 +1,10 @@
 import { Icon } from "@/components/ui/icon";
 import { useRTL } from "@/hooks/useRTL";
 import { NAV_THEME } from "@/lib/theme";
+import { IconChecklist } from "@tabler/icons-react-native";
 import * as Haptics from "expo-haptics";
 import { Tabs } from "expo-router";
-import { Map, Telescope, Timer, User } from "lucide-react-native";
+import { Map, Telescope, User } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -34,9 +35,9 @@ export default function TabLayout() {
         icon: Telescope,
       },
       {
-        name: "sessions",
-        title: t("screens.sessions", "Sessions"),
-        icon: Timer,
+        name: "activities",
+        title: t("screens.activities", "Activities"),
+        icon: IconChecklist,
       },
       {
         name: "map",

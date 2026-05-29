@@ -1,14 +1,13 @@
 import { LucideIcon } from "lucide-react-native";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 import { useRTL } from "~/hooks/useRTL";
 import { cn } from "~/lib/utils";
-import { StablePressable } from "../shared/StablePressable";
 import { Icon } from "../ui/icon";
 import { IconBadge } from "../ui/icon-badge";
 import { Text, TextVariantDefaults } from "../ui/text";
 import React from "react";
-import { colorScheme, useColorScheme } from "nativewind";
-import { hslToHex, THEME } from "@/lib/theme";
+import { hslToHex } from "@/lib/theme";
+import { useColorPalette } from "@/hooks/useColorPalette";
 
 type Shortcut =
   | {
@@ -22,7 +21,10 @@ type Shortcut =
   | { key: string; render: React.ReactNode; hidden?: boolean };
 
 interface ApplicationHeaderProps {
-  className?: string;
+  classNames?: {
+    wrapper?: string;
+    title?: string;
+  };
   title?: string | React.ReactNode;
   titleVariant?: TextVariantDefaults;
   shortcuts?: Shortcut[];
@@ -30,18 +32,14 @@ interface ApplicationHeaderProps {
 }
 
 export const ApplicationHeader = ({
-  className,
+  classNames,
   title,
   titleVariant = "h1",
   shortcuts,
   reverse = false,
 }: ApplicationHeaderProps) => {
-  const { colorScheme } = useColorScheme();
-  const isDarkColorScheme = colorScheme === "dark";
-  const color = hslToHex(
-    isDarkColorScheme ? THEME.dark.foreground : THEME.light.foreground,
-  );
-
+  const { palette } = useColorPalette();
+  const color = hslToHex(palette.foreground);
   const isRTL = useRTL();
 
   const renderTitle = () => {
@@ -49,7 +47,7 @@ export const ApplicationHeader = ({
 
     if (typeof title === "string") {
       return (
-        <Text variant={titleVariant} className="mx-2">
+        <Text variant={titleVariant} className={cn("mx-2", classNames?.title)}>
           {title}
         </Text>
       );
@@ -62,7 +60,7 @@ export const ApplicationHeader = ({
       className={cn(
         "flex flex-row justify-between items-center gap-2 px-2",
         isRTL || reverse ? "flex-row-reverse" : "flex-row",
-        className,
+        classNames?.wrapper,
       )}
     >
       {renderTitle()}
@@ -76,9 +74,12 @@ export const ApplicationHeader = ({
             "icon" in shortcut
           ) {
             return (
-              <StablePressable
+              <Pressable
                 key={shortcut.key}
-                className={cn("p-1", shortcut.hidden && "hidden")}
+                className={cn(
+                  "p-1 rounded-full active:bg-primary/50",
+                  shortcut.hidden && "hidden",
+                )}
                 onPress={shortcut.onPress}
               >
                 {shortcut.badgeText ? (
@@ -95,7 +96,7 @@ export const ApplicationHeader = ({
                     color={shortcut.color || color}
                   />
                 )}
-              </StablePressable>
+              </Pressable>
             );
           } else {
             if (!shortcut.hidden)

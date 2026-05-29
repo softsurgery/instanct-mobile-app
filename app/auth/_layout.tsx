@@ -31,16 +31,6 @@ export default function AuthLayout() {
           animationDuration: 200,
         }}
       />
-      <Stack.Screen
-        name="sign-up-carry-on"
-        options={{
-          title: "",
-          headerShown: false,
-          headerRight: () => <ThemeToggle />,
-          animation: "fade",
-          animationDuration: 200,
-        }}
-      />
     </Stack>
   );
 }

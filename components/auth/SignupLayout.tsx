@@ -1,31 +1,99 @@
-import { Button } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { router } from "expo-router";
 import { View } from "react-native";
-import DividedText from "../shared/DividedText";
-import { StableKeyboardAwareScrollView } from "../shared/StableKeyboardAwareScrollView";
 import { FormBuilder } from "../shared/form-builder/FormBuilder";
 import { useSignUpFormStructure } from "./useSignupFormStructure";
-import { SSOButtons } from "./SSOButtons";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { ArrowLeft } from "lucide-react-native";
 import { Stepper } from "../shared/Stepper";
+import React from "react";
+import { useAuthValidation } from "@/hooks/useAuthValidation";
+import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
+import { useUploadMutation } from "@/hooks/useUploadMutation";
+import { ServerErrorResponse, Upload } from "@/types";
+import { toast } from "sonner-native";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/api";
 
-interface SignupProps {
+interface SignupLayoutProps {
   className?: string;
 }
 
-export const SignupLayout = ({ className }: SignupProps) => {
+export const SignupLayout = ({ className }: SignupLayoutProps) => {
   const authStore = useAuthStore();
-  const { signUpFormStructure } = useSignUpFormStructure({ store: authStore });
+  const { industries, isIndustriesSubTypePending } = useIndustries();
+
+  const {
+    uploadFiles: uploadProfilePicture,
+    isUploadPending: isProfilePictureUploadPending,
+  } = useUploadMutation({
+    onSuccess: (response: Upload[]) => {
+      authStore.setNested("signUpRequest.pictureId", response?.[0]?.id);
+    },
+    onError: (error: ServerErrorResponse) => {
+      toast.error(
+        error.response?.data?.message || "Failed to upload image",
+        {},
+      );
+    },
+  });
+
+  const { usernameValidation, emailValidation } = useAuthValidation();
+
+  const {
+    signUpFormStructure,
+    industriesFormStructure,
+    profilePictureFieldset,
+  } = useSignUpFormStructure({
+    store: authStore,
+    usernameValidation,
+    emailValidation,
+    industriesOptions: industries.map((industry) => ({
+      label: industry.label,
+      value: String(industry.id),
+    })),
+    uploadPicture: uploadProfilePicture,
+    isProfilePictureUploadPending,
+  });
+
+  React.useEffect(() => {
+    return () => {
+      authStore.reset();
+    };
+  }, []);
+
+  const { mutate: signUp, isPending: isSignUpPending } = useMutation({
+    mutationFn: async () => api.auth.signUp(authStore.signUpRequest),
+    onSuccess: () => {
+      toast.success("Account created successfully! Please sign in.");
+      router.push("/auth/sign-in");
+    },
+    onError: (error: ServerErrorResponse) => {
+      const message =
+        error.response?.data?.message || "Failed to create account";
+      toast.error(message);
+    },
+  });
+
+  const step1Validation =
+    !usernameValidation.isCheckingUsername &&
+    !emailValidation.isCheckingEmail &&
+    !usernameValidation.isUsernameTaken &&
+    !emailValidation.isEmailTaken &&
+    !!authStore.signUpRequest.username &&
+    !!authStore.signUpRequest.email &&
+    !!authStore.signUpRequest.firstName &&
+    !!authStore.signUpRequest.lastName &&
+    !!authStore.signUpRequest.password &&
+    authStore.signUpRequest.password.length >= 8 &&
+    authStore.signUpRequest.password === authStore.utilities.confirmPassword;
 
   return (
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
-        className="border-b border-border pb-2"
+        classNames={{ wrapper: "border-b border-border pb-2" }}
         titleVariant="large"
         shortcuts={[
           {
@@ -48,77 +116,33 @@ export const SignupLayout = ({ className }: SignupProps) => {
                 title: "Introduce Yourself",
                 description:
                   "Start by providing the basic details about yourself.",
-                component: null,
+                component: <FormBuilder structure={signUpFormStructure} />,
+                validation: step1Validation,
               },
               {
                 title: "Industries",
                 description:
                   "Select the industries and objectives relevant to you.",
-                component: null,
-              },
-              {
-                title: "Objectives",
-                description: "Select the objectives relevant to you.",
-                component: null,
+                component: <FormBuilder structure={industriesFormStructure} />,
+                validation: !!authStore.signUpRequest.industries.length,
               },
               {
                 title: "Show us your face",
                 description:
                   "Upload a profile picture to personalize your account.",
-                component: null,
+                component: <FormBuilder structure={profilePictureFieldset} />,
+                validation: !!authStore.signUpRequest.pictureId,
               },
             ]}
-            closingAction={{
-              label: "Create My Account",
-              onPress: () => {},
-            }}
+            closingActions={[
+              {
+                label: "Create My Account",
+                onPress: () => signUp(),
+                disabled: isSignUpPending,
+              },
+            ]}
           />
         </View>
-        {/* <StableKeyboardAwareScrollView>
-          <View
-            className={cn(
-              "flex flex-col justify-center gap-5 p-4 pb-6",
-              className,
-            )}
-          >
-            <View className="my-5">
-              <Text className="text-2xl font-extrabold text-center">
-                Create Account
-              </Text>
-              <Text className="text-2xl font-thin text-center">
-                Join us and get started!
-              </Text>
-            </View>
-
-            <View className="flex flex-col gap-2 px-2 w-fit">
-              <FormBuilder structure={signUpFormStructure} />
-
-              <Button
-                disabled={false}
-                className="flex flex-row justify-center gap-2 my-1"
-                onPress={() => {}}
-              >
-                <Text className="font-bold">Create My Account</Text>
-              </Button>
-
-              <DividedText text="OR" />
-
-              <SSOButtons isSignInPending={false} />
-            </View>
-
-            <View className="flex flex-row gap-1 items-center justify-center">
-              <Text variant={"muted"}>Already have an account?</Text>
-              <Text
-                variant={"small"}
-                onPress={() => {
-                  router.push("/auth/sign-in");
-                }}
-              >
-                Sign in
-              </Text>
-            </View>
-          </View>
-        </StableKeyboardAwareScrollView> */}
       </View>
     </StableSafeAreaView>
   );

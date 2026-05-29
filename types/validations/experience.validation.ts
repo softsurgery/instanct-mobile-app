@@ -3,21 +3,25 @@ import { LocationTypes, WorkTypes } from "../user-management";
 
 const baseExperienceSchema = z.object({
   title: z
-    .string()
-    .min(2, {
-      message: "Title must be at least 2 characters long.",
+    .string({
+      message: "Title is required.",
     })
-    .max(100, {
-      message: "Title cannot exceed 100 characters.",
+    .min(1, {
+      message: "Title cannot be empty.",
+    })
+    .max(50, {
+      message: "Title cannot exceed 50 characters.",
     }),
 
   company: z
-    .string()
-    .min(2, {
-      message: "Company name must be at least 2 characters long.",
+    .string({
+      message: "Company name is required.",
     })
-    .max(100, {
-      message: "Company name cannot exceed 100 characters.",
+    .min(1, {
+      message: "Company name cannot be empty.",
+    })
+    .max(50, {
+      message: "Company name cannot exceed 50 characters.",
     }),
 
   startDate: z
@@ -39,18 +43,17 @@ const baseExperienceSchema = z.object({
     ),
   location: z
     .string()
-    .min(2, {
-      message: "Location must be at least 2 characters long.",
-    })
-    .max(100, {
-      message: "Location cannot exceed 100 characters.",
+    .max(50, {
+      message: "Location cannot exceed 50 characters.",
     })
     .optional(),
 
-  workType: z.enum(WorkTypes).optional(),
-
-  locationType: z.enum(LocationTypes).optional(),
-
+  workType: z.nativeEnum(WorkTypes, {
+    error: "You must select a valid work type",
+  }),
+  locationType: z.nativeEnum(LocationTypes, {
+    error: "You must select a valid location type",
+  }),
   endDate: z
     .preprocess(
       (value) =>
@@ -59,12 +62,7 @@ const baseExperienceSchema = z.object({
     )
     .optional(),
 
-  description: z
-    .string()
-    .max(500, {
-      message: "Description cannot exceed 500 characters.",
-    })
-    .optional(),
+  description: z.string().optional(),
 });
 
 const createExperienceSchema = baseExperienceSchema

@@ -12,19 +12,18 @@ interface ThemeSwitcherProps {
 }
 
 export const ThemeSwitcher = ({ classNames }: ThemeSwitcherProps) => {
-  const { toggleColorScheme } = useColorScheme();
-  const { theme, toggleTheme } = usePreferencePersistStore();
-  const isDarkMode = React.useMemo(() => theme === "dark", [theme]);
+  const { colorScheme, toggleColorScheme } = useColorScheme();
+  const { toggleTheme } = usePreferencePersistStore();
   return (
     <Select
       classNames={classNames}
       title="Select Theme"
       description="Choose your preferred theme"
       placeholder="Select a theme"
-      value={theme}
+      value={colorScheme}
       onSelect={() => {
         toggleTheme();
-        setAndroidNavigationBar(theme);
+        setAndroidNavigationBar(colorScheme === "dark" ? "light" : "dark");
         toggleColorScheme();
       }}
       options={[

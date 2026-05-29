@@ -52,7 +52,7 @@ export const SessionDetailsPortal = ({
   return (
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
-        className="border-b border-border pb-2"
+        classNames={{ wrapper: "border-b border-border pb-2" }}
         title={t("screens.sessionDetails")}
         titleVariant="large"
         reverse

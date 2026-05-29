@@ -1,21 +1,33 @@
 import React from "react";
 import type { ImageProps } from "expo-image";
-import { View, type ImageURISource } from "react-native";
+import { TouchableOpacity, View, type ImageURISource } from "react-native";
 import ImageView from "react-native-image-viewing";
-import { StablePressable } from "@/components/shared/StablePressable";
 import { cn } from "@/lib/utils";
 
-interface ProfilePhotoPreviewV2Props {
-  source?: ImageProps["source"] | null;
+interface PhotoPreviewProps {
   className?: string;
   children: React.ReactNode;
+  source?: ImageProps["source"] | null;
+  index?: number;
+  color?: string;
+  presentationStyle?: "fullScreen" | "overFullScreen" | "pageSheet";
+  onPress?: () => void;
+  footer?: (helpers: {
+    close: () => void;
+    open: () => void;
+  }) => React.ReactNode;
 }
 
-export const ProfilePhotoPreview = ({
-  source,
+export const PhotoPreview = ({
   className,
   children,
-}: ProfilePhotoPreviewV2Props) => {
+  source,
+  color = "rgba(0, 0, 0, 0.8)",
+  presentationStyle = "overFullScreen",
+  onPress,
+  footer,
+  index = 0,
+}: PhotoPreviewProps) => {
   type ViewerImage = ImageURISource | number;
 
   const images = React.useMemo<ViewerImage[]>(() => {
@@ -24,13 +36,19 @@ export const ProfilePhotoPreview = ({
 
       if (typeof value === "string") {
         const uri = value.trim();
+
         if (!uri) return null;
+
         return { uri };
       }
 
       if (typeof value === "object" && value !== null && "uri" in value) {
         const uri = (value as { uri?: unknown }).uri;
-        if (typeof uri !== "string" || uri.trim().length === 0) return null;
+
+        if (typeof uri !== "string" || uri.trim().length === 0) {
+          return null;
+        }
+
         return { uri: uri.trim() };
       }
 
@@ -46,14 +64,17 @@ export const ProfilePhotoPreview = ({
     }
 
     const single = normalize(source);
+
     return single ? [single] : [];
   }, [source]);
 
   const hasImageSource = images.length > 0;
+
   const [isVisible, setIsVisible] = React.useState(false);
 
   const openPreview = React.useCallback(() => {
     if (!hasImageSource) return;
+
     setIsVisible(true);
   }, [hasImageSource]);
 
@@ -61,14 +82,24 @@ export const ProfilePhotoPreview = ({
     setIsVisible(false);
   }, []);
 
-  const trigger = hasImageSource ? (
-    <StablePressable
-      className={cn("overflow-hidden rounded-full", className)}
-      onPress={openPreview}
-      onPressClassname="opacity-90"
+  const canPress = hasImageSource || !!onPress;
+
+  const handlePress = () => {
+    if (hasImageSource) {
+      openPreview();
+    } else {
+      onPress?.();
+    }
+  };
+
+  const trigger = canPress ? (
+    <TouchableOpacity
+      className={cn("z-10", className)}
+      onPress={handlePress}
+      activeOpacity={0.8}
     >
       {children}
-    </StablePressable>
+    </TouchableOpacity>
   ) : (
     <View className={cn(className)}>{children}</View>
   );
@@ -80,9 +111,19 @@ export const ProfilePhotoPreview = ({
       {hasImageSource ? (
         <ImageView
           images={images}
-          imageIndex={0}
+          imageIndex={index}
           visible={isVisible}
           onRequestClose={closePreview}
+          backgroundColor={color}
+          presentationStyle={presentationStyle}
+          FooterComponent={() => (
+            <>
+              {footer?.({
+                close: closePreview,
+                open: openPreview,
+              })}
+            </>
+          )}
         />
       ) : null}
     </>

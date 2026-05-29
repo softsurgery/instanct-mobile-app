@@ -58,7 +58,7 @@ export const SigninLayout = ({ className }: SigninProps) => {
   return (
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
-        className="border-b border-border pb-2"
+        classNames={{ wrapper: "border-b border-border pb-2" }}
         titleVariant="large"
         shortcuts={[
           {
@@ -110,10 +110,8 @@ export const SigninLayout = ({ className }: SigninProps) => {
             <View className="flex flex-row gap-1 items-center justify-center">
               <Text variant={"muted"}>Don&apos;t have an account?</Text>
               <Text
-                variant={"small"}
-                onPress={() => {
-                  router.push("/auth/sign-up");
-                }}
+                className="font-bold"
+                onPress={() => router.push("/auth/sign-up")}
               >
                 Create an account
               </Text>

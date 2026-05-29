@@ -50,6 +50,7 @@ const StableScrollView = React.forwardRef<ScrollView, StableScrollViewProps>(
         alwaysBounceVertical={refreshControl ? true : false}
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
+        nestedScrollEnabled={true}
         overScrollMode={refreshControl ? "always" : "never"}
         keyboardShouldPersistTaps="handled"
         style={style}

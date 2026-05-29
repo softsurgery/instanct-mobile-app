@@ -9,6 +9,8 @@ import { InspectBaseProfile } from "../profile/BaseProfile";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { IconMessageChatbot } from "@tabler/icons-react-native";
+import React from "react";
+import { useChatContext } from "@/contexts/ChatContext";
 
 interface MenuPortalProps {
   className?: string;
@@ -17,7 +19,14 @@ interface MenuPortalProps {
 export const MenuPortal = ({ className }: MenuPortalProps) => {
   const { t } = useTranslation("common");
   const { currentUser } = useCurrentUser();
-  const { newCount, resetCount } = useNotificationContext();
+  const { count, resetCount } = useNotificationContext();
+  const { count: chatCount, resetCount: resetChatCount } = useChatContext();
+
+  const handleChatPress = React.useCallback(() => {
+    resetChatCount();
+    router.push("/main/chat");
+  }, [resetChatCount]);
+
   return (
     <View className={cn("flex-1", className)}>
       <InspectBaseProfile
@@ -29,10 +38,12 @@ export const MenuPortal = ({ className }: MenuPortalProps) => {
           >
             <ApplicationHeader
               title={t("screens.menu")}
+              classNames={{ title: "text-white" }}
               shortcuts={[
                 {
                   key: "settings",
                   icon: Settings,
+                  color: "white",
                   onPress: () => router.push("/main/settings"),
                 },
                 ...(process.env.NODE_ENV === "development"
@@ -40,6 +51,7 @@ export const MenuPortal = ({ className }: MenuPortalProps) => {
                       {
                         key: "flask",
                         icon: FlaskConical,
+                        color: "white",
                         onPress: () => router.push("/main/test"),
                       },
                     ]
@@ -51,12 +63,15 @@ export const MenuPortal = ({ className }: MenuPortalProps) => {
                     router.push("/main/notifications");
                     resetCount();
                   },
-                  badgeText: newCount > 0 ? `${newCount}` : undefined,
+                  color: "white",
+                  badgeText: count > 0 ? `${count}` : undefined,
                 },
                 {
                   key: "chat",
                   icon: IconMessageChatbot,
-                  onPress: () => router.push("/main/chat"),
+                  badgeText: chatCount > 0 ? String(chatCount) : undefined,
+                  color: "white",
+                  onPress: handleChatPress,
                 },
               ]}
             />

@@ -1,3 +1,4 @@
+import React from "react";
 import { api } from "@/api";
 import { ApplicationHeader } from "@/components/shared/AppHeader";
 import { Tappable } from "@/components/shared/Tappable";
@@ -21,8 +22,9 @@ import {
   FileText,
 } from "lucide-react-native";
 import { View } from "react-native";
-import { DeleteExperienceDialog } from "./DeleteExperienceDialog";
 import { toast } from "sonner-native";
+import { ActionSheetRef } from "react-native-actions-sheet";
+import { DeleteExperienceActionSheet } from "./DeleteExperienceActionSheet";
 
 interface UpdateExperiencesProps {
   className?: string;
@@ -31,6 +33,10 @@ interface UpdateExperiencesProps {
 export const UpdateExperiences = ({ className }: UpdateExperiencesProps) => {
   const userStore = useUserStore();
   const queryClient = useQueryClient();
+  const deleteSheetRef = React.useRef<ActionSheetRef>(null);
+  const [selectedExperienceId, setSelectedExperienceId] = React.useState<
+    number | null
+  >(null);
 
   const onUpdateExperiencePress = (exp: ResponseExperienceDto) => {
     userStore.set("responseExperience", exp);
@@ -44,28 +50,50 @@ export const UpdateExperiences = ({ className }: UpdateExperiencesProps) => {
       endDate: exp.endDate ? new Date(exp.endDate) : undefined,
       description: exp.description,
     });
+    userStore.set("present", exp.endDate === null);
     router.push("/main/profile/update-experience");
   };
 
   const { mutate: deleteExperience, isPending: isDeletePending } = useMutation({
     mutationFn: (id: number) => api.experience.remove(id),
     onSuccess: () => {
-      toast.success("Experience deleted successfully", {
-        description: "Your experience has been successfully deleted.",
-      });
       queryClient.invalidateQueries({
         queryKey: ["experiences", userStore.response?.id],
       });
+      toast.success("Experience deleted successfully", {
+        description: "Your experience has been successfully deleted.",
+      });
+      deleteSheetRef.current?.hide();
+      setSelectedExperienceId(null);
     },
     onError: (error: ServerErrorResponse) => {
       toast.error(error.response?.data?.message || "An error occurred", {});
     },
   });
 
+  const onDeleteExperiencePress = (experienceId: number) => {
+    setSelectedExperienceId(experienceId);
+    deleteSheetRef.current?.show();
+  };
+
+  const onCloseDeleteExperienceSheet = () => {
+    deleteSheetRef.current?.hide();
+    setSelectedExperienceId(null);
+  };
+
+  const onConfirmDeleteExperience = () => {
+    if (!selectedExperienceId) {
+      toast.error("No experience selected");
+      return;
+    }
+
+    deleteExperience(selectedExperienceId);
+  };
+
   return (
     <StableSafeAreaView className={cn("flex flex-1", className)}>
       <ApplicationHeader
-        className="border-b border-border pb-2 bg-transparent"
+        classNames={{ wrapper: "border-b border-border pb-2 bg-transparent" }}
         title="Experiences"
         titleVariant="large"
         reverse
@@ -89,33 +117,27 @@ export const UpdateExperiences = ({ className }: UpdateExperiencesProps) => {
                     key={exp.id}
                     className="bg-card border border-border overflow-hidden shadow-sm"
                   >
-                    {/* Header with index badge */}
-                    <View className="flex flex-row items-center justify-between px-4 pt-4 pb-3 border-b border-border">
-                      <View className="flex flex-row items-center gap-2">
-                        <View className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                          <Icon as={Briefcase} size={16} />
-                        </View>
-                        <Text className="text-base font-semibold">
-                          Experience {index + 1}
-                        </Text>
-                      </View>
-                      {exp.endDate === null && (
-                        <View className="bg-green-500/20 px-2.5 py-1 rounded-full">
-                          <Text className="text-xs font-medium">Current</Text>
-                        </View>
-                      )}
-                    </View>
-
                     {/* Content */}
                     <View className="px-4 py-4 gap-3.5">
                       {/* Job Title */}
-                      <View className="gap-1.5">
-                        <Text className="text-xs font-semibold uppercase text-muted-foreground tracking-wide">
-                          Job Title
-                        </Text>
-                        <Text className="text-lg font-bold text-foreground">
-                          {exp.title}
-                        </Text>
+                      <View className="flex flex-row justify-between">
+                        <View className="gap-1.5">
+                          <Text className="text-xs font-semibold uppercase text-muted-foreground tracking-wide">
+                            Job Title
+                          </Text>
+                          <Text className="text-lg font-bold text-foreground">
+                            {exp.title}
+                          </Text>
+                        </View>
+                        <View className="flex flex-row items-center justify-between px-4">
+                          {exp.endDate === null && (
+                            <View className="bg-green-500/20 px-2.5 py-1 rounded-full">
+                              <Text className="text-xs font-medium">
+                                Current
+                              </Text>
+                            </View>
+                          )}
+                        </View>
                       </View>
 
                       {/* Company */}
@@ -166,21 +188,16 @@ export const UpdateExperiences = ({ className }: UpdateExperiencesProps) => {
                       >
                         Edit experience
                       </Tappable>
-                      <DeleteExperienceDialog
-                        handleDelete={() => deleteExperience(exp.id)}
-                        loading={isDeletePending}
-                        trigger={
-                          <Tappable
-                            className="p-4 flex flex-row"
-                            classNames={{
-                              content: "font-semibold text-sm",
-                              pressable: "bg-destructive/50",
-                            }}
-                          >
-                            Delete experience
-                          </Tappable>
-                        }
-                      />
+                      <Tappable
+                        className="p-4 flex flex-row"
+                        classNames={{
+                          content: "font-semibold text-sm",
+                          pressable: "bg-destructive/50",
+                        }}
+                        onPress={() => onDeleteExperiencePress(exp.id)}
+                      >
+                        Delete experience
+                      </Tappable>
                     </View>
                   </View>
                 );
@@ -207,6 +224,12 @@ export const UpdateExperiences = ({ className }: UpdateExperiencesProps) => {
           )}
         </View>
       </StableScrollView>
+      <DeleteExperienceActionSheet
+        ref={deleteSheetRef}
+        onConfirm={onConfirmDeleteExperience}
+        onClose={onCloseDeleteExperienceSheet}
+        isPending={isDeletePending}
+      />
     </StableSafeAreaView>
   );
 };

@@ -1,7 +1,7 @@
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
 import {
   RequestClientSignInDto,
-  RequestClientSignUpDto,
+  RequestSpecializedClientSignUpDto,
   ResponseClientSigninDto,
 } from "@/types";
 import axios from "./axios";
@@ -14,21 +14,18 @@ const saveToken = (access_token: string, refresh_token: string) => {
 };
 
 const signIn = async (
-  requestClientSignInDto: RequestClientSignInDto
+  requestClientSignInDto: RequestClientSignInDto,
 ): Promise<ResponseClientSigninDto> => {
   const response = await axios.post(
     "/client-auth/sign-in",
-    requestClientSignInDto
+    requestClientSignInDto,
   );
   saveToken(response.data.access_token, response.data.refresh_token);
   return response.data;
 };
 
-const signUp = async (requestClientSignUpDto: RequestClientSignUpDto) => {
-  const response = await axios.post(
-    "/client-auth/sign-up",
-    requestClientSignUpDto
-  );
+const signUp = async (request: RequestSpecializedClientSignUpDto) => {
+  const response = await axios.post("/client-custom-auth/sign-up", request);
   return response.data;
 };
 

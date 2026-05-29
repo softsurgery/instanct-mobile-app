@@ -16,11 +16,11 @@ import Animated, {
 import * as Haptics from "expo-haptics";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { LinearGradient } from "expo-linear-gradient";
-import { useColorScheme } from "nativewind";
 import { cn } from "~/lib/utils";
-import { THEME, hslToHex } from "~/lib/theme";
+import { hslToHex } from "~/lib/theme";
 import { SelectOption } from "./form-builder/types";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { useColorPalette } from "@/hooks/useColorPalette";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 const ITEM_HEIGHT = 25;
@@ -165,25 +165,32 @@ export const StableScrollable = <T extends string = string>({
   onChange,
   className,
 }: StableScrollableProps<T>) => {
-  const { colorScheme } = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const { palette } = useColorPalette();
 
   const colors = React.useMemo(() => {
-    const t = isDark ? THEME.dark : THEME.light;
     return {
-      selectedText: hslToHex(t.foreground),
-      text: hslToHex(t.cardForeground),
+      selectedText: hslToHex(palette.foreground),
+      text: hslToHex(palette.cardForeground),
     };
-  }, [isDark]);
+  }, [palette]);
 
   const optionCount = options.length;
   const maxScroll = Math.max(0, (optionCount - 1) * ITEM_HEIGHT);
 
+  // ── Compute initial scroll position from the controlled value ─────────
+  const initialIndex = React.useMemo(() => {
+    if (value == null) return 0;
+    const idx = options.findIndex((o) => o.value === value);
+    return idx >= 0 ? idx : 0;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // ── Shared values ────────────────────────────────────────────────────────
-  const scrollY = useSharedValue(0);
+  const scrollY = useSharedValue(initialIndex * ITEM_HEIGHT);
   const dragStartY = useSharedValue(0);
-  const lastHapticIndex = useSharedValue(-1);
+  const lastHapticIndex = useSharedValue(initialIndex);
   const isSnapping = useSharedValue(false);
+  const isFirstRender = React.useRef(true);
 
   // ── Callbacks (JS thread) ────────────────────────────────────────────────
   const triggerHaptic = React.useCallback(() => {
@@ -214,8 +221,12 @@ export const StableScrollable = <T extends string = string>({
     }
   });
 
-  // ── Controlled value: scroll to initial / updated value ──────────────────
+  // ── Controlled value: scroll to updated value (skip first render) ────
   React.useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
     if (value == null) return;
     const idx = options.findIndex((o) => o.value === value);
     if (idx >= 0) {

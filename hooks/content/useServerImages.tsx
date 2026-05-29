@@ -1,6 +1,7 @@
+import { Image } from "@/components/ui/image";
 import { cn } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
-import { Image, ImageSource } from "expo-image";
+import { ImageSource } from "expo-image";
 import React from "react";
 import { View } from "react-native";
 import { api } from "~/api";
@@ -15,10 +16,10 @@ import { Text } from "~/components/ui/text";
 interface UseServerImagesProps {
   ids: (number | undefined)[];
   fallbacks?: (string | React.ReactNode | ImageSource | undefined)[];
-  size: { width: number; height: number };
+  size?: { width?: number; height?: number };
+  className?: string;
   wrapperClassName?: string;
   fallbackClassName?: string;
-  className?: string;
   enabled?: boolean;
 }
 
@@ -73,18 +74,16 @@ export const useServerImages = ({
             key={index}
             className={cn(wrapperClassName, "flex items-center justify-center")}
             style={{
-              width: size.width * 1.05,
-              height: size.height * 1.05,
-              borderRadius: size.width / 2,
+              width: size?.width ? size.width * 1.05 : "100%",
+              height: size?.height ? size.height * 1.05 : "100%",
             }}
           >
             <Image
               className={cn(className)}
               source={upload}
               style={{
-                width: size.width,
-                height: size.height,
-                borderRadius: size.width / 2,
+                width: size?.width,
+                height: size?.height,
               }}
               contentFit="cover"
             />
@@ -96,10 +95,10 @@ export const useServerImages = ({
         return (
           <Skeleton
             key={index}
+            className={cn(className)}
             style={{
-              width: size.width,
-              height: size.height,
-              borderRadius: size.width / 2,
+              width: size?.width,
+              height: size?.height,
             }}
           />
         );
@@ -115,18 +114,16 @@ export const useServerImages = ({
             key={index}
             className={cn(wrapperClassName, "flex items-center justify-center")}
             style={{
-              width: size.width * 1.05,
-              height: size.height * 1.05,
-              borderRadius: size.width / 2,
+              width: size?.width ? size.width * 1.05 : "100%",
+              height: size?.height ? size.height * 1.05 : "100%",
             }}
           >
             <Image
               source={fallback as ImageSource}
               className={cn(className)}
               style={{
-                width: size.width,
-                height: size.height,
-                borderRadius: size.width / 2,
+                width: size?.width,
+                height: size?.height,
               }}
               contentFit="cover"
             />
@@ -140,9 +137,8 @@ export const useServerImages = ({
             key={index}
             className={cn(className)}
             style={{
-              width: size.width,
-              height: size.height,
-              borderRadius: size.width / 2,
+              width: size?.width,
+              height: size?.height,
             }}
           >
             <AvatarImage />
@@ -161,11 +157,11 @@ export const useServerImages = ({
 
       return (
         <Skeleton
+          className={cn(className)}
           key={index}
           style={{
-            width: size.width,
-            height: size.height,
-            borderRadius: size.width / 2,
+            width: size?.width,
+            height: size?.height,
           }}
         />
       );
@@ -180,5 +176,10 @@ export const useServerImages = ({
     fallbackClassName,
   ]);
 
-  return { uploads, isPending, jsxArray };
+  return {
+    uploads,
+    isPending,
+    jsxArray,
+    refetch: () => queries.forEach((q) => q.refetch()),
+  };
 };

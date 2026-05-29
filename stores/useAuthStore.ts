@@ -1,12 +1,17 @@
 import { setDeepValue } from "@/lib/object";
-import { RequestClientSignInDto, RequestClientSignUpDto } from "@/types";
+import {
+  RequestClientSignInDto,
+  RequestSpecializedClientSignUpDto,
+} from "@/types";
 import { create } from "zustand";
 
 interface AuthData {
   signInRequest: RequestClientSignInDto;
-  signUpRequest: RequestClientSignUpDto;
+  signUpRequest: RequestSpecializedClientSignUpDto;
   utilities: {
     confirmPassword: string;
+    picture?: string;
+    progress: number;
   };
   signUpRequestErrors: Record<string, string[]>;
   signInRequestErrors: Record<string, string[]>;
@@ -30,9 +35,13 @@ const initialState: AuthData = {
     email: "",
     username: "",
     password: "",
+    industries: [],
+    pictureId: undefined,
   },
   utilities: {
     confirmPassword: "",
+    picture: undefined,
+    progress: 0,
   },
   signInRequestErrors: {},
   signUpRequestErrors: {},

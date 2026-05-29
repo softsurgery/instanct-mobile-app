@@ -31,16 +31,24 @@ const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const { colorScheme } = useColorScheme();
-  const { newCount, notifications, resetCount } = useNotifications();
+  const {
+    count: notificationCount,
+    notifications,
+    resetCount: resetNotificationCount,
+  } = useNotifications();
 
   const isDarkColorScheme = colorScheme === "dark";
 
   return (
     <ThemeProvider value={NAV_THEME[colorScheme ?? "light"]}>
-      <SafeAreaProvider>
-        <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <SafeAreaProvider>
           <NotificationContext.Provider
-            value={{ newCount, notifications, resetCount }}
+            value={{
+              count: notificationCount,
+              notifications,
+              resetCount: resetNotificationCount,
+            }}
           >
             <GestureHandlerRootView style={{ flex: 1 }}>
               <View className={cn("flex-1 light dark:dark")}>
@@ -86,8 +94,8 @@ export default function RootLayout() {
               </View>
             </GestureHandlerRootView>
           </NotificationContext.Provider>
-        </QueryClientProvider>
-      </SafeAreaProvider>
+        </SafeAreaProvider>
+      </QueryClientProvider>
     </ThemeProvider>
   );
 }

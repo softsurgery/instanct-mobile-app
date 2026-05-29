@@ -30,6 +30,7 @@ export const UserCarouselEntry = ({
     ids: [user?.pictureId],
     fallbacks: [fallback],
     className: "rounded-full",
+    wrapperClassName: "border-2 border-white bg-white rounded-full shadow-md",
     size: { width: 50, height: 50 },
   });
 
