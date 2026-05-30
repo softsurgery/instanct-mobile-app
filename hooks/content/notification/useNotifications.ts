@@ -3,8 +3,9 @@ import {
   createAndroidChannel,
   requestNotificationPermissions,
 } from "@/lib/notification";
-import { getSocket } from "@/lib/socket";
+import { disconnectSocket, getSocket } from "@/lib/socket";
 import { sanitizeText } from "@/lib/string";
+import { useQueryClient } from "@tanstack/react-query";
 import * as Notifications from "expo-notifications";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -12,6 +13,7 @@ import { Socket } from "socket.io-client";
 import { ResponseNotificationDto } from "~/types/notifications";
 
 export function useNotifications() {
+  const queryClient = useQueryClient();
   const { t } = useTranslation("notifications");
   const [notifications, setNotifications] = React.useState<
     ResponseNotificationDto[]
@@ -37,6 +39,7 @@ export function useNotifications() {
     socket.on("notification", async (notification: ResponseNotificationDto) => {
       setNotifications((prev) => [...prev, notification]);
       setCount((prev) => prev + 1);
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
       await Notifications.scheduleNotificationAsync({
         content: {
           title: sanitizeText(
@@ -55,10 +58,10 @@ export function useNotifications() {
     });
 
     return () => {
-      socket.disconnect();
+      disconnectSocket("notifications");
       socketRef.current = null;
     };
-  }, [accessToken]);
+  }, [accessToken, queryClient]);
 
   const resetCount = React.useCallback(() => setCount(0), []);
 
