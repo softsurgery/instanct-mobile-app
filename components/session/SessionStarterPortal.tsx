@@ -129,14 +129,14 @@ export const SessionStarterPortal = ({
         )}
       </StableKeyboardAwareScrollView>
       {!isKeyboardVisible && (
-        <View className="absolute bottom-0 left-0 right-0 border-t border-border bg-card p-8 pt-4">
+        <View className="border-t border-border bg-card p-8 pt-4">
           <Button
-            size="sm"
-            className="rounded-full"
+            size="lg"
+            className="rounded-xl"
             onPress={() => handleSessionStart()}
             disabled={isStartingSessionPending}
           >
-            <Text>Sélectionner la session</Text>
+            <Text className="text-md font-bold">Start Session</Text>
           </Button>
         </View>
       )}

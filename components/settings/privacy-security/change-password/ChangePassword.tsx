@@ -61,7 +61,7 @@ export const ChangePassword = ({ className }: ChangePasswordProps) => {
       </StableKeyboardAwareScrollView>
 
       {!isKeyboardVisible && (
-        <View className="absolute bottom-0 left-0 right-0 border-t border-border bg-card p-8 pt-4 gap-4">
+        <View className="border-t border-border bg-card p-8 pt-4 gap-4">
           <View className="flex flex-row justify-between gap-4">
             <Button
               size="sm"

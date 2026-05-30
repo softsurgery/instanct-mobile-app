@@ -232,16 +232,24 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
         </View>
       </ScrollView>
 
-      <View className="py-4 border-t-2 border-border">
-        <Button
-          size="sm"
-          className="mx-6 mb-4 rounded-full"
-          onPress={handleMapConfigurationUpdate}
-          disabled={isUpdateMapConfigurationPending}
-        >
-          <Icon as={Save} size={16} />
-          <Text>Update Configuration</Text>
-        </Button>
+      <View className="border-t border-border bg-card p-8 pt-4 gap-4">
+        <View className="flex flex-col justify-between gap-2">
+          <Button
+            size="lg"
+            variant="default"
+            className="rounded-xl"
+            onPress={() => {
+              handleMapConfigurationUpdate();
+            }}
+            disabled={isUpdateMapConfigurationPending}
+          >
+            <Text className="text-md font-bold">
+              {isUpdateMapConfigurationPending
+                ? "Updating..."
+                : "Update Configuration"}
+            </Text>
+          </Button>
+        </View>
       </View>
     </StableSafeAreaView>
   );
