@@ -17,7 +17,6 @@ import {
 } from "@/types";
 import { useFocusEffect, useNavigation } from "expo-router";
 import { Image, ImageSourcePropType, Pressable, View } from "react-native";
-import { Badge } from "../ui/badge";
 import { ProfileStat } from "./ProfileStat";
 import { useUserIndustries } from "@/hooks/content/users/useUserIndustries";
 import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
@@ -40,8 +39,10 @@ import { Pencil } from "lucide-react-native";
 import { BaseProfileSkeleton } from "./BaseProfileSkeleton";
 import { ExperienceInstance } from "./experience/ExperienceInstance";
 import { EducationInstance } from "./education/EducationInstance";
-import { hslToHex } from "@/lib/theme";
+import { hslToHex, THEME } from "@/lib/theme";
 import { useColorPalette } from "@/hooks/useColorPalette";
+
+const PRIMARY = hslToHex(THEME.light.primary);
 
 interface ProfileSection<T = unknown> {
   key: string;
@@ -229,7 +230,7 @@ export const InspectBaseProfile = ({
         return uri ? { uri } : undefined;
       }
       default:
-        return require("~/assets/images/partial-react-logo.png");
+        return undefined;
     }
   }, [coverSource]);
 
@@ -278,7 +279,7 @@ export const InspectBaseProfile = ({
         data: experiences as unknown[],
         editable: currentUser?.id === user?.id,
         renderItem: (experience: ResponseExperienceDto) => (
-          <ExperienceInstance className="mb-4" experience={experience} />
+          <ExperienceInstance experience={experience} />
         ),
       },
       {
@@ -287,7 +288,7 @@ export const InspectBaseProfile = ({
         data: educations as unknown[],
         editable: currentUser?.id === user?.id,
         renderItem: (education: ResponseEducationDto) => (
-          <EducationInstance className="mb-4" education={education} />
+          <EducationInstance education={education} />
         ),
       },
       {
@@ -298,9 +299,20 @@ export const InspectBaseProfile = ({
         ) as unknown[],
         editable: currentUser?.id === user?.id,
         renderItem: (industry: ResponseRefParamDto) => (
-          <Badge variant={"outline"} className={cn("px-2 py-1 rounded-full")}>
-            <Text className="text-xs">{industry.label}</Text>
-          </Badge>
+          <View
+            className="rounded-full border px-3 py-1.5"
+            style={{
+              backgroundColor: `${PRIMARY}14`,
+              borderColor: `${PRIMARY}33`,
+            }}
+          >
+            <Text
+              className="text-[13px] font-semibold"
+              style={{ color: PRIMARY }}
+            >
+              {industry.label}
+            </Text>
+          </View>
         ),
       },
     ],
@@ -343,18 +355,19 @@ export const InspectBaseProfile = ({
             );
           }}
         >
-          {coverImageSource ? (
+          {/* Branded backdrop so empty covers feel intentional */}
+          {coverPreviewSource ? (
             <Image
-              source={coverImageSource}
-              className="w-full h-full opacity-70"
+              source={coverPreviewSource}
+              className="w-full h-full"
               resizeMode="cover"
             />
-          ) : (
-            <View className="flex flex-row gap-2 items-center pt-12">
+          ) : currentUser?.id === id ? (
+            <View className="flex flex-row gap-2 items-center">
               <Icon as={Pencil} color="white" />
-              <Text className="text-white">Add Cover Photo</Text>
+              <Text className="font-medium text-white">Add Cover Photo</Text>
             </View>
-          )}
+          ) : null}
         </PhotoPreview>
         {(isCoverUploadPending || isUpdateCoverPending) && (
           <View className="absolute inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -362,30 +375,30 @@ export const InspectBaseProfile = ({
           </View>
         )}
         {/* Header */}
-        <View className="flex-row items-center px-5 -mt-12">
-          {isProfilePicturePending ? (
-            <Skeleton className="w-[100px] h-[100px] rounded-full" />
-          ) : (
-            <PhotoPreview source={profilePictureSource}>
-              {profilePictures[0]}
-            </PhotoPreview>
-          )}
-          <View className="flex-1 mt-16">
-            <View className="flex-row items-center justify-between mx-2">
-              <View>
-                <Text className="text-xl font-semibold text-foreground">
-                  {identity}
-                </Text>
-                {id && (
-                  <Text className="text-sm text-muted-foreground">
-                    @{user?.username}
-                  </Text>
-                )}
+        <View className="-mt-12 px-5">
+          <View className="flex-row items-end justify-between">
+            {isProfilePicturePending ? (
+              <Skeleton className="h-[100px] w-[100px] rounded-full" />
+            ) : (
+              <View className="rounded-full border-4 border-background bg-background">
+                <PhotoPreview source={profilePictureSource}>
+                  {profilePictures[0]}
+                </PhotoPreview>
               </View>
-              {currentUser?.id === id && (
-                <ProfileStat className="flex flex-row gap-4" />
-              )}
-            </View>
+            )}
+            {currentUser?.id === id && <ProfileStat className="mb-4" />}
+          </View>
+
+          {/* Identity */}
+          <View className="mt-3">
+            <Text className="text-2xl font-bold text-foreground">
+              {identity}
+            </Text>
+            {id && (
+              <Text className="text-sm text-muted-foreground">
+                @{user?.username}
+              </Text>
+            )}
           </View>
         </View>
       </View>

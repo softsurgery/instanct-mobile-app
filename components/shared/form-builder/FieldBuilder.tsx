@@ -72,7 +72,6 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           onChangeText={(text) => field?.props?.onChangeText?.(text)}
           onBlur={() => field?.props?.onBlur?.()}
           className={cn(field.className, field?.error && "border-red-500")}
-          style={field?.error ? { borderColor: "red" } : {}}
           {...field.props?.other}
         />
       );

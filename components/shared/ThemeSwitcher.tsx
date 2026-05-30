@@ -21,9 +21,10 @@ export const ThemeSwitcher = ({ classNames }: ThemeSwitcherProps) => {
       description="Choose your preferred theme"
       placeholder="Select a theme"
       value={colorScheme}
-      onSelect={() => {
+      onSelect={async (value) => {
+        if (value === colorScheme) return;
         toggleTheme();
-        setAndroidNavigationBar(colorScheme === "dark" ? "light" : "dark");
+        await setAndroidNavigationBar(colorScheme === "dark" ? "light" : "dark");
         toggleColorScheme();
       }}
       options={[

@@ -19,6 +19,7 @@ export const CareerTab = ({
 }: CarreerTabProps) => (
   <ScrollView
     className={cn("flex-1 bg-background", className)}
+    contentContainerStyle={{ paddingTop: 20, paddingBottom: 32 }}
     refreshControl={
       <RefreshControl refreshing={!!refreshing} onRefresh={onRefresh} />
     }

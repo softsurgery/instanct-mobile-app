@@ -53,7 +53,6 @@ export const CreateExperience = ({ className }: CreateExperienceProps) => {
   const handleCreateSubmit = () => {
     const data = userStore.createExperienceDto;
     const result = createExperienceSchema.safeParse(data);
-    console.log(result.error?.flatten().fieldErrors);
     if (!result.success) {
       userStore.set("experienceErrors", result.error.flatten().fieldErrors);
     } else {

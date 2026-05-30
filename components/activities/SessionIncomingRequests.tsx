@@ -77,7 +77,7 @@ export const SessionIncomingRequests = ({
               onScroll={handleScroll}
               renderItem={({ item }) => (
                 <View className="mb-4">
-                  <Text className="px-4 mb-2 text-sm font-semibold text-muted-foreground">
+                  <Text className="mb-2.5 px-4 text-xs font-bold uppercase tracking-wide text-muted-foreground">
                     {item.title}
                   </Text>
                   {item.data.map((request) => (

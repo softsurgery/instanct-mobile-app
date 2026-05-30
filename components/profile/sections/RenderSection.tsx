@@ -1,11 +1,26 @@
 import { StablePressable } from "@/components/shared/StablePressable";
 import { Icon } from "@/components/ui/icon";
-import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
+import { hslToHex, THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import { router } from "expo-router";
-import { Pen, Plus } from "lucide-react-native";
+import {
+  Briefcase,
+  GraduationCap,
+  LucideIcon,
+  Pen,
+  Plus,
+  Tag,
+} from "lucide-react-native";
 import { View } from "react-native";
+
+const PRIMARY = hslToHex(THEME.light.primary);
+
+const SECTION_ICONS: Record<string, LucideIcon> = {
+  experience: Briefcase,
+  education: GraduationCap,
+  industries: Tag,
+};
 
 export interface ProfileSection<T = unknown> {
   key: string;
@@ -18,23 +33,42 @@ export interface ProfileSection<T = unknown> {
 
 export const RenderSection = (section: ProfileSection) => {
   const isBadge = section.key === "industries";
+  const count = section.data?.length ?? 0;
+  const SectionIcon = SECTION_ICONS[section.key] ?? Briefcase;
 
   return (
-    <View key={section.key}>
-      <View className="flex flex-row items-center justify-between">
-        <View className="p-4">
-          <Text variant="h4">{section.title}</Text>
+    <View key={section.key} className="px-4">
+      {/* Section header */}
+      <View className="flex-row items-center justify-between">
+        <View className="flex-row items-center gap-2">
+          <Icon as={SectionIcon} size={18} color={PRIMARY} />
+          <Text className="text-base font-bold text-foreground">
+            {section.title}
+          </Text>
+          {count > 0 && (
+            <View
+              className="min-w-5 items-center rounded-full px-1.5 py-0.5"
+              style={{ backgroundColor: `${PRIMARY}14` }}
+            >
+              <Text
+                className="text-[11px] font-bold"
+                style={{ color: PRIMARY }}
+              >
+                {count}
+              </Text>
+            </View>
+          )}
         </View>
 
         <View
           className={cn(
-            "flex flex-row gap-1 items-center px-2",
+            "flex-row items-center gap-1.5",
             !section.editable && "hidden",
           )}
         >
           {!isBadge && (
             <StablePressable
-              className="p-2"
+              className="h-9 w-9 items-center justify-center rounded-full border border-border"
               onPress={() => {
                 switch (section.key) {
                   case "experience":
@@ -45,14 +79,14 @@ export const RenderSection = (section: ProfileSection) => {
                     break;
                 }
               }}
-              onPressClassname="bg-primary/25 rounded-full"
+              onPressClassname="bg-primary/15"
             >
-              <Icon as={Plus} size={20} className="text-muted-foreground" />
+              <Icon as={Plus} size={18} color={PRIMARY} />
             </StablePressable>
           )}
 
           <StablePressable
-            className="p-2"
+            className="h-9 w-9 items-center justify-center rounded-full border border-border"
             onPress={() => {
               switch (section.key) {
                 case "experience":
@@ -69,35 +103,34 @@ export const RenderSection = (section: ProfileSection) => {
                   break;
               }
             }}
-            onPressClassname="bg-primary/25 rounded-full"
+            onPressClassname="bg-primary/15"
           >
-            <Icon as={Pen} size={18} className="text-muted-foreground" />
+            <Icon as={Pen} size={16} color={PRIMARY} />
           </StablePressable>
         </View>
       </View>
 
-      <Separator />
-
-      <View className="p-4">
-        {section.data?.length === 0 ? (
-          <View key={section.key}>
-            <Text className="text-sm text-muted-foreground italic text-center my-4">
-              No {section.title} added yet
+      {/* Section content */}
+      <View className="pt-3">
+        {count === 0 ? (
+          <View className="items-center rounded-2xl border border-dashed border-border py-6">
+            <Text className="text-sm italic text-muted-foreground">
+              No {section.title.toLowerCase()} added yet
             </Text>
           </View>
         ) : isBadge ? (
           <View className="flex-row flex-wrap gap-2">
-            {Array.isArray(section.data) &&
-              section.data.map((sectionItem, idx) => (
-                <View key={idx}>{section.renderItem(sectionItem)}</View>
-              ))}
+            {section.data.map((sectionItem, idx) => (
+              <View key={idx}>{section.renderItem(sectionItem)}</View>
+            ))}
           </View>
         ) : (
-          <View className="flex flex-col gap-4">
-            {Array.isArray(section.data) &&
-              section.data.map((sectionItem, idx) => (
-                <View key={idx}>{section.renderItem(sectionItem)}</View>
-              ))}
+          <View>
+            {section.data.map((sectionItem, idx) => (
+              <View key={idx} className="my-4">
+                {section.renderItem(sectionItem)}
+              </View>
+            ))}
           </View>
         )}
       </View>

@@ -21,11 +21,12 @@ export const InterestsTab = ({
 }: InterestsTabProps) => (
   <ScrollView
     className={cn("flex-1 bg-background", className)}
+    contentContainerStyle={{ paddingTop: 20, paddingBottom: 32 }}
     refreshControl={
       <RefreshControl refreshing={!!refreshing} onRefresh={onRefresh} />
     }
   >
-    <View className="flex flex-col gap-4">
+    <View className="flex flex-col gap-6">
       {profileSections
         .filter((s) => s.key === "industries")
         .map((section) => renderSection({ ...section, userId }))}

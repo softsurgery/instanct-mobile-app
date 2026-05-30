@@ -1,16 +1,21 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
+import { hslToHex, THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import { ResponseConversationDto, ResponseUserDto } from "@/types";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { MessageCircle, Bookmark, BellRing } from "lucide-react-native";
-import { Dimensions, Pressable, View } from "react-native";
+import {
+  MessageCircle,
+  Bookmark,
+  Briefcase,
+  Quote,
+  UserPlus,
+} from "lucide-react-native";
+import { Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { Icon } from "../ui/icon";
 import { Text } from "../ui/text";
 import { ImageBackground } from "expo-image";
-import { Badge } from "../ui/badge";
 import { useStartConversation } from "@/hooks/content/chat/useStartConversation";
 import { useBookmarkActions } from "@/hooks/content/users/useBookmarkActions";
 import { useServerImages } from "@/hooks/content/useServerImages";
@@ -18,12 +23,19 @@ import StableScrollView from "../shared/StableScrollView";
 
 const { width, height: screenHeight } = Dimensions.get("window");
 
+const CARD_HEIGHT = screenHeight * 0.8;
+const HERO_HEIGHT = CARD_HEIGHT * 0.62;
+
+const PRIMARY = hslToHex(THEME.light.primary);
+const PRIMARY_DARK = "#4f3a99";
+
 interface UserCardProps {
   className?: string;
   user: ResponseUserDto;
 }
 
 export const UserCard = ({ user, className }: UserCardProps) => {
+  const router = useRouter();
   const { isBookmarked, toggleBookmark } = useBookmarkActions({
     bookmarkId: user.id,
   });
@@ -31,18 +43,15 @@ export const UserCard = ({ user, className }: UserCardProps) => {
   const identity = React.useMemo(() => identifyUser(user), [user]);
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
 
-  const { jsxArray: profilePictures, uploads: uploadedProfilePicture } =
-    useServerImages({
-      ids: [user?.pictureId],
-      fallbacks: [fallback],
-      className: "rounded-full",
-      wrapperClassName: "border-4 border-white bg-white rounded-full shadow-lg",
-      size: { width: 100, height: 100 },
-    });
+  const { uploads: uploadedProfilePicture } = useServerImages({
+    ids: [user?.pictureId],
+    fallbacks: [fallback],
+    size: { width: 100, height: 100 },
+  });
 
-  const router = useRouter();
+  const photoUri = uploadedProfilePicture[0] as string | undefined;
 
-  const { startConversation, isStartingConversation } = useStartConversation({
+  const { startConversation } = useStartConversation({
     onSuccess: (conversation: ResponseConversationDto) => {
       router.push({
         pathname: "/main/chat/conversation",
@@ -51,120 +60,161 @@ export const UserCard = ({ user, className }: UserCardProps) => {
     },
   });
 
+  const openProfile = () =>
+    router.push({
+      pathname: "/main/profile/inspect-profile",
+      params: { id: user?.id },
+    });
+
+  const heroOverlay = (
+    <View
+      className="flex-1 justify-end px-5"
+      style={{ paddingBottom: 84 }}
+      pointerEvents="box-none"
+    >
+      <Pressable onPress={openProfile} className="gap-1">
+        <Text className="text-3xl font-extrabold text-white" numberOfLines={1}>
+          {identity}
+        </Text>
+        <Text className="text-sm font-semibold text-white/70">
+          @{user.username}
+        </Text>
+      </Pressable>
+    </View>
+  );
+
   return (
     <View
-      className={cn("flex-1 h-full", className)}
-      style={{ width, height: screenHeight * 0.8 }}
+      className={cn("bg-background", className)}
+      style={{ width, height: CARD_HEIGHT }}
     >
-      <ImageBackground
-        source={{ uri: uploadedProfilePicture[0] as string }}
-        style={{ height: screenHeight * 0.5, width: "100%" }}
-        blurRadius={10}
-      >
-        <LinearGradient
-          colors={["rgba(139, 92, 246, 0.7)", "rgba(59, 130, 246, 0.7)"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={{ flex: 1 }}
-        >
-          <View className="flex flex-col items-center justify-center mt-auto px-5 gap-3 mb-4">
-            <Pressable
-              className="p-1 rounded-full"
-              onPress={() =>
-                router.push({
-                  pathname: "/main/profile/inspect-profile",
-                  params: { id: user?.id },
-                })
-              }
+      {/* Hero — the person */}
+      <View style={{ height: HERO_HEIGHT, width: "100%" }}>
+        {photoUri ? (
+          <ImageBackground
+            source={{ uri: photoUri }}
+            style={{ flex: 1 }}
+            contentFit="cover"
+          >
+            <LinearGradient
+              colors={["rgba(0,0,0,0.45)", "transparent"]}
+              style={[styles.scrim, { height: 120 }]}
+            />
+            <LinearGradient
+              colors={["transparent", "rgba(0,0,0,0.25)", "rgba(0,0,0,0.85)"]}
+              style={StyleSheet.absoluteFill}
+            />
+            {heroOverlay}
+          </ImageBackground>
+        ) : (
+          <LinearGradient
+            colors={[PRIMARY, PRIMARY_DARK]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{ flex: 1 }}
+          >
+            <View
+              style={StyleSheet.absoluteFill}
+              className="items-center justify-center"
             >
-              {profilePictures[0]}
-            </Pressable>
-
-            <View className="flex flex-col items-center">
-              <Text className="text-2xl font-extrabold text-center text-white">
-                {identity}
+              <Text className="text-[120px] font-black text-white/15">
+                {fallback}
               </Text>
-              <Text className="text-md font-bold text-white">
-                @{user.username}
-              </Text>
-              <Text className="text-md font-bold text-white">{user.email}</Text>
             </View>
-          </View>
+            <LinearGradient
+              colors={["transparent", "rgba(0,0,0,0.35)"]}
+              style={StyleSheet.absoluteFill}
+            />
+            {heroOverlay}
+          </LinearGradient>
+        )}
+      </View>
 
-          {/* Action Buttons */}
-          <View className="flex flex-row gap-8 justify-center items-center py-4 px-4">
-            <Button
-              size={"sm"}
-              className={cn(
-                `rounded-full h-12 w-12 transition-all duration-200`,
-                isBookmarked
-                  ? "bg-destructive shadow-lg shadow-red-500/40"
-                  : "bg-violet-600 dark:bg-violet-500 active:bg-violet-700 dark:active:bg-violet-600",
-              )}
-              onPress={toggleBookmark}
-            >
-              <Icon
-                as={Bookmark}
-                size={26}
-                className="transition-all duration-200"
-                fill={isBookmarked ? "#fff" : "transparent"}
-                color={"white"}
-              />
-            </Button>
-            <Button
-              size={"sm"}
-              className="rounded-full h-16 w-16 bg-teal-600 dark:bg-teal-500 active:bg-teal-700 dark:active:bg-teal-600"
-              onPress={() =>
-                router.push({
-                  pathname: "/main/request/new-request",
-                  params: { id: user?.id },
-                })
-              }
-            >
-              <Icon
-                as={BellRing}
-                size={30}
-                className="text-white"
-                color={"white"}
-              />
-            </Button>
-            <Button
-              size={"sm"}
-              className="rounded-full h-12 w-12 bg-blue-600 dark:bg-blue-500 active:bg-blue-700 dark:active:bg-blue-600"
-              onPress={() => {
-                startConversation({ users: [user.id] });
-              }}
-            >
-              <Icon
-                as={MessageCircle}
-                size={26}
-                className="text-white"
-                color={"white"}
-              />
-            </Button>
-          </View>
-        </LinearGradient>
-      </ImageBackground>
-      {/* Content Section */}
-      <View className="flex-1 px-4 h-full">
-        <StableScrollView>
-          {user.industries && user.industries.length > 0 ? (
-            <View>
-              <Text className="font-bold py-2 text-lg">Industries</Text>
-              <View className="flex flex-row flex-wrap items-center gap-x-2">
-                {user.industries?.map((ind) => (
-                  <Badge key={ind.id} className="rounded-full mt-2 py-1 px-3">
-                    <Text className="text-md font-semibold">{ind.label}</Text>
-                  </Badge>
+      {/* Content sheet — overlaps the hero for depth */}
+      <View className="-mt-6 flex-1 rounded-t-3xl bg-background">
+        {/* Floating action bar straddling the seam */}
+        <View
+          className="flex-row items-center justify-center gap-5"
+          style={{ marginTop: -32 }}
+        >
+          {/* Bookmark */}
+          <Pressable
+            onPress={toggleBookmark}
+            className={cn(
+              "h-14 w-14 items-center justify-center rounded-full border shadow-lg shadow-black/20",
+              isBookmarked
+                ? "border-transparent bg-primary"
+                : "border-border bg-card",
+            )}
+          >
+            <Icon
+              as={Bookmark}
+              size={24}
+              color={isBookmarked ? "#ffffff" : PRIMARY}
+              fill={isBookmarked ? "#ffffff" : "transparent"}
+            />
+          </Pressable>
+
+          {/* Send request — the headline action */}
+          <Pressable
+            onPress={() =>
+              router.push({
+                pathname: "/main/request/new-request",
+                params: { id: user?.id },
+              })
+            }
+            className="h-[72px] w-[72px] items-center justify-center rounded-full bg-primary shadow-xl shadow-primary/40 active:opacity-90"
+            style={{ shadowColor: PRIMARY }}
+          >
+            <Icon as={UserPlus} size={32} color="#ffffff" />
+          </Pressable>
+
+          {/* Message */}
+          <Pressable
+            onPress={() => startConversation({ users: [user.id] })}
+            className="h-14 w-14 items-center justify-center rounded-full border border-border bg-card shadow-lg shadow-black/20"
+          >
+            <Icon as={MessageCircle} size={24} color={PRIMARY} />
+          </Pressable>
+        </View>
+
+        <StableScrollView
+          className="flex-1 px-5"
+          contentContainerStyle={{ paddingTop: 20, paddingBottom: 32 }}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Industries */}
+          {user.industries && user.industries.length > 0 && (
+            <View className="mb-6">
+              <View className="mb-2.5 flex-row items-center gap-2">
+                <Icon as={Briefcase} size={16} color={PRIMARY} />
+                <Text className="text-base font-bold text-foreground">
+                  Industries
+                </Text>
+              </View>
+              <View className="flex-row flex-wrap gap-2">
+                {user.industries.map((ind) => (
+                  <View
+                    key={ind.id}
+                    className="rounded-full bg-muted px-3 py-1.5"
+                  >
+                    <Text className="text-[13px] font-semibold text-foreground">
+                      {ind.label}
+                    </Text>
+                  </View>
                 ))}
               </View>
             </View>
-          ) : null}
+          )}
+
           {/* Bio */}
           <View>
-            <Text className="font-bold py-2 text-lg">Bio</Text>
-            <Text className="text-md text-muted-foreground">
-              {user.bio || "No bio available."}
+            <View className="mb-2.5 flex-row items-center gap-2">
+              <Icon as={Quote} size={16} color={PRIMARY} />
+              <Text className="text-base font-bold text-foreground">About</Text>
+            </View>
+            <Text className="text-[15px] leading-6 text-muted-foreground">
+              {user.bio?.trim() || "No bio available."}
             </Text>
           </View>
         </StableScrollView>
@@ -172,3 +222,12 @@ export const UserCard = ({ user, className }: UserCardProps) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  scrim: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+  },
+});

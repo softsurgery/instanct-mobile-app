@@ -120,15 +120,14 @@ export const ActivitiesDetailContent = ({
                   paddingBottom: 24,
                 }}
                 renderItem={({ item }) => (
-                  <View className="mb-6">
-                    <Text className="px-4 mb-2 text-sm font-semibold text-muted-foreground">
+                  <View className="mb-5">
+                    <Text className="mb-2.5 px-4 text-xs font-bold uppercase tracking-wide text-muted-foreground">
                       {item.title}
                     </Text>
 
                     {item.data.map((bookmark) => (
                       <BookmarkCard
                         key={bookmark.id}
-                        className="px-4 py-1"
                         user={bookmark.bookmark}
                       />
                     ))}
