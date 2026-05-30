@@ -6,23 +6,25 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import {
   ArrowLeft,
-  Check,
+  Calendar,
+  CheckCircle2,
   CircleArrowDown,
   CircleHelp,
   Clock3,
   MapPin,
-  X,
+  XCircle,
 } from "lucide-react-native";
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 import { Loader } from "../shared/Loader";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { identifyUser } from "@/lib/user";
 import { useIdentifiedUser } from "@/hooks/content/users/useIdentifiedUser";
 import { toDateOnly, toTimeOnly } from "@/lib/date";
+import { RequestEvent, RequestStatus } from "@/types";
 
 interface RequestProps {
   id: string;
@@ -30,10 +32,50 @@ interface RequestProps {
 }
 
 export const Request = ({ id, className }: RequestProps) => {
+  const queryClient = useQueryClient();
+
   const { data: request, isPending: isRequestPending } = useQuery({
     queryKey: ["request", id],
     queryFn: () => api.request.findOneById(id, ["session.user"].join(",")),
   });
+
+  const { mutate: updateStatus, isPending: isUpdating } = useMutation({
+    mutationFn: (event: RequestEvent) =>
+      api.request.updateStatus(Number(id), event),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["request", id] });
+      queryClient.invalidateQueries({ queryKey: ["requests"] });
+    },
+    onError: () => {
+      Alert.alert("Erreur", "Une erreur est survenue. Veuillez réessayer.");
+    },
+  });
+
+  const handleAccept = () => {
+    Alert.alert(
+      "Accepter la demande",
+      "Êtes-vous sûr de vouloir accepter cette demande de réunion ?",
+      [
+        { text: "Annuler", style: "cancel" },
+        { text: "Accepter", onPress: () => updateStatus(RequestEvent.Accept) },
+      ],
+    );
+  };
+
+  const handleReject = () => {
+    Alert.alert(
+      "Refuser la demande",
+      "Êtes-vous sûr de vouloir refuser cette demande de réunion ?",
+      [
+        { text: "Annuler", style: "cancel" },
+        {
+          text: "Refuser",
+          style: "destructive",
+          onPress: () => updateStatus(RequestEvent.Reject),
+        },
+      ],
+    );
+  };
 
   const { user, isUserPending } = useIdentifiedUser({
     id: request?.session?.user?.id!,
@@ -104,20 +146,45 @@ export const Request = ({ id, className }: RequestProps) => {
                   Statut
                 </Text>
                 <View className="mt-4 gap-3">
-                  <View className="flex-row items-center gap-3">
-                    <Icon as={CircleHelp} size={24} />
-                    <Text className="text-md text-foreground">
-                      En attente d&apos;une réponse
-                    </Text>
-                  </View>
-                  <View className="flex-row items-center gap-3">
-                    <Icon as={CircleArrowDown} size={24} />
-                    <Text className="text-md text-foreground">
-                      {user
-                        ? `Réunion demandée par ${identifyUser(user)}`
-                        : "Réunion demandée"}
-                    </Text>
-                  </View>
+                  {request?.status === RequestStatus.Accepted && (
+                    <View className="flex-row items-center gap-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 p-3">
+                      <Icon
+                        as={CheckCircle2}
+                        size={24}
+                        className="text-emerald-600"
+                      />
+                      <Text className="text-md text-emerald-700 dark:text-emerald-400 font-medium">
+                        Demande acceptée
+                      </Text>
+                    </View>
+                  )}
+                  {request?.status === RequestStatus.Rejected && (
+                    <View className="flex-row items-center gap-3 rounded-xl bg-red-50 dark:bg-red-950/30 p-3">
+                      <Icon as={XCircle} size={24} className="text-red-600" />
+                      <Text className="text-md text-red-700 dark:text-red-400 font-medium">
+                        Demande refusée
+                      </Text>
+                    </View>
+                  )}
+                  {(!request?.status ||
+                    request?.status === RequestStatus.Sent) && (
+                    <>
+                      <View className="flex-row items-center gap-3">
+                        <Icon as={CircleHelp} size={24} />
+                        <Text className="text-md text-foreground">
+                          En attente d&apos;une réponse
+                        </Text>
+                      </View>
+                      <View className="flex-row items-center gap-3">
+                        <Icon as={CircleArrowDown} size={24} />
+                        <Text className="text-md text-foreground">
+                          {user
+                            ? `Réunion demandée par ${identifyUser(user)}`
+                            : "Réunion demandée"}
+                        </Text>
+                      </View>
+                    </>
+                  )}
                 </View>
               </View>
               {/* description */}
@@ -134,10 +201,15 @@ export const Request = ({ id, className }: RequestProps) => {
                 <Text className="text-lg font-semibold text-foreground">
                   Heure et lieu
                 </Text>
-                <View className="mt-4 gap-3">
+                <View className="flex flex-row justify-between mt-4">
                   <View className="flex-row items-center gap-3">
                     <Icon as={Clock3} size={24} />
                     <View className="flex-1">
+                      {!request?.time && (
+                        <Text className="text-md text-foreground opacity-50">
+                          Non spécifié
+                        </Text>
+                      )}
                       {request?.time && (
                         <>
                           <Text className="text-md text-foreground">
@@ -147,11 +219,6 @@ export const Request = ({ id, className }: RequestProps) => {
                             {toTimeOnly(new Date(request.time))}
                           </Text>
                         </>
-                      )}
-                      {!request?.time && (
-                        <Text className="text-md text-foreground opacity-50">
-                          Non spécifié
-                        </Text>
                       )}
                     </View>
                   </View>
@@ -164,34 +231,61 @@ export const Request = ({ id, className }: RequestProps) => {
                 </View>
               </View>
 
-              <View className="rounded-2xl border border-border bg-muted/30 p-5">
-                <Text className="text-sm font-semibold text-foreground">
-                  Acceptez cette réunion pour l&apos;ajouter à votre programme.
-                </Text>
-
-                <View className="mt-2 gap-2">
-                  <Button
-                    className="bg-emerald-600"
-                    size={"sm"}
-                    onPress={() => {}}
-                  >
-                    <Icon as={Check} size={20} color="white" />
-                    <Text className="text-sm text-white">Accepter</Text>
-                  </Button>
-                  <Button
-                    size={"sm"}
-                    variant={"destructive"}
-                    onPress={() => {}}
-                  >
-                    <Icon as={X} size={20} color="white" />
-                    <Text className="text-sm text-white">Refuser</Text>
-                  </Button>
+              {request?.status === RequestStatus.Accepted && (
+                <View className="rounded-2xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/20 p-5">
+                  <View className="flex-row items-center gap-2">
+                    <Icon
+                      as={Calendar}
+                      size={20}
+                      className="text-emerald-600"
+                    />
+                    <Text className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">
+                      Cette réunion a été ajoutée à votre programme.
+                    </Text>
+                  </View>
                 </View>
-              </View>
+              )}
+
+              {request?.status === RequestStatus.Rejected && (
+                <View className="rounded-2xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/20 p-5">
+                  <Text className="text-sm font-semibold text-red-700 dark:text-red-400">
+                    Vous avez refusé cette demande de réunion.
+                  </Text>
+                </View>
+              )}
+
+              <Text className="text-sm text-white">{request?.status}</Text>
             </View>
           )}
         </StableScrollView>
       </View>
+      {!isPending && (
+        <View className="border-t border-border bg-card p-8 pt-4 gap-4">
+          <View className="flex flex-col justify-between gap-2">
+            {(!request?.status || request?.status === RequestStatus.Sent) && (
+              <>
+                <Button
+                  size="lg"
+                  className="rounded-xl"
+                  onPress={handleAccept}
+                  disabled={isUpdating}
+                >
+                  <Text className="text-md font-bold">Accepter</Text>
+                </Button>
+                <Button
+                  size="lg"
+                  className="rounded-xl"
+                  variant="destructive"
+                  onPress={handleReject}
+                  disabled={isUpdating}
+                >
+                  <Text className="text-md font-bold">Refuser</Text>
+                </Button>
+              </>
+            )}
+          </View>
+        </View>
+      )}
     </StableSafeAreaView>
   );
 };

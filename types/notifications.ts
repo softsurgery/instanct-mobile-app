@@ -5,7 +5,8 @@ export enum NotificationType {
   TEST = "TEST",
   NEW_SIGNIN = "NEW_SIGNIN",
   REQUEST_RECEIVED = "REQUEST_RECEIVED",
-  // NEW_MESSAGE = "NEW_MESSAGE",
+  REQUEST_ACCEPTED = "REQUEST_ACCEPTED",
+  REQUEST_REJECTED = "REQUEST_REJECTED",
 }
 
 export interface ResponseNotificationDto extends DatabaseEntity {
