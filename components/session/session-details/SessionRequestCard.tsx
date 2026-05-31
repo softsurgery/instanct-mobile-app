@@ -1,21 +1,12 @@
 import { Text } from "@/components/ui/text";
-import { Icon } from "@/components/ui/icon";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { identifyUserAvatar, identifyUser } from "@/lib/user";
-import { hslToHex, THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
-import { ResponseRequestDto } from "@/types";
-import {
-  ArrowDownLeft,
-  ArrowUpRight,
-  Clock,
-  MapPin,
-  MessageCircle,
-  Redo,
-} from "lucide-react-native";
-import { useColorScheme } from "nativewind";
-import { View } from "react-native";
-import { timeAgo, toTimeOnly, toLongDateString } from "@/lib/date";
+import { RequestStatus, ResponseRequestDto } from "@/types";
+import { Pressable, View } from "react-native";
+import { timeAgo } from "@/lib/date";
+import { Separator } from "@/components/ui/separator";
+import { router } from "expo-router";
 
 interface SessionRequestCardProps {
   className?: string;
@@ -23,17 +14,11 @@ interface SessionRequestCardProps {
   isIncoming?: boolean;
 }
 
-const PRIMARY = hslToHex(THEME.light.primary);
-const BLUE = "#3b82f6";
-
 export const SessionRequestCard: React.FC<SessionRequestCardProps> = ({
   className,
   request,
   isIncoming = true,
 }) => {
-  const { colorScheme } = useColorScheme();
-  const isDark = colorScheme === "dark";
-
   const sender = request?.session?.user;
   const receiver = request?.receivers?.[0];
 
@@ -47,29 +32,28 @@ export const SessionRequestCard: React.FC<SessionRequestCardProps> = ({
     size: { width: 78, height: 78 },
   });
 
-  const requestTime = request?.time ? new Date(request.time) : null;
   const createdAt = request?.createdAt ? new Date(request.createdAt) : null;
 
-  const accent = isIncoming ? PRIMARY : BLUE;
-  const mutedFg = hslToHex(
-    isDark ? THEME.dark.mutedForeground : THEME.light.mutedForeground,
-  );
-  const DirIcon = isIncoming ? ArrowDownLeft : ArrowUpRight;
-  const directionLabel = isIncoming ? "Incoming" : "Outgoing";
+  const statusColorMap: Record<string, string> = {
+    [RequestStatus.Sent]: "#fbbf24",
+    [RequestStatus.Accepted]: "#34d399",
+    [RequestStatus.Rejected]: "#f87171",
+  };
+
+  const statusColor = statusColorMap[request.status ?? ""] ?? "#94a3b8";
 
   const youSide: "sender" | "receiver" = isIncoming ? "receiver" : "sender";
 
-  const hasDetails = !!(request?.message || request?.location || requestTime);
-
-  const renderPerson = (
-    user: typeof sender,
-    index: number,
-    side: "sender" | "receiver",
-  ) => (
-    <View className="items-center" style={{ width: 92 }}>
+  const RenderPerson: React.FC<{
+    className?: string;
+    user: typeof sender;
+    index: number;
+    side: "sender" | "receiver";
+  }> = ({ className, user, index, side }) => (
+    <View className={cn("items-center", className)} style={{ width: 92 }}>
       <View
-        className="rounded-full p-1"
-        style={{ backgroundColor: `${accent}1f` }}
+        className="rounded-full"
+        style={{ backgroundColor: `${statusColor}25` }}
       >
         <View className="rounded-full shadow-sm">{images[index]}</View>
       </View>
@@ -82,11 +66,11 @@ export const SessionRequestCard: React.FC<SessionRequestCardProps> = ({
       {youSide === side ? (
         <View
           className="mt-1 rounded-full px-2 py-[1px]"
-          style={{ backgroundColor: `${accent}1f` }}
+          style={{ backgroundColor: `${statusColor}25` }}
         >
           <Text
             className="text-xs font-bold uppercase tracking-wide"
-            style={{ color: accent }}
+            style={{ color: statusColor }}
           >
             You
           </Text>
@@ -96,25 +80,29 @@ export const SessionRequestCard: React.FC<SessionRequestCardProps> = ({
   );
 
   return (
-    <View className={cn("overflow-hidden rounded-md", className)}>
+    <Pressable
+      className={cn("rounded-md active:opacity-75", className)}
+      onPress={() => {
+        router.push({
+          pathname: `/main/request/answer`,
+          params: { id: request.id },
+        });
+      }}
+    >
       {/* Left accent rail */}
       <View
         className="absolute bottom-0 left-0 top-0 w-1"
-        style={{ backgroundColor: accent }}
+        style={{ backgroundColor: `${statusColor}25` }}
       />
 
       {/* Header band: direction + when */}
       <View
         className="flex-row items-center justify-between px-4 py-2.5"
-        style={{ backgroundColor: `${accent}14` }}
+        style={{ backgroundColor: `${statusColor}25` }}
       >
         <View className="flex-row items-center gap-1.5">
-          <Icon as={DirIcon} size={14} color={accent} />
-          <Text
-            className="text-xs font-bold uppercase tracking-wide"
-            style={{ color: accent }}
-          >
-            {directionLabel}
+          <Text className="text-xs font-bold uppercase tracking-wide">
+            {request.status}
           </Text>
         </View>
         {createdAt && (
@@ -125,66 +113,37 @@ export const SessionRequestCard: React.FC<SessionRequestCardProps> = ({
       </View>
 
       {/* Flow: sender → receiver */}
-      <View className="flex-row items-start justify-center px-4 pb-1 pt-4">
-        {renderPerson(sender, 0, "sender")}
+      <View className="flex flex-row items-start justify-between px-2 pb-1 pt-4">
+        <RenderPerson
+          className="flex-1"
+          user={sender}
+          index={0}
+          side="sender"
+        />
 
-        <View className="mt-5 flex-1 flex-row items-center px-1">
+        {/* <View className="flex-1 flex-row items-center justify-center px-1">
           <View
             className="flex-1 border-t border-dashed"
             style={{ borderColor: `${accent}59` }}
           />
           <View
-            className="h-8 w-8 items-center justify-center rounded-full"
-            style={{ backgroundColor: accent }}
-          >
-            <Icon as={Redo} size={45} color="#ffffff" />
-          </View>
+            className="flex-1 border-t border-dashed"
+            style={{ borderColor: `${accent}59` }}
+          />
           <View
             className="flex-1 border-t border-dashed"
             style={{ borderColor: `${accent}59` }}
           />
-        </View>
+        </View> */}
+        <Separator className="flex-1 border border-dashed my-auto" />
 
-        {renderPerson(receiver, 1, "receiver")}
+        <RenderPerson
+          className="flex-1"
+          user={receiver}
+          index={1}
+          side="receiver"
+        />
       </View>
-
-      {/* Details: message, schedule, place */}
-      {hasDetails && (
-        <View className="mx-4 mb-4 mt-3 gap-2.5 rounded-xl bg-muted/50 p-3">
-          {request.message && (
-            <View className="flex-row items-start gap-2 rounded-lg ">
-              <Icon
-                as={MessageCircle}
-                size={16}
-                color={accent}
-                style={{ marginTop: 2 }}
-              />
-              <Text className="flex-1 text-sm italic text-foreground">
-                &quot;{request?.message}&quot;
-              </Text>
-            </View>
-          )}
-          {requestTime && (
-            <View className="flex-row items-center gap-2">
-              <Icon as={Clock} size={16} color={mutedFg} />
-              <Text className="text-xs text-muted-foreground">
-                {toLongDateString(requestTime)} at {toTimeOnly(requestTime)}
-              </Text>
-            </View>
-          )}
-          {request?.location && (
-            <View className="flex-row items-center gap-2">
-              <Icon as={MapPin} size={16} color={mutedFg} />
-              <Text
-                className="flex-1 text-xs text-muted-foreground"
-                numberOfLines={2}
-              >
-                {request?.location}
-              </Text>
-            </View>
-          )}
-        </View>
-      )}
-    </View>
+    </Pressable>
   );
 };
