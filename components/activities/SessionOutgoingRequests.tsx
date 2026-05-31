@@ -36,6 +36,25 @@ export const SessionOutgoingRequests = ({
     join: ["session", "session.user", "receivers"],
   });
 
+  const renderItem = React.useCallback(
+    ({ item }: { item: GroupedRequests }) => (
+      <View className="mb-4">
+        <Text className="mb-2.5 px-4 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+          {item.title}
+        </Text>
+        {item.data.map((request) => (
+          <SessionRequestCard
+            key={request.id}
+            className="mx-4 mb-3"
+            request={request}
+            isIncoming={false}
+          />
+        ))}
+      </View>
+    ),
+    [],
+  );
+
   const groupedRequests = React.useMemo<GroupedRequests[]>(() => {
     const grouped: Record<string, ResponseRequestDto[]> = {};
 
@@ -79,51 +98,42 @@ export const SessionOutgoingRequests = ({
   return (
     <View className={cn("flex-1 bg-background", className)}>
       <View className="flex-1">
-        <LegendList
-          style={{ flex: 1, paddingBlock: 12 }}
-          className="flex-1"
-          data={groupedRequests}
-          onScroll={handleScroll}
-          renderItem={({ item }) => (
-            <View className="mb-4">
-              <Text className="mb-2.5 px-4 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                {item.title}
-              </Text>
-              {item.data.map((request) => (
-                <SessionRequestCard
-                  key={request.id}
-                  className="mx-4 mb-3"
-                  request={request}
-                  isIncoming={false}
-                />
-              ))}
-            </View>
-          )}
-          keyExtractor={(item) => item.title}
-          showsVerticalScrollIndicator={false}
-          recycleItems={true}
-          onEndReached={() => {
-            if (hasNextPage && !isFetchingNextPage) {
-              fetchNextPage();
+        {isRequestsPending ? (
+          <View className="flex flex-col flex-1 justify-center items-center">
+            <Loader />
+          </View>
+        ) : (
+          <LegendList
+            style={{ flex: 1, paddingBlock: 12 }}
+            data={groupedRequests}
+            onScroll={handleScroll}
+            renderItem={renderItem}
+            recycleItems={true}
+            keyExtractor={(item) => item.title}
+            showsVerticalScrollIndicator={false}
+            onEndReached={() => {
+              if (hasNextPage && !isFetchingNextPage) {
+                fetchNextPage();
+              }
+            }}
+            refreshControl={
+              <RefreshControl
+                refreshing={isRequestsPending}
+                onRefresh={refetchRequests}
+              />
             }
-          }}
-          refreshControl={
-            <RefreshControl
-              refreshing={isRequestsPending}
-              onRefresh={refetchRequests}
-            />
-          }
-          onEndReachedThreshold={0.5}
-          contentContainerStyle={{
-            paddingHorizontal: 0,
-            paddingBottom: 24,
-          }}
-          ListEmptyComponent={() => (
-            <View className="flex flex-col flex-1 justify-center items-center">
-              <NotFound message="No outgoing requests were found" />
-            </View>
-          )}
-        />
+            onEndReachedThreshold={0.5}
+            contentContainerStyle={{
+              paddingHorizontal: 0,
+              paddingBottom: 24,
+            }}
+            ListEmptyComponent={() => (
+              <View className="flex flex-col flex-1 justify-center items-center">
+                <NotFound message="No outgoing requests were found" />
+              </View>
+            )}
+          />
+        )}
       </View>
     </View>
   );

@@ -3,12 +3,14 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { api } from "~/api";
 
 interface useInfiniteIncomingSessionRequestsProps {
+  limit?: number;
   join?: string[];
   enabled?: boolean;
 }
 
 export const useInfiniteIncomingSessionRequests = (
-  { join = [], enabled = true }: useInfiniteIncomingSessionRequestsProps = {
+  { limit = 5, join = [], enabled = true }: useInfiniteIncomingSessionRequestsProps = {
+    limit: 5,
     join: [],
     enabled: true,
   },
@@ -27,7 +29,7 @@ export const useInfiniteIncomingSessionRequests = (
     queryFn: ({ pageParam = 1 }) => {
       const queryParams = {
         page: String(pageParam),
-        limit: "20",
+        limit: String(limit),
         sort: "createdAt,desc",
         join: join.join(","),
       };

@@ -35,6 +35,25 @@ export const SessionIncomingRequests = ({
     join: ["session", "session.user", "receivers"],
   });
 
+  const renderItem = React.useCallback(
+    ({ item }: { item: GroupedRequests }) => (
+      <View className="mb-4">
+        <Text className="mb-2.5 px-4 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+          {item.title}
+        </Text>
+        {item.data.map((request) => (
+          <SessionRequestCard
+            key={request.id}
+            className="mx-4 mb-3"
+            request={request}
+            isIncoming={true}
+          />
+        ))}
+      </View>
+    ),
+    [],
+  );
+
   const groupedRequests = React.useMemo<GroupedRequests[]>(() => {
     const grouped: Record<string, ResponseRequestDto[]> = {};
 
@@ -75,24 +94,10 @@ export const SessionIncomingRequests = ({
               style={{ flex: 1, paddingBlock: 12 }}
               data={groupedRequests}
               onScroll={handleScroll}
-              renderItem={({ item }) => (
-                <View className="mb-4">
-                  <Text className="mb-2.5 px-4 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                    {item.title}
-                  </Text>
-                  {item.data.map((request) => (
-                    <SessionRequestCard
-                      key={request.id}
-                      className="mx-4 mb-3"
-                      request={request}
-                      isIncoming={true}
-                    />
-                  ))}
-                </View>
-              )}
+              renderItem={renderItem}
+              recycleItems={true}
               keyExtractor={(item) => item.title}
               showsVerticalScrollIndicator={false}
-              recycleItems={true}
               onEndReached={() => {
                 if (hasNextPage && !isFetchingNextPage) {
                   fetchNextPage();
