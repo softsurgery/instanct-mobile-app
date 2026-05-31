@@ -13,12 +13,17 @@ import { MapRenderer } from "./MapRenderer";
 import { MapStatus } from "./MapDebugging/MapStatus";
 import { Loader } from "../shared/Loader";
 import { useChatContext } from "@/contexts/ChatContext";
+import { hslToHex } from "@/lib/theme";
+import { useColorPalette } from "@/hooks/useColorPalette";
 
 interface MapPortalProps {
   className?: string;
 }
 
 export const MapPortal = ({ className }: MapPortalProps) => {
+  const { palette } = useColorPalette();
+  const background = hslToHex(palette.background);
+  const foreground = hslToHex(palette.foreground);
   const { t } = useTranslation("common");
   const mapStore = useMapStore();
   const { count: chatCount, resetCount: resetChatCount } = useChatContext();
@@ -61,15 +66,23 @@ export const MapPortal = ({ className }: MapPortalProps) => {
       <StableSafeAreaView className="absolute top-0 left-0 right-0 z-20">
         <ApplicationHeader
           title={t("screens.map")}
+          classNames={{
+            title:
+              mapStore.settings.mode === "map"
+                ? "text-foreground"
+                : "text-background",
+          }}
           shortcuts={[
             {
               key: "settings",
               icon: Settings,
+              color: mapStore.settings.mode === "map" ? foreground : background,
               onPress: () => router.push("/main/maps/map-settings"),
             },
             {
               key: "notifications",
               icon: Bell,
+              color: mapStore.settings.mode === "map" ? foreground : background,
               onPress: () => {
                 router.push("/main/notifications");
                 resetCount();
@@ -79,6 +92,7 @@ export const MapPortal = ({ className }: MapPortalProps) => {
             {
               key: "chat",
               icon: IconMessageChatbot,
+              color: mapStore.settings.mode === "map" ? foreground : background,
               badgeText: chatCount > 0 ? String(chatCount) : undefined,
               onPress: handleChatPress,
             },

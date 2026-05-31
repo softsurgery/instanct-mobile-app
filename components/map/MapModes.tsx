@@ -2,11 +2,10 @@ import { cn } from "@/lib/utils";
 import { View } from "react-native";
 import { Icon } from "../ui/icon";
 import * as Haptics from "expo-haptics";
-import { Crosshair, Eye, RefreshCcw, SatelliteDish } from "lucide-react-native";
+import { Crosshair, RefreshCcw, SatelliteDish } from "lucide-react-native";
 import { useMapStore } from "@/stores/useMapStore";
-import { THEME } from "@/lib/theme";
-import { useColorScheme } from "nativewind";
 import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
+import { useColorPalette } from "@/hooks/useColorPalette";
 
 interface MapModesProps {
   className?: string;
@@ -17,12 +16,8 @@ export const MapModes = ({
   className,
   moveToCurrentLocation,
 }: MapModesProps) => {
-  const { colorScheme } = useColorScheme();
+  const { palette } = useColorPalette();
   const { restartSocket } = useLiveGeolocation();
-  const active =
-    colorScheme === "dark" ? THEME.dark.primary : THEME.light.primary;
-  const inactive =
-    colorScheme === "dark" ? THEME.dark.foreground : THEME.light.foreground;
   const mapStore = useMapStore();
   const modes = [
     {
@@ -35,7 +30,8 @@ export const MapModes = ({
     {
       key: "globe",
       icon: SatelliteDish,
-      color: mapStore.settings.mode === "map" ? inactive : active,
+      color:
+        mapStore.settings.mode === "map" ? palette.primary : palette.foreground,
       onPress: () => {
         if (mapStore.settings.mode === "map")
           mapStore.setNested("settings.mode", "sattelite");
