@@ -39,5 +39,5 @@ export interface UpdateSessionDto<T = any> {
 }
 
 export interface MapSessionPayload {
-  objectives: string[];
+  objectives: number[];
 }

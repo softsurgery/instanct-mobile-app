@@ -1,5 +1,5 @@
 import { ResponseRefParamDto } from "./reference-types";
-import { ResponseSessionDto } from "./session";
+import { MapSessionPayload, ResponseSessionDto } from "./session";
 import { Upload } from "./upload";
 import { DatabaseEntity } from "./utils/database-entity";
 
@@ -48,7 +48,7 @@ export interface ResponseUserDto extends ResponseAbstractUsertDto {
   experiences?: ResponseExperienceDto[];
   educations?: ResponseEducationDto[];
   industries?: ResponseRefParamDto[];
-  activeSession?: ResponseSessionDto;
+  activeSession?: ResponseSessionDto<MapSessionPayload>;
 }
 
 export interface CreateUserDto extends CreateAbstractUserDto {

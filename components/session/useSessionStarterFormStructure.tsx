@@ -126,10 +126,9 @@ export const useSessionStarterFormStructure = ({
     placeholder: "Select objectives",
     error: store.errors?.payload?.objectives?.[0],
     props: {
-      value: store.createDto?.payload?.objectives,
+      value: store.createDto?.payload?.objectives.map(String) || [],
       onSelect: (values) => {
-        console.log(store.createDto?.payload);
-        store.setNested("createDto.payload.objectives", values);
+        store.setNested("createDto.payload.objectives", values.map(Number));
         store.setNested("errors.payload.objectives", []);
       },
       options: objectives,

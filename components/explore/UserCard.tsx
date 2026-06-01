@@ -2,7 +2,11 @@ import React from "react";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import { hslToHex, THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
-import { ResponseConversationDto, ResponseUserDto } from "@/types";
+import {
+  ResponseConversationDto,
+  ResponseRefParamDto,
+  ResponseUserDto,
+} from "@/types";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import {
@@ -10,7 +14,8 @@ import {
   Bookmark,
   Briefcase,
   Quote,
-  Plus,
+  Goal,
+  Send,
 } from "lucide-react-native";
 import { Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { Icon } from "../ui/icon";
@@ -20,11 +25,12 @@ import { useStartConversation } from "@/hooks/content/chat/useStartConversation"
 import { useBookmarkActions } from "@/hooks/content/users/useBookmarkActions";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import StableScrollView from "../shared/StableScrollView";
+import { useColorPalette } from "@/hooks/useColorPalette";
 
 const { width, height: screenHeight } = Dimensions.get("window");
 
-const CARD_HEIGHT = screenHeight * 0.8;
-const HERO_HEIGHT = CARD_HEIGHT * 0.62;
+const CARD_HEIGHT = screenHeight * 0.9;
+const HERO_HEIGHT = CARD_HEIGHT * 0.4;
 
 const PRIMARY = hslToHex(THEME.light.primary);
 const PRIMARY_DARK = "#4f3a99";
@@ -32,9 +38,11 @@ const PRIMARY_DARK = "#4f3a99";
 interface UserCardProps {
   className?: string;
   user: ResponseUserDto;
+  objectives: ResponseRefParamDto[];
 }
 
-export const UserCard = ({ user, className }: UserCardProps) => {
+export const UserCard = ({ user, objectives, className }: UserCardProps) => {
+  const { palette } = useColorPalette();
   const router = useRouter();
   const { isBookmarked, toggleBookmark } = useBookmarkActions({
     bookmarkId: user.id,
@@ -69,7 +77,7 @@ export const UserCard = ({ user, className }: UserCardProps) => {
   const heroOverlay = (
     <View
       className="flex-1 justify-end px-5"
-      style={{ paddingBottom: 84 }}
+      style={{ paddingBottom: 30 }}
       pointerEvents="box-none"
     >
       <Pressable onPress={openProfile} className="gap-1">
@@ -85,7 +93,7 @@ export const UserCard = ({ user, className }: UserCardProps) => {
 
   return (
     <View
-      className={cn("bg-background", className)}
+      className={cn("flex-1 bg-background", className)}
       style={{ width, height: CARD_HEIGHT }}
     >
       {/* Hero — the person */}
@@ -131,7 +139,7 @@ export const UserCard = ({ user, className }: UserCardProps) => {
       </View>
 
       {/* Content sheet — overlaps the hero for depth */}
-      <View className="-mt-6 flex-1 rounded-t-3xl bg-background">
+      <View className="flex-1 rounded-t-3xl bg-background">
         {/* Floating action bar straddling the seam */}
         <View
           className="flex-row items-center justify-center gap-5"
@@ -163,10 +171,10 @@ export const UserCard = ({ user, className }: UserCardProps) => {
                 params: { id: user?.id },
               })
             }
-            className="h-[72px] w-[72px] items-center justify-center rounded-full bg-primary shadow-xl shadow-primary/40 active:opacity-90"
+            className="h-16 w-16 items-center justify-center rounded-full bg-accent/75"
             style={{ shadowColor: PRIMARY }}
           >
-            <Icon as={Plus} strokeWidth={5} size={32} color="#ffffff" />
+            <Icon as={Send} strokeWidth={1.5} size={32} color={"white"} />
           </Pressable>
 
           {/* Message */}
@@ -180,7 +188,6 @@ export const UserCard = ({ user, className }: UserCardProps) => {
 
         <StableScrollView
           className="flex-1 px-5"
-          contentContainerStyle={{ paddingTop: 20, paddingBottom: 32 }}
           showsVerticalScrollIndicator={false}
         >
           {/* Industries */}
@@ -207,6 +214,35 @@ export const UserCard = ({ user, className }: UserCardProps) => {
             </View>
           )}
 
+          {/* Objectives */}
+          {user?.activeSession?.payload?.objectives &&
+            user.activeSession.payload.objectives.length > 0 && (
+              <View className="mb-6">
+                <View className="mb-2.5 flex-row items-center gap-2">
+                  <Icon as={Goal} size={16} color={PRIMARY} />
+                  <Text className="text-base font-bold text-foreground">
+                    Objectives
+                  </Text>
+                </View>
+                <View className="flex-row flex-wrap gap-2">
+                  {user.activeSession.payload.objectives.map((id) => {
+                    const objective = objectives.find((obj) => obj.id == id);
+                    if (!objective) return null;
+                    return (
+                      <View
+                        key={objective.id}
+                        className="rounded-full bg-muted px-3 py-1.5"
+                      >
+                        <Text className="text-[13px] font-semibold text-foreground">
+                          {objective.label}
+                        </Text>
+                      </View>
+                    );
+                  })}
+                </View>
+              </View>
+            )}
+
           {/* Bio */}
           <View>
             <View className="mb-2.5 flex-row items-center gap-2">
@@ -216,6 +252,9 @@ export const UserCard = ({ user, className }: UserCardProps) => {
             <Text className="text-[15px] leading-6 text-muted-foreground">
               {user.bio?.trim() || "No bio available."}
             </Text>
+            {/* <Text className="text-[15px] leading-6 text-muted-foreground">
+              {JSON.stringify(user.activeSession)}
+            </Text> */}
           </View>
         </StableScrollView>
       </View>
