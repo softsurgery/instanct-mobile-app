@@ -31,7 +31,7 @@ export const MapModes = ({
       key: "globe",
       icon: SatelliteDish,
       color:
-        mapStore.settings.mode === "map" ? palette.primary : palette.foreground,
+        mapStore.settings.mode !== "map" ? palette.primary : palette.foreground,
       onPress: () => {
         if (mapStore.settings.mode === "map")
           mapStore.setNested("settings.mode", "sattelite");
@@ -45,16 +45,6 @@ export const MapModes = ({
         moveToCurrentLocation?.();
       },
     },
-    // {
-    //   key: "profile",
-    //   icon: User,
-    //   onPress: () => router.push("/main/profile/update-profile"),
-    // },
-    // {
-    //   key: "more",
-    //   icon: ChevronDownCircle,
-    //   onPress: () => {},
-    // },
   ];
 
   const withHaptic = (functions: Function[]) => {

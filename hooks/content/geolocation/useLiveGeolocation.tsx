@@ -133,11 +133,10 @@ export function useLiveGeolocation(
       socket.on("nearby_users", async (nearbyList: NearbyUser[]) => {
         mapStore.setNearbyUsers(nearbyList);
 
-        // fetch profiles for all nearby users (lazy)
+        // fetch profiles for all nearby users
         for (const n of nearbyList) {
-          const existing = mapStore.getUserById(n.userId);
           try {
-            if (!existing && n.user) mapStore.addUser(n.user);
+            if (n.user) mapStore.addUser(n.user);
           } catch (e) {
             console.warn("Failed to fetch profile:", e);
           }

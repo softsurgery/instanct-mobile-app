@@ -2,6 +2,7 @@ import { setDeepValue } from "@/lib/object";
 import { Cluster, NearbyUser, ResponseUserDto } from "@/types";
 import * as Location from "expo-location";
 import { create } from "zustand";
+import isEqual from "lodash/isEqual";
 
 interface MapData {
   parameters: {
@@ -129,24 +130,56 @@ export const useMapStore = create<MapStore>((set, get) => ({
       };
     });
   },
-  addNearbyUser: (user: NearbyUser) => {
-    set((state) => {
-      const existing = state.nearbyUsers.find((u) => u.userId === user.userId);
-      if (existing) return state;
-      const updated = [...state.nearbyUsers];
-      updated.push(user);
-      return { ...state, nearbyUsers: updated };
-    });
-  },
+
   addUser: (user: ResponseUserDto) => {
     set((state) => {
       const existing = state.users.find((u) => u.id === user.id);
-      if (existing) return state;
-      const updated = [...state.users];
-      updated.push(user);
-      return { ...state, users: updated };
+
+      // Add new user
+      if (!existing) {
+        return {
+          ...state,
+          users: [...state.users, user],
+        };
+      }
+
+      // No changes
+      if (isEqual(existing, user)) {
+        return state;
+      }
+
+      // Replace changed user
+      return {
+        ...state,
+        users: state.users.map((u) => (u.id === user.id ? user : u)),
+      };
     });
   },
+
+  addNearbyUser: (user: NearbyUser) => {
+    set((state) => {
+      const existing = state.nearbyUsers.find((u) => u.userId === user.userId);
+
+      if (!existing) {
+        return {
+          ...state,
+          nearbyUsers: [...state.nearbyUsers, user],
+        };
+      }
+
+      if (isEqual(existing, user)) {
+        return state;
+      }
+
+      return {
+        ...state,
+        nearbyUsers: state.nearbyUsers.map((u) =>
+          u.userId === user.userId ? user : u,
+        ),
+      };
+    });
+  },
+
   setUsers: (users: ResponseUserDto[]) => {
     set((state) => {
       const updated = [...state.users];
