@@ -9,7 +9,11 @@ interface useInfiniteIncomingSessionRequestsProps {
 }
 
 export const useInfiniteIncomingSessionRequests = (
-  { limit = 5, join = [], enabled = true }: useInfiniteIncomingSessionRequestsProps = {
+  {
+    limit = 5,
+    join = [],
+    enabled = true,
+  }: useInfiniteIncomingSessionRequestsProps = {
     limit: 10,
     join: [],
     enabled: true,
