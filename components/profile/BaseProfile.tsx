@@ -39,11 +39,8 @@ import { Pencil } from "lucide-react-native";
 import { BaseProfileSkeleton } from "./BaseProfileSkeleton";
 import { ExperienceInstance } from "./experience/ExperienceInstance";
 import { EducationInstance } from "./education/EducationInstance";
-import { hslToHex, THEME } from "@/lib/theme";
+import { hslToHex } from "@/lib/theme";
 import { useColorPalette } from "@/hooks/useColorPalette";
-
-const PRIMARY = hslToHex(THEME.light.primary);
-
 interface ProfileSection<T = unknown> {
   key: string;
   title: string;
@@ -299,13 +296,7 @@ export const InspectBaseProfile = ({
         ) as unknown[],
         editable: currentUser?.id === user?.id,
         renderItem: (industry: ResponseRefParamDto) => (
-          <View
-            className="rounded-full border px-3 py-1.5"
-            style={{
-              backgroundColor: `${PRIMARY}14`,
-              borderColor: `${PRIMARY}33`,
-            }}
-          >
+          <View className="rounded-full border border-border px-3 py-1.5">
             <Text className="text-[13px] font-semibold">{industry.label}</Text>
           </View>
         ),
