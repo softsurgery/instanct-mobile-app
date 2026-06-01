@@ -1,5 +1,6 @@
 import { Gender } from "@/types";
 import {
+  CustomFieldProps,
   DateFieldProps,
   Field,
   FieldVariant,
@@ -10,6 +11,8 @@ import {
   TextFieldProps,
 } from "../../shared/form-builder/types";
 import { UserStore } from "@/stores/useUserStore";
+import { Pressable, View } from "react-native";
+import { Text } from "@/components/ui/text";
 
 interface useUpdateProfileFormStructureProps {
   store: UserStore;
@@ -54,6 +57,27 @@ export const useUpdateProfileFormStructure = ({
           },
         });
       },
+    },
+  };
+
+  const pictureRemovalButton: Field<CustomFieldProps> = {
+    id: "pictureRemoval",
+    label: "",
+    variant: FieldVariant.CUSTOM,
+    props: {
+      children: (
+        <View className="flex-row items-center justify-center -mt-6">
+          <Pressable
+            onPress={() => {
+              store.set("picture", undefined);
+              store.setNested("updateDto.pictureId", null);
+            }}
+            className="mt-2 rounded-full border border-border px-3 py-2 active:bg-muted"
+          >
+            <Text className="text-sm font-bold">Remove Picture</Text>
+          </Pressable>
+        </View>
+      ),
     },
   };
 
@@ -197,7 +221,7 @@ export const useUpdateProfileFormStructure = ({
         rows: [
           {
             id: 1,
-            fields: [pictureField],
+            fields: [pictureField, pictureRemovalButton],
           },
           {
             id: 2,

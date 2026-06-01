@@ -375,7 +375,7 @@ export const InspectBaseProfile = ({
           </View>
         )}
         {/* Header */}
-        <View className="-mt-12 px-5">
+        <View className="-mt-12 px-5 z-50">
           <View className="flex-row items-end justify-between">
             {isProfilePicturePending ? (
               <Skeleton className="h-[100px] w-[100px] rounded-full" />
