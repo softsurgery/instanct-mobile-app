@@ -21,10 +21,9 @@ interface ActivitiesDetailContentProps {
 
 const Tab = createMaterialTopTabNavigator();
 
-type GroupedBookmarks = {
-  title: string;
-  data: ResponseUserBookmarkDto[];
-};
+type FlattenedBookmark =
+  | { type: "header"; title: string; id: string }
+  | { type: "item"; bookmark: ResponseUserBookmarkDto; id: string };
 
 export const ActivitiesDetailContent = ({
   className,
@@ -43,7 +42,22 @@ export const ActivitiesDetailContent = ({
     join: ["bookmark"],
   });
 
-  const groupedBookmarks = React.useMemo<GroupedBookmarks[]>(() => {
+  const renderItem = React.useCallback(
+    ({ item }: { item: FlattenedBookmark }) => {
+      if (item.type === "header") {
+        return (
+          <Text className="mb-2.5 mt-2 px-4 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+            {item.title}
+          </Text>
+        );
+      }
+
+      return <BookmarkCard user={item.bookmark.bookmark} />;
+    },
+    [],
+  );
+
+  const flattenedData = React.useMemo<FlattenedBookmark[]>(() => {
     const grouped: Record<string, ResponseUserBookmarkDto[]> = {};
 
     bookmarks.forEach((bookmark) => {
@@ -64,10 +78,19 @@ export const ActivitiesDetailContent = ({
       grouped[title].push(bookmark);
     });
 
-    return Object.entries(grouped).map(([title, data]) => ({
-      title,
-      data,
-    }));
+    const flattened: FlattenedBookmark[] = [];
+    Object.entries(grouped).forEach(([title, data]) => {
+      flattened.push({ type: "header", title, id: `header-${title}` });
+      data.forEach((bookmark) => {
+        flattened.push({
+          type: "item",
+          bookmark,
+          id: `item-${bookmark.id}`,
+        });
+      });
+    });
+
+    return flattened;
   }, [bookmarks]);
 
   return (
@@ -103,8 +126,8 @@ export const ActivitiesDetailContent = ({
             ) : (
               <LegendList
                 style={{ flex: 1, paddingBlock: 12 }}
-                data={groupedBookmarks}
-                keyExtractor={(item) => item.title}
+                data={flattenedData}
+                keyExtractor={(item) => item.id}
                 showsVerticalScrollIndicator={false}
                 onScroll={handleScroll}
                 onRefresh={refetchBookmarks}
@@ -119,20 +142,7 @@ export const ActivitiesDetailContent = ({
                   paddingHorizontal: 0,
                   paddingBottom: 24,
                 }}
-                renderItem={({ item }) => (
-                  <View className="mb-5">
-                    <Text className="mb-2.5 px-4 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                      {item.title}
-                    </Text>
-
-                    {item.data.map((bookmark) => (
-                      <BookmarkCard
-                        key={bookmark.id}
-                        user={bookmark.bookmark}
-                      />
-                    ))}
-                  </View>
-                )}
+                renderItem={renderItem}
               />
             )
           }

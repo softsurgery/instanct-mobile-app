@@ -32,7 +32,7 @@ export const BookmarkCard = ({ className, user }: BookmarkCardProps) => {
     ids,
     fallbacks,
     className: "w-14 h-14 rounded-full",
-    size: { width: 60, height: 60 },
+    size: { width: 50, height: 50 },
   });
 
   // Prefer a meaningful subtitle that says *why* this person is worth saving.

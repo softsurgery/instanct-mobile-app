@@ -15,10 +15,9 @@ interface SessionIncomingRequestsProps {
   handleScroll?: (event: any) => void;
 }
 
-type GroupedRequests = {
-  title: string;
-  data: ResponseRequestDto[];
-};
+type FlattenedItem =
+  | { type: "header"; title: string; id: string }
+  | { type: "item"; request: ResponseRequestDto; id: string };
 
 export const SessionIncomingRequests = ({
   className,
@@ -35,26 +34,25 @@ export const SessionIncomingRequests = ({
     join: ["session", "session.user", "receivers"],
   });
 
-  const renderItem = React.useCallback(
-    ({ item }: { item: GroupedRequests }) => (
-      <View className="mb-4">
-        <Text className="mb-2.5 px-4 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+  const renderItem = React.useCallback(({ item }: { item: FlattenedItem }) => {
+    if (item.type === "header") {
+      return (
+        <Text className="mb-2.5 mt-2 px-4 text-xs font-bold uppercase tracking-wide text-muted-foreground">
           {item.title}
         </Text>
-        {item.data.map((request) => (
-          <SessionRequestCard
-            key={request.id}
-            className="mx-4 mb-3"
-            request={request}
-            isIncoming={true}
-          />
-        ))}
-      </View>
-    ),
-    [],
-  );
+      );
+    }
 
-  const groupedRequests = React.useMemo<GroupedRequests[]>(() => {
+    return (
+      <SessionRequestCard
+        className="mx-4 mb-3"
+        request={item.request}
+        isIncoming={true}
+      />
+    );
+  }, []);
+
+  const flattenedData = React.useMemo<FlattenedItem[]>(() => {
     const grouped: Record<string, ResponseRequestDto[]> = {};
 
     requests.forEach((request) => {
@@ -75,10 +73,19 @@ export const SessionIncomingRequests = ({
       grouped[title].push(request);
     });
 
-    return Object.entries(grouped).map(([title, data]) => ({
-      title,
-      data,
-    }));
+    const flattened: FlattenedItem[] = [];
+    Object.entries(grouped).forEach(([title, data]) => {
+      flattened.push({ type: "header", title, id: `header-${title}` });
+      data.forEach((request) => {
+        flattened.push({
+          type: "item",
+          request,
+          id: `item-${request.id}`,
+        });
+      });
+    });
+
+    return flattened;
   }, [requests]);
 
   return (
@@ -92,11 +99,11 @@ export const SessionIncomingRequests = ({
           <View className="flex-1">
             <LegendList
               style={{ flex: 1, paddingBlock: 12 }}
-              data={groupedRequests}
+              data={flattenedData}
               onScroll={handleScroll}
               renderItem={renderItem}
               recycleItems={true}
-              keyExtractor={(item) => item.title}
+              keyExtractor={(item) => item.id}
               showsVerticalScrollIndicator={false}
               onEndReached={() => {
                 if (hasNextPage && !isFetchingNextPage) {

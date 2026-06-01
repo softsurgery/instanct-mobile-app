@@ -10,7 +10,7 @@ import {
   Bookmark,
   Briefcase,
   Quote,
-  UserPlus,
+  Plus,
 } from "lucide-react-native";
 import { Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { Icon } from "../ui/icon";
@@ -166,7 +166,7 @@ export const UserCard = ({ user, className }: UserCardProps) => {
             className="h-[72px] w-[72px] items-center justify-center rounded-full bg-primary shadow-xl shadow-primary/40 active:opacity-90"
             style={{ shadowColor: PRIMARY }}
           >
-            <Icon as={UserPlus} size={32} color="#ffffff" />
+            <Icon as={Plus} strokeWidth={5} size={32} color="#ffffff" />
           </Pressable>
 
           {/* Message */}
