@@ -1,6 +1,6 @@
 import React from "react";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
-import { hslToHex, THEME } from "@/lib/theme";
+import { hslToHex } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import {
   ResponseConversationDto,
@@ -15,7 +15,6 @@ import {
   Briefcase,
   Quote,
   Goal,
-  Send,
 } from "lucide-react-native";
 import { Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { Icon } from "../ui/icon";
@@ -26,23 +25,29 @@ import { useBookmarkActions } from "@/hooks/content/users/useBookmarkActions";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import StableScrollView from "../shared/StableScrollView";
 import { useColorPalette } from "@/hooks/useColorPalette";
+import { IconMoodPlus } from "@tabler/icons-react-native";
 
 const { width, height: screenHeight } = Dimensions.get("window");
 
 const CARD_HEIGHT = screenHeight * 0.9;
-const HERO_HEIGHT = CARD_HEIGHT * 0.4;
-
-const PRIMARY = hslToHex(THEME.light.primary);
-const PRIMARY_DARK = "#4f3a99";
+const HERO_HEIGHT = CARD_HEIGHT * 0.5;
 
 interface UserCardProps {
   className?: string;
   user: ResponseUserDto;
   objectives: ResponseRefParamDto[];
+  // industries: ResponseRefParamDto[];
 }
 
-export const UserCard = ({ user, objectives, className }: UserCardProps) => {
+export const UserCard = ({
+  user,
+  objectives,
+  // industries,
+  className,
+}: UserCardProps) => {
   const { palette } = useColorPalette();
+  const primary = hslToHex(palette?.primary);
+  const primaryDark = hslToHex(palette?.primary, 0.8);
   const router = useRouter();
   const { isBookmarked, toggleBookmark } = useBookmarkActions({
     bookmarkId: user.id,
@@ -116,7 +121,7 @@ export const UserCard = ({ user, objectives, className }: UserCardProps) => {
           </ImageBackground>
         ) : (
           <LinearGradient
-            colors={[PRIMARY, PRIMARY_DARK]}
+            colors={[primary, primaryDark]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={{ flex: 1 }}
@@ -151,14 +156,14 @@ export const UserCard = ({ user, objectives, className }: UserCardProps) => {
             className={cn(
               "h-14 w-14 items-center justify-center rounded-full border shadow-lg shadow-black/20",
               isBookmarked
-                ? "border-transparent bg-primary"
-                : "border-border bg-card",
+                ? "border-transparent bg-primary active:bg-primary/50"
+                : "border-border bg-card active:bg-card/50",
             )}
           >
             <Icon
               as={Bookmark}
               size={24}
-              color={isBookmarked ? "#ffffff" : PRIMARY}
+              color={isBookmarked ? "#ffffff" : primary}
               fill={isBookmarked ? "#ffffff" : "transparent"}
             />
           </Pressable>
@@ -171,18 +176,23 @@ export const UserCard = ({ user, objectives, className }: UserCardProps) => {
                 params: { id: user?.id },
               })
             }
-            className="h-16 w-16 items-center justify-center rounded-full bg-accent/75"
-            style={{ shadowColor: PRIMARY }}
+            className="rounded-full bg-primary active:bg-primary/50 border-2 border-border w-20 h-20 flex items-center justify-center"
           >
-            <Icon as={Send} strokeWidth={1.5} size={32} color={"white"} />
+            <Icon
+              as={IconMoodPlus}
+              strokeWidth={1.5}
+              size={42}
+              color={"white"}
+              // fill="white"
+            />
           </Pressable>
 
           {/* Message */}
           <Pressable
             onPress={() => startConversation({ users: [user.id] })}
-            className="h-14 w-14 items-center justify-center rounded-full border border-border bg-card shadow-lg shadow-black/20"
+            className="h-14 w-14 items-center justify-center rounded-full border border-border bg-card active:bg-card/50 shadow-lg shadow-black/20"
           >
-            <Icon as={MessageCircle} size={24} color={PRIMARY} />
+            <Icon as={MessageCircle} size={24} color={primary} />
           </Pressable>
         </View>
 
@@ -194,7 +204,7 @@ export const UserCard = ({ user, objectives, className }: UserCardProps) => {
           {user.industries && user.industries.length > 0 && (
             <View className="mb-6">
               <View className="mb-2.5 flex-row items-center gap-2">
-                <Icon as={Briefcase} size={16} color={PRIMARY} />
+                <Icon as={Briefcase} size={16} color={primary} />
                 <Text className="text-base font-bold text-foreground">
                   Industries
                 </Text>
@@ -215,11 +225,12 @@ export const UserCard = ({ user, objectives, className }: UserCardProps) => {
           )}
 
           {/* Objectives */}
+
           {user?.activeSession?.payload?.objectives &&
             user.activeSession.payload.objectives.length > 0 && (
               <View className="mb-6">
                 <View className="mb-2.5 flex-row items-center gap-2">
-                  <Icon as={Goal} size={16} color={PRIMARY} />
+                  <Icon as={Goal} size={16} color={primary} />
                   <Text className="text-base font-bold text-foreground">
                     Objectives
                   </Text>
@@ -246,7 +257,7 @@ export const UserCard = ({ user, objectives, className }: UserCardProps) => {
           {/* Bio */}
           <View>
             <View className="mb-2.5 flex-row items-center gap-2">
-              <Icon as={Quote} size={16} color={PRIMARY} />
+              <Icon as={Quote} size={16} color={primary} />
               <Text className="text-base font-bold text-foreground">About</Text>
             </View>
             <Text className="text-[15px] leading-6 text-muted-foreground">

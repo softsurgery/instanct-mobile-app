@@ -24,6 +24,7 @@ import { hslToHex } from "@/lib/theme";
 import { useColorPalette } from "@/hooks/useColorPalette";
 import { useChatContext } from "@/contexts/ChatContext";
 import { useObjectives } from "@/hooks/content/reference-types/useObjectives";
+import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
 
 interface ExplorePortalProps {
   className?: string;
@@ -43,6 +44,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
     enabled: true,
     join: ["user", "user.industries", "user.sessions"],
   });
+  const { industries, isIndustriesSubTypePending } = useIndustries();
   const { objectives, isObjectivesSubTypePending } = useObjectives();
 
   const filterCount = React.useMemo(() => {
@@ -88,7 +90,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
     ({ item }: { item: ResponseUserDto }) => (
       <UserCard user={item} objectives={objectives} />
     ),
-    [objectives],
+    [objectives, industries],
   );
 
   useFocusEffect(
@@ -156,7 +158,9 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
         ].filter(Boolean)}
       />
       {mapSession ? (
-        liveUsers.length === 0 || isObjectivesSubTypePending ? (
+        liveUsers.length === 0 ||
+        isObjectivesSubTypePending ||
+        isIndustriesSubTypePending ? (
           <View className="flex flex-col flex-1 justify-center items-center px-4">
             <Loader />
             <Text variant={"large"} className="text-center">
