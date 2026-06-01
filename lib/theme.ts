@@ -101,17 +101,30 @@ export const NAV_THEME: Record<"light" | "dark", Theme> = {
   },
 };
 
-export function hslToHex(hslString: string): string {
-  const match = hslString.match(/hsl\((\d+)\s+(\d+)%\s+(\d+)%\)/);
-  if (!match) return hslString; // Return as-is if not valid HSL
-  let h = parseInt(match[1], 10) / 360;
-  let s = parseInt(match[2], 10) / 100;
-  let l = parseInt(match[3], 10) / 100;
-  let r, g, b;
+export function hslToHex(hslString: string, opacity: number = 1): string {
+  const match = hslString.match(
+    /hsla?\(\s*(\d+(?:\.\d+)?)(?:deg)?(?:[\s,]+)(\d+(?:\.\d+)?)%(?:[\s,]+)(\d+(?:\.\d+)?)%(?:\s*(?:\/|,)\s*(\d*\.?\d+))?\s*\)/i
+  );
+
+  if (!match) {
+    return hslString;
+  }
+
+  let h = (parseFloat(match[1]) % 360) / 360;
+  const s = parseFloat(match[2]) / 100;
+  const l = parseFloat(match[3]) / 100;
+
+  const inputAlpha = match[4] !== undefined ? parseFloat(match[4]) : 1;
+  const alpha = Math.max(0, Math.min(1, inputAlpha * opacity));
+
+  let r: number;
+  let g: number;
+  let b: number;
+
   if (s === 0) {
     r = g = b = l;
   } else {
-    const hue2rgb = (p: number, q: number, t: number) => {
+    const hue2rgb = (p: number, q: number, t: number): number => {
       if (t < 0) t += 1;
       if (t > 1) t -= 1;
       if (t < 1 / 6) return p + (q - p) * 6 * t;
@@ -119,15 +132,29 @@ export function hslToHex(hslString: string): string {
       if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
       return p;
     };
+
     const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
     const p = 2 * l - q;
+
     r = hue2rgb(p, q, h + 1 / 3);
     g = hue2rgb(p, q, h);
     b = hue2rgb(p, q, h - 1 / 3);
   }
-  const toHex = (x: number) => {
-    const hex = Math.round(x * 255).toString(16);
-    return hex.length === 1 ? "0" + hex : hex;
-  };
-  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+
+  const toHex = (value: number): string =>
+    Math.round(value * 255)
+      .toString(16)
+      .padStart(2, "0");
+
+  const hex = `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+
+  if (alpha >= 1) {
+    return hex;
+  }
+
+  const alphaHex = Math.round(alpha * 255)
+    .toString(16)
+    .padStart(2, "0");
+
+  return `${hex}${alphaHex}`;
 }
