@@ -1,6 +1,7 @@
 import { SeeMoreText } from "@/components/shared/SeeMoreText";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
+import { useColorPalette } from "@/hooks/useColorPalette";
 import { hslToHex, THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import { ResponseExperienceDto } from "@/types";
@@ -13,8 +14,6 @@ interface ExperienceInstanceProps {
   className?: string;
   experience: ResponseExperienceDto;
 }
-
-const PRIMARY = hslToHex(THEME.light.primary);
 
 const MetaChip = ({
   icon,
@@ -37,12 +36,8 @@ export const ExperienceInstance = ({
   className,
   experience,
 }: ExperienceInstanceProps) => {
-  const { colorScheme } = useColorScheme();
-  const mutedFg = hslToHex(
-    colorScheme === "dark"
-      ? THEME.dark.mutedForeground
-      : THEME.light.mutedForeground,
-  );
+  const { palette } = useColorPalette();
+  const primary = hslToHex(palette.primary);
 
   const range = experience.startDate
     ? `${format(new Date(experience.startDate), "MMM yyyy")} — ${
@@ -57,18 +52,10 @@ export const ExperienceInstance = ({
     .join(" · ");
 
   return (
-    <View
-      className={cn(
-        "flex-row gap-3",
-        className,
-      )}
-    >
+    <View className={cn("flex-row gap-3", className)}>
       {/* Role tile */}
-      <View
-        className="h-11 w-11 items-center justify-center rounded-xl"
-        style={{ backgroundColor: `${PRIMARY}14` }}
-      >
-        <Icon as={Briefcase} size={20} color={PRIMARY} />
+      <View className="h-11 w-11 items-center justify-center rounded-xl bg-primary/25">
+        <Icon as={Briefcase} size={20} />
       </View>
 
       <View className="flex-1">
@@ -84,17 +71,17 @@ export const ExperienceInstance = ({
         {(range || experience.workType || place) && (
           <View className="mt-2 flex-row flex-wrap gap-1.5">
             {range && (
-              <MetaChip icon={CalendarDays} label={range} color={PRIMARY} />
+              <MetaChip icon={CalendarDays} label={range} color={primary} />
             )}
             {!!experience.workType && (
               <MetaChip
                 icon={Laptop}
                 label={experience.workType}
-                color={mutedFg}
+                color={primary}
               />
             )}
             {!!place && (
-              <MetaChip icon={MapPin} label={place} color={mutedFg} />
+              <MetaChip icon={MapPin} label={place} color={primary} />
             )}
           </View>
         )}

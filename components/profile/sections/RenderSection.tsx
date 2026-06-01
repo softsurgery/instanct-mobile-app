@@ -1,7 +1,7 @@
-import { StablePressable } from "@/components/shared/StablePressable";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { hslToHex, THEME } from "@/lib/theme";
+import { useColorPalette } from "@/hooks/useColorPalette";
+import { hslToHex } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import { router } from "expo-router";
 import {
@@ -12,9 +12,7 @@ import {
   Plus,
   Tag,
 } from "lucide-react-native";
-import { View } from "react-native";
-
-const PRIMARY = hslToHex(THEME.light.primary);
+import { Pressable, View } from "react-native";
 
 const SECTION_ICONS: Record<string, LucideIcon> = {
   experience: Briefcase,
@@ -32,6 +30,8 @@ export interface ProfileSection<T = unknown> {
 }
 
 export const RenderSection = (section: ProfileSection) => {
+  const { palette } = useColorPalette();
+  const primary = hslToHex(palette.primary);
   const isBadge = section.key === "industries";
   const count = section.data?.length ?? 0;
   const SectionIcon = SECTION_ICONS[section.key] ?? Briefcase;
@@ -41,21 +41,13 @@ export const RenderSection = (section: ProfileSection) => {
       {/* Section header */}
       <View className="flex-row items-center justify-between">
         <View className="flex-row items-center gap-2">
-          <Icon as={SectionIcon} size={18} color={PRIMARY} />
+          <Icon as={SectionIcon} size={18} color={primary} />
           <Text className="text-base font-bold text-foreground">
             {section.title}
           </Text>
           {count > 0 && (
-            <View
-              className="min-w-5 items-center rounded-full px-1.5 py-0.5"
-              style={{ backgroundColor: `${PRIMARY}14` }}
-            >
-              <Text
-                className="text-[11px] font-bold"
-                style={{ color: PRIMARY }}
-              >
-                {count}
-              </Text>
+            <View className="items-center rounded-full px-1.5 py-0.5 bg-primary/10">
+              <Text className="text-sm font-bold">{count}</Text>
             </View>
           )}
         </View>
@@ -67,8 +59,8 @@ export const RenderSection = (section: ProfileSection) => {
           )}
         >
           {!isBadge && (
-            <StablePressable
-              className="h-9 w-9 items-center justify-center rounded-full border border-border"
+            <Pressable
+              className="h-9 w-9 items-center justify-center rounded-full border border-border active:bg-primary/15"
               onPress={() => {
                 switch (section.key) {
                   case "experience":
@@ -79,14 +71,13 @@ export const RenderSection = (section: ProfileSection) => {
                     break;
                 }
               }}
-              onPressClassname="bg-primary/15"
             >
-              <Icon as={Plus} size={18} color={PRIMARY} />
-            </StablePressable>
+              <Icon as={Plus} size={18} color={primary} />
+            </Pressable>
           )}
 
-          <StablePressable
-            className="h-9 w-9 items-center justify-center rounded-full border border-border"
+          <Pressable
+            className="h-9 w-9 items-center justify-center rounded-full border border-border active:bg-primary/15"
             onPress={() => {
               switch (section.key) {
                 case "experience":
@@ -103,10 +94,9 @@ export const RenderSection = (section: ProfileSection) => {
                   break;
               }
             }}
-            onPressClassname="bg-primary/15"
           >
-            <Icon as={Pen} size={16} color={PRIMARY} />
-          </StablePressable>
+            <Icon as={Pen} size={16} color={primary} />
+          </Pressable>
         </View>
       </View>
 

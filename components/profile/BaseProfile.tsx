@@ -306,12 +306,7 @@ export const InspectBaseProfile = ({
               borderColor: `${PRIMARY}33`,
             }}
           >
-            <Text
-              className="text-[13px] font-semibold"
-              style={{ color: PRIMARY }}
-            >
-              {industry.label}
-            </Text>
+            <Text className="text-[13px] font-semibold">{industry.label}</Text>
           </View>
         ),
       },
