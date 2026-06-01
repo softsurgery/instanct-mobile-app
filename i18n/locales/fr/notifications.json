@@ -2,11 +2,15 @@
   "titles": {
     "TEST": "Ceci est une notification de test",
     "NEW_SIGNIN": "Nouvelle connexion!",
-    "REQUEST_RECEIVED": "Nouvelle demande reçue"
+    "REQUEST_RECEIVED": "Nouvelle demande reçue",
+    "REQUEST_ACCEPTED": "Votre demande a été acceptée",
+    "REQUEST_REJECTED": "Votre demande a été rejetée"
   },
   "descriptions": {
     "TEST": "Ceci est une notification de test décrivant ce qui est testé pour vérifier que le système de notification fonctionne correctement.",
     "NEW_SIGNIN": "Nous avons remarqué une nouvelle connexion de nouveau dispositif",
-    "REQUEST_RECEIVED": "Vous avez reçu une nouvelle demande de {{senderIdentification}}. Cliquez pour voir les détails de la demande et y répondre."
+    "REQUEST_RECEIVED": "Vous avez reçu une nouvelle demande de {{senderIdentification}}. Cliquez pour voir les détails de la demande et y répondre.",
+    "REQUEST_ACCEPTED": "{{responderIdentification}} a accepté votre demande. Vous pouvez maintenant vous connecter et commencer à collaborer !",
+    "REQUEST_REJECTED": "{{responderIdentification}} a rejeté votre demande. Ne vous inquiétez pas"
   }
 }

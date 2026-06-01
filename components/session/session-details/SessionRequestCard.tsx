@@ -50,7 +50,7 @@ export const SessionRequestCard: React.FC<SessionRequestCardProps> = ({
   return (
     <Pressable
       className={cn(
-        "flex-row items-center gap-4 p-2 shadow-sm active:opacity-75",
+        "flex-row items-center gap-4 p-2 active:opacity-75",
         className,
       )}
       onPress={() => {
@@ -64,7 +64,7 @@ export const SessionRequestCard: React.FC<SessionRequestCardProps> = ({
         className="rounded-full"
         style={{ backgroundColor: `${statusColor}15` }}
       >
-        <View className="rounded-full shadow-sm">{personImage}</View>
+        <View className="rounded-full">{personImage}</View>
       </View>
 
       <View className="flex-1">
@@ -77,7 +77,7 @@ export const SessionRequestCard: React.FC<SessionRequestCardProps> = ({
 
         <View className="mt-1 flex-row items-center gap-2">
           <Text
-            className="text-xs font-bold uppercase tracking-wider"
+            className="text-sm font-extrabold uppercase"
             style={{ color: statusColor }}
           >
             {request.status}

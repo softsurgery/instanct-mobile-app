@@ -25,6 +25,8 @@ export const NotificationEntry = ({
   const onPress = () => {
     switch (notification.type) {
       case NotificationType.REQUEST_RECEIVED:
+      case NotificationType.REQUEST_ACCEPTED:
+      case NotificationType.REQUEST_REJECTED:
         router.push({
           pathname: `/main/request/answer`,
           params: { id: notification.payload.requestId },
@@ -75,6 +77,7 @@ export const NotificationEntry = ({
         <Text variant={"muted"} className="ml-auto">
           {timeAgo(notification.createdAt)}
         </Text>
+        {/* <Text className="text-xs">{JSON.stringify(notification.payload)}</Text> */}
       </View>
     </StablePressable>
   );
