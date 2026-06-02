@@ -98,7 +98,7 @@ export const AboutTab = ({
                   >
                     {user.website}
                   </Text>
-                  <Icon as={ExternalLink} size={16} color={fg} />
+                  <Icon as={ExternalLink} size={24} color={fg} />
                 </StablePressable>
               )}
               {user?.linkedin && (
@@ -115,7 +115,7 @@ export const AboutTab = ({
                   <Text className="flex-1 text-sm font-medium text-foreground">
                     LinkedIn Profile
                   </Text>
-                  <Icon as={ExternalLink} size={16} color={fg} />
+                  <Icon as={ExternalLink} size={24} color={fg} />
                 </StablePressable>
               )}
             </View>
