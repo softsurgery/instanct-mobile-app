@@ -1,10 +1,10 @@
 import { Icon } from "@/components/ui/icon";
 import { useRTL } from "@/hooks/useRTL";
 import { NAV_THEME } from "@/lib/theme";
-import { IconChecklist } from "@tabler/icons-react-native";
+import { IconChecklist, IconMapPinHeart } from "@tabler/icons-react-native";
 import * as Haptics from "expo-haptics";
 import { Tabs, useSegments } from "expo-router";
-import { Map, Telescope, User } from "lucide-react-native";
+import { Telescope, User } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -46,7 +46,7 @@ export default function TabLayout() {
       {
         name: "map",
         title: t("screens.map"),
-        icon: Map,
+        icon: IconMapPinHeart,
       },
       {
         name: "menu",
