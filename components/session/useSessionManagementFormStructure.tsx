@@ -24,8 +24,7 @@ export const useSessionManagementFormStructure = ({
     label: "End Time",
     variant: FieldVariant.TIME,
     error: store.errors.plannedEnd?.[0],
-    description:
-      "You can adjust the planned end time",
+    description: "You can adjust the planned end time",
     disabled: isPending,
     props: {
       value: store.updateDto?.plannedEnd,
@@ -44,10 +43,9 @@ export const useSessionManagementFormStructure = ({
     placeholder: "Select objectives",
     error: store.errors?.payload?.objectives?.[0],
     props: {
-      value: store.updateDto?.payload?.objectives,
+      value: store.updateDto?.payload?.objectives.map(String) || [],
       onSelect: (values) => {
-        console.log(store.updateDto?.payload);
-        store.setNested("updateDto.payload.objectives", values);
+        store.setNested("updateDto.payload.objectives", values.map(Number));
         store.setNested("errors.payload.objectives", []);
       },
       options: objectives,
