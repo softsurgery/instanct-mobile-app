@@ -1,9 +1,9 @@
 import { useNotificationContext } from "@/contexts/NotificationsContext";
 import { cn } from "@/lib/utils";
 import { useMapStore } from "@/stores/useMapStore";
-import { IconMessageChatbot } from "@tabler/icons-react-native";
+import { IconMapPinCog, IconMessageChatbot } from "@tabler/icons-react-native";
 import { router } from "expo-router";
-import { Bell, Settings } from "lucide-react-native";
+import { Bell } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
@@ -75,7 +75,7 @@ export const MapPortal = ({ className }: MapPortalProps) => {
           shortcuts={[
             {
               key: "settings",
-              icon: Settings,
+              icon: IconMapPinCog,
               color: mapStore.settings.mode === "map" ? foreground : background,
               onPress: () => router.push("/main/maps/map-settings"),
             },

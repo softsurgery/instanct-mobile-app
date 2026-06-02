@@ -68,10 +68,15 @@ export const MapRenderer = ({
       userId: currentUser?.id as string,
       distance: 0,
       isOnline: true,
+      coordinatesVisible: true,
       profilePicture: null,
       updatedAt: new Date().toISOString(),
     };
-    return [...mapStore.nearbyUsers, myself];
+    // Only show users with visible coordinates on the map
+    const visibleUsers = mapStore.nearbyUsers.filter(
+      (u) => u.coordinatesVisible && u.latitude != null && u.longitude != null,
+    );
+    return [...visibleUsers, myself];
   }, [currentUser, mapStore.nearbyUsers]);
 
   //handle marker press
@@ -126,11 +131,13 @@ export const MapRenderer = ({
     );
 
     if (unique.length === 1 && unique[0].userId !== currentUser?.id) {
-      handleMarkerPress(
-        unique[0].latitude,
-        unique[0].longitude,
-        unique[0].userId,
-      );
+      if (unique[0].latitude != null && unique[0].longitude != null) {
+        handleMarkerPress(
+          unique[0].latitude,
+          unique[0].longitude,
+          unique[0].userId,
+        );
+      }
       return;
     }
 
@@ -239,10 +246,10 @@ export const MapRenderer = ({
             key={u.userId}
             id={u.userId}
             anchor={{ x: 0.5, y: 0.5 }}
-            coordinate={{ latitude: u.latitude, longitude: u.longitude }}
+            coordinate={{ latitude: u.latitude!, longitude: u.longitude! }}
             onPress={() => {
               if (u.userId !== currentUser?.id)
-                handleMarkerPress(u.latitude, u.longitude, u.userId);
+                handleMarkerPress(u.latitude!, u.longitude!, u.userId);
             }}
             tracksViewChanges={!isAndroid}
             image={
@@ -292,9 +299,15 @@ export const MapRenderer = ({
         <UsersCarousel
           users={mapStore.nearbyUsers}
           className="rounded-full"
-          onUserPress={(user) =>
-            handleMarkerPress(user.latitude, user.longitude, user.userId)
-          }
+          onUserPress={(user) => {
+            if (
+              user.coordinatesVisible &&
+              user.latitude != null &&
+              user.longitude != null
+            ) {
+              handleMarkerPress(user.latitude, user.longitude, user.userId);
+            }
+          }}
         />
       </View>
       {/* Navigation Mode */}
