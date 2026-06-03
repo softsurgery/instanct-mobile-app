@@ -366,13 +366,11 @@ export const InspectBaseProfile = ({
             {isProfilePicturePending ? (
               <Skeleton className="h-[100px] w-[100px] rounded-full" />
             ) : (
-              <View className="rounded-full border-4 border-background bg-background">
-                <PhotoPreview source={profilePictureSource}>
-                  {profilePictures[0]}
-                </PhotoPreview>
-              </View>
+              <PhotoPreview source={profilePictureSource}>
+                {profilePictures[0]}
+              </PhotoPreview>
             )}
-            {currentUser?.id === id && <ProfileStat className="mb-4" />}
+            {currentUser?.id === id && <ProfileStat />}
           </View>
 
           {/* Identity */}
