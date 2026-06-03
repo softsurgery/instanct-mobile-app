@@ -295,21 +295,23 @@ export const MapRenderer = ({
           />
         ) : null}
       </Modal>
-      <View className="py-4 absolute bottom-0 left-0 right-0 bg-background/50 rounded-t-2xl">
-        <UsersCarousel
-          users={mapStore.nearbyUsers}
-          className="rounded-full"
-          onUserPress={(user) => {
-            if (
-              user.coordinatesVisible &&
-              user.latitude != null &&
-              user.longitude != null
-            ) {
-              handleMarkerPress(user.latitude, user.longitude, user.userId);
-            }
-          }}
-        />
-      </View>
+      {mapStore.nearbyUsers.length > 0 && (
+        <View className="py-4 absolute bottom-0 left-0 right-0 bg-background/50 rounded-t-2xl">
+          <UsersCarousel
+            users={mapStore.nearbyUsers}
+            className="rounded-full"
+            onUserPress={(user) => {
+              if (
+                user.coordinatesVisible &&
+                user.latitude != null &&
+                user.longitude != null
+              ) {
+                handleMarkerPress(user.latitude, user.longitude, user.userId);
+              }
+            }}
+          />
+        </View>
+      )}
       {/* Navigation Mode */}
       <MapModes moveToCurrentLocation={handleMoveToCurrentLocation} />
     </View>

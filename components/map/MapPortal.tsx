@@ -10,7 +10,6 @@ import { View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { MapRenderer } from "./MapRenderer";
-import { MapStatus } from "./MapDebugging/MapStatus";
 import { Loader } from "../shared/Loader";
 import { useChatContext } from "@/contexts/ChatContext";
 import { hslToHex } from "@/lib/theme";
@@ -21,11 +20,24 @@ interface MapPortalProps {
 }
 
 export const MapPortal = ({ className }: MapPortalProps) => {
-  const { palette } = useColorPalette();
-  const background = hslToHex(palette.background);
-  const foreground = hslToHex(palette.foreground);
-  const { t } = useTranslation("common");
   const mapStore = useMapStore();
+  const { palette, colorScheme } = useColorPalette();
+
+  const mapHeaderIconColors = React.useMemo(() => {
+    if (colorScheme === "light" && mapStore.settings.mode === "sattelite") {
+      return hslToHex(palette.background);
+    }
+    return hslToHex(palette.foreground);
+  }, [palette, colorScheme, mapStore.settings.mode]);
+
+  const mapHeaderTitleClassName = React.useMemo(() => {
+    if (colorScheme === "light" && mapStore.settings.mode === "sattelite") {
+      return "text-background";
+    }
+    return "text-foreground";
+  }, [colorScheme, mapStore.settings.mode]);
+
+  const { t } = useTranslation("common");
   const { count: chatCount, resetCount: resetChatCount } = useChatContext();
   const { count, resetCount } = useNotificationContext();
 
@@ -67,22 +79,19 @@ export const MapPortal = ({ className }: MapPortalProps) => {
         <ApplicationHeader
           title={t("screens.map")}
           classNames={{
-            title:
-              mapStore.settings.mode === "map"
-                ? "text-foreground"
-                : "text-background",
+            title: mapHeaderTitleClassName,
           }}
           shortcuts={[
             {
               key: "settings",
               icon: IconMapPinCog,
-              color: mapStore.settings.mode === "map" ? foreground : background,
+              color: mapHeaderIconColors,
               onPress: () => router.push("/main/maps/map-settings"),
             },
             {
               key: "notifications",
               icon: Bell,
-              color: mapStore.settings.mode === "map" ? foreground : background,
+              color: mapHeaderIconColors,
               onPress: () => {
                 router.push("/main/notifications");
                 resetCount();
@@ -92,13 +101,13 @@ export const MapPortal = ({ className }: MapPortalProps) => {
             {
               key: "chat",
               icon: IconMessageChatbot,
-              color: mapStore.settings.mode === "map" ? foreground : background,
+              color: mapHeaderIconColors,
               badgeText: chatCount > 0 ? String(chatCount) : undefined,
               onPress: handleChatPress,
             },
           ]}
         />
-        <MapStatus />
+        {/* <MapStatus /> */}
         {/* <MapDebugDialog className="m-4" /> */}
       </StableSafeAreaView>
       {/* {!sessionStarted && (
