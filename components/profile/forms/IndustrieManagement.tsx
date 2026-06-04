@@ -147,36 +147,35 @@ export const IndustriesManagement = ({
         </StableKeyboardAwareScrollView>
       </View>
       {!isKeyboardVisible && (
-        <View className="py-6 border-t border-border">
-          <Button
-            className="mx-6 mb-4 rounded-full"
-            size="sm"
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              handleSave();
-            }}
-            disabled={isPending || selectedIndustries.length === 0}
-          >
-            {isPending ? (
-              <React.Fragment>
-                <Icon
-                  as={Loader2}
-                  size={18}
-                  className="text-primary-foreground animate-spin"
-                />
+        <View className="border-t border-border bg-card p-8 pt-4 gap-4">
+          <View className="flex flex-col justify-between gap-2">
+            <Button
+              size="lg"
+              className="rounded-xl"
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                handleSave();
+              }}
+              disabled={isPending || selectedIndustries.length === 0}
+            >
+              {isPending ? (
+                <React.Fragment>
+                  <Icon
+                    as={Loader2}
+                    size={18}
+                    className="text-primary-foreground animate-spin"
+                  />
+                  <Text className="text-primary-foreground font-semibold">
+                    Saving...
+                  </Text>
+                </React.Fragment>
+              ) : (
                 <Text className="text-primary-foreground font-semibold">
-                  Saving...
+                  Update Industries
                 </Text>
-              </React.Fragment>
-            ) : (
-              <React.Fragment>
-                <Icon as={Save} size={18} className="text-primary-foreground" />
-                <Text className="text-primary-foreground font-semibold">
-                  Save Selection
-                </Text>
-              </React.Fragment>
-            )}
-          </Button>
+              )}
+            </Button>
+          </View>
         </View>
       )}
     </StableSafeAreaView>
