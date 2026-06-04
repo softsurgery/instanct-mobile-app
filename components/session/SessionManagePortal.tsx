@@ -22,6 +22,8 @@ import { FormBuilder } from "../shared/form-builder/FormBuilder";
 import { api } from "@/api";
 import { useActiveSessions } from "@/hooks/content/sessions/useActiveSessions";
 import { Loader } from "../shared/Loader";
+import { ActionSheetRef } from "react-native-actions-sheet";
+import { EndSessionActionSheet } from "./EndSessionActionSheet";
 
 interface SessionManagePortalProps {
   className?: string;
@@ -32,6 +34,10 @@ export const SessionManagePortal = ({
 }: SessionManagePortalProps) => {
   const { mapSession, refetchSessions, isSessionsPending } =
     useActiveSessions();
+  const endSessionSheetRef = React.useRef<ActionSheetRef>(null);
+  const [currentSessionId, setCurrentSessionId] = React.useState<number | null>(
+    null,
+  );
 
   const queryClient = useQueryClient();
   const isKeyboardVisible = useKeyboardVisible();
@@ -59,6 +65,9 @@ export const SessionManagePortal = ({
         queryClient.invalidateQueries({
           queryKey: ["sessions"],
         });
+        queryClient.invalidateQueries({
+          queryKey: ["active-sessions"],
+        });
         refetchSessions();
         router.replace(`/main/(tabs)`);
       },
@@ -73,7 +82,9 @@ export const SessionManagePortal = ({
     mutationFn: async () =>
       api.session.update(mapSession?.id!, sessionStore.updateDto),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["active-sessions"] });
+      queryClient.invalidateQueries({
+        queryKey: ["active-sessions"],
+      });
       queryClient.invalidateQueries({ queryKey: ["sessions"] });
       toast.success("Session updated successfully!", {
         description: "Your session has been successfully updated.",
@@ -121,6 +132,21 @@ export const SessionManagePortal = ({
     }
   };
 
+  const onEndSessionPress = (sessionId: number) => {
+    setCurrentSessionId(sessionId);
+    endSessionSheetRef.current?.show();
+  };
+
+  const onCancelPress = () => {
+    endSessionSheetRef.current?.hide();
+    setCurrentSessionId(null);
+  };
+  const onConfirmEndSession = () => {
+    if (!currentSessionId) {
+      return;
+    }
+    endSession();
+  };
   const isPending = isEndingSessionPending || isUpdatingSession;
 
   return (
@@ -171,7 +197,7 @@ export const SessionManagePortal = ({
                   variant="outline"
                   className="rounded-xl"
                   onPress={() => {
-                    endSession();
+                    onEndSessionPress(mapSession?.id!);
                   }}
                   disabled={isPending}
                 >
@@ -194,6 +220,12 @@ export const SessionManagePortal = ({
           )}
         </>
       )}
+      <EndSessionActionSheet
+        ref={endSessionSheetRef}
+        onConfirm={onConfirmEndSession}
+        onClose={onCancelPress}
+        isPending={isEndingSessionPending}
+      />
     </StableSafeAreaView>
   );
 };
