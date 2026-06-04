@@ -11,7 +11,7 @@ import { Button } from "~/components/ui/button";
 import { Icon } from "~/components/ui/icon";
 import { Text } from "~/components/ui/text";
 import { FormBuilder } from "~/components/shared/form-builder/FormBuilder";
-import { useChangePasswordFormStructure } from "./forms/useChangePasswordFormStructure";
+import { useChangePasswordFormStructure } from "./useChangePasswordFormStructure";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 import { useUserStore } from "@/stores/useUserStore";
 

@@ -1,3 +1,4 @@
+import { useRTL } from "@/hooks/useRTL";
 import { cn } from "@/lib/utils";
 import { Platform, TextInput, type TextInputProps } from "react-native";
 
@@ -5,10 +6,12 @@ function Input({
   className,
   ...props
 }: TextInputProps & React.RefAttributes<TextInput>) {
+  const isRTL = useRTL();
   return (
     <TextInput
       className={cn(
         "dark:bg-input/30 border-input bg-background text-foreground flex h-9 w-full min-w-0 flex-row items-center rounded-md border px-3 py-1 text-sm leading-5 shadow-sm shadow-black/5",
+        !isRTL ? "text-left" : "text-right",
         props.editable === false &&
           cn(
             "opacity-50",

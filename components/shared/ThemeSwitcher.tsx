@@ -24,7 +24,9 @@ export const ThemeSwitcher = ({ classNames }: ThemeSwitcherProps) => {
       onSelect={async (value) => {
         if (value === colorScheme) return;
         toggleTheme();
-        await setAndroidNavigationBar(colorScheme === "dark" ? "light" : "dark");
+        await setAndroidNavigationBar(
+          colorScheme === "dark" ? "light" : "dark",
+        );
         toggleColorScheme();
       }}
       options={[

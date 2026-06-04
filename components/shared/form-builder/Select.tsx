@@ -15,6 +15,7 @@ import type { SelectOption } from "~/components/shared/form-builder/types";
 import { cn } from "~/lib/utils";
 import ActionSheet, { type ActionSheetRef } from "react-native-actions-sheet";
 import { useColorPalette } from "@/hooks/useColorPalette";
+import { useRTL } from "@/hooks/useRTL";
 
 interface SelectProps {
   classNames?: {
@@ -48,6 +49,7 @@ export default function Select({
   options = [],
   searchable = false,
 }: SelectProps) {
+  const isRTL = useRTL();
   const { palette } = useColorPalette();
   const sheetRef = React.useRef<ActionSheetRef>(null);
   const [search, setSearch] = React.useState("");
@@ -89,7 +91,12 @@ export default function Select({
           placeholder={placeholder || "Select an option"}
           className={cn("block opacity-100", classNames?.input)}
         />
-        <View className="absolute right-3 text-muted-foreground">
+        <View
+          className={cn(
+            "absolute text-muted-foreground",
+            isRTL ? "left-3" : "right-3",
+          )}
+        >
           <Icon as={ChevronDown} size={18} color={"gray"} />
         </View>
       </Pressable>
@@ -109,12 +116,22 @@ export default function Select({
         }}
       >
         <View className="mb-4">
-          <Text className="text-lg font-semibold text-foreground">
+          <Text
+            className={cn(
+              "text-lg font-semibold text-foreground",
+              isRTL && "text-right",
+            )}
+          >
             {title || "Select Option"}
           </Text>
 
           {description && (
-            <Text className="mt-1 text-sm text-muted-foreground">
+            <Text
+              className={cn(
+                "mt-1 text-sm text-muted-foreground",
+                isRTL && "text-right",
+              )}
+            >
               {description}
             </Text>
           )}
@@ -125,13 +142,16 @@ export default function Select({
             <Icon
               as={Search}
               size={18}
-              className="absolute left-3 top-3 z-10 text-muted-foreground"
+              className={cn(
+                "absolute top-3 z-10 text-muted-foreground",
+                isRTL ? "left-3" : "right-3",
+              )}
             />
             <Input
               value={search}
               onChangeText={setSearch}
               placeholder="Search..."
-              className="pl-10"
+              className={cn(isRTL ? "pr-10" : "pl-10")}
               autoFocus
             />
           </View>
@@ -164,6 +184,7 @@ export default function Select({
                     "flex-row items-center justify-between rounded-xl px-4 py-3",
                     index !== filtered.length - 1 && "mb-1",
                     isSelected && "bg-primary/10",
+                    isRTL && "flex-row-reverse",
                   )}
                 >
                   <Text

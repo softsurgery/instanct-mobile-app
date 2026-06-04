@@ -5,23 +5,34 @@
     "like": "Aimer",
     "map": "Carte",
     "menu": "Menu",
-    "settings": "Paramètres",
     "notifications": "Notifications",
     "profile": "Mon Profile",
     "experience": "Expérience",
     "education": "Éducation",
-    "reportBug": "Signaler un bug",
-    "sendFeedback": "Envoyer des commentaires",
-    "faqs": "Questions fréquemment posées",
     "sessions": "Sessions",
     "sessionDetails": "Détails de la session",
-    "mapSettings": "Paramètres de la carte"
+    "mapSettings": "Paramètres de la carte",
+    "settings": {
+      "title": "Paramètres",
+      "reportBug": "Signaler un bug",
+      "sendFeedback": "Envoyer des commentaires",
+      "faqs": "Questions fréquemment posées",
+      "privacyPolicy": "Politique de confidentialité",
+      "termsOfService": "Conditions d'utilisation",
+      "language": "Langue",
+      "theme": "Thème"
+    }
   },
   "language": {
     "select": {
       "title": "Sélectionnez la langue",
       "description": "Sélectionnez la langue que vous souhaitez utiliser dans l'application",
       "placeholder": "Sélectionnez la langue"
+    },
+    "options": {
+      "en": "Anglais",
+      "fr": "Français",
+      "ar": "Arabe"
     }
   }
 }

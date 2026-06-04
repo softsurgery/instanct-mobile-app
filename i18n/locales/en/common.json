@@ -5,23 +5,34 @@
     "like": "Like",
     "map": "Map",
     "menu": "Menu",
-    "settings": "Settings",
     "notifications": "Notifications",
     "profile": "My Profile",
     "experience": "Experience",
     "education": "Education",
-    "reportBug": "Report a Bug",
-    "sendFeedback": "Send Feedback",
-    "faqs": "Frequently Asked Questions",
     "sessions": "Sessions",
     "sessionDetails": "Session Details",
-    "mapSettings": "Map Settings"
+    "mapSettings": "Map Settings",
+    "settings": {
+      "title": "Settings",
+      "reportBug": "Report a Bug",
+      "sendFeedback": "Send Feedback",
+      "faqs": "Frequently Asked Questions",
+      "privacyPolicy": "Privacy Policy",
+      "termsOfService": "Terms of Service",
+      "language": "Language",
+      "theme": "Theme"
+    }
   },
   "language": {
     "select": {
       "title": "Select Language",
       "description": "Select the language you want to use in the app",
       "placeholder": "Select Language"
+    },
+    "options": {
+      "en": "English",
+      "fr": "French",
+      "ar": "Arabic"
     }
   }
 }
