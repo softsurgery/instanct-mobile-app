@@ -58,7 +58,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
     const targetedIndustries = userFilerStore.dto.industry;
     setCurrentIndex(0);
 
-    return liveUsers.filter(
+    const industryFiltered = liveUsers.filter(
       (user) =>
         user.id !== currentUser?.id &&
         (!targetedIndustries ||
@@ -67,6 +67,22 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
             targetedIndustries.includes(industry.id),
           )),
     );
+
+    const objectiveFiltered = industryFiltered.filter((user) => {
+      const targetedObjectives = userFilerStore.dto.objectives;
+
+      return (
+        !targetedObjectives ||
+        targetedObjectives.length === 0 ||
+        user.sessions?.some((session) =>
+          session.payload?.objectives?.some((objectiveId: number) =>
+            targetedObjectives.includes(objectiveId),
+          ),
+        )
+      );
+    });
+
+    return objectiveFiltered;
   }, [liveUsers, currentUser, userFilerStore.dto]);
 
   const handleNotificationsPress = React.useCallback(() => {
