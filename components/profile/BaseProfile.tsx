@@ -15,7 +15,7 @@ import {
   UpdateUserCoverDto,
   Upload,
 } from "@/types";
-import { useFocusEffect, useNavigation } from "expo-router";
+import { router, useFocusEffect, useNavigation } from "expo-router";
 import { Image, ImageSourcePropType, Pressable, View } from "react-native";
 import { ProfileStat } from "./ProfileStat";
 import { useUserIndustries } from "@/hooks/content/users/useUserIndustries";
@@ -35,7 +35,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as ImagePicker from "expo-image-picker";
 import { Skeleton } from "../ui/skeleton";
 import { Icon } from "../ui/icon";
-import { Pencil } from "lucide-react-native";
+import { Mail, Pencil } from "lucide-react-native";
 import { BaseProfileSkeleton } from "./BaseProfileSkeleton";
 import { ExperienceInstance } from "./experience/ExperienceInstance";
 import { EducationInstance } from "./education/EducationInstance";
@@ -379,9 +379,25 @@ export const InspectBaseProfile = ({
               {identity}
             </Text>
             {id && (
-              <Text className="text-sm text-muted-foreground">
-                @{user?.username}
-              </Text>
+              <View className="flex-col items-start justify-between gap-2">
+                <View className="flex flex-row items-center gap-2">
+                  <Text className="text-sm text-muted-foreground">
+                    @{user?.username}
+                  </Text>
+                  {!!user?.email && !user?.emailVerified && (
+                    <Text className="text-xs text-yellow-600 font-bold">
+                      (Unverified Email)
+                    </Text>
+                  )}
+                </View>
+                <Pressable
+                  onPress={() => router.push("/main/profile/verify-email")}
+                  className="flex-row items-center gap-1.5 rounded-xl border border-border px-3.5 py-2 active:opacity-80 bg-yellow-700"
+                >
+                  <Icon as={Mail} size={16} />
+                  <Text className="text-md font-semibold">Verify email</Text>
+                </Pressable>
+              </View>
             )}
           </View>
         </View>
