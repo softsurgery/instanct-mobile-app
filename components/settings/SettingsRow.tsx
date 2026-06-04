@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { LucideIcon } from "lucide-react-native";
 import React, { useMemo } from "react";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 import { StablePressable } from "../shared/StablePressable";
 import { Icon } from "../ui/icon";
 import { Text } from "../ui/text";
@@ -89,12 +89,16 @@ export const SettingRow = ({
   );
 
   return isPressable ? (
-    <StablePressable
+    <Pressable
       onPress={onPress}
-      className={cn("w-full", disabled && "opacity-50", className)}
+      className={cn(
+        "w-full active:opacity-50",
+        disabled && "opacity-50",
+        className,
+      )}
     >
       {content}
-    </StablePressable>
+    </Pressable>
   ) : (
     <View className={cn(disabled && "opacity-50", className)}>{content}</View>
   );
