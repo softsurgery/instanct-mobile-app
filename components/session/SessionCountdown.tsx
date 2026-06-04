@@ -1,14 +1,18 @@
 import { cn } from "@/lib/utils";
 import { ResponseSessionDto } from "@/types/session";
 import React from "react";
-import { View } from "react-native";
-import { Text } from "../ui/text";
+import { StyleProp, TextStyle, View, ViewStyle } from "react-native";
+import { Text } from "react-native-gesture-handler";
 
 interface SessionCountdownProps {
   session: ResponseSessionDto;
   classNames?: {
     wrapper?: string;
     text?: string;
+  };
+  styles?: {
+    wrapper?: StyleProp<ViewStyle>;
+    text?: StyleProp<TextStyle>;
   };
 }
 
@@ -37,6 +41,7 @@ const computeTimeLeft = (targetDate: Date): TimeLeft => {
 const pad = (n: number): string => String(n).padStart(2, "0");
 
 export const SessionCountdown = ({
+  styles,
   session,
   classNames,
 }: SessionCountdownProps) => {
@@ -77,13 +82,17 @@ export const SessionCountdown = ({
       : `${pad(timeLeft.hours)}:${pad(timeLeft.minutes)}:${pad(timeLeft.seconds)}`;
 
   return (
-    <View className={cn("flex-row items-center gap-1", classNames?.wrapper)}>
+    <View
+      className={cn("flex-row items-center gap-1", classNames?.wrapper)}
+      style={styles?.wrapper}
+    >
       <Text
         className={cn(
           "font-bold tabular-nums",
           isExpired ? "text-destructive" : "text-foreground",
           classNames?.text,
         )}
+        style={styles?.text}
       >
         {isExpired ? "00:00:00" : formatted}
       </Text>

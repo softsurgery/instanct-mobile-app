@@ -30,7 +30,7 @@ export const MapStatus = ({ className }: MapStatusProps) => {
           </Text>
         )}
       </Text>
-      <Text className="mx-4 bg-transparent text-xs font-bold">
+      {/* <Text className="mx-4 bg-transparent text-xs font-bold">
         Coordinates:{" "}
         <Text className="text-xs">
           {mapStore.location?.coords.latitude.toFixed(3)},{" "}
@@ -39,7 +39,7 @@ export const MapStatus = ({ className }: MapStatusProps) => {
       </Text>
       <Text className="mx-4 bg-transparent text-xs font-bold">
         Range: <Text className="text-xs">{mapStore.settings.radius} KM</Text>
-      </Text>
+      </Text> */}
     </View>
   );
 };

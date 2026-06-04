@@ -12,8 +12,11 @@ import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { MapRenderer } from "./MapRenderer";
 import { Loader } from "../shared/Loader";
 import { useChatContext } from "@/contexts/ChatContext";
+import { useActiveMapSessionContext } from "@/contexts/ActiveMapSessionContext";
 import { hslToHex } from "@/lib/theme";
 import { useColorPalette } from "@/hooks/useColorPalette";
+import { MapStatus } from "./MapDebugging/MapStatus";
+import { MapLockedOverlay } from "./MaplLockedOverlay";
 
 interface MapPortalProps {
   className?: string;
@@ -21,6 +24,7 @@ interface MapPortalProps {
 
 export const MapPortal = ({ className }: MapPortalProps) => {
   const mapStore = useMapStore();
+  const { activeSession, initialized } = useActiveMapSessionContext();
   const { palette, colorScheme } = useColorPalette();
 
   const mapHeaderIconColors = React.useMemo(() => {
@@ -51,7 +55,7 @@ export const MapPortal = ({ className }: MapPortalProps) => {
     longitude: 0,
   };
 
-  if (!mapStore.location) {
+  if (!initialized || !mapStore.location) {
     return (
       <View
         className={cn(
@@ -67,12 +71,16 @@ export const MapPortal = ({ className }: MapPortalProps) => {
   return (
     <View className={cn("flex-1 bg-background", className)}>
       <View className="absolute inset-0 border-y border-border top-0">
-        <MapRenderer
-          className="flex-1"
-          latitude={latitude}
-          longitude={longitude}
-          nearbyUsers={mapStore.nearbyUsers}
-        />
+        {activeSession ? (
+          <MapRenderer
+            className="flex-1"
+            latitude={latitude}
+            longitude={longitude}
+            nearbyUsers={mapStore.nearbyUsers}
+          />
+        ) : (
+          <MapLockedOverlay className="flex-1" />
+        )}
       </View>
 
       <StableSafeAreaView className="absolute top-0 left-0 right-0 z-20">
@@ -107,7 +115,7 @@ export const MapPortal = ({ className }: MapPortalProps) => {
             },
           ]}
         />
-        {/* <MapStatus /> */}
+        {activeSession && <MapStatus />}
         {/* <MapDebugDialog className="m-4" /> */}
       </StableSafeAreaView>
       {/* {!sessionStarted && (
