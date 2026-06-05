@@ -1,6 +1,12 @@
-import { View, ScrollView, RefreshControl } from "react-native";
+import {
+  View,
+  ScrollView,
+  RefreshControl,
+  NativeSyntheticEvent,
+} from "react-native";
 import { ProfileSection } from "./RenderSection";
 import { cn } from "@/lib/utils";
+import { NativeScrollEvent } from "react-native";
 
 interface InterestsTabProps {
   className?: string;
@@ -9,6 +15,7 @@ interface InterestsTabProps {
   userId?: string;
   onRefresh?: () => void;
   refreshing?: boolean;
+  onScroll?: (e: NativeSyntheticEvent<NativeScrollEvent>) => void;
 }
 
 export const InterestsTab = ({
@@ -18,8 +25,10 @@ export const InterestsTab = ({
   userId,
   onRefresh,
   refreshing,
+  onScroll,
 }: InterestsTabProps) => (
   <ScrollView
+    onScroll={onScroll}
     className={cn("flex-1 bg-background", className)}
     contentContainerStyle={{ paddingTop: 20, paddingBottom: 32 }}
     refreshControl={

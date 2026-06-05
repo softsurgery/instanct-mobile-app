@@ -14,13 +14,21 @@ import {
   UserRound,
   LucideIcon,
 } from "lucide-react-native";
-import { Linking, RefreshControl, ScrollView, View } from "react-native";
+import {
+  Linking,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  RefreshControl,
+  ScrollView,
+  View,
+} from "react-native";
 
 interface AboutTabProps {
   className?: string;
   user: ResponseUserDto;
   onRefresh?: () => void;
   refreshing?: boolean;
+  onScroll?: (e: NativeSyntheticEvent<NativeScrollEvent>) => void;
 }
 
 const SectionHeader = ({
@@ -43,6 +51,7 @@ export const AboutTab = ({
   user,
   refreshing,
   onRefresh,
+  onScroll,
 }: AboutTabProps) => {
   const { palette } = useColorPalette();
   const fg = hslToHex(palette.foreground);
@@ -51,6 +60,7 @@ export const AboutTab = ({
   return (
     <ScrollView
       className={cn(className)}
+      onScroll={onScroll}
       contentContainerStyle={{ paddingTop: 20, paddingBottom: 32 }}
       refreshControl={
         <RefreshControl refreshing={!!refreshing} onRefresh={onRefresh} />

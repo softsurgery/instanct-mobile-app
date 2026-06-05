@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { StableSafeAreaView } from "@/components/shared/StableSafeAreaView";
 import { ApplicationHeader } from "@/components/shared/AppHeader";
 import { Text } from "@/components/ui/text";
-import { ArrowLeft, Save, Loader2 } from "lucide-react-native";
+import { ArrowLeft, Loader2 } from "lucide-react-native";
 import { Icon } from "@/components/ui/icon";
 import * as Haptics from "expo-haptics";
 import { Button } from "@/components/ui/button";

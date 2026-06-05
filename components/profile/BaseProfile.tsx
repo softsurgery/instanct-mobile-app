@@ -41,6 +41,7 @@ import { ExperienceInstance } from "./experience/ExperienceInstance";
 import { EducationInstance } from "./education/EducationInstance";
 import { hslToHex } from "@/lib/theme";
 import { useColorPalette } from "@/hooks/useColorPalette";
+import { useScrollableElement } from "@/hooks/useScrollableElement";
 interface ProfileSection<T = unknown> {
   key: string;
   title: string;
@@ -61,6 +62,10 @@ export const InspectBaseProfile = ({
   id,
   coverExtra,
 }: InspectBaseProfileProps) => {
+  const { animatedHeaderStyle, handleScroll } = useScrollableElement({
+    deltaThreshold: 350,
+    duration: 250,
+  });
   const { palette } = useColorPalette();
   const queryClient = useQueryClient();
   const navigation = useNavigation();
@@ -167,6 +172,22 @@ export const InspectBaseProfile = ({
         refetchCurrentUser();
         toast.success("Cover updated successfully", {
           description: "Your cover has been successfully updated.",
+        });
+      },
+      onError: (error: ServerErrorResponse) => {
+        toast.error(
+          error.response?.data?.message || "Failed to update cover",
+          {},
+        );
+      },
+    });
+
+  const { mutate: sendVerifyEmail, isPending: isSendVerifyEmailPending } =
+    useMutation({
+      mutationFn: () => api.auth.sendVerifyEmail(user?.email),
+      onSuccess: () => {
+        toast.success("Email sent successfully", {
+          description: "Check your email for verification link.",
         });
       },
       onError: (error: ServerErrorResponse) => {
@@ -384,19 +405,26 @@ export const InspectBaseProfile = ({
                   <Text className="text-sm text-muted-foreground">
                     @{user?.username}
                   </Text>
-                  {!!user?.email && !user?.emailVerified && (
-                    <Text className="text-xs text-yellow-600 font-bold">
-                      (Unverified Email)
-                    </Text>
-                  )}
+                  {!!user?.email &&
+                    !user?.emailVerified &&
+                    currentUser?.id === id && (
+                      <Text className="text-xs text-yellow-600 font-bold">
+                        (Unverified Email)
+                      </Text>
+                    )}
                 </View>
-                <Pressable
-                  onPress={() => router.push("/main/profile/verify-email")}
-                  className="flex-row items-center gap-1.5 rounded-xl border border-border px-3.5 py-2 active:opacity-80 bg-yellow-700"
-                >
-                  <Icon as={Mail} size={16} />
-                  <Text className="text-md font-semibold">Verify email</Text>
-                </Pressable>
+                {currentUser?.id === id && (
+                  <Pressable
+                    onPress={() => sendVerifyEmail()}
+                    disabled={isSendVerifyEmailPending}
+                    className="flex-row items-center gap-1.5 rounded-xl border border-border px-3.5 py-2 active:opacity-80 bg-yellow-700"
+                  >
+                    <Icon as={Mail} size={16} color={"white"} />
+                    <Text className="text-md font-semibold text-white">
+                      Verify email
+                    </Text>
+                  </Pressable>
+                )}
               </View>
             )}
           </View>
@@ -433,6 +461,7 @@ export const InspectBaseProfile = ({
                 user={user}
                 onRefresh={onRefresh}
                 refreshing={refreshing}
+                onScroll={handleScroll}
               />
             )}
           </Tab.Screen>
@@ -448,6 +477,7 @@ export const InspectBaseProfile = ({
                 renderSection={RenderSection}
                 onRefresh={onRefresh}
                 refreshing={refreshing}
+                onScroll={handleScroll}
               />
             )}
           </Tab.Screen>
@@ -464,6 +494,7 @@ export const InspectBaseProfile = ({
                 userId={id}
                 onRefresh={onRefresh}
                 refreshing={refreshing}
+                onScroll={handleScroll}
               />
             )}
           </Tab.Screen>

@@ -1,4 +1,10 @@
-import { RefreshControl, ScrollView, View } from "react-native";
+import {
+  NativeSyntheticEvent,
+  RefreshControl,
+  ScrollView,
+  View,
+  NativeScrollEvent,
+} from "react-native";
 import { ProfileSection } from "./RenderSection";
 import { cn } from "@/lib/utils";
 
@@ -8,6 +14,7 @@ interface CarreerTabProps {
   renderSection: (section: ProfileSection) => React.ReactNode;
   onRefresh?: () => void;
   refreshing?: boolean;
+  onScroll?: (e: NativeSyntheticEvent<NativeScrollEvent>) => void;
 }
 
 export const CareerTab = ({
@@ -16,8 +23,10 @@ export const CareerTab = ({
   renderSection,
   onRefresh,
   refreshing,
+  onScroll,
 }: CarreerTabProps) => (
   <ScrollView
+    onScroll={onScroll}
     className={cn("flex-1 bg-background", className)}
     contentContainerStyle={{ paddingTop: 20, paddingBottom: 32 }}
     refreshControl={
