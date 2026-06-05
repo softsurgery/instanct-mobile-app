@@ -1,27 +1,48 @@
+import React from "react";
 import { View, TouchableOpacity } from "react-native";
+import * as Haptics from "expo-haptics";
+import { type ActionSheetRef } from "react-native-actions-sheet";
 import { Text } from "../ui/text";
 import { Icon } from "../ui/icon";
 import { ResponseUserDto } from "@/types";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import { useServerImages } from "@/hooks/content/useServerImages";
+import { useBookmarkActions } from "@/hooks/content/users/useBookmarkActions";
 import { useRouter } from "expo-router";
 import { hslToHex, THEME } from "@/lib/theme";
-import { cn } from "@/lib/utils";
-import { Bookmark, ChevronRight } from "lucide-react-native";
+import {
+  Bookmark,
+  BookmarkX,
+  ChevronRight,
+  SendIcon,
+  UserRound,
+} from "lucide-react-native";
 import { useColorScheme } from "nativewind";
+import {
+  UserQuickActionsSheet,
+  type QuickAction,
+} from "./UserQuickActionsSheet";
 
 interface BookmarkCardProps {
   className?: string;
   user?: ResponseUserDto;
+  /** Fired after the bookmark is successfully removed (e.g. to hide the row). */
+  onRemoved?: (user?: ResponseUserDto) => void;
 }
 
 const PRIMARY = hslToHex(THEME.light.primary);
 
-export const BookmarkCard = ({ className, user }: BookmarkCardProps) => {
+export const BookmarkCard = ({
+  className,
+  user,
+  onRemoved,
+}: BookmarkCardProps) => {
   const ids = [user?.pictureId];
   const fallbacks = [identifyUserAvatar(user)];
   const router = useRouter();
   const { colorScheme } = useColorScheme();
+  const sheetRef = React.useRef<ActionSheetRef>(null);
+
   const mutedFg = hslToHex(
     colorScheme === "dark"
       ? THEME.dark.mutedForeground
@@ -35,7 +56,14 @@ export const BookmarkCard = ({ className, user }: BookmarkCardProps) => {
     size: { width: 50, height: 50 },
   });
 
-  // Prefer a meaningful subtitle that says *why* this person is worth saving.
+  // bookmarkId === user id. enabled:false skips the findBookmark lookup
+  // since we already know this user is bookmarked (they're in the list).
+  const { deleteBookmark } = useBookmarkActions({
+    bookmarkId: user?.id ?? "",
+    enabled: false,
+    onDeleteBookmarkSuccess: () => onRemoved?.(user),
+  });
+
   const subtitle = user?.industries?.length
     ? user.industries
         .map((industry) => industry?.label)
@@ -43,54 +71,99 @@ export const BookmarkCard = ({ className, user }: BookmarkCardProps) => {
         .join(" · ")
     : user?.bio?.trim() || user?.email;
 
-  return (
-    <TouchableOpacity
-      activeOpacity={0.7}
-      className={className}
-      onPress={() =>
-        router.push({
-          pathname: "/main/profile/inspect-profile",
-          params: { id: user?.id },
-        })
-      }
-    >
-      <View className="flex-row items-center gap-3.5 p-3 ">
-        {/* Avatar with brand ring + saved marker */}
-        <View className="relative">
-          <View
-            className="rounded-full p-[3px]"
-            style={{ backgroundColor: `${PRIMARY}1f` }}
-          >
-            <View className="rounded-full bg-muted">{bookmarkImages[0]}</View>
-          </View>
-          <View
-            className="absolute -bottom-0.5 -right-0.5 h-6 w-6 items-center justify-center rounded-full border-2 border-card"
-            style={{ backgroundColor: PRIMARY }}
-          >
-            <Icon as={Bookmark} size={12} color="#ffffff" fill="#ffffff" />
-          </View>
-        </View>
+  const openProfile = React.useCallback(() => {
+    router.push({
+      pathname: "/main/profile/inspect-profile",
+      params: { id: user?.id },
+    });
+  }, [router, user?.id]);
 
-        {/* Identity */}
-        <View className="flex-1">
-          <Text
-            numberOfLines={1}
-            className="text-[16px] font-semibold text-foreground"
-          >
-            {identifyUser(user)}
-          </Text>
-          {!!subtitle && (
+  const handleLongPress = React.useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    sheetRef.current?.show();
+  }, []);
+
+  const actions = React.useMemo<QuickAction[]>(
+    () => [
+      {
+        key: "profile",
+        label: "View profile",
+        icon: UserRound,
+        onPress: openProfile,
+      },
+      {
+        key: "message",
+        label: "Send message",
+        icon: SendIcon,
+        onPress: () => {},
+      },
+      {
+        key: "remove",
+        label: "Remove bookmark",
+        icon: BookmarkX,
+        destructive: true,
+        onPress: () => {
+          if (user?.id) deleteBookmark();
+        },
+      },
+    ],
+    [openProfile, deleteBookmark, user?.id],
+  );
+
+  return (
+    <>
+      <TouchableOpacity
+        activeOpacity={0.7}
+        className={className}
+        onPress={openProfile}
+        onLongPress={handleLongPress}
+        delayLongPress={220}
+      >
+        <View className="flex-row items-center gap-3.5 p-3 ">
+          {/* Avatar with brand ring + saved marker */}
+          <View className="relative">
+            <View
+              className="rounded-full p-[3px]"
+              style={{ backgroundColor: `${PRIMARY}1f` }}
+            >
+              <View className="rounded-full bg-muted">{bookmarkImages[0]}</View>
+            </View>
+            <View
+              className="absolute -bottom-0.5 -right-0.5 h-6 w-6 items-center justify-center rounded-full border-2 border-card"
+              style={{ backgroundColor: PRIMARY }}
+            >
+              <Icon as={Bookmark} size={12} color="#ffffff" fill="#ffffff" />
+            </View>
+          </View>
+
+          {/* Identity */}
+          <View className="flex-1">
             <Text
               numberOfLines={1}
-              className="mt-0.5 text-[13px] text-muted-foreground"
+              className="text-[16px] font-semibold text-foreground"
             >
-              {subtitle}
+              {identifyUser(user)}
             </Text>
-          )}
+            {!!subtitle && (
+              <Text
+                numberOfLines={1}
+                className="mt-0.5 text-[13px] text-muted-foreground"
+              >
+                {subtitle}
+              </Text>
+            )}
+          </View>
+          <Icon as={ChevronRight} size={20} color={mutedFg} />
         </View>
+      </TouchableOpacity>
 
-        <Icon as={ChevronRight} size={20} color={mutedFg} />
-      </View>
-    </TouchableOpacity>
+      <UserQuickActionsSheet
+        ref={sheetRef}
+        user={user}
+        avatar={bookmarkImages[0]}
+        subtitle={subtitle}
+        actions={actions}
+      />
+    </>
   );
 };
