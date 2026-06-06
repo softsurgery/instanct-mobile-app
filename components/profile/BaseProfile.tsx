@@ -413,7 +413,7 @@ export const InspectBaseProfile = ({
                       </Text>
                     )}
                 </View>
-                {currentUser?.id === id && (
+                {currentUser?.id === id && user?.email && !user.emailVerified && (
                   <Pressable
                     onPress={() => sendVerifyEmail()}
                     disabled={isSendVerifyEmailPending}

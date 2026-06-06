@@ -317,6 +317,15 @@ export default function MainLayout() {
               }}
             />
             <Stack.Screen
+              name="settings/verify-email"
+              options={{
+                title: "Verify Email",
+                headerShown: false,
+                animation: "fade_from_bottom",
+                animationDuration: 200,
+              }}
+            />
+            <Stack.Screen
               name="settings/about"
               options={{
                 title: "About Instanct",
@@ -408,6 +417,14 @@ export default function MainLayout() {
               name="test"
               options={{
                 title: "Try Anything",
+                animation: "fade_from_bottom",
+                animationDuration: 200,
+              }}
+            />
+            <Stack.Screen
+              name="test/deep-link-test"
+              options={{
+                title: "Deep Link Test",
                 animation: "fade_from_bottom",
                 animationDuration: 200,
               }}

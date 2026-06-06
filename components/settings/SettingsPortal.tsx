@@ -29,6 +29,7 @@ interface SettingsSection {
   title: string;
   description: string;
   rows: SettingRowConfig[];
+  showOnDevelopment?: boolean;
 }
 
 export const SettingsPortal = ({ className }: SettingsPortalProps) => {
@@ -62,6 +63,7 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
           onPress: () => router.push("/main/profile/privacy-security"),
         }),
       ],
+      showOnDevelopment: false,
     },
     {
       key: "preferences",
@@ -83,6 +85,7 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
           onPress: () => router.push("/main/settings/theme"),
         }),
       ],
+      showOnDevelopment: false,
     },
     {
       key: "support",
@@ -111,6 +114,7 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
           onPress: () => router.push("/main/profile/support/faqs"),
         }),
       ],
+      showOnDevelopment: false,
     },
     {
       key: "info",
@@ -139,8 +143,24 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
           onPress: () => router.push("/main/settings/about"),
         }),
       ],
+      showOnDevelopment: false,
     },
-  ];
+    {
+      key: "test",
+      title: "Test",
+      description: "This is just for development purposes",
+      rows: [
+        createSettingRow({
+          title: "Deep link",
+          description: "Test deep linking",
+          rightIcon: ChevronRight,
+          className: "p-1 px-4",
+          onPress: () => router.push("/main/test/deep-link-test"),
+        }),
+      ],
+      showOnDevelopment: true,
+    },
+  ].filter((section) => !section.showOnDevelopment || __DEV__);
 
   const { t } = useTranslation("common");
   const queryClient = useQueryClient();

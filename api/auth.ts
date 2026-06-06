@@ -29,7 +29,21 @@ const signUp = async (request: RequestSpecializedClientSignUpDto) => {
   return response.data;
 };
 
+const sendVerifyEmail = async (email?: string) => {
+  const response = await axios.post("/client-auth/send-verify-email", {
+    email,
+  });
+  return response.data;
+};
+
+const verifyEmail = async (token: string) => {
+  const response = await axios.post("/client-auth/verify-email", { token });
+  return response.data;
+};
+
 export const auth = {
   signIn,
   signUp,
+  sendVerifyEmail,
+  verifyEmail,
 };
