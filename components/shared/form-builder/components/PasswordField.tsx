@@ -40,7 +40,7 @@ export const PasswordField = ({ className, ...props }: PasswordFieldProps) => {
           top: 4,
           padding: 4,
         }}
-        disabled={!props?.editable}
+        disabled={props?.editable === false}
       >
         <Icon as={showPassword ? Eye : EyeOff} size={20} color="gray" />
       </TouchableOpacity>
