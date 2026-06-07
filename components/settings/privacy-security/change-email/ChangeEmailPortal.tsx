@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import { router } from "expo-router";
-import { ArrowLeft } from "lucide-react-native";
+import { ArrowLeft, Loader2 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { cn } from "~/lib/utils";
 import { ApplicationHeader } from "~/components//shared/AppHeader";
@@ -14,6 +14,12 @@ import { Text } from "@/components/ui/text";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 import { Button } from "@/components/ui/button";
 import * as Haptics from "expo-haptics";
+import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/api";
+import { toast } from "sonner-native";
+import { ServerErrorResponse } from "@/types";
+import { Icon } from "@/components/ui/icon";
 
 interface ChangeEmailPortalProps {
   className?: string;
@@ -23,15 +29,49 @@ export const ChangeEmailPortal = ({ className }: ChangeEmailPortalProps) => {
   const isKeyboardVisible = useKeyboardVisible();
   const { t } = useTranslation();
   const userStore = useUserStore();
+  const { currentUser, refetchCurrentUser } = useCurrentUser();
+
+  React.useEffect(() => {
+    if (currentUser) {
+      userStore.set("response", currentUser);
+    }
+  }, [currentUser]);
+
   const { updateMailFormStructure } = useChangeEmailFormStructure({
     store: userStore,
   });
 
+  const { mutate: updateEmail, isPending } = useMutation({
+    mutationFn: async () =>
+      api.auth.updateEmail({
+        email: userStore.updateDto.email!,
+        password: userStore.updateDto.password!,
+      }),
+    onSuccess: () => {
+      toast.success(
+        "Email update initiated. Please check your new email to verify.",
+      );
+      router.back();
+    },
+    onError: (error: ServerErrorResponse) => {
+      toast.error(error.response?.data?.message || "Failed to update email");
+    },
+  });
+
+  const handleSave = () => {
+    if (!userStore.updateDto.email || !userStore.updateDto.password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+    updateEmail();
+  };
+
+  if (!currentUser) return null;
   return (
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
         classNames={{ wrapper: "border-b border-border pb-2" }}
-        title={t("screens.changeEmail", "Change Email")}
+        title={t("screens.updateEmail", "Update Email")}
         titleVariant="large"
         reverse
         shortcuts={[
@@ -60,11 +100,11 @@ export const ChangeEmailPortal = ({ className }: ChangeEmailPortalProps) => {
               className="rounded-xl"
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                // handleSave();
+                handleSave();
               }}
-              // disabled={isPending}
+              disabled={isPending}
             >
-              {/* {isPending ? (
+              {isPending ? (
                 <React.Fragment>
                   <Icon
                     as={Loader2}
@@ -72,14 +112,12 @@ export const ChangeEmailPortal = ({ className }: ChangeEmailPortalProps) => {
                     className="text-primary-foreground animate-spin"
                   />
                   <Text className="text-primary-foreground font-semibold">
-                    Saving...
+                    Updating...
                   </Text>
                 </React.Fragment>
-              ) : ( */}
-              <Text className="text-primary-foreground font-semibold">
-                Update Email
-              </Text>
-              {/* )} */}
+              ) : (
+                <Text className="text-md font-bold">Update Email</Text>
+              )}
             </Button>
           </View>
         </View>

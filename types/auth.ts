@@ -26,3 +26,8 @@ export interface RequestSpecializedClientSignUpDto extends RequestClientSignUpDt
   industries: number[];
   pictureId?: number;
 }
+
+export interface RequestClientUpdateMailDto {
+  email: string;
+  password: string;
+}
