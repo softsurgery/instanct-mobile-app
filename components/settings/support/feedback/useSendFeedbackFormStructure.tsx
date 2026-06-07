@@ -1,3 +1,5 @@
+import { useColorPalette } from "@/hooks/useColorPalette";
+import { hslToHex } from "@/lib/theme";
 import { SendFeedbackStore } from "@/stores/useFeedbackManager";
 import {
   Field,
@@ -16,6 +18,7 @@ interface useSendFeedbackFormStructureProps {
 export const useSendFeedbackFormStructure = ({
   store,
 }: useSendFeedbackFormStructureProps) => {
+  const { palette } = useColorPalette();
   //message
   const messageField: Field<TextareaFieldProps> = {
     id: "feedback-message",
@@ -66,7 +69,8 @@ export const useSendFeedbackFormStructure = ({
     description: "Rate your experience",
     error: store.errors.rating?.[0],
     props: {
-      color: "#b91c1c",
+      color: hslToHex(palette.primary),
+      starSize: 48,
       value: store.createDto.rating,
       onValueChange: (value: number) => {
         store.setNested("createDto.rating", value);
@@ -78,7 +82,6 @@ export const useSendFeedbackFormStructure = ({
   const feedbackFormStructure: FormStructure = {
     title: "",
     description: "",
-    orientation: "vertical",
     isHeaderVisible: false,
     fieldsets: [
       {

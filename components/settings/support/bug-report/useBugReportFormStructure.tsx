@@ -77,7 +77,6 @@ export const useBugReportFormStructure = ({
   const bugFormStructure: FormStructure = {
     title: "",
     description: "",
-    orientation: "vertical",
     isHeaderVisible: false,
     fieldsets: [
       {
@@ -85,10 +84,14 @@ export const useBugReportFormStructure = ({
         rows: [
           {
             id: 1,
-            fields: [titleField, descriptionField],
+            fields: [titleField],
           },
           {
             id: 2,
+            fields: [descriptionField],
+          },
+          {
+            id: 3,
             fields: [categoryField],
           },
         ],
