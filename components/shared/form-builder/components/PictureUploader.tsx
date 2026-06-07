@@ -3,7 +3,7 @@ import { Text } from "@/components/ui/text";
 import * as ImagePicker from "expo-image-picker";
 import { Pressable } from "react-native";
 import { cn } from "~/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "../StableAvatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../../StableAvatar";
 
 interface PictureUploaderProps {
   wrapperClassName?: string;
@@ -12,11 +12,11 @@ interface PictureUploaderProps {
   image?: string | File;
   fallback?: string;
   onFileChange?: (
-    image: File | { uri: string; name: string; type: string }
+    image: File | { uri: string; name: string; type: string },
   ) => void;
   onUpload?: (
     file: File | { uri: string; name: string; type: string },
-    onProgress: (percent: number) => void
+    onProgress: (percent: number) => void,
   ) => void;
 }
 

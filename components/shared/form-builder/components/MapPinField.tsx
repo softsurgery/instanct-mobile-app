@@ -18,7 +18,7 @@ import {
 import ActionSheet, { type ActionSheetRef } from "react-native-actions-sheet";
 import MapView, { MapPressEvent, Marker, Region } from "react-native-maps";
 import { AndroidDarkMapStyle } from "@/components/map/utils/AndroidDarkMapStyle";
-import type { MapPinFieldProps } from "./types";
+import type { MapPinFieldProps } from "../types";
 import { Button } from "@/components/ui/button";
 import { Easing, useSharedValue, withTiming } from "react-native-reanimated";
 

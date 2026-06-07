@@ -1,6 +1,6 @@
 import { usePreferencePersistStore } from "@/stores/usePreferencePersistStore";
 import { useTranslation } from "react-i18next";
-import Select from "./form-builder/Select";
+import Select from "./form-builder/components/Select";
 
 interface LanguageSwitcherProps {
   classNames?: {

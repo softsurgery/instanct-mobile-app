@@ -7,15 +7,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { View } from "react-native";
 import StarRating from "react-native-star-rating-widget";
-import { PictureUploader } from "./PictureUploader";
-import Select from "./Select";
+import { PictureUploader } from "./components/PictureUploader";
+import Select from "./components/Select";
 import { Field, FieldVariant } from "./types";
-import { DatePicker } from "./DatePicker2";
-import { TimePicker } from "./TimePicker";
+import { DatePicker } from "./components/DatePicker2";
+import { TimePicker } from "./components/TimePicker";
 import { ChoicePicker } from "../ChoicePicker";
-import MultiSelect from "./MultiSelect";
-import MapPinField from "./MapPinField";
-import { PasswordField } from "./PasswordField";
+import MultiSelect from "./components/MultiSelect";
+import MapPinField from "./components/MapPinField";
+import { PasswordField } from "./components/PasswordField";
 
 interface FieldBuilderProps {
   field?: Field<any>;

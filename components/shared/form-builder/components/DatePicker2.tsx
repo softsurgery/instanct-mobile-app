@@ -19,8 +19,8 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
-import { StableScrollable } from "../StableScrollable";
-import { StablePressable } from "../StablePressable";
+import { StableScrollable } from "../../StableScrollable";
+import { StablePressable } from "../../StablePressable";
 import { Separator } from "@/components/ui/separator";
 import * as Haptics from "expo-haptics";
 
