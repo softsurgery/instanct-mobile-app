@@ -144,6 +144,8 @@ export interface RatingFieldProps {
   onValueChange?: (value: number) => void;
   editable?: boolean;
   color?: string;
+  maxStars?: number;
+  starSize?: number;
 }
 
 export interface PictureFieldProps {

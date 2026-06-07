@@ -30,7 +30,6 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           <Input
             {...field?.props}
             editable={field?.props?.editable}
-            id={field.label}
             keyboardType={
               field.variant === FieldVariant.TEL ? "phone-pad" : "default"
             }
@@ -69,10 +68,26 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           keyboardType="email-address"
           placeholder={field.placeholder}
           value={field?.props?.value?.toString() || ""}
-          onChangeText={(text) => field?.props?.onChangeText?.(text)}
+          onChangeText={(text) =>
+            field?.props?.onChangeText?.(text.trim().toLowerCase())
+          }
           onBlur={() => field?.props?.onBlur?.()}
           className={cn(field.className, field?.error && "border-red-500")}
           {...field.props?.other}
+        />
+      );
+    case "password":
+      return (
+        <PasswordField
+          {...field.props}
+          className={cn(
+            field?.className,
+            field?.error && "border border-red-500",
+          )}
+          placeholder={field?.placeholder}
+          value={field?.props?.value?.toString() || ""}
+          onChangeText={(text) => field?.props?.onChangeText?.(text)}
+          editable={field?.props?.editable}
         />
       );
     case "select":
@@ -151,20 +166,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           <Text className="text-sm">{field.description}</Text>
         </View>
       );
-    case "password":
-      return (
-        <PasswordField
-          {...field.props}
-          className={cn(
-            field?.className,
-            field?.error && "border border-red-500",
-          )}
-          placeholder={field?.placeholder}
-          value={field?.props?.value?.toString() || ""}
-          onChangeText={(text) => field?.props?.onChangeText?.(text)}
-          editable={field?.props?.editable}
-        />
-      );
+
     case "textarea":
       return (
         <View className="flex flex-col gap-2 w-full">
@@ -181,18 +183,15 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
       );
     case "rating":
       return (
-        <View className="flex flex-col w-full">
-          <View className="mx-auto">
-            <StarRating
-              {...field?.props}
-              className={cn(field.className, field?.error && "border-red-500")}
-              rating={field?.props?.value || 0}
-              onChange={(rating) => field.props?.onValueChange?.(rating)}
-              maxStars={5}
-              color={field?.props?.color || "yellow"}
-            />
-          </View>
-        </View>
+        <StarRating
+          {...field?.props}
+          className={cn(field.className, field?.error && "border-red-500")}
+          rating={field?.props?.value || 0}
+          starSize={field?.props?.starSize || 32}
+          onChange={(rating) => field.props?.onValueChange?.(rating)}
+          maxStars={field?.props?.maxStars || 5}
+          color={field?.props?.color || "yellow"}
+        />
       );
     case "picture":
       return (
