@@ -269,6 +269,16 @@ export default function MainLayout() {
             {/* *************************************************************************************************** */}
             {/* Settings  ****************************************************************************************** */}
             <Stack.Screen
+              name="profile/email-success"
+              options={{
+                title: "Email Changed Successfully",
+                headerShown: false,
+                animation: "simple_push",
+                animationDuration: 200,
+              }}
+            />
+
+            <Stack.Screen
               name="profile/support/report-bug"
               options={{
                 title: "Report a Bug",
