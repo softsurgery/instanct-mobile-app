@@ -31,3 +31,8 @@ export interface RequestClientUpdateMailDto {
   email: string;
   password: string;
 }
+
+export interface RequestClientUpdatePasswordDto {
+  currentPassword: string;
+  newPassword: string;
+}
