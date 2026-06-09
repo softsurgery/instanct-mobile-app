@@ -46,7 +46,7 @@ export const NotFound = ({
           source={require("~/assets/not-found.json")}
         />
       </Animated.View>
-      <Text className="mt-4">{message}</Text>
+      <Text className="text-lg font-thin tracking-wider">{message}</Text>
     </View>
   );
 };
