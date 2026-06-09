@@ -4,7 +4,7 @@ export const THEME = {
   light: {
     background: "hsl(0 0% 100%)",
     foreground: "hsl(0 0% 20%)",
-    card: "hsl(0 0% 100%)",
+    card: "hsl(192 15% 94%)",
     cardForeground: "hsl(0 0% 20%)",
     popover: "hsl(0 0% 100%)",
     popoverForeground: "hsl(0 0% 20%)",
@@ -103,7 +103,7 @@ export const NAV_THEME: Record<"light" | "dark", Theme> = {
 
 export function hslToHex(hslString: string, opacity: number = 1): string {
   const match = hslString.match(
-    /hsla?\(\s*(\d+(?:\.\d+)?)(?:deg)?(?:[\s,]+)(\d+(?:\.\d+)?)%(?:[\s,]+)(\d+(?:\.\d+)?)%(?:\s*(?:\/|,)\s*(\d*\.?\d+))?\s*\)/i
+    /hsla?\(\s*(\d+(?:\.\d+)?)(?:deg)?(?:[\s,]+)(\d+(?:\.\d+)?)%(?:[\s,]+)(\d+(?:\.\d+)?)%(?:\s*(?:\/|,)\s*(\d*\.?\d+))?\s*\)/i,
   );
 
   if (!match) {
