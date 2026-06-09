@@ -90,16 +90,20 @@ export const SigninLayout = ({ className }: SigninProps) => {
             <View className="flex flex-col gap-2 w-fit">
               <FormBuilder structure={signInFormStructure} />
 
-              <Text className="text-sm font-bold ml-auto my-1">
+              <Text className="text-base font-bold ml-auto my-1">
                 Forget Password ?
               </Text>
 
               <Button
                 disabled={isSignInPending}
-                className="flex flex-row justify-center gap-2 my-1"
+                variant="default"
+                size="lg"
+                className="relative flex flex-row items-center justify-center rounded-xl h-14"
                 onPress={onSignInPress}
               >
-                <Text className="font-bold">Continue with E-Mail</Text>
+                <Text className="text-lg font-bold text-foreground">
+                  Continue with E-Mail
+                </Text>
               </Button>
 
               <DividedText text="OR" />
@@ -108,9 +112,9 @@ export const SigninLayout = ({ className }: SigninProps) => {
             </View>
 
             <View className="flex flex-row gap-1 items-center justify-center">
-              <Text variant={"muted"}>Don&apos;t have an account?</Text>
+              <Text className="text-base">Don&apos;t have an account?</Text>
               <Text
-                className="font-bold"
+                className="text-base font-bold"
                 onPress={() => router.push("/auth/sign-up")}
               >
                 Create an account

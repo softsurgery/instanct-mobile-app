@@ -56,14 +56,14 @@ export default function OnBoarding({ className }: OnBoardingProps) {
     <StableSafeAreaView
       className={cn("flex-1 justify-between bg-background", className)}
     >
-      <View className="flex-1 flex flex-col justify-between pt-8 pb-4">
+      <View className="flex-1 flex flex-col justify-between py-4">
         <View className="flex flex-row gap-3 px-6 items-center">
           <Image
             source={require("~/assets/images/logo.png")}
-            style={{ width: 48, height: 48, borderRadius: 12 }}
+            style={{ width: 60, height: 60, borderRadius: 12 }}
             contentFit="cover"
           />
-          <Text className="text-3xl font-extrabold tracking-tight">
+          <Text className="text-3xl font-extrabold tracking-tight mt-2">
             Instanct
           </Text>
         </View>

@@ -1,11 +1,9 @@
 import { router } from "expo-router";
-import { Mail } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import { Image, Platform, View } from "react-native";
 import { cn } from "~/lib/utils";
 import DividedText from "../shared/DividedText";
 import { Button } from "../ui/button";
-import { Icon } from "../ui/icon";
 import { Text } from "../ui/text";
 
 export interface SSOButtonsProps {
@@ -15,7 +13,9 @@ export interface SSOButtonsProps {
 }
 
 const IconSlot = ({ children }: { children: React.ReactNode }) => (
-  <View className="w-10 items-center">{children}</View>
+  <View className="absolute left-5 z-10 flex h-full justify-center items-center">
+    {children}
+  </View>
 );
 
 export const SSOButtons = ({
@@ -26,13 +26,13 @@ export const SSOButtons = ({
   const { colorScheme } = useColorScheme();
 
   return (
-    <View className={cn("flex flex-col justify-center gap-2", className)}>
+    <View className={cn("flex flex-col justify-center gap-3.5", className)}>
       {Platform.OS === "ios" && (
         <Button
           disabled={isSignInPending}
           variant="outline"
-          size="sm"
-          className="flex flex-row items-center gap-4"
+          size="lg"
+          className="relative flex flex-row items-center justify-center rounded-xl h-14"
         >
           <IconSlot>
             <Image
@@ -45,7 +45,7 @@ export const SSOButtons = ({
             />
           </IconSlot>
 
-          <Text className="text-sm font-bold text-foreground">
+          <Text className="text-lg font-bold text-foreground">
             Continue with Apple
           </Text>
         </Button>
@@ -53,8 +53,9 @@ export const SSOButtons = ({
 
       <Button
         disabled={isSignInPending}
-        size="sm"
-        className="flex flex-row items-center gap-4 bg-red-600"
+        variant="outline"
+        size="lg"
+        className="relative flex flex-row items-center justify-center rounded-xl h-14"
       >
         <IconSlot>
           <Image
@@ -63,16 +64,16 @@ export const SSOButtons = ({
           />
         </IconSlot>
 
-        <Text className="text-sm font-bold text-foreground">
+        <Text className="text-lg font-bold text-foreground">
           Continue with Google
         </Text>
       </Button>
 
       <Button
         disabled={isSignInPending}
-        variant="secondary"
-        size="sm"
-        className="flex flex-row items-center gap-4"
+        variant="outline"
+        size="lg"
+        className="relative flex flex-row items-center justify-center rounded-xl h-14"
       >
         <IconSlot>
           <Image
@@ -81,8 +82,8 @@ export const SSOButtons = ({
           />
         </IconSlot>
 
-        <Text className="text-sm font-bold text-foreground">
-          Continue with Linkedin
+        <Text className="text-lg font-bold text-foreground">
+          Continue with LinkedIn
         </Text>
       </Button>
 
@@ -92,16 +93,12 @@ export const SSOButtons = ({
 
           <Button
             disabled={isSignInPending}
-            size="sm"
-            className="flex flex-row items-center gap-4"
+            size="lg"
+            className="relative flex flex-row items-center justify-center rounded-xl h-14"
             onPress={() => router.push("/auth/sign-in")}
           >
-            <IconSlot>
-              <Icon as={Mail} size={24} />
-            </IconSlot>
-
-            <Text className="text-sm font-bold text-foreground">
-              Continue with E-mail
+            <Text className="text-lg font-bold text-primary-foreground">
+              Continue with Email
             </Text>
           </Button>
         </>
