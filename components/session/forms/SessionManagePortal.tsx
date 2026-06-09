@@ -1,8 +1,8 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { View } from "react-native";
-import { Text } from "../ui/text";
-import { Button } from "../ui/button";
+import { Text } from "../../ui/text";
+import { Button } from "../../ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 import { useSessionStore } from "@/stores/useSessionStore";
@@ -11,19 +11,19 @@ import { ServerErrorResponse } from "@/types";
 import { router } from "expo-router";
 import { useObjectives } from "@/hooks/content/reference-types/useObjectives";
 import { useSessionManagementFormStructure } from "./useSessionManagementFormStructure";
-import { mapToSelectOptions } from "../shared/form-builder/utils/map-select-options";
+import { mapToSelectOptions } from "../../shared/form-builder/utils/map-select-options";
 import { updateSessionSchema } from "@/types/validations/session.validation";
 import { zodErrorsToNested } from "@/lib/object";
-import { StableSafeAreaView } from "../shared/StableSafeAreaView";
-import { ApplicationHeader } from "../shared/AppHeader";
+import { StableSafeAreaView } from "../../shared/StableSafeAreaView";
+import { ApplicationHeader } from "../../shared/AppHeader";
 import { ArrowLeft } from "lucide-react-native";
-import { StableKeyboardAwareScrollView } from "../shared/StableKeyboardAwareScrollView";
-import { FormBuilder } from "../shared/form-builder/FormBuilder";
+import { StableKeyboardAwareScrollView } from "../../shared/StableKeyboardAwareScrollView";
+import { FormBuilder } from "../../shared/form-builder/FormBuilder";
 import { api } from "@/api";
 import { useActiveSessions } from "@/hooks/content/sessions/useActiveSessions";
-import { Loader } from "../shared/Loader";
+import { Loader } from "../../shared/Loader";
 import { ActionSheetRef } from "react-native-actions-sheet";
-import { EndSessionActionSheet } from "./EndSessionActionSheet";
+import { EndSessionActionSheet } from "../EndSessionActionSheet";
 
 interface SessionManagePortalProps {
   className?: string;

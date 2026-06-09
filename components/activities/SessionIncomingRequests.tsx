@@ -120,12 +120,26 @@ export const SessionIncomingRequests = ({
               contentContainerStyle={{
                 paddingHorizontal: 0,
                 paddingBottom: 24,
+                flexGrow: 1,
               }}
               ListEmptyComponent={() => (
-                <View className="flex flex-col flex-1 justify-center items-center h-full">
+                <View className="flex flex-col flex-1 justify-center items-center">
                   <NotFound message="No incoming requests were found" />
                 </View>
               )}
+              ListFooterComponent={
+                <View className="items-center mb-8">
+                  {isFetchingNextPage ? (
+                    <Loader size="small" className="flex items-center h-fit" />
+                  ) : !hasNextPage && flattenedData.length > 0 ? (
+                    <View className="flex flex-row items-center justify-center gap-2 p-6">
+                      <Text variant="p" className="text-muted-foreground">
+                        You have caught up with all incoming requests
+                      </Text>
+                    </View>
+                  ) : null}
+                </View>
+              }
             />
           </View>
         )}

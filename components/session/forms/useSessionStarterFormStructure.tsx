@@ -7,11 +7,9 @@ import {
   MultiSelectFieldProps,
   SelectOption,
   TimeFieldProps,
-} from "../shared/form-builder/types";
+} from "../../shared/form-builder/types";
 import React from "react";
-import { View, Pressable } from "react-native";
-import { cn } from "@/lib/utils";
-import { Text } from "../ui/text";
+import { SessionStartModeToggle } from "../SessionStarterModeToggle";
 
 interface useSessionStarterFormStructureProps {
   store: SessionStore;
@@ -31,55 +29,7 @@ export const useSessionStarterFormStructure = ({
     variant: FieldVariant.CUSTOM,
     disabled: isPending,
     props: {
-      children: (
-        <View className="-mt-4 pb-2 flex-row gap-2">
-          <Pressable
-            onPress={() => {
-              store.setNested("flags.startNow", true);
-              store.setNested("createDto.plannedStart", undefined);
-            }}
-            className={cn(
-              "flex-1 py-3 px-4 rounded-lg items-center justify-center border-2",
-              store.flags.startNow
-                ? "bg-primary border-primary"
-                : "bg-transparent border-border",
-            )}
-          >
-            <Text
-              className={cn(
-                "font-semibold",
-                store.flags.startNow
-                  ? "text-primary-foreground"
-                  : "text-foreground",
-              )}
-            >
-              Démarrer maintenant
-            </Text>
-          </Pressable>
-          <Pressable
-            onPress={() => {
-              store.setNested("flags.startNow", false);
-            }}
-            className={cn(
-              "flex-1 py-3 px-4 rounded-lg items-center justify-center border-2",
-              !store.flags.startNow
-                ? "bg-primary border-primary"
-                : "bg-transparent border-border",
-            )}
-          >
-            <Text
-              className={cn(
-                "font-semibold",
-                !store.flags.startNow
-                  ? "text-primary-foreground"
-                  : "text-foreground",
-              )}
-            >
-              Planifier
-            </Text>
-          </Pressable>
-        </View>
-      ),
+      children: <SessionStartModeToggle store={store} disabled={isPending} />,
     },
   };
 

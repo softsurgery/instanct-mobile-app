@@ -1,12 +1,9 @@
 import React from "react";
 import ActionSheet, { type ActionSheetRef } from "react-native-actions-sheet";
-import { useColorScheme } from "nativewind";
-import { THEME } from "~/lib/theme";
 import { View } from "react-native";
 import { Text } from "~/components/ui/text";
 import { Button } from "~/components/ui/button";
-import { Icon } from "~/components/ui/icon";
-import { Trash2 } from "lucide-react-native";
+import { useColorPalette } from "@/hooks/useColorPalette";
 
 interface EndSessionActionSheetProps {
   onConfirm: () => void;
@@ -18,8 +15,7 @@ export const EndSessionActionSheet = React.forwardRef<
   ActionSheetRef,
   EndSessionActionSheetProps
 >(({ onConfirm, onClose, isPending }, ref) => {
-  const { colorScheme } = useColorScheme();
-  const isDarkColorScheme = colorScheme === "dark";
+  const { palette } = useColorPalette();
   return (
     <ActionSheet
       ref={ref}
@@ -27,9 +23,7 @@ export const EndSessionActionSheet = React.forwardRef<
       statusBarTranslucent
       defaultOverlayOpacity={0.45}
       containerStyle={{
-        backgroundColor: isDarkColorScheme
-          ? THEME.dark.background
-          : THEME.light.background,
+        backgroundColor: palette.background,
         borderTopLeftRadius: 24,
         borderTopRightRadius: 24,
         paddingHorizontal: 16,

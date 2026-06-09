@@ -133,12 +133,28 @@ export const SessionOutgoingRequests = ({
             contentContainerStyle={{
               paddingHorizontal: 0,
               paddingBottom: 24,
+              flexGrow: 1,
             }}
             ListEmptyComponent={() => (
               <View className="flex flex-col flex-1 justify-center items-center">
                 <NotFound message="No outgoing requests were found" />
               </View>
             )}
+            ListFooterComponent={
+              flattenedData.length === 0 ? null : (
+                <View className="items-center mb-8">
+                  {isRequestsPending ? (
+                    <Loader size="small" className="flex items-center h-fit" />
+                  ) : !hasNextPage ? (
+                    <View className="flex flex-row items-center justify-center p-4">
+                      <Text variant={"p"} className="text-muted-foreground">
+                        You have caught up with all outgoing requests
+                      </Text>
+                    </View>
+                  ) : null}
+                </View>
+              )
+            }
           />
         )}
       </View>

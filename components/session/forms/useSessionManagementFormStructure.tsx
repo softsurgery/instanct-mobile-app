@@ -6,7 +6,7 @@ import {
   MultiSelectFieldProps,
   SelectOption,
   TimeFieldProps,
-} from "../shared/form-builder/types";
+} from "../../shared/form-builder/types";
 
 interface useSessionManagementFormStructureProps {
   store: SessionStore;

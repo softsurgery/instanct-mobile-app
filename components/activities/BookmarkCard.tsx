@@ -26,7 +26,6 @@ import {
 interface BookmarkCardProps {
   className?: string;
   user?: ResponseUserDto;
-  /** Fired after the bookmark is successfully removed (e.g. to hide the row). */
   onRemoved?: (user?: ResponseUserDto) => void;
 }
 
@@ -56,8 +55,6 @@ export const BookmarkCard = ({
     size: { width: 50, height: 50 },
   });
 
-  // bookmarkId === user id. enabled:false skips the findBookmark lookup
-  // since we already know this user is bookmarked (they're in the list).
   const { deleteBookmark } = useBookmarkActions({
     bookmarkId: user?.id ?? "",
     enabled: false,
