@@ -97,7 +97,7 @@ export default function Select({
             isRTL ? "left-3" : "right-3",
           )}
         >
-          <Icon as={ChevronDown} size={18} color={"gray"} />
+          <Icon as={ChevronDown} size={16} color={"gray"} />
         </View>
       </Pressable>
       <ActionSheet

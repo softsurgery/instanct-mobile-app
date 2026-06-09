@@ -37,7 +37,7 @@ export const PasswordField = ({ className, ...props }: PasswordFieldProps) => {
         style={{
           position: "absolute",
           right: 10,
-          top: 4,
+          top: 7,
           padding: 4,
         }}
         disabled={props?.editable === false}

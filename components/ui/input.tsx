@@ -1,4 +1,3 @@
-import { useRTL } from "@/hooks/useRTL";
 import { cn } from "@/lib/utils";
 import { Platform, TextInput, type TextInputProps } from "react-native";
 
@@ -6,12 +5,12 @@ function Input({
   className,
   ...props
 }: TextInputProps & React.RefAttributes<TextInput>) {
-  const isRTL = useRTL();
   return (
     <TextInput
+      {...props}
+      multiline={false}
       className={cn(
-        "dark:bg-input/30 border-input bg-background text-foreground flex h-9 w-full min-w-0 flex-row items-center rounded-md border px-3 py-1 text-sm leading-5 shadow-sm shadow-black/5",
-        !isRTL ? "text-left" : "text-right",
+        "dark:bg-input/30 border border-input text-foreground h-11 w-full min-w-0 flex flex-row items-center rounded-xl px-3 shadow-sm shadow-black/5",
         props.editable === false &&
           cn(
             "opacity-50",
@@ -20,16 +19,10 @@ function Input({
             }),
           ),
         Platform.select({
-          web: cn(
-            "placeholder:text-muted-foreground selection:bg-primary outline-none transition-[color,box-shadow] md:text-sm",
-            "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-            "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
-          ),
-          native: "placeholder:text-muted-foreground/50 placeholder:text-sm",
+          native: "placeholder:text-muted-foreground/50",
         }),
         className,
       )}
-      {...props}
     />
   );
 }

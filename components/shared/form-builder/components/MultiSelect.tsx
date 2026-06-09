@@ -2,7 +2,7 @@ import { Icon } from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import * as Haptics from "expo-haptics";
-import { Check, ChevronDown, Search } from "lucide-react-native";
+import { Check, ChevronDown, Search, VectorSquare } from "lucide-react-native";
 import React from "react";
 import {
   Keyboard,
@@ -14,9 +14,9 @@ import {
 import type { SelectOption } from "~/components/shared/form-builder/types";
 import { cn } from "~/lib/utils";
 import ActionSheet, { type ActionSheetRef } from "react-native-actions-sheet";
-import { useColorScheme } from "nativewind";
-import { THEME } from "@/lib/theme";
 import { toast } from "sonner-native";
+import { useColorPalette } from "@/hooks/useColorPalette";
+import { Button } from "@/components/ui/button";
 
 interface MultiSelectProps {
   classNames?: {
@@ -51,8 +51,7 @@ export default function MultiSelect({
   searchable = false,
   max = Infinity,
 }: MultiSelectProps) {
-  const { colorScheme } = useColorScheme();
-  const isDarkColorScheme = colorScheme === "dark";
+  const { palette } = useColorPalette();
   const sheetRef = React.useRef<ActionSheetRef>(null);
   const [search, setSearch] = React.useState("");
 
@@ -98,37 +97,53 @@ export default function MultiSelect({
 
   return (
     <>
-      <Pressable
-        className={cn(
-          "min-h-9 w-full flex-row flex-wrap items-center rounded-md border border-input dark:bg-input/30 px-2 py-2",
-          disabled && "opacity-50 pointer-events-none",
-          classNames?.trigger,
-        )}
-        onPress={() => {
-          if (!disabled) sheetRef.current?.show();
-        }}
-      >
-        {selectedLabels.length === 0 ? (
-          <Text className="text-sm text-muted-foreground/50 leading-5">
-            {placeholder || "Select options"}
-          </Text>
-        ) : (
+      {selectedLabels.length === 0 ? (
+        // <Text className="text-sm text-muted-foreground/50 leading-5">
+        //   {placeholder || "Select options"}
+        // </Text>
+        <Button
+          disabled={disabled}
+          variant="outline"
+          className={cn("w-full h-11 rounded-xl p-0 px-2", classNames?.trigger)}
+          onPress={() => sheetRef.current?.show()}
+        >
+          <View className="flex flex-row items-center justify-between w-full">
+            <View className="flex flex-row items-center gap-2">
+              <Icon as={VectorSquare} size={16} color={"gray"} />
+              <Text className="text-base text-foreground/50">
+                {placeholder || "Select options"}
+              </Text>
+            </View>
+            <Icon as={ChevronDown} size={16} color={"gray"} />
+          </View>
+        </Button>
+      ) : (
+        <Pressable
+          className={cn(
+            "min-h-11 w-full flex-row flex-wrap items-center rounded-xl border border-input dark:bg-input/30 px-1 py-2",
+            disabled && "opacity-50 pointer-events-none",
+            classNames?.trigger,
+          )}
+          onPress={() => {
+            if (!disabled) sheetRef.current?.show();
+          }}
+        >
           <View className="flex-1 flex-row flex-wrap gap-2 pr-8">
             {selectedLabels.map((label) => (
               <View
                 key={label}
-                className="rounded-full bg-primary/25 px-3 py-0.5"
+                className="rounded-full bg-primary/50 px-3 py-1"
               >
-                <Text className="text-sm">{label}</Text>
+                <Text className="text-base">{label}</Text>
               </View>
             ))}
           </View>
-        )}
+          <View className="absolute right-2 text-muted-foreground">
+            <Icon as={ChevronDown} size={16} color={"gray"} />
+          </View>
+        </Pressable>
+      )}
 
-        <View className="absolute right-3 text-muted-foreground">
-          <Icon as={ChevronDown} size={18} color={"gray"} />
-        </View>
-      </Pressable>
       <ActionSheet
         ref={sheetRef}
         gestureEnabled
@@ -136,9 +151,7 @@ export default function MultiSelect({
         defaultOverlayOpacity={0.45}
         onClose={handleClose}
         containerStyle={{
-          backgroundColor: isDarkColorScheme
-            ? THEME.dark.background
-            : THEME.light.background,
+          backgroundColor: palette.background,
           borderTopLeftRadius: 24,
           borderTopRightRadius: 24,
           paddingHorizontal: 16,

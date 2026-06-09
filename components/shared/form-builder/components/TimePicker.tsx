@@ -184,13 +184,15 @@ export const TimePicker = ({
       <Button
         disabled={disabled}
         variant="outline"
-        className={cn("w-full h-9 p-0 px-2", classNames?.trigger)}
+        className={cn("w-full h-11 rounded-xl p-0 px-2", classNames?.trigger)}
         onPress={toggle}
       >
         <View className="flex flex-row items-center justify-between w-full">
           <View className="flex flex-row items-center gap-2">
             <Icon as={Clock} size={16} color={"gray"} />
-            <Text className="text-sm">{displayText}</Text>
+            <Text className={cn("text-base", !time && "text-foreground/50")}>
+              {displayText}
+            </Text>
           </View>
           <Animated.View style={chevronStyle}>
             <Icon as={ChevronDown} size={16} color={"gray"} />
@@ -203,7 +205,7 @@ export const TimePicker = ({
         <View
           ref={contentRef}
           className={cn(
-            "mt-2 rounded-lg border border-border bg-card p-3",
+            "mt-2 rounded-xl border border-border bg-card p-3",
             classNames?.content,
           )}
           onStartShouldSetResponder={() => true}
