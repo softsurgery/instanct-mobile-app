@@ -33,9 +33,6 @@ interface SettingsSection {
 }
 
 export const SettingsPortal = ({ className }: SettingsPortalProps) => {
-  const cardClass =
-    "border border-b-border border-t-border bg-card shadow-sm overflow-hidden";
-
   const primaryCardClass =
     "rounded-2xl border border-primary/10 bg-primary/5 shadow-sm overflow-hidden";
 
@@ -218,8 +215,8 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
           </View>
 
           {settingsRows.map((section) => (
-            <View key={section.key} className={cardClass}>
-              <View className="px-8 py-4 bg-background/75 mb-4">
+            <View key={section.key} className="bg-background">
+              <View className="px-8 py-4 bg-card mb-4">
                 <Text className="text-lg font-semibold">{section.title}</Text>
                 <Text className="text-sm text-muted-foreground mt-1">
                   {section.description}
