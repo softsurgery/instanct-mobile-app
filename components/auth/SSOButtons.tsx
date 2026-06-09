@@ -1,15 +1,16 @@
-import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import { Image, Platform, View } from "react-native";
+import { ActivityIndicator, Image, Platform, View } from "react-native";
 import { cn } from "~/lib/utils";
 import DividedText from "../shared/DividedText";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
+import { useSSO } from "@/hooks/useSSO";
+import { router } from "expo-router";
 
 export interface SSOButtonsProps {
   className?: string;
   classic?: boolean;
-  isSignInPending: boolean;
+  isSignInPending?: boolean;
 }
 
 const IconSlot = ({ children }: { children: React.ReactNode }) => (
@@ -21,28 +22,46 @@ const IconSlot = ({ children }: { children: React.ReactNode }) => (
 export const SSOButtons = ({
   className,
   classic = false,
-  isSignInPending,
+  isSignInPending = false,
 }: SSOButtonsProps) => {
   const { colorScheme } = useColorScheme();
+  const {
+    isPending: isSSOPending,
+    signInWithGoogle,
+    signInWithLinkedIn,
+    signInWithApple,
+    isGoogleReady,
+    isLinkedInReady,
+    isAppleReady,
+  } = useSSO();
+
+  const isDisabled = isSignInPending || isSSOPending;
 
   return (
-    <View className={cn("flex flex-col justify-center gap-3.5", className)}>
+    <View
+      className={cn("flex flex-col justify-center gap-3.5 py-5", className)}
+    >
       {Platform.OS === "ios" && (
         <Button
-          disabled={isSignInPending}
+          disabled={isDisabled || !isAppleReady}
           variant="outline"
           size="lg"
           className="relative flex flex-row items-center justify-center rounded-xl h-14"
+          onPress={signInWithApple}
         >
           <IconSlot>
-            <Image
-              className="w-6 h-6"
-              source={
-                colorScheme === "dark"
-                  ? require("~/assets/images/apple-dark.png")
-                  : require("~/assets/images/apple.png")
-              }
-            />
+            {isSSOPending ? (
+              <ActivityIndicator size="small" />
+            ) : (
+              <Image
+                className="w-6 h-6"
+                source={
+                  colorScheme === "dark"
+                    ? require("~/assets/images/apple-dark.png")
+                    : require("~/assets/images/apple.png")
+                }
+              />
+            )}
           </IconSlot>
 
           <Text className="text-lg font-bold text-foreground">
@@ -52,10 +71,11 @@ export const SSOButtons = ({
       )}
 
       <Button
-        disabled={isSignInPending}
+        disabled={isDisabled || !isGoogleReady}
         variant="outline"
         size="lg"
         className="relative flex flex-row items-center justify-center rounded-xl h-14"
+        onPress={signInWithGoogle}
       >
         <IconSlot>
           <Image
@@ -70,10 +90,11 @@ export const SSOButtons = ({
       </Button>
 
       <Button
-        disabled={isSignInPending}
+        disabled={isDisabled || !isLinkedInReady}
         variant="outline"
         size="lg"
         className="relative flex flex-row items-center justify-center rounded-xl h-14"
+        onPress={signInWithLinkedIn}
       >
         <IconSlot>
           <Image
@@ -92,7 +113,7 @@ export const SSOButtons = ({
           <DividedText text="OR" />
 
           <Button
-            disabled={isSignInPending}
+            disabled={isDisabled}
             size="lg"
             className="relative flex flex-row items-center justify-center rounded-xl h-14"
             onPress={() => router.push("/auth/sign-in")}

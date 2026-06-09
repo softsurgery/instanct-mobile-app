@@ -36,3 +36,15 @@ export interface RequestClientUpdatePasswordDto {
   currentPassword: string;
   newPassword: string;
 }
+
+export enum OAuthProvider {
+  GOOGLE = "google",
+  LINKEDIN = "linkedin",
+  APPLE = "apple",
+}
+
+export interface RequestClientOAuthDto {
+  provider: OAuthProvider;
+  idToken: string;
+  redirectUri?: string;
+}
