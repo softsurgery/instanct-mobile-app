@@ -7,7 +7,7 @@ import { IconMessageChatbot } from "@tabler/icons-react-native";
 import { router } from "expo-router";
 import { ArrowDownNarrowWide, Bell, CalendarCog } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
+import { Dimensions, View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { UserCard } from "./UserCard";
@@ -25,16 +25,20 @@ import { useChatContext } from "@/contexts/ChatContext";
 import { useObjectives } from "@/hooks/content/reference-types/useObjectives";
 import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
 import { useActiveMapSessionContext } from "@/contexts/ActiveMapSessionContext";
+import { useMapStore } from "@/stores/useMapStore";
 
 interface ExplorePortalProps {
   className?: string;
 }
+
+const height = Dimensions.get("window").height;
 
 export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   const { palette } = useColorPalette();
   const { t } = useTranslation("common");
   const { currentUser } = useCurrentUser();
   const userFilerStore = useExploreFilterStore();
+  const mapStore = useMapStore();
   const { count: notificationCount, resetCount: resetNotificationCount } =
     useNotificationContext();
   const { count: chatCount, resetCount: resetChatCount } = useChatContext();
@@ -46,6 +50,11 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   });
   const { industries, isIndustriesSubTypePending } = useIndustries();
   const { objectives, isObjectivesSubTypePending } = useObjectives();
+
+  const { latitude, longitude } = mapStore?.location?.coords || {
+    latitude: 0,
+    longitude: 0,
+  };
 
   const filterCount = React.useMemo(() => {
     return (
@@ -181,6 +190,8 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
       {activeSession ? (
         liveUsers.length - 1 === 0 ||
         !initialized ||
+        !latitude ||
+        !longitude ||
         isObjectivesSubTypePending ||
         isIndustriesSubTypePending ? (
           <View className="flex flex-col flex-1 justify-center items-center px-4">
@@ -206,7 +217,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
                 position: "absolute",
                 top: 0,
                 left: 0,
-                height: "100%",
+                height: height,
                 width: "100%",
               }}
               horizontal
