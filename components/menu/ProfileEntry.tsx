@@ -6,7 +6,7 @@ import { router } from "expo-router";
 import { Edit, Verified } from "lucide-react-native";
 import React from "react";
 import { View } from "react-native";
-import { PremiumCarousel } from "../premium/PremiumCarousel";
+import { PremiumCarousel } from "../deprecated/premium/PremiumCarousel";
 import { Button } from "../ui/button";
 import { Icon } from "../ui/icon";
 import { Text } from "../ui/text";

@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { LinearGradient } from "expo-linear-gradient";
 import { Check, Lock } from "lucide-react-native";
 import { TouchableOpacity, View } from "react-native";
-import { Text } from "../ui/text";
+import { Text } from "../../ui/text";
 
 interface FeatureItem {
   label: string;

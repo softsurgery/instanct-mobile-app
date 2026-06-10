@@ -27,9 +27,9 @@ import {
 } from "lucide-react-native";
 import React from "react";
 import { View, ScrollView } from "react-native";
-import { StableSafeAreaView } from "../shared/StableSafeAreaView";
+import { StableSafeAreaView } from "../../shared/StableSafeAreaView";
 import { router } from "expo-router";
-import { ApplicationHeader } from "../shared/AppHeader";
+import { ApplicationHeader } from "../../shared/AppHeader";
 
 // Mock event types for demonstration
 export interface CalendarEvent {
