@@ -47,4 +47,5 @@ export interface RequestClientOAuthDto {
   provider: OAuthProvider;
   idToken: string;
   redirectUri?: string;
+  codeVerifier?: string;
 }

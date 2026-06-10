@@ -3,7 +3,6 @@ import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
-import Constants from "expo-constants";
 import { toast } from "sonner-native";
 import { api } from "@/api";
 import { OAuthProvider, ServerErrorResponse } from "@/types";
@@ -16,9 +15,11 @@ WebBrowser.maybeCompleteAuthSession();
 // Using platform-specific environment variables, fallback to generic
 const GOOGLE_CLIENT_ID =
   Platform.OS === "ios"
-    ? process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID
+    ? process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID ||
+      process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID
     : Platform.OS === "android"
-      ? process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID || process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID
+      ? process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID ||
+        process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID
       : process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID;
 
 const googleDiscovery: AuthSession.DiscoveryDocument = {
@@ -41,20 +42,11 @@ const appleDiscovery: AuthSession.DiscoveryDocument = {
 };
 
 export function useSSO() {
-  // Ensure the redirect URI uses the correct scheme, 
-  // For Expo Go, it uses exp:// but Google doesn't allow it. 
+  // Ensure the redirect URI uses the correct scheme,
+  // For Expo Go, it uses exp:// but Google doesn't allow it.
   // You should configure a valid Web redirect or Proxy in Google Console.
-  const redirectUri =
-    Constants.appOwnership === "expo"
-      ? AuthSession.makeRedirectUri({
-          path: "oauth",
-        })
-      : AuthSession.makeRedirectUri({
-          scheme: "instanctmobileapp",
-          path: "oauth",
-        });
-
-  console.log("Using SSO Redirect URI:", redirectUri);
+  // Redirect to the backend, which will then redirect back to the app with the code
+  const redirectUri = process.env.EXPO_PUBLIC_OAUTH_REDIRECT_URI ?? "exp://";
 
   // ── Google Auth Request ────────────────────────────────────────────
   const [googleRequest, , googlePromptAsync] = AuthSession.useAuthRequest(
@@ -95,13 +87,20 @@ export function useSSO() {
     mutationFn: async ({
       provider,
       idToken,
+      codeVerifier,
       redirectUri,
     }: {
       provider: OAuthProvider;
       idToken: string;
+      codeVerifier?: string;
       redirectUri?: string;
     }) => {
-      return api.auth.ssoSignIn({ provider, idToken, redirectUri });
+      return api.auth.ssoSignIn({
+        provider,
+        idToken,
+        codeVerifier,
+        redirectUri,
+      });
     },
     onSuccess: () => {
       router.replace("/");
@@ -119,10 +118,16 @@ export function useSSO() {
     try {
       const result = await googlePromptAsync();
       if (result.type === "success") {
-        const idToken =
-          result.params?.id_token || result.authentication?.idToken;
-        if (idToken) {
-          performSSOSignIn({ provider: OAuthProvider.GOOGLE, idToken, redirectUri });
+        console.log(JSON.stringify(result, null, 2));
+        const code = result.params?.code;
+        const codeVerifier = googleRequest?.codeVerifier;
+        if (code) {
+          performSSOSignIn({
+            provider: OAuthProvider.GOOGLE,
+            idToken: code,
+            codeVerifier,
+            redirectUri,
+          });
         } else {
           toast.error("Failed to obtain Google credentials.");
         }
