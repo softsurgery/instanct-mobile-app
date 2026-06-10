@@ -1,7 +1,7 @@
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
+import { useLogout } from "@/hooks/useLogout";
 import { delay } from "@/lib/time";
 import _axios from "axios";
-import { router } from "expo-router";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 const GLOBAL_DELAY = process.env.EXPO_PUBLIC_GLOBAL_DELAY
@@ -44,7 +44,6 @@ axios.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     const authStore = useAuthPersistStore.getState();
-
     if (
       error.response &&
       error.response.status === 401 &&
@@ -69,8 +68,8 @@ axios.interceptors.response.use(
 
           return axios(originalRequest);
         } catch (err) {
-          authStore.logout();
-          router.push("/");
+          const logout = useLogout();
+          logout();
           return Promise.reject(err);
         }
       }

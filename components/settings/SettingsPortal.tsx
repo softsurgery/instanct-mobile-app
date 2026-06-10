@@ -1,10 +1,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
-import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
 import { identifyUser } from "@/lib/user";
-import { useMapStore } from "@/stores/useMapStore";
-import { useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { ArrowLeft, ChevronRight, LogOut, Trash2 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
@@ -19,6 +16,7 @@ import { Separator } from "../ui/separator";
 import { Text } from "../ui/text";
 import { createSettingRow, SettingRow } from "./SettingsRow";
 import type { SettingRowConfig } from "./SettingsRow";
+import { useLogout } from "@/hooks/useLogout";
 
 interface SettingsPortalProps {
   className?: string;
@@ -160,17 +158,8 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
   ].filter((section) => !section.showOnDevelopment || __DEV__);
 
   const { t } = useTranslation("common");
-  const queryClient = useQueryClient();
-  const mapStore = useMapStore();
-  const authPersistStore = useAuthPersistStore();
   const { currentUser } = useCurrentUser();
-
-  const logout = () => {
-    authPersistStore.logout?.();
-    mapStore.reset();
-    queryClient.clear();
-    router.replace("/");
-  };
+  const logout = useLogout();
 
   return (
     <StableSafeAreaView className={cn("flex flex-1 bg-card", className)}>

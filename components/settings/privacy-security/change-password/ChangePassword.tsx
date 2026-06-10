@@ -17,9 +17,9 @@ import { useUserStore } from "@/stores/useUserStore";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/api";
 import { toast } from "sonner-native";
-import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
 import { ServerErrorResponse } from "@/types";
 import * as Haptics from "expo-haptics";
+import { useLogout } from "@/hooks/useLogout";
 
 interface ChangePasswordProps {
   className?: string;
@@ -29,12 +29,11 @@ export const ChangePassword = ({ className }: ChangePasswordProps) => {
   const { t } = useTranslation();
   const userStore = useUserStore();
   const isKeyboardVisible = useKeyboardVisible();
+  const logout = useLogout();
 
   const { structure } = useChangePasswordFormStructure({
     store: userStore,
   });
-
-  const authPersistStore = useAuthPersistStore();
 
   const { mutate: updatePassword, isPending } = useMutation({
     mutationFn: async () =>
@@ -44,8 +43,7 @@ export const ChangePassword = ({ className }: ChangePasswordProps) => {
       }),
     onSuccess: () => {
       toast.success("Password updated successfully.");
-      authPersistStore.logout();
-      router.replace("/");
+      logout();
     },
     onError: (error: ServerErrorResponse) => {
       toast.error(error.response?.data?.message || "Failed to update password");
