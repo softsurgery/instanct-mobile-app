@@ -13,9 +13,9 @@ import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { UserEntry } from "./UserEntry";
 import { MarkedInput } from "../shared/MarkedInput";
 import { Separator } from "../ui/separator";
-import { Loader } from "../shared/Loader";
 import { NotFound } from "../shared/NotFound";
 import { useChat } from "@/hooks/content/chat/useChat";
+import { UserEntrySkeleton } from "./UserEntrySkeleton";
 
 interface ChatPortalProps {
   className?: string;
@@ -107,52 +107,60 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
         <Separator />
         {/* Manual Tabs */}
         <View className="flex-1 px-4">
-          {isPending ? (
-            <View className="flex flex-col flex-1 justify-center items-center px-4">
-              <Loader />
-            </View>
-          ) : (
-            <LegendList
-              style={{ flex: 1, paddingBlock: 12 }}
-              data={conversations}
-              renderItem={renderItem}
-              recycleItems={true}
-              keyExtractor={(item) => item.id.toString()}
-              showsVerticalScrollIndicator={false}
-              refreshControl={
-                <RefreshControl
-                  refreshing={isRefetching}
-                  onRefresh={refetch}
-                  progressViewOffset={0}
-                  enabled={true}
-                />
+          <LegendList
+            style={{ flex: 1, paddingBlock: 12 }}
+            data={conversations}
+            renderItem={renderItem}
+            recycleItems={true}
+            keyExtractor={(item) => item.id.toString()}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={isRefetching}
+                onRefresh={refetch}
+                progressViewOffset={0}
+                enabled={true}
+              />
+            }
+            onEndReached={() => {
+              if (hasNextPage && !isFetchingNextPage) {
+                fetchNextPage();
               }
-              onEndReached={() => {
-                if (hasNextPage && !isFetchingNextPage) {
-                  fetchNextPage();
-                }
-              }}
-              onEndReachedThreshold={0.5}
-              contentContainerStyle={{
-                paddingHorizontal: 0,
-                paddingBottom: 24,
-                flexGrow: 1,
-              }}
-              ListEmptyComponent={
-                !isPending ? (
-                  <View className="flex flex-col flex-1">
-                    <NotFound
-                      className="justify-center items-center"
-                      message={[
-                        "No conversations found.",
-                        "Start a new chat by searching for a user.",
-                      ]}
-                    />
-                  </View>
-                ) : null
-              }
-            />
-          )}
+            }}
+            onEndReachedThreshold={0.5}
+            contentContainerStyle={{
+              paddingHorizontal: 0,
+              paddingBottom: 24,
+              flexGrow: 1,
+            }}
+            ListEmptyComponent={
+              !isPending ? (
+                <View className="flex flex-col flex-1">
+                  <NotFound
+                    className="justify-center items-center"
+                    message={[
+                      "No conversations found.",
+                      "Start a new chat by searching for a user.",
+                    ]}
+                  />
+                </View>
+              ) : null
+            }
+            ListFooterComponent={
+              <View className="items-center mb-8 w-full">
+                {isPending ? (
+                  <>
+                    <UserEntrySkeleton className="py-2" />
+                    <UserEntrySkeleton className="py-2" />
+                    <UserEntrySkeleton className="py-2" />
+                    <UserEntrySkeleton className="py-2" />
+                    <UserEntrySkeleton className="py-2" />
+                    <UserEntrySkeleton className="py-2" />
+                  </>
+                ) : null}
+              </View>
+            }
+          />
         </View>
       </View>
     </StableSafeAreaView>
