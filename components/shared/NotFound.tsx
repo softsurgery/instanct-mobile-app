@@ -11,7 +11,7 @@ import { View } from "react-native";
 interface NotFoundProps {
   size?: "small" | "large" | number;
   className?: string;
-  message?: string;
+  message?: string | string[];
 }
 
 export const NotFound = ({
@@ -46,7 +46,17 @@ export const NotFound = ({
           source={require("~/assets/lotties/not-found.json")}
         />
       </Animated.View>
-      <Text className="text-lg font-thin tracking-wider">{message}</Text>
+      <View className="flex flex-col items-center gap-2">
+        {Array.isArray(message) ? (
+          message.map((m, i) => (
+            <Text key={i} className="text-lg font-bold text-center">
+              {m}
+            </Text>
+          ))
+        ) : (
+          <Text className="text-lg font-bold text-center">{message}</Text>
+        )}
+      </View>
     </View>
   );
 };

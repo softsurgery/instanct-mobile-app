@@ -24,6 +24,7 @@ import { useUserPresence } from "@/hooks/content/chat/useUserPresence";
 import { ImageBackground } from "expo-image";
 import { useColorScheme } from "nativewind";
 import { Loader } from "../shared/Loader";
+import { ChatStatic } from "./conversation/ChatStatic";
 
 interface ConversationProps {
   id: number;
@@ -103,7 +104,7 @@ export const Conversation = ({ id }: ConversationProps) => {
             width: "100%",
             height: "100%",
           }}
-          imageStyle={{ opacity: 0.7 }}
+          imageStyle={{ opacity: 0.3 }}
         >
           <View className="flex-1">
             {/* MESSAGES */}
@@ -138,13 +139,16 @@ export const Conversation = ({ id }: ConversationProps) => {
                     );
                   }
 
-                  return (
-                    <ChatBubble
-                      message={item.message.content}
-                      timestamp={item.message.createdAt}
-                      right={item.message.userId === currentUser?.id}
-                    />
-                  );
+                  if (item.type === "message")
+                    return (
+                      <ChatBubble
+                        message={item.message.content}
+                        timestamp={item.message.createdAt}
+                        right={item.message.userId === currentUser?.id}
+                      />
+                    );
+
+                  return <ChatStatic message={item.message} />;
                 }}
                 onEndReached={loadMore}
                 onEndReachedThreshold={0.3}

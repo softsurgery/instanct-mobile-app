@@ -108,9 +108,9 @@ export const UserEntry = ({
               {lastMessage?.userId === currentUser?.id && `You: `}
               {lastMessage
                 ? lastMessage?.content
-                    .replaceAll("\n", " ")
-                    .replace(/\s+/g, " ")
-                    .trim()
+                    ?.replaceAll("\n", " ")
+                    ?.replace(/\s+/g, " ")
+                    ?.trim()
                 : "You can send a message to start the conversation"}
             </Text>
 

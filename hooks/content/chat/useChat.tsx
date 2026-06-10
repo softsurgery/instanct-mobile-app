@@ -65,7 +65,6 @@ export const useChat = (
       api.chat.conversation.findPaginatedUserConversations({
         page: String(pageParam),
         limit: String(limit),
-        sort: "lastMessage.createdAt,desc",
         search: search,
         join,
       }),

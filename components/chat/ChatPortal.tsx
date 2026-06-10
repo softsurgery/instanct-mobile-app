@@ -10,7 +10,6 @@ import { cn } from "~/lib/utils";
 import { ResponseConversationDto } from "~/types";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
-import { Text } from "../ui/text";
 import { UserEntry } from "./UserEntry";
 import { MarkedInput } from "../shared/MarkedInput";
 import { Separator } from "../ui/separator";
@@ -107,23 +106,17 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
         />
         <Separator />
         {/* Manual Tabs */}
-        {isPending ? (
-          <View className="flex flex-col flex-1 justify-center items-center px-4">
-            <Loader />
-          </View>
-        ) : conversations.length === 0 ? (
-          <View className="flex flex-col flex-1 justify-center items-center px-4">
-            <NotFound />
-            <Text variant={"large"} className="text-center">
-              No conversations found. Start a new chat by searching for a user.
-            </Text>
-          </View>
-        ) : (
-          <View className="flex-1 px-2">
+        <View className="flex-1 px-4">
+          {isPending ? (
+            <View className="flex flex-col flex-1 justify-center items-center px-4">
+              <Loader />
+            </View>
+          ) : (
             <LegendList
-              style={{ flex: 1, paddingVertical: 4 }}
+              style={{ flex: 1, paddingBlock: 12 }}
               data={conversations}
               renderItem={renderItem}
+              recycleItems={true}
               keyExtractor={(item) => item.id.toString()}
               showsVerticalScrollIndicator={false}
               refreshControl={
@@ -140,18 +133,27 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
                 }
               }}
               onEndReachedThreshold={0.5}
+              contentContainerStyle={{
+                paddingHorizontal: 0,
+                paddingBottom: 24,
+                flexGrow: 1,
+              }}
               ListEmptyComponent={
                 !isPending ? (
-                  <View className="p-6 items-center">
-                    <Text className="text-muted-foreground">
-                      No conversations available
-                    </Text>
+                  <View className="flex flex-col flex-1">
+                    <NotFound
+                      className="justify-center items-center"
+                      message={[
+                        "No conversations found.",
+                        "Start a new chat by searching for a user.",
+                      ]}
+                    />
                   </View>
                 ) : null
               }
             />
-          </View>
-        )}
+          )}
+        </View>
       </View>
     </StableSafeAreaView>
   );

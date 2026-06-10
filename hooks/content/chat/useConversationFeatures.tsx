@@ -1,9 +1,13 @@
 import { api } from "@/api";
 import React from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { type Socket } from "socket.io-client";
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
-import { ResponseMessageDto } from "@/types";
+import {
+  MessageFlatListItem,
+  MessageVariant,
+  ResponseMessageDto,
+} from "@/types";
 import { useAudioPlayer } from "expo-audio";
 import {
   differenceInCalendarDays,
@@ -12,10 +16,6 @@ import {
   isYesterday,
 } from "date-fns";
 import { getSocket } from "@/lib/socket";
-
-type FlatListItem =
-  | { type: "header"; date: string; key: string }
-  | { type: "message"; message: ResponseMessageDto };
 
 interface useConversationFeaturesProps {
   id: number;
@@ -31,7 +31,6 @@ export const useConversationFeatures = ({
   const soundPlayer = useAudioPlayer(
     require("~/assets/sounds/receive-message.wav"),
   );
-  const queryClient = useQueryClient();
 
   const pageRef = React.useRef(1);
   const [messages, setMessages] = React.useState<ResponseMessageDto[]>([]);
@@ -66,7 +65,7 @@ export const useConversationFeatures = ({
   }, [soundPlayer]);
 
   const groupMessagesByDay = React.useCallback(
-    (msgs: ResponseMessageDto[]): FlatListItem[] => {
+    (msgs: ResponseMessageDto[]): MessageFlatListItem[] => {
       if (msgs.length === 0) return [];
 
       const sorted = [...msgs].sort(
@@ -94,7 +93,12 @@ export const useConversationFeatures = ({
         }
 
         return [
-          ...msgs.map((msg) => ({ type: "message" as const, message: msg })),
+          ...msgs.map(
+            (msg): MessageFlatListItem => ({
+              type: msg.variant === MessageVariant.TEXT ? "message" : "static",
+              message: msg,
+            }),
+          ),
           { type: "header" as const, date: label, key: `header-${date}` },
         ];
       });

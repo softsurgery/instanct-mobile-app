@@ -1,11 +1,21 @@
 import { ResponseUserDto } from "./user-management";
 import { DatabaseEntity } from "./utils";
 
+export enum MessageVariant {
+  TEXT = "text",
+  STATIC = "static",
+  EMOJI = "emoji",
+  IMAGE = "image",
+  VIDEO = "video",
+}
+
 export interface ResponseConversationDto extends DatabaseEntity {
   id: number;
   participants: ResponseConversationUserDto[];
   messages: ResponseMessageDto[];
   lastMessage: ResponseMessageDto;
+  variant: MessageVariant;
+  static?: StaticMessageEnum;
 }
 
 export interface ResponseMessageDto extends DatabaseEntity {
@@ -15,6 +25,8 @@ export interface ResponseMessageDto extends DatabaseEntity {
   conversation: ResponseConversationDto;
   userId: string;
   user: ResponseUserDto;
+  variant?: MessageVariant;
+  static?: StaticMessageEnum;
 }
 
 export interface CreateConversationDto {
@@ -33,3 +45,13 @@ export interface GroupedMessages {
   date: string;
   messages: ResponseMessageDto[];
 }
+
+export enum StaticMessageEnum {
+  FIRST_MESSAGE = "First Message",
+  POKE = "Poke",
+}
+
+export type MessageFlatListItem =
+  | { type: "header"; date: string; key: string }
+  | { type: "message"; message: ResponseMessageDto }
+  | { type: "static"; message: ResponseMessageDto };

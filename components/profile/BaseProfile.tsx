@@ -413,18 +413,20 @@ export const InspectBaseProfile = ({
                       </Text>
                     )}
                 </View>
-                {currentUser?.id === id && user?.email && !user.emailVerified && (
-                  <Pressable
-                    onPress={() => sendVerifyEmail()}
-                    disabled={isSendVerifyEmailPending}
-                    className="flex-row items-center gap-1.5 rounded-xl border border-border px-3.5 py-2 active:opacity-80 bg-yellow-700"
-                  >
-                    <Icon as={Mail} size={16} color={"white"} />
-                    <Text className="text-md font-semibold text-white">
-                      Verify email
-                    </Text>
-                  </Pressable>
-                )}
+                {currentUser?.id === id &&
+                  user?.email &&
+                  !user.emailVerified && (
+                    <Pressable
+                      onPress={() => sendVerifyEmail()}
+                      disabled={isSendVerifyEmailPending}
+                      className="flex-row items-center gap-1.5 rounded-xl border border-border px-3.5 py-2 active:opacity-80 bg-yellow-700"
+                    >
+                      <Icon as={Mail} size={16} color={"white"} />
+                      <Text className="text-md font-semibold text-white">
+                        Verify email
+                      </Text>
+                    </Pressable>
+                  )}
               </View>
             )}
           </View>
