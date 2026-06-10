@@ -1,5 +1,5 @@
 import { useColorScheme } from "nativewind";
-import { ActivityIndicator, Image, Platform, View } from "react-native";
+import { Image, Platform, View } from "react-native";
 import { cn } from "~/lib/utils";
 import DividedText from "../shared/DividedText";
 import { Button } from "../ui/button";
@@ -50,18 +50,14 @@ export const SSOButtons = ({
           onPress={signInWithApple}
         >
           <IconSlot>
-            {isSSOPending ? (
-              <ActivityIndicator size="small" />
-            ) : (
-              <Image
-                className="w-6 h-6"
-                source={
-                  colorScheme === "dark"
-                    ? require("~/assets/images/apple-dark.png")
-                    : require("~/assets/images/apple.png")
-                }
-              />
-            )}
+            <Image
+              className="w-6 h-6"
+              source={
+                colorScheme === "dark"
+                  ? require("~/assets/images/apple-dark.png")
+                  : require("~/assets/images/apple.png")
+              }
+            />
           </IconSlot>
 
           <Text className="text-lg font-bold text-foreground">

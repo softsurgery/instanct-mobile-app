@@ -101,7 +101,7 @@ export const SigninLayout = ({ className }: SigninProps) => {
                 className="relative flex flex-row items-center justify-center rounded-xl h-14"
                 onPress={onSignInPress}
               >
-                <Text className="text-lg font-bold text-foreground">
+                <Text className="text-lg font-bold text-white">
                   Continue with E-Mail
                 </Text>
               </Button>
