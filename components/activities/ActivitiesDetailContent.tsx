@@ -74,7 +74,7 @@ export const ActivitiesDetailContent = ({
     const grouped: Record<string, ResponseUserBookmarkDto[]> = {};
 
     bookmarks
-      .filter((bookmark) => !removedUserIds.has(bookmark.bookmark?.id))
+      .filter((b) => !removedUserIds.has(b.bookmark?.id as string))
       .forEach((bookmark) => {
         const date = parseISO(new Date(bookmark.createdAt).toISOString());
 
@@ -131,12 +131,6 @@ export const ActivitiesDetailContent = ({
             isBookmarksPending ? (
               <View className="flex-1 items-center justify-center">
                 <Loader />
-              </View>
-            ) : flattenedData.length === 0 ? (
-              <View className="flex-1 items-center justify-center">
-                <Text className="text-center text-muted-foreground px-6">
-                  No bookmarks yet.
-                </Text>
               </View>
             ) : (
               <LegendList
