@@ -41,7 +41,7 @@ export const Loader: React.FC<LoaderProps> = ({
             width: size === "small" ? 100 : size === "large" ? 200 : size,
             height: size === "small" ? 100 : size === "large" ? 200 : size,
           }}
-          source={require("~/assets/lottie-loader.json")}
+          source={require("~/assets/lotties/lottie-loader.json")}
         />
       )}
     </Animated.View>

@@ -45,7 +45,7 @@ export const Success = ({
             width: size === "small" ? 100 : size === "large" ? 200 : size,
             height: size === "small" ? 100 : size === "large" ? 200 : size,
           }}
-          source={require("~/assets/success.json")}
+          source={require("~/assets/lotties/success.json")}
         />
       </Animated.View>
       <Text className="-mt-4" {...textProps}>

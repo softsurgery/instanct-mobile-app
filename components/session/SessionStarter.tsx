@@ -45,7 +45,7 @@ export const SessionStarter = ({ className }: SessionStarterProps) => {
               width: 300,
               height: 300,
             }}
-            source={require("~/assets/power-on.json")}
+            source={require("~/assets/lotties/power-on.json")}
           />
         </Animated.View>
       </TouchableOpacity>
