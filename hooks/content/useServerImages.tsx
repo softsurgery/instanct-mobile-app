@@ -74,8 +74,8 @@ export const useServerImages = ({
             key={index}
             className={cn(wrapperClassName, "flex items-center justify-center")}
             style={{
-              width: size?.width ? size.width * 1.05 : "100%",
-              height: size?.height ? size.height * 1.05 : "100%",
+              width: size?.width ? size.width : "100%",
+              height: size?.height ? size.height : "100%",
             }}
           >
             <Image
@@ -114,8 +114,8 @@ export const useServerImages = ({
             key={index}
             className={cn(wrapperClassName, "flex items-center justify-center")}
             style={{
-              width: size?.width ? size.width * 1.05 : "100%",
-              height: size?.height ? size.height * 1.05 : "100%",
+              width: size?.width ? size.width : "100%",
+              height: size?.height ? size.height : "100%",
             }}
           >
             <Image
