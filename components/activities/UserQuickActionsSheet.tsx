@@ -80,7 +80,7 @@ export const UserQuickActionsSheet = React.forwardRef<
         </View>
 
         {/* actions as buttons */}
-        <View className="flex flex-col gap-4">
+        <View className="flex flex-col gap-2">
           {actions.map((a) => (
             <Button
               key={a.key}

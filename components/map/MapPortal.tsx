@@ -115,7 +115,13 @@ export const MapPortal = ({ className }: MapPortalProps) => {
             },
           ]}
         />
-        {activeSession && <MapStatus />}
+        {activeSession && (
+          <MapStatus
+            classNames={{
+              text: mapHeaderTitleClassName,
+            }}
+          />
+        )}
         {/* <MapDebugDialog className="m-4" /> */}
       </StableSafeAreaView>
       {/* {!sessionStarted && (

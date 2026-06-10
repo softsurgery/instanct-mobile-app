@@ -98,9 +98,6 @@ export default function MultiSelect({
   return (
     <>
       {selectedLabels.length === 0 ? (
-        // <Text className="text-sm text-muted-foreground/50 leading-5">
-        //   {placeholder || "Select options"}
-        // </Text>
         <Button
           disabled={disabled}
           variant="outline"
@@ -128,13 +125,13 @@ export default function MultiSelect({
             if (!disabled) sheetRef.current?.show();
           }}
         >
-          <View className="flex-1 flex-row flex-wrap gap-2 pr-8">
+          <View className="flex-1 flex-row flex-wrap gap-1 pr-8">
             {selectedLabels.map((label) => (
               <View
                 key={label}
-                className="rounded-full bg-primary/50 px-3 py-1"
+                className="rounded-full bg-primary/75 px-3 py-1"
               >
-                <Text className="text-base">{label}</Text>
+                <Text className="text-base text-white">{label}</Text>
               </View>
             ))}
           </View>

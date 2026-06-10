@@ -4,18 +4,26 @@ import { View } from "react-native";
 import { Text } from "../../ui/text";
 
 interface MapStatusProps {
-  className?: string;
+  classNames?: {
+    wrapper?: string;
+    text?: string;
+  };
 }
 
-export const MapStatus = ({ className }: MapStatusProps) => {
+export const MapStatus = ({ classNames }: MapStatusProps) => {
   const mapStore = useMapStore();
   return (
-    <View>
-      <Text className={cn("mx-4 bg-transparent text-xs font-bold", className)}>
+    <View className={cn(classNames?.wrapper)}>
+      <Text
+        className={cn(
+          "mx-4 bg-transparent text-sm font-bold",
+          classNames?.text,
+        )}
+      >
         Status:
         <Text
           className={cn(
-            "text-xs font-bold",
+            "text-sm font-bold",
             mapStore.connected ? "text-green-500" : "text-red-500",
           )}
         >
