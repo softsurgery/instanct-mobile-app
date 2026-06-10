@@ -15,12 +15,13 @@ export interface ResponseGeolocationDto extends DatabaseEntity {
 }
 
 export interface NearbyUser {
-  latitude: number;
-  longitude: number;
+  latitude: number | null;
+  longitude: number | null;
   user?: ResponseUserDto;
   userId: string;
-  distance?: number;
+  distance?: number | null;
   isOnline?: boolean;
+  coordinatesVisible?: boolean;
   profilePicture?: React.ReactNode;
   updatedAt: string;
 }

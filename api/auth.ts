@@ -3,6 +3,9 @@ import {
   RequestClientSignInDto,
   RequestSpecializedClientSignUpDto,
   ResponseClientSigninDto,
+  RequestClientUpdateMailDto,
+  RequestClientUpdatePasswordDto,
+  RequestClientOAuthDto,
 } from "@/types";
 import axios from "./axios";
 
@@ -24,12 +27,48 @@ const signIn = async (
   return response.data;
 };
 
+const ssoSignIn = async (
+  request: RequestClientOAuthDto,
+): Promise<ResponseClientSigninDto> => {
+  const response = await axios.post("/client-auth/oauth", request);
+  saveToken(response.data.access_token, response.data.refresh_token);
+  return response.data;
+};
+
 const signUp = async (request: RequestSpecializedClientSignUpDto) => {
   const response = await axios.post("/client-custom-auth/sign-up", request);
   return response.data;
 };
 
+const sendVerifyEmail = async (email?: string) => {
+  const response = await axios.post("/client-auth/send-verify-email", {
+    email,
+  });
+  return response.data;
+};
+
+const verifyEmail = async (token: string) => {
+  const response = await axios.post("/client-auth/verify-email", { token });
+  return response.data;
+};
+
+const updateEmail = async (request: RequestClientUpdateMailDto) => {
+  const response = await axios.post("/client-auth/update-email", request);
+  return response.data;
+};
+
+const updatePassword = async (request: RequestClientUpdatePasswordDto) => {
+  const response = await axios.post("/client-auth/update-password", request);
+  return response.data;
+};
+
 export const auth = {
   signIn,
+  ssoSignIn,
   signUp,
+  sendVerifyEmail,
+  verifyEmail,
+  updateEmail,
+  updatePassword,
 };
+

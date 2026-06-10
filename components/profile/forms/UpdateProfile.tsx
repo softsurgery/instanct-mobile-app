@@ -2,7 +2,6 @@ import { cn } from "@/lib/utils";
 import { useUserStore } from "@/stores/useUserStore";
 import { router } from "expo-router";
 import { ArrowLeft } from "lucide-react-native";
-import { useTranslation } from "react-i18next";
 import { ApplicationHeader } from "../../shared/AppHeader";
 import { FormBuilder } from "../../shared/form-builder/FormBuilder";
 import { StableKeyboardAwareScrollView } from "../../shared/StableKeyboardAwareScrollView";
@@ -151,18 +150,25 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
         ]}
       />
       <StableKeyboardAwareScrollView className="flex-1 bg-background">
-        <FormBuilder structure={structure} className="mt-4 px-2" />
+        <FormBuilder structure={structure} className="px-2" />
       </StableKeyboardAwareScrollView>
       {!isKeyboardVisible && (
-        <View className="py-6 border-t border-border">
-          <Button
-            size="sm"
-            className="mx-6 mb-4 rounded-full"
-            onPress={handleUpdateSubmit}
-            disabled={isUpdatePending}
-          >
-            <Text>Update Profile</Text>
-          </Button>
+        <View className="border-t border-border bg-card p-8 pt-4 gap-4">
+          <View className="flex flex-col justify-between gap-2">
+            <Button
+              size="lg"
+              variant="default"
+              className="rounded-xl"
+              onPress={() => {
+                handleUpdateSubmit();
+              }}
+              disabled={isUpdatePending}
+            >
+              <Text className="text-md font-bold">
+                {isUpdatePending ? "Updating..." : "Update Profile"}
+              </Text>
+            </Button>
+          </View>
         </View>
       )}
     </StableSafeAreaView>

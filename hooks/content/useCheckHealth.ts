@@ -17,10 +17,10 @@ export const useCheckHealth = (
     queryFn: async () => {
       try {
         const response = await axios.get("/app/health");
-        console.log("Health check response:", response.data);
+        // console.log("Health check response:", response.data);
         return response.data;
       } catch (error) {
-        console.log("Health check failed:", error);
+        // console.log("Health check failed:", error);
         return { status: "unhealthy" };
       }
     },

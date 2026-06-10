@@ -26,7 +26,7 @@ export const createSessionSchema = (now: boolean) => {
 
       payload: z.object({
         objectives: z
-          .array(z.string({ message: "Objective must be a string." }))
+          .array(z.number({ message: "Objective must be a number." }))
           .min(1, { message: "At least one objective must be selected." })
           .optional(),
       }),
@@ -52,7 +52,7 @@ export const updateSessionSchema = z.object({
 
   payload: z.object({
     objectives: z
-      .array(z.string({ message: "Objective must be a string." }))
+      .array(z.number({ message: "Objective must be a number." }))
       .min(1, { message: "At least one objective must be selected." })
       .optional(),
   }),

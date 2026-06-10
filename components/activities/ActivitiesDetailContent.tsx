@@ -9,9 +9,11 @@ import { useInfiniteUserBookmarks } from "@/hooks/content/users/useInfinteUserBo
 import { LegendList } from "@legendapp/list";
 import { BookmarkCard } from "./BookmarkCard";
 import { ResponseUserBookmarkDto } from "@/types/bookmark";
+import { ResponseUserDto } from "@/types";
 import { Loader } from "@/components/shared/Loader";
 import { cn } from "@/lib/utils";
 import { format, isToday, isYesterday, parseISO } from "date-fns";
+import { NotFound } from "../shared/NotFound";
 
 interface ActivitiesDetailContentProps {
   className?: string;
@@ -21,10 +23,9 @@ interface ActivitiesDetailContentProps {
 
 const Tab = createMaterialTopTabNavigator();
 
-type GroupedBookmarks = {
-  title: string;
-  data: ResponseUserBookmarkDto[];
-};
+type FlattenedBookmark =
+  | { type: "header"; title: string; id: string }
+  | { type: "item"; bookmark: ResponseUserBookmarkDto; id: string };
 
 export const ActivitiesDetailContent = ({
   className,
@@ -43,32 +44,69 @@ export const ActivitiesDetailContent = ({
     join: ["bookmark"],
   });
 
-  const groupedBookmarks = React.useMemo<GroupedBookmarks[]>(() => {
+  const [removedUserIds, setRemovedUserIds] = React.useState<Set<string>>(
+    new Set(),
+  );
+
+  const handleRemoved = React.useCallback((user?: ResponseUserDto) => {
+    if (!user?.id) return;
+    setRemovedUserIds((prev) => new Set(prev).add(user.id));
+  }, []);
+
+  const renderItem = React.useCallback(
+    ({ item }: { item: FlattenedBookmark }) => {
+      if (item.type === "header") {
+        return (
+          <Text className="mb-2.5 mt-2 px-4 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+            {item.title}
+          </Text>
+        );
+      }
+
+      return (
+        <BookmarkCard user={item.bookmark.bookmark} onRemoved={handleRemoved} />
+      );
+    },
+    [handleRemoved],
+  );
+
+  const flattenedData = React.useMemo<FlattenedBookmark[]>(() => {
     const grouped: Record<string, ResponseUserBookmarkDto[]> = {};
 
-    bookmarks.forEach((bookmark) => {
-      const date = parseISO(new Date(bookmark.createdAt).toISOString());
+    bookmarks
+      .filter((b) => !removedUserIds.has(b.bookmark?.id as string))
+      .forEach((bookmark) => {
+        const date = parseISO(new Date(bookmark.createdAt).toISOString());
 
-      let title = format(date, "MMMM d, yyyy");
+        let title = format(date, "MMMM d, yyyy");
 
-      if (isToday(date)) {
-        title = "Today";
-      } else if (isYesterday(date)) {
-        title = "Yesterday";
-      }
+        if (isToday(date)) {
+          title = "Today";
+        } else if (isYesterday(date)) {
+          title = "Yesterday";
+        }
 
-      if (!grouped[title]) {
-        grouped[title] = [];
-      }
+        if (!grouped[title]) {
+          grouped[title] = [];
+        }
 
-      grouped[title].push(bookmark);
+        grouped[title].push(bookmark);
+      });
+
+    const flattened: FlattenedBookmark[] = [];
+    Object.entries(grouped).forEach(([title, data]) => {
+      flattened.push({ type: "header", title, id: `header-${title}` });
+      data.forEach((bookmark) => {
+        flattened.push({
+          type: "item",
+          bookmark,
+          id: `item-${bookmark.id}`,
+        });
+      });
     });
 
-    return Object.entries(grouped).map(([title, data]) => ({
-      title,
-      data,
-    }));
-  }, [bookmarks]);
+    return flattened;
+  }, [bookmarks, removedUserIds]);
 
   return (
     <View className={cn("flex flex-1 flex-col", className)}>
@@ -94,17 +132,11 @@ export const ActivitiesDetailContent = ({
               <View className="flex-1 items-center justify-center">
                 <Loader />
               </View>
-            ) : bookmarks.length === 0 ? (
-              <View className="flex-1 items-center justify-center">
-                <Text className="text-center text-muted-foreground px-6">
-                  No bookmarks yet.
-                </Text>
-              </View>
             ) : (
               <LegendList
                 style={{ flex: 1, paddingBlock: 12 }}
-                data={groupedBookmarks}
-                keyExtractor={(item) => item.title}
+                data={flattenedData}
+                keyExtractor={(item) => item.id}
                 showsVerticalScrollIndicator={false}
                 onScroll={handleScroll}
                 onRefresh={refetchBookmarks}
@@ -117,23 +149,32 @@ export const ActivitiesDetailContent = ({
                 onEndReachedThreshold={0.5}
                 contentContainerStyle={{
                   paddingHorizontal: 0,
-                  paddingBottom: 24,
+                  flexGrow: 1,
                 }}
-                renderItem={({ item }) => (
-                  <View className="mb-6">
-                    <Text className="px-4 mb-2 text-sm font-semibold text-muted-foreground">
-                      {item.title}
-                    </Text>
-
-                    {item.data.map((bookmark) => (
-                      <BookmarkCard
-                        key={bookmark.id}
-                        className="px-4 py-1"
-                        user={bookmark.bookmark}
-                      />
-                    ))}
+                renderItem={renderItem}
+                ListEmptyComponent={() => (
+                  <View className="flex flex-col flex-1 justify-center items-center h-full">
+                    <NotFound message="No bookmarks were found" />
                   </View>
                 )}
+                ListFooterComponent={
+                  flattenedData.length === 0 ? null : (
+                    <View className="items-center mb-8">
+                      {isFetchingNextPage ? (
+                        <Loader
+                          size="small"
+                          className="flex items-center h-fit"
+                        />
+                      ) : !hasNextPage ? (
+                        <View className="flex flex-row items-center justify-center gap-2 px-4">
+                          <Text variant="p" className="text-muted-foreground">
+                            You have caught up with all bookmarks!
+                          </Text>
+                        </View>
+                      ) : null}
+                    </View>
+                  )
+                }
               />
             )
           }

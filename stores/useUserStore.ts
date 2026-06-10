@@ -16,6 +16,11 @@ interface UserData {
   response?: ResponseUserDto;
   updateDto: UpdateUserDto;
   updateCoverDto: UpdateUserCoverDto;
+  updatePasswordDto: {
+    currentPassword?: string;
+    newPassword?: string;
+    confirmPassword?: string;
+  };
 
   //experiences
   experiences?: ResponseExperienceDto[];
@@ -67,6 +72,11 @@ const initialState: UserData = {
   },
   updateCoverDto: {
     coverId: undefined,
+  },
+  updatePasswordDto: {
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   },
   createExperienceDto: {
     title: "",

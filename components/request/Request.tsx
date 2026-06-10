@@ -1,39 +1,135 @@
+import React from "react";
 import { api } from "@/api";
 import { ApplicationHeader } from "@/components/shared/AppHeader";
 import { StableSafeAreaView } from "@/components/shared/StableSafeAreaView";
-import StableScrollView from "@/components/shared/StableScrollView";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import {
   ArrowLeft,
-  Check,
-  CircleArrowDown,
-  CircleHelp,
+  Calendar,
+  CheckCircle2,
   Clock3,
   MapPin,
-  X,
+  MessageSquare,
+  XCircle,
 } from "lucide-react-native";
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 import { Loader } from "../shared/Loader";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { identifyUser } from "@/lib/user";
 import { useIdentifiedUser } from "@/hooks/content/users/useIdentifiedUser";
 import { toDateOnly, toTimeOnly } from "@/lib/date";
+import { RequestEvent, RequestStatus } from "@/types";
+import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
+import { toast } from "sonner-native";
+import { RequestDetailsCard } from "./RequestDetailsCard";
 
 interface RequestProps {
   id: string;
   className?: string;
 }
 
+const StatusBadge = ({ status }: { status?: RequestStatus }) => {
+  if (status === RequestStatus.Accepted) {
+    return (
+      <View className="flex-row items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 dark:bg-emerald-950/40">
+        <Icon as={CheckCircle2} size={14} className="text-emerald-600" />
+        <Text className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+          Acceptée
+        </Text>
+      </View>
+    );
+  }
+
+  if (status === RequestStatus.Rejected) {
+    return (
+      <View className="flex-row items-center gap-1.5 rounded-full bg-red-100 px-3 py-1 dark:bg-red-950/40">
+        <Icon as={XCircle} size={14} className="text-red-600" />
+        <Text className="text-xs font-semibold text-red-700 dark:text-red-400">
+          Refusée
+        </Text>
+      </View>
+    );
+  }
+
+  return (
+    <View className="flex-row items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 dark:bg-amber-950/40">
+      <View className="h-2 w-2 rounded-full bg-amber-500" />
+      <Text className="text-xs font-semibold text-amber-700 dark:text-amber-400">
+        En attente
+      </Text>
+    </View>
+  );
+};
+
 export const Request = ({ id, className }: RequestProps) => {
+  const { currentUser } = useCurrentUser();
+  const queryClient = useQueryClient();
+
+  // track which action is in flight so only that button spins
+  const [pendingEvent, setPendingEvent] = React.useState<RequestEvent | null>(
+    null,
+  );
+
   const { data: request, isPending: isRequestPending } = useQuery({
     queryKey: ["request", id],
-    queryFn: () => api.request.findOneById(id, ["session.user"].join(",")),
+    queryFn: () =>
+      api.request.findOneById(id, ["session", "session.user"].join(",")),
   });
+
+  const { mutate: updateStatus, isPending: isUpdating } = useMutation({
+    mutationFn: (event: RequestEvent) =>
+      api.request.updateStatus(Number(id), event),
+    onSuccess: (_data, event) => {
+      queryClient.invalidateQueries({ queryKey: ["request", id] });
+      queryClient.invalidateQueries({ queryKey: ["requests"] });
+      toast.success(
+        event === RequestEvent.Accept ? "Demande acceptée" : "Demande refusée",
+      );
+    },
+    onError: () => {
+      Alert.alert("Erreur", "Une erreur est survenue. Veuillez réessayer.");
+    },
+    onSettled: () => setPendingEvent(null),
+  });
+
+  const runUpdate = (event: RequestEvent) => {
+    setPendingEvent(event);
+    updateStatus(event);
+  };
+
+  const handleAccept = () => {
+    Alert.alert(
+      "Accepter la demande",
+      "Êtes-vous sûr de vouloir accepter cette demande de réunion ?",
+      [
+        { text: "Annuler", style: "cancel" },
+        {
+          text: "Accepter",
+          onPress: () => runUpdate(RequestEvent.Accept),
+        },
+      ],
+    );
+  };
+
+  const handleReject = () => {
+    Alert.alert(
+      "Refuser la demande",
+      "Êtes-vous sûr de vouloir refuser cette demande de réunion ?",
+      [
+        { text: "Annuler", style: "cancel" },
+        {
+          text: "Refuser",
+          style: "destructive",
+          onPress: () => runUpdate(RequestEvent.Reject),
+        },
+      ],
+    );
+  };
 
   const { user, isUserPending } = useIdentifiedUser({
     id: request?.session?.user?.id!,
@@ -45,18 +141,22 @@ export const Request = ({ id, className }: RequestProps) => {
       fallbacks: [identifyUser(user)],
       wrapperClassName:
         "border border-border bg-background rounded-full shadow-md",
-      size: { width: 70, height: 70 },
+      size: { width: 80, height: 80 },
       enabled: !!user,
     });
 
   const isPending =
     isRequestPending || isUserPending || isProfilePicturesPending;
 
+  const isOwner = currentUser?.id === request?.session?.user?.id;
+  const isPendingStatus =
+    !request?.status || request?.status === RequestStatus.Sent;
+
   return (
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
-        classNames={{ wrapper: "border-b border-border pb-2 bg-transparent" }}
-        title={"Answer request"}
+        classNames={{ wrapper: "border-b border-border pb-2" }}
+        title={"Demande de réunion"}
         titleVariant="large"
         reverse
         shortcuts={[
@@ -69,129 +169,125 @@ export const Request = ({ id, className }: RequestProps) => {
           },
         ]}
       />
-      <View className="flex-1 bg-background">
-        <StableScrollView className="px-4 pt-4">
-          {isPending ? (
-            <Loader className="flex flex-1 justify-center items-center" />
-          ) : (
-            <View className="flex flex-col gap-8">
-              <View>
-                <Text className="text-lg font-semibold text-foreground">
-                  Partenaire de réunion
-                </Text>
-
-                {user && (
-                  <View
-                    key={user.id}
-                    className="mt-4 flex-row items-center gap-4"
-                  >
-                    <View className="overflow-hidden rounded-full bg-muted">
-                      {profilePictures[0]}
-                    </View>
-
-                    <View className="flex-1">
-                      <Text className="text-lg font-semibold text-foreground">
-                        {identifyUser(user)}
-                      </Text>
-                      <Text className="text-lg opacity-50">{user?.email}</Text>
+      <View className="flex-1 bg-background px-4 pt-6">
+        {isPending ? (
+          <Loader className="flex flex-1 items-center justify-center" />
+        ) : (
+          <View className="flex flex-col gap-6">
+            {/* Profile + Status */}
+            <View className="items-center gap-3 rounded-2xl">
+              {user && (
+                <View className="flex flex-row items-center gap-4">
+                  <View className="overflow-hidden rounded-full border-2 border-border bg-muted">
+                    {profilePictures[0]}
+                  </View>
+                  <View className="gap-1">
+                    <Text className="text-xl font-bold text-foreground">
+                      {identifyUser(user)}
+                    </Text>
+                    <Text className="text-sm text-muted-foreground">
+                      {user?.email}
+                    </Text>
+                    <View className="mt-2">
+                      <StatusBadge status={request?.status} />
                     </View>
                   </View>
-                )}
-              </View>
-              {/* Status */}
-              <View>
-                <Text className="text-lg font-semibold text-foreground">
-                  Statut
-                </Text>
-                <View className="mt-4 gap-3">
-                  <View className="flex-row items-center gap-3">
-                    <Icon as={CircleHelp} size={24} />
-                    <Text className="text-md text-foreground">
-                      En attente d&apos;une réponse
-                    </Text>
-                  </View>
-                  <View className="flex-row items-center gap-3">
-                    <Icon as={CircleArrowDown} size={24} />
-                    <Text className="text-md text-foreground">
-                      {user
-                        ? `Réunion demandée par ${identifyUser(user)}`
-                        : "Réunion demandée"}
-                    </Text>
-                  </View>
                 </View>
-              </View>
-              {/* description */}
-              <View>
-                <Text className="text-lg font-semibold text-foreground">
-                  Description du rendez-vous
-                </Text>
-                <Text className="mt-4 text-sm leading-2 text-foreground">
-                  {request?.message || "Aucune description fournie"}
-                </Text>
-              </View>
-              {/* details */}
-              <View>
-                <Text className="text-lg font-semibold text-foreground">
-                  Heure et lieu
-                </Text>
-                <View className="mt-4 gap-3">
-                  <View className="flex-row items-center gap-3">
-                    <Icon as={Clock3} size={24} />
-                    <View className="flex-1">
-                      {request?.time && (
-                        <>
-                          <Text className="text-md text-foreground">
-                            {toDateOnly(new Date(request.time))}
-                          </Text>
-                          <Text className="text-sm text-foreground opacity-75">
-                            {toTimeOnly(new Date(request.time))}
-                          </Text>
-                        </>
-                      )}
-                      {!request?.time && (
-                        <Text className="text-md text-foreground opacity-50">
-                          Non spécifié
-                        </Text>
-                      )}
-                    </View>
-                  </View>
-                  <View className="flex-row items-center gap-3">
-                    <Icon as={MapPin} size={24} />
-                    <Text className="text-md text-foreground">
-                      {request?.location || "Non spécifié"}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-
-              <View className="rounded-2xl border border-border bg-muted/30 p-5">
-                <Text className="text-sm font-semibold text-foreground">
-                  Acceptez cette réunion pour l&apos;ajouter à votre programme.
-                </Text>
-
-                <View className="mt-2 gap-2">
-                  <Button
-                    className="bg-emerald-600"
-                    size={"sm"}
-                    onPress={() => {}}
-                  >
-                    <Icon as={Check} size={20} color="white" />
-                    <Text className="text-sm text-white">Accepter</Text>
-                  </Button>
-                  <Button
-                    size={"sm"}
-                    variant={"destructive"}
-                    onPress={() => {}}
-                  >
-                    <Icon as={X} size={20} color="white" />
-                    <Text className="text-sm text-white">Refuser</Text>
-                  </Button>
-                </View>
-              </View>
+              )}
             </View>
-          )}
-        </StableScrollView>
+
+            {/* Details card */}
+            <View className="gap-1 p-4">
+              <RequestDetailsCard
+                icon={MessageSquare}
+                label="Message"
+                value={request?.message}
+                emptyText="Aucune description fournie"
+              />
+
+              <View className="my-3 h-px bg-border" />
+
+              <RequestDetailsCard icon={Clock3} label="Date et heure">
+                {request?.time ? (
+                  <View className="flex-row items-baseline gap-1.5">
+                    <Text className="text-sm font-medium text-foreground">
+                      {toDateOnly(new Date(request.time))}
+                    </Text>
+                    <Text className="text-sm text-muted-foreground">
+                      · {toTimeOnly(new Date(request.time))}
+                    </Text>
+                  </View>
+                ) : (
+                  <Text className="text-sm italic text-muted-foreground/70">
+                    Non spécifié
+                  </Text>
+                )}
+              </RequestDetailsCard>
+
+              <View className="my-3 h-px bg-border" />
+
+              <RequestDetailsCard
+                icon={MapPin}
+                label="Lieu"
+                value={request?.location}
+              />
+            </View>
+
+            {/* Status info banners */}
+            {request?.status === RequestStatus.Accepted && (
+              <View className="flex-row items-center gap-2.5 rounded-2xl bg-emerald-50 p-4 dark:bg-emerald-950/20">
+                <Icon as={Calendar} size={18} className="text-emerald-600" />
+                <Text className="flex-1 text-sm text-emerald-700 dark:text-emerald-400">
+                  Cette réunion a été ajoutée à votre programme.
+                </Text>
+              </View>
+            )}
+
+            {request?.status === RequestStatus.Rejected && (
+              <View className="flex-row items-center gap-2.5 rounded-2xl bg-red-50 p-4 dark:bg-red-950/20">
+                <Icon as={XCircle} size={18} className="text-red-600" />
+                <Text className="flex-1 text-sm text-red-700 dark:text-red-400">
+                  Vous avez refusé cette demande de réunion.
+                </Text>
+              </View>
+            )}
+
+            {/* Awaiting response — shown to the sender (session owner) */}
+            {isPendingStatus && isOwner && (
+              <View className="flex-row items-center gap-2.5 rounded-2xl bg-amber-50 p-4 dark:bg-amber-950/20">
+                <Icon as={Clock3} size={18} className="text-amber-600" />
+                <Text className="flex-1 text-sm text-amber-700 dark:text-amber-400">
+                  En attente de la réponse du destinataire.
+                </Text>
+              </View>
+            )}
+          </View>
+        )}
       </View>
+
+      {!isPending && !isOwner && isPendingStatus && (
+        <View className="gap-3 border-t border-border bg-card p-8 pt-4">
+          <Button
+            size="lg"
+            className="flex-row items-center justify-center gap-2 rounded-xl"
+            onPress={handleAccept}
+            disabled={isUpdating}
+          >
+            {pendingEvent === RequestEvent.Accept && <Loader size="small" />}
+            <Text className="text-md font-bold">Accepter</Text>
+          </Button>
+          <Button
+            size="lg"
+            variant="destructive"
+            className="flex-row items-center justify-center gap-2 rounded-xl"
+            onPress={handleReject}
+            disabled={isUpdating}
+          >
+            {pendingEvent === RequestEvent.Reject && <Loader size="small" />}
+            <Text className="text-md font-bold">Refuser</Text>
+          </Button>
+        </View>
+      )}
     </StableSafeAreaView>
   );
 };

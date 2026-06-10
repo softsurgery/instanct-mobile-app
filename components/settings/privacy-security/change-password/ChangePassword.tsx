@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import { router } from "expo-router";
-import { ArrowLeft, Lock } from "lucide-react-native";
+import { ArrowLeft, Lock, Loader2 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { cn } from "~/lib/utils";
 import { ApplicationHeader } from "~/components/shared/AppHeader";
@@ -11,9 +11,15 @@ import { Button } from "~/components/ui/button";
 import { Icon } from "~/components/ui/icon";
 import { Text } from "~/components/ui/text";
 import { FormBuilder } from "~/components/shared/form-builder/FormBuilder";
-import { useChangePasswordFormStructure } from "./forms/useChangePasswordFormStructure";
+import { useChangePasswordFormStructure } from "./useChangePasswordFormStructure";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 import { useUserStore } from "@/stores/useUserStore";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/api";
+import { toast } from "sonner-native";
+import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
+import { ServerErrorResponse } from "@/types";
+import * as Haptics from "expo-haptics";
 
 interface ChangePasswordProps {
   className?: string;
@@ -27,6 +33,42 @@ export const ChangePassword = ({ className }: ChangePasswordProps) => {
   const { structure } = useChangePasswordFormStructure({
     store: userStore,
   });
+
+  const authPersistStore = useAuthPersistStore();
+
+  const { mutate: updatePassword, isPending } = useMutation({
+    mutationFn: async () =>
+      api.auth.updatePassword({
+        currentPassword: userStore.updatePasswordDto.currentPassword!,
+        newPassword: userStore.updatePasswordDto.newPassword!,
+      }),
+    onSuccess: () => {
+      toast.success("Password updated successfully.");
+      authPersistStore.logout();
+      router.replace("/");
+    },
+    onError: (error: ServerErrorResponse) => {
+      toast.error(error.response?.data?.message || "Failed to update password");
+    },
+  });
+
+  const handleSave = () => {
+    const { currentPassword, newPassword, confirmPassword } =
+      userStore.updatePasswordDto;
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error("New passwords do not match");
+      return;
+    }
+    if (newPassword.length < 6) {
+      toast.error("Password must be at least 6 characters long");
+      return;
+    }
+    updatePassword();
+  };
 
   return (
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
@@ -44,35 +86,48 @@ export const ChangePassword = ({ className }: ChangePasswordProps) => {
         ]}
       />
       <StableKeyboardAwareScrollView className="flex-1 bg-background">
-        <FormBuilder structure={structure} className="mt-4 px-2" />
         <View className="border border-primary/20 bg-primary/5 p-4">
-          <View className="flex-row gap-3">
+          <View className="flex-row justify-center items-center gap-3">
             <Icon
               as={Lock}
-              size={16}
+              size={28}
               className="mt-0.5 flex-shrink-0 text-primary"
             />
-            <Text className="flex-1 text-xs leading-5 text-muted-foreground">
+            <Text className="flex-1 text-sm leading-5 text-muted-foreground">
               After changing your password, you may be asked to sign in again on
               other devices.
             </Text>
           </View>
         </View>
+        <FormBuilder structure={structure} className="mt-4 px-2" />
       </StableKeyboardAwareScrollView>
 
       {!isKeyboardVisible && (
-        <View className="absolute bottom-0 left-0 right-0 border-t border-border bg-card p-8 pt-4 gap-4">
-          <View className="flex flex-row justify-between gap-4">
+        <View className="border-t border-border bg-card p-8 pt-4 gap-4">
+          <View className="flex flex-col justify-between gap-2">
             <Button
-              size="sm"
-              variant="outline"
-              className="flex-1 rounded-full"
-              onPress={() => router.back()}
+              size="lg"
+              className="rounded-xl"
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                handleSave();
+              }}
+              disabled={isPending}
             >
-              <Text className="font-semibold">Cancel</Text>
-            </Button>
-            <Button size="sm" className="flex-1 rounded-full">
-              <Text>Update Password</Text>
+              {isPending ? (
+                <React.Fragment>
+                  <Icon
+                    as={Loader2}
+                    size={18}
+                    className="text-primary-foreground animate-spin"
+                  />
+                  <Text className="text-primary-foreground font-semibold">
+                    Updating...
+                  </Text>
+                </React.Fragment>
+              ) : (
+                <Text className="text-md font-bold">Update Password</Text>
+              )}
             </Button>
           </View>
         </View>

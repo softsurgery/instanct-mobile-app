@@ -1,24 +1,24 @@
+import React from "react";
+import { Pressable, View } from "react-native";
+import { router } from "expo-router";
 import { Text } from "@/components/ui/text";
-import { Icon } from "@/components/ui/icon";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { identifyUserAvatar, identifyUser } from "@/lib/user";
 import { cn } from "@/lib/utils";
-import { ResponseRequestDto } from "@/types";
-import {
-  ArrowRight,
-  Clock,
-  MapPin,
-  MessageCircle,
-  Redo,
-} from "lucide-react-native";
-import { View } from "react-native";
-import { timeAgo, toTimeOnly, toLongDateString } from "@/lib/date";
+import { timeAgo } from "@/lib/date";
+import { RequestStatus, ResponseRequestDto } from "@/types";
 
 interface SessionRequestCardProps {
   className?: string;
   request: ResponseRequestDto;
   isIncoming?: boolean;
 }
+
+const statusColorMap: Record<string, string> = {
+  [RequestStatus.Sent]: "#fbbf24",
+  [RequestStatus.Accepted]: "#34d399",
+  [RequestStatus.Rejected]: "#f87171",
+};
 
 export const SessionRequestCard: React.FC<SessionRequestCardProps> = ({
   className,
@@ -32,96 +32,63 @@ export const SessionRequestCard: React.FC<SessionRequestCardProps> = ({
   const fallbacks = [identifyUserAvatar(sender), identifyUserAvatar(receiver)];
 
   const { jsxArray: images } = useServerImages({
-    ids: ids,
-    fallbacks: fallbacks,
-    className: "w-12 h-12 border-2 border-background rounded-full",
-    size: { width: 48, height: 48 },
+    ids,
+    fallbacks,
+    className: "w-12 h-12 rounded-full",
+    size: { width: 50, height: 50 },
   });
 
-  const requestTime = request?.time ? new Date(request.time) : null;
   const createdAt = request?.createdAt ? new Date(request.createdAt) : null;
 
-  //  border border-border/25 bg-card/25 rounded-xl
+  const statusColor = statusColorMap[request.status ?? ""] ?? "#94a3b8";
+
+  // Incoming => show sender
+  // Outgoing => show receiver
+  const person = isIncoming ? sender : receiver;
+  const personImage = isIncoming ? images?.[0] : images?.[1];
+
   return (
-    <View className={cn("p-4", className)}>
-      {/* Header with badge and time */}
-      <View className="flex-row justify-between items-center mb-4">
-        {createdAt && (
-          <Text className="text-[11px] text-muted-foreground">
-            {timeAgo(createdAt)}
-          </Text>
-        )}
-      </View>
-
-      {/* Avatars with arrow connector */}
-      <View className="flex-row items-center justify-center py-2">
-        <View className="items-center" style={{ width: 80 }}>
-          <View className="shadow-sm rounded-full">{images[0]}</View>
-          <Text
-            className="text-xs mt-2 font-medium text-foreground text-center w-full"
-            numberOfLines={1}
-          >
-            {identifyUser(sender)}
-          </Text>
-        </View>
-
-        <View className="flex-1 flex-row items-center justify-center px-3">
-          <View className="w-7 h-7 rounded-full bg-muted/50 items-center justify-center mx-1">
-            <Icon
-              as={Redo}
-              size={28}
-              className={cn(isIncoming ? "text-blue-500" : "text-orange-500")}
-            />
-          </View>
-        </View>
-
-        <View className="items-center" style={{ width: 80 }}>
-          <View className="shadow-sm rounded-full">{images[1]}</View>
-          <Text
-            className="text-xs mt-2 font-medium text-foreground text-center w-full"
-            numberOfLines={1}
-          >
-            {identifyUser(receiver)}
-          </Text>
-        </View>
-      </View>
-
-      {/* Additional info: Message, Location, Time */}
-      {(request?.message || request?.location || request?.time) && (
-        <View className="mt-3 p-3 rounded-xl gap-2.5">
-          {request.message && (
-            <View className="flex flex-row items-start gap-2">
-              <Icon
-                as={MessageCircle}
-                size={13}
-                className="text-muted-foreground"
-              />
-              <Text className="text-sm text-foreground italic">
-                &quot;{request?.message}&quot;
-              </Text>
-            </View>
-          )}
-          {requestTime && (
-            <View className="flex-row items-center gap-2">
-              <Icon as={Clock} size={13} className="text-muted-foreground" />
-              <Text className="text-xs text-muted-foreground">
-                {toLongDateString(requestTime)} at {toTimeOnly(requestTime)}
-              </Text>
-            </View>
-          )}
-          {request?.location && (
-            <View className="flex-row items-center gap-2">
-              <Icon as={MapPin} size={13} className="text-muted-foreground" />
-              <Text
-                className="text-xs text-muted-foreground flex-1"
-                numberOfLines={2}
-              >
-                {request?.location}
-              </Text>
-            </View>
-          )}
-        </View>
+    <Pressable
+      className={cn(
+        "flex-row items-center gap-4 p-2 active:opacity-75",
+        className,
       )}
-    </View>
+      onPress={() => {
+        router.push({
+          pathname: "/main/request/answer",
+          params: { id: request.id },
+        });
+      }}
+    >
+      <View
+        className="rounded-full"
+        style={{ backgroundColor: `${statusColor}15` }}
+      >
+        <View className="rounded-full">{personImage}</View>
+      </View>
+
+      <View className="flex-1">
+        <Text
+          className="text-base font-semibold text-foreground"
+          numberOfLines={1}
+        >
+          {identifyUser(person)}
+        </Text>
+
+        <View className="mt-1 flex-row items-center gap-2">
+          <Text
+            className="text-sm font-extrabold uppercase"
+            style={{ color: statusColor }}
+          >
+            {request.status}
+          </Text>
+          {createdAt && (
+            <Text className="text-xs font-medium text-muted-foreground">
+              • {timeAgo(createdAt)}
+            </Text>
+          )}
+        </View>
+      </View>
+    </Pressable>
   );
 };

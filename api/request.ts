@@ -2,7 +2,9 @@ import {
   CreateRequestDto,
   Paginated,
   QueryParams,
+  RequestEvent,
   ResponseRequestDto,
+  ResponseRequestWorkflowDto,
 } from "@/types";
 import axios from "./axios";
 
@@ -110,10 +112,22 @@ const send = async (
   return response.data;
 };
 
+const updateStatus = async (
+  id: number,
+  event: RequestEvent,
+): Promise<ResponseRequestWorkflowDto> => {
+  const response = await axios.post<ResponseRequestWorkflowDto>(
+    `/request-workflow/${id}/next`,
+    { event },
+  );
+  return response.data;
+};
+
 export const request = {
   findAllPaginated,
   findOneById,
   findAllIncomingPaginated,
   findAllOutgoingPaginated,
   send,
+  updateStatus,
 };

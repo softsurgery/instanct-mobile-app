@@ -1,4 +1,4 @@
-import { UserCalendar } from "@/components/calendar/UserCalendar";
+import { UserCalendar } from "@/components/deprecated/calendar/UserCalendar";
 import { useLocalSearchParams } from "expo-router";
 
 export default function Screen() {

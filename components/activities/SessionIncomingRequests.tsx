@@ -15,10 +15,9 @@ interface SessionIncomingRequestsProps {
   handleScroll?: (event: any) => void;
 }
 
-type GroupedRequests = {
-  title: string;
-  data: ResponseRequestDto[];
-};
+type FlattenedItem =
+  | { type: "header"; title: string; id: string }
+  | { type: "item"; request: ResponseRequestDto; id: string };
 
 export const SessionIncomingRequests = ({
   className,
@@ -35,7 +34,25 @@ export const SessionIncomingRequests = ({
     join: ["session", "session.user", "receivers"],
   });
 
-  const groupedRequests = React.useMemo<GroupedRequests[]>(() => {
+  const renderItem = React.useCallback(({ item }: { item: FlattenedItem }) => {
+    if (item.type === "header") {
+      return (
+        <Text className="mb-2.5 mt-2 px-4 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+          {item.title}
+        </Text>
+      );
+    }
+
+    return (
+      <SessionRequestCard
+        className="mx-4 mb-3"
+        request={item.request}
+        isIncoming={true}
+      />
+    );
+  }, []);
+
+  const flattenedData = React.useMemo<FlattenedItem[]>(() => {
     const grouped: Record<string, ResponseRequestDto[]> = {};
 
     requests.forEach((request) => {
@@ -56,10 +73,19 @@ export const SessionIncomingRequests = ({
       grouped[title].push(request);
     });
 
-    return Object.entries(grouped).map(([title, data]) => ({
-      title,
-      data,
-    }));
+    const flattened: FlattenedItem[] = [];
+    Object.entries(grouped).forEach(([title, data]) => {
+      flattened.push({ type: "header", title, id: `header-${title}` });
+      data.forEach((request) => {
+        flattened.push({
+          type: "item",
+          request,
+          id: `item-${request.id}`,
+        });
+      });
+    });
+
+    return flattened;
   }, [requests]);
 
   return (
@@ -73,26 +99,12 @@ export const SessionIncomingRequests = ({
           <View className="flex-1">
             <LegendList
               style={{ flex: 1, paddingBlock: 12 }}
-              data={groupedRequests}
+              data={flattenedData}
               onScroll={handleScroll}
-              renderItem={({ item }) => (
-                <View className="mb-4">
-                  <Text className="px-4 mb-2 text-sm font-semibold text-muted-foreground">
-                    {item.title}
-                  </Text>
-                  {item.data.map((request) => (
-                    <SessionRequestCard
-                      key={request.id}
-                      className="mx-4 mb-3"
-                      request={request}
-                      isIncoming={true}
-                    />
-                  ))}
-                </View>
-              )}
-              keyExtractor={(item) => item.title}
-              showsVerticalScrollIndicator={false}
+              renderItem={renderItem}
               recycleItems={true}
+              keyExtractor={(item) => item.id}
+              showsVerticalScrollIndicator={false}
               onEndReached={() => {
                 if (hasNextPage && !isFetchingNextPage) {
                   fetchNextPage();
@@ -108,12 +120,26 @@ export const SessionIncomingRequests = ({
               contentContainerStyle={{
                 paddingHorizontal: 0,
                 paddingBottom: 24,
+                flexGrow: 1,
               }}
               ListEmptyComponent={() => (
-                <View className="flex flex-col flex-1 justify-center items-center h-full">
+                <View className="flex flex-col flex-1 justify-center items-center">
                   <NotFound message="No incoming requests were found" />
                 </View>
               )}
+              ListFooterComponent={
+                <View className="items-center mb-8">
+                  {isFetchingNextPage ? (
+                    <Loader size="small" className="flex items-center h-fit" />
+                  ) : !hasNextPage && flattenedData.length > 0 ? (
+                    <View className="flex flex-row items-center justify-center gap-2 p-6">
+                      <Text variant="p" className="text-muted-foreground">
+                        You have caught up with all incoming requests
+                      </Text>
+                    </View>
+                  ) : null}
+                </View>
+              }
             />
           </View>
         )}

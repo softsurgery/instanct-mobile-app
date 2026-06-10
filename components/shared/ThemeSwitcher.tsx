@@ -1,5 +1,5 @@
 import { usePreferencePersistStore } from "@/stores/usePreferencePersistStore";
-import Select from "./form-builder/Select";
+import Select from "./form-builder/components/Select";
 import { useColorScheme } from "nativewind";
 import { setAndroidNavigationBar } from "@/lib/android-navigation-bar";
 import React from "react";
@@ -21,9 +21,12 @@ export const ThemeSwitcher = ({ classNames }: ThemeSwitcherProps) => {
       description="Choose your preferred theme"
       placeholder="Select a theme"
       value={colorScheme}
-      onSelect={() => {
+      onSelect={async (value) => {
+        if (value === colorScheme) return;
         toggleTheme();
-        setAndroidNavigationBar(colorScheme === "dark" ? "light" : "dark");
+        await setAndroidNavigationBar(
+          colorScheme === "dark" ? "light" : "dark",
+        );
         toggleColorScheme();
       }}
       options={[

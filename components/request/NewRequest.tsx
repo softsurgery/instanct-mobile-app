@@ -142,15 +142,20 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
             <FormBuilder structure={structure} className="mt-4 px-2" />
           </StableKeyboardAwareScrollView>
           {!isKeyboardVisible && (
-            <View className="py-6 border-t border-border">
-              <Button
-                size={"sm"}
-                className="mx-6 mb-4 rounded-full"
-                onPress={() => handleSubmit()}
-                disabled={isSendingRequestPending}
-              >
-                <Text>Envoyer une demande</Text>
-              </Button>
+            <View className="border-t border-border bg-card p-8 pt-4 gap-4">
+              <View className="flex flex-col justify-between gap-2">
+                <Button
+                  size="lg"
+                  variant="default"
+                  className="rounded-xl"
+                  onPress={() => handleSubmit()}
+                  disabled={isSendingRequestPending}
+                >
+                  <Text>
+                    {isSendingRequestPending ? "Sending..." : "Send Request"}
+                  </Text>
+                </Button>
+              </View>
             </View>
           )}
         </>

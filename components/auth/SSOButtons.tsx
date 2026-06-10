@@ -1,38 +1,53 @@
-import { router } from "expo-router";
-import { Mail } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import { Image, Platform, View } from "react-native";
 import { cn } from "~/lib/utils";
 import DividedText from "../shared/DividedText";
 import { Button } from "../ui/button";
-import { Icon } from "../ui/icon";
 import { Text } from "../ui/text";
+import { useSSO } from "@/hooks/useSSO";
+import { router } from "expo-router";
 
 export interface SSOButtonsProps {
   className?: string;
   classic?: boolean;
-  isSignInPending: boolean;
+  isSignInPending?: boolean;
 }
 
 const IconSlot = ({ children }: { children: React.ReactNode }) => (
-  <View className="w-10 items-center">{children}</View>
+  <View className="absolute left-5 z-10 flex h-full justify-center items-center">
+    {children}
+  </View>
 );
 
 export const SSOButtons = ({
   className,
   classic = false,
-  isSignInPending,
+  isSignInPending = false,
 }: SSOButtonsProps) => {
   const { colorScheme } = useColorScheme();
+  const {
+    isPending: isSSOPending,
+    signInWithGoogle,
+    signInWithLinkedIn,
+    signInWithApple,
+    isGoogleReady,
+    isLinkedInReady,
+    isAppleReady,
+  } = useSSO();
+
+  const isDisabled = isSignInPending || isSSOPending;
 
   return (
-    <View className={cn("flex flex-col justify-center gap-2", className)}>
+    <View
+      className={cn("flex flex-col justify-center gap-3.5 py-5", className)}
+    >
       {Platform.OS === "ios" && (
         <Button
-          disabled={isSignInPending}
+          disabled={isDisabled || !isAppleReady}
           variant="outline"
-          size="sm"
-          className="flex flex-row items-center gap-4"
+          size="lg"
+          className="relative flex flex-row items-center justify-center rounded-xl h-14"
+          onPress={signInWithApple}
         >
           <IconSlot>
             <Image
@@ -45,16 +60,18 @@ export const SSOButtons = ({
             />
           </IconSlot>
 
-          <Text className="text-sm font-bold text-foreground">
+          <Text className="text-lg font-bold text-foreground">
             Continue with Apple
           </Text>
         </Button>
       )}
 
       <Button
-        disabled={isSignInPending}
-        size="sm"
-        className="flex flex-row items-center gap-4 bg-red-600"
+        disabled={isDisabled || !isGoogleReady}
+        variant="outline"
+        size="lg"
+        className="relative flex flex-row items-center justify-center rounded-xl h-14"
+        onPress={signInWithGoogle}
       >
         <IconSlot>
           <Image
@@ -63,16 +80,17 @@ export const SSOButtons = ({
           />
         </IconSlot>
 
-        <Text className="text-sm font-bold text-foreground">
+        <Text className="text-lg font-bold text-foreground">
           Continue with Google
         </Text>
       </Button>
 
       <Button
-        disabled={isSignInPending}
-        variant="secondary"
-        size="sm"
-        className="flex flex-row items-center gap-4"
+        disabled={isDisabled || !isLinkedInReady}
+        variant="outline"
+        size="lg"
+        className="relative flex flex-row items-center justify-center rounded-xl h-14"
+        onPress={signInWithLinkedIn}
       >
         <IconSlot>
           <Image
@@ -81,8 +99,8 @@ export const SSOButtons = ({
           />
         </IconSlot>
 
-        <Text className="text-sm font-bold text-foreground">
-          Continue with Linkedin
+        <Text className="text-lg font-bold text-foreground">
+          Continue with LinkedIn
         </Text>
       </Button>
 
@@ -91,17 +109,13 @@ export const SSOButtons = ({
           <DividedText text="OR" />
 
           <Button
-            disabled={isSignInPending}
-            size="sm"
-            className="flex flex-row items-center gap-4"
+            disabled={isDisabled}
+            size="lg"
+            className="relative flex flex-row items-center justify-center rounded-xl h-14"
             onPress={() => router.push("/auth/sign-in")}
           >
-            <IconSlot>
-              <Icon as={Mail} size={24} />
-            </IconSlot>
-
-            <Text className="text-sm font-bold text-foreground">
-              Continue with E-mail
+            <Text className="text-lg font-bold text-primary-foreground">
+              Continue with Email
             </Text>
           </Button>
         </>

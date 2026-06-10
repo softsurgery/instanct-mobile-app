@@ -1,10 +1,10 @@
 import { Icon } from "@/components/ui/icon";
 import { useRTL } from "@/hooks/useRTL";
 import { NAV_THEME } from "@/lib/theme";
-import { IconChecklist } from "@tabler/icons-react-native";
+import { IconChecklist, IconMapPinHeart } from "@tabler/icons-react-native";
 import * as Haptics from "expo-haptics";
-import { Tabs } from "expo-router";
-import { Map, Telescope, User } from "lucide-react-native";
+import { Tabs, useSegments } from "expo-router";
+import { Telescope, User } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -17,6 +17,10 @@ import Animated, {
 } from "react-native-reanimated";
 
 export default function TabLayout() {
+  const segments = useSegments();
+  const currentRoute = segments[segments.length - 1];
+  const isMapScreen = currentRoute === "map";
+
   const { colorScheme } = useColorScheme();
   const isRTL = useRTL();
   const { t } = useTranslation("common");
@@ -42,7 +46,7 @@ export default function TabLayout() {
       {
         name: "map",
         title: t("screens.map"),
-        icon: Map,
+        icon: IconMapPinHeart,
       },
       {
         name: "menu",
@@ -126,7 +130,7 @@ export default function TabLayout() {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.text,
         tabBarStyle: {
-          borderRadius: 28,
+          borderRadius: !isMapScreen ? 28 : 0,
           paddingTop: 10,
           paddingInline: 10,
           backgroundColor: colors.card,

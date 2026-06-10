@@ -5,23 +5,34 @@
     "like": "الإعجاب",
     "map": "خريطة",
     "menu": "القائمة",
-    "settings": "الإعدادات",
     "notifications": "الإشعارات",
     "profile": "ملفي",
     "experience": "الخبرة",
     "education": "التعليم",
-    "reportBug": "الإبلاغ عن خطأ",
-    "sendFeedback": "إرسال ملاحظات",
-    "faqs": "الأسئلة الشائعة",
     "sessions": "الجلسات",
     "sessionDetails": "تفاصيل الجلسة",
-    "mapSettings": "إعدادات الخريطة"
+    "mapSettings": "إعدادات الخريطة",
+    "settings": {
+      "title": "الإعدادات",
+      "reportBug": "الإبلاغ عن خطأ",
+      "sendFeedback": "إرسال ملاحظات",
+      "faqs": "الأسئلة الشائعة",
+      "privacyPolicy": "سياسة الخصوصية",
+      "termsOfService": "شروط الخدمة",
+      "language": "اللغة",
+      "theme": "المظهر"
+    }
   },
   "language": {
     "select": {
       "title": "اختر اللغة",
       "description": "اختر اللغة التي تريد استخدامها في التطبيق",
       "placeholder": "اختر اللغة"
+    },
+    "options": {
+      "en": "الإنجليزي",
+      "fr": "الفرنسي",
+      "ar": "العربية"
     }
   }
 }

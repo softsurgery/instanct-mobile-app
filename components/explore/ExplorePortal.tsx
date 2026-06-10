@@ -4,15 +4,14 @@ import { cn } from "@/lib/utils";
 import { ResponseUserDto } from "@/types/user-management";
 import { LegendList } from "@legendapp/list";
 import { IconMessageChatbot } from "@tabler/icons-react-native";
-import { router, useFocusEffect } from "expo-router";
+import { router } from "expo-router";
 import { ArrowDownNarrowWide, Bell, CalendarCog } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
+import { Dimensions, View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { UserCard } from "./UserCard";
 import { Text } from "../ui/text";
-import { useActiveSessions } from "@/hooks/content/sessions/useActiveSessions";
 import { SessionCountdown } from "../session/SessionCountdown";
 import { SessionStarter } from "../session/SessionStarter";
 import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
@@ -23,25 +22,39 @@ import { NotFound } from "../shared/NotFound";
 import { hslToHex } from "@/lib/theme";
 import { useColorPalette } from "@/hooks/useColorPalette";
 import { useChatContext } from "@/contexts/ChatContext";
+import { useObjectives } from "@/hooks/content/reference-types/useObjectives";
+import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
+import { useActiveMapSessionContext } from "@/contexts/ActiveMapSessionContext";
+import { useMapStore } from "@/stores/useMapStore";
 
 interface ExplorePortalProps {
   className?: string;
 }
+
+const height = Dimensions.get("window").height;
 
 export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   const { palette } = useColorPalette();
   const { t } = useTranslation("common");
   const { currentUser } = useCurrentUser();
   const userFilerStore = useExploreFilterStore();
+  const mapStore = useMapStore();
   const { count: notificationCount, resetCount: resetNotificationCount } =
     useNotificationContext();
   const { count: chatCount, resetCount: resetChatCount } = useChatContext();
-  const { mapSession, refetchSessions } = useActiveSessions();
+  const { activeSession, initialized } = useActiveMapSessionContext();
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const { users: liveUsers } = useLiveGeolocation({
     enabled: true,
     join: ["user", "user.industries", "user.sessions"],
   });
+  const { industries, isIndustriesSubTypePending } = useIndustries();
+  const { objectives, isObjectivesSubTypePending } = useObjectives();
+
+  const { latitude, longitude } = mapStore?.location?.coords || {
+    latitude: 0,
+    longitude: 0,
+  };
 
   const filterCount = React.useMemo(() => {
     return (
@@ -54,7 +67,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
     const targetedIndustries = userFilerStore.dto.industry;
     setCurrentIndex(0);
 
-    return liveUsers.filter(
+    const industryFiltered = liveUsers.filter(
       (user) =>
         user.id !== currentUser?.id &&
         (!targetedIndustries ||
@@ -63,6 +76,22 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
             targetedIndustries.includes(industry.id),
           )),
     );
+
+    const objectiveFiltered = industryFiltered.filter((user) => {
+      const targetedObjectives = userFilerStore.dto.objectives;
+
+      return (
+        !targetedObjectives ||
+        targetedObjectives.length === 0 ||
+        user.sessions?.some((session) =>
+          session.payload?.objectives?.some((objectiveId: number) =>
+            targetedObjectives.includes(objectiveId),
+          ),
+        )
+      );
+    });
+
+    return objectiveFiltered;
   }, [liveUsers, currentUser, userFilerStore.dto]);
 
   const handleNotificationsPress = React.useCallback(() => {
@@ -83,23 +112,26 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   }, []);
 
   const renderItem = React.useCallback(
-    ({ item }: { item: ResponseUserDto }) => <UserCard user={item} />,
-    [],
+    ({ item }: { item: ResponseUserDto }) => (
+      <UserCard user={item} objectives={objectives} />
+    ),
+    [objectives, industries],
   );
 
-  useFocusEffect(
-    React.useCallback(() => {
-      return () => {
-        refetchSessions();
-      };
-    }, [refetchSessions]),
-  );
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     return () => {
+  //       refetchSessions();
+  //     };
+  //   }, [refetchSessions]),
+  // );
 
   const color = React.useMemo(() => {
-    if (!mapSession) return hslToHex(palette.foreground);
-    if (mapSession && users.length === 0) return hslToHex(palette.foreground);
+    if (!activeSession) return hslToHex(palette.foreground);
+    if (activeSession && users.length === 0)
+      return hslToHex(palette.foreground);
     return "white";
-  }, [mapSession, users, palette]);
+  }, [activeSession, users, palette]);
 
   return (
     <StableSafeAreaView className={cn("flex-1", className)}>
@@ -109,26 +141,30 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
             <Text variant={"h1"} style={{ color }}>
               {t("screens.explore")}
             </Text>
-            {mapSession && users.length !== 0 && (
+            {activeSession && (
               <SessionCountdown
-                classNames={{ text: `text-${color}` }}
-                session={mapSession}
+                session={activeSession}
+                styles={{
+                  text: {
+                    color,
+                  },
+                }}
               />
             )}
           </View>
         }
-        classNames={{ wrapper: cn("z-10", mapSession ? "items-start" : "") }}
+        classNames={{ wrapper: cn("z-10", activeSession ? "items-start" : "") }}
         shortcuts={[
           {
             key: "end-session",
-            hidden: !mapSession,
+            hidden: !activeSession,
             icon: CalendarCog,
             color,
             onPress: () => router.push("/main/sessions/manage"),
           },
           {
             key: "filter",
-            hidden: !mapSession,
+            hidden: !activeSession,
             color,
             icon: ArrowDownNarrowWide,
             badgeText: filterCount > 0 ? String(filterCount) : undefined,
@@ -151,15 +187,20 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
           },
         ].filter(Boolean)}
       />
-      {mapSession ? (
-        liveUsers.length === 0 ? (
+      {activeSession ? (
+        liveUsers.length - 1 === 0 ||
+        !initialized ||
+        !latitude ||
+        !longitude ||
+        isObjectivesSubTypePending ||
+        isIndustriesSubTypePending ? (
           <View className="flex flex-col flex-1 justify-center items-center px-4">
             <Loader />
             <Text variant={"large"} className="text-center">
               Nearby people will be available shortly, if any are around.
             </Text>
           </View>
-        ) : users.length === 0 ? (
+        ) : users.length === 0 && filterCount > 0 ? (
           <View className="flex flex-col flex-1 justify-center items-center px-4">
             <NotFound />
             <Text variant={"large"} className="text-center">
@@ -176,7 +217,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
                 position: "absolute",
                 top: 0,
                 left: 0,
-                height: "100%",
+                height: height,
                 width: "100%",
               }}
               horizontal

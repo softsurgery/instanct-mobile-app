@@ -43,10 +43,10 @@ export const NotFound = ({
             width: size === "small" ? 100 : size === "large" ? 200 : size,
             height: size === "small" ? 100 : size === "large" ? 200 : size,
           }}
-          source={require("~/assets/not-found.json")}
+          source={require("~/assets/lotties/not-found.json")}
         />
       </Animated.View>
-      <Text className="mt-4">{message}</Text>
+      <Text className="text-lg font-thin tracking-wider">{message}</Text>
     </View>
   );
 };

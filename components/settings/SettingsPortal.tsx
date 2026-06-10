@@ -10,7 +10,6 @@ import { ArrowLeft, ChevronRight, LogOut, Trash2 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { Alert, View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
-import { LanguageSwitcher } from "../shared/LanguageSwitcher";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import StableScrollView from "../shared/StableScrollView";
 import { Badge } from "../ui/badge";
@@ -20,7 +19,6 @@ import { Separator } from "../ui/separator";
 import { Text } from "../ui/text";
 import { createSettingRow, SettingRow } from "./SettingsRow";
 import type { SettingRowConfig } from "./SettingsRow";
-import { ThemeSwitcher } from "../shared/ThemeSwitcher";
 
 interface SettingsPortalProps {
   className?: string;
@@ -31,12 +29,10 @@ interface SettingsSection {
   title: string;
   description: string;
   rows: SettingRowConfig[];
+  showOnDevelopment?: boolean;
 }
 
 export const SettingsPortal = ({ className }: SettingsPortalProps) => {
-  const cardClass =
-    "border border-b-border border-t-border bg-card shadow-sm overflow-hidden";
-
   const primaryCardClass =
     "rounded-2xl border border-primary/10 bg-primary/5 shadow-sm overflow-hidden";
 
@@ -64,6 +60,7 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
           onPress: () => router.push("/main/profile/privacy-security"),
         }),
       ],
+      showOnDevelopment: false,
     },
     {
       key: "preferences",
@@ -71,46 +68,21 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
       description: "Tailor Instanct to your daily habits.",
       rows: [
         createSettingRow({
+          title: "Language",
+          description: "Set your preferred language",
           className: "p-1 px-4",
-          Component: () => (
-            <View
-              className={cn("flex flex-row justify-between gap-4", className)}
-            >
-              <View className="flex-1">
-                <Text className="font-semibold text-base">Language</Text>
-                <Text className="text-xs text-muted-foreground">
-                  Set your preferred language
-                </Text>
-              </View>
-              <LanguageSwitcher
-                classNames={{
-                  trigger: "flex-1",
-                }}
-              />
-            </View>
-          ),
+          rightIcon: ChevronRight,
+          onPress: () => router.push("/main/settings/language"),
         }),
         createSettingRow({
+          title: "Theme",
+          description: "Set your preferred theme",
           className: "p-1 px-4",
-          Component: () => (
-            <View
-              className={cn("flex flex-row justify-between gap-4", className)}
-            >
-              <View className="flex-1">
-                <Text className="font-semibold text-base">Theme</Text>
-                <Text className="text-xs text-muted-foreground">
-                  Set your preferred theme
-                </Text>
-              </View>
-              <ThemeSwitcher
-                classNames={{
-                  trigger: "flex-1 ",
-                }}
-              />
-            </View>
-          ),
+          rightIcon: ChevronRight,
+          onPress: () => router.push("/main/settings/theme"),
         }),
       ],
+      showOnDevelopment: false,
     },
     {
       key: "support",
@@ -139,6 +111,7 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
           onPress: () => router.push("/main/profile/support/faqs"),
         }),
       ],
+      showOnDevelopment: false,
     },
     {
       key: "info",
@@ -150,25 +123,41 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
           description: "Rules for using Instanct",
           rightIcon: ChevronRight,
           className: "p-1 px-4",
-          onPress: () => router.push("/main/terms"),
+          onPress: () => router.push("/main/settings/terms"),
         }),
         createSettingRow({
           title: "Privacy Policy",
           description: "How we handle your data",
           rightIcon: ChevronRight,
           className: "p-1 px-4",
-          onPress: () => router.push("/main/privacy-policy"),
+          onPress: () => router.push("/main/settings/privacy-policy"),
         }),
         createSettingRow({
           title: "About Instanct",
           description: "What we stand for",
           rightIcon: ChevronRight,
           className: "p-1 px-4",
-          onPress: () => router.push("/main/about"),
+          onPress: () => router.push("/main/settings/about"),
         }),
       ],
+      showOnDevelopment: false,
     },
-  ];
+    {
+      key: "test",
+      title: "Test",
+      description: "This is just for development purposes",
+      rows: [
+        createSettingRow({
+          title: "Deep link",
+          description: "Test deep linking",
+          rightIcon: ChevronRight,
+          className: "p-1 px-4",
+          onPress: () => router.push("/main/test/deep-link-test"),
+        }),
+      ],
+      showOnDevelopment: true,
+    },
+  ].filter((section) => !section.showOnDevelopment || __DEV__);
 
   const { t } = useTranslation("common");
   const queryClient = useQueryClient();
@@ -187,7 +176,7 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
     <StableSafeAreaView className={cn("flex flex-1 bg-card", className)}>
       <ApplicationHeader
         classNames={{ wrapper: "border-b border-border pb-2" }}
-        title={t("screens.settings")}
+        title={t("screens.settings.title")}
         titleVariant="large"
         reverse
         shortcuts={[
@@ -226,8 +215,8 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
           </View>
 
           {settingsRows.map((section) => (
-            <View key={section.key} className={cardClass}>
-              <View className="px-8 py-4 bg-background/75 mb-4">
+            <View key={section.key} className="bg-background">
+              <View className="px-8 py-4 bg-card mb-4">
                 <Text className="text-lg font-semibold">{section.title}</Text>
                 <Text className="text-sm text-muted-foreground mt-1">
                   {section.description}

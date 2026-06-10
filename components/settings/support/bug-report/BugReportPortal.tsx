@@ -1,6 +1,6 @@
 import React from "react";
 import { useMutation } from "@tanstack/react-query";
-import { ArrowLeft } from "lucide-react-native";
+import { ArrowLeft, Loader2 } from "lucide-react-native";
 import { api } from "~/api";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
@@ -18,6 +18,8 @@ import { useReportBugStore } from "@/stores/useReportBugStore";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 import { toast } from "sonner-native";
 import { ServerErrorResponse } from "@/types";
+import { Icon } from "@/components/ui/icon";
+import * as Haptics from "expo-haptics";
 
 interface BugReportPortalProps {
   className?: string;
@@ -26,6 +28,7 @@ interface BugReportPortalProps {
 export const BugReportPortal = ({ className }: BugReportPortalProps) => {
   const { t } = useTranslation("common");
   const isKeyboardVisible = useKeyboardVisible();
+  const bugStore = useReportBugStore();
 
   React.useEffect(() => {
     return () => {
@@ -33,7 +36,6 @@ export const BugReportPortal = ({ className }: BugReportPortalProps) => {
     };
   }, []);
 
-  const bugStore = useReportBugStore();
   const { bugFormStructure } = useBugReportFormStructure({ store: bugStore });
 
   const { mutate: reportBug, isPending: isReportBugPending } = useMutation({
@@ -64,9 +66,9 @@ export const BugReportPortal = ({ className }: BugReportPortalProps) => {
   };
 
   return (
-    <StableSafeAreaView className={cn("flex-1", className)}>
+    <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
-        classNames={{ wrapper: "border-b border-border pb-2 bg-transparent" }}
+        classNames={{ wrapper: "border-b border-border pb-2" }}
         title={t("screens.reportBug")}
         titleVariant="large"
         reverse
@@ -79,7 +81,7 @@ export const BugReportPortal = ({ className }: BugReportPortalProps) => {
         ]}
       />
       <StableKeyboardAwareScrollView className="flex-1 bg-background">
-        <View className="p-4">
+        <View className="px-5 pt-4 pb-2">
           <Text className="text-sm text-muted-foreground leading-relaxed">
             Encountered a bug? Let us know the details, and we&apos;ll work on
             fixing it as soon as possible!
@@ -88,15 +90,33 @@ export const BugReportPortal = ({ className }: BugReportPortalProps) => {
         <FormBuilder structure={bugFormStructure} className="px-2" />
       </StableKeyboardAwareScrollView>
       {!isKeyboardVisible && (
-        <View className="py-6 border-t border-border">
-          <Button
-            size={"sm"}
-            className="mx-6 mb-4 rounded-full"
-            disabled={isReportBugPending}
-            onPress={handleSubmit}
-          >
-            <Text>Submit Bug</Text>
-          </Button>
+        <View className="border-t border-border bg-card p-8 pt-4 gap-4">
+          <View className="flex flex-col justify-between gap-2">
+            <Button
+              size="lg"
+              className="rounded-xl"
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                handleSubmit();
+              }}
+              disabled={isReportBugPending}
+            >
+              {isReportBugPending ? (
+                <React.Fragment>
+                  <Icon
+                    as={Loader2}
+                    size={18}
+                    className="text-primary-foreground animate-spin"
+                  />
+                  <Text className="text-primary-foreground font-semibold">
+                    Submitting...
+                  </Text>
+                </React.Fragment>
+              ) : (
+                <Text className="text-md font-bold">Submit Bug</Text>
+              )}
+            </Button>
+          </View>
         </View>
       )}
     </StableSafeAreaView>

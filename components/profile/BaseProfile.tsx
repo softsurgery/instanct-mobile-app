@@ -15,9 +15,8 @@ import {
   UpdateUserCoverDto,
   Upload,
 } from "@/types";
-import { useFocusEffect, useNavigation } from "expo-router";
+import { router, useFocusEffect, useNavigation } from "expo-router";
 import { Image, ImageSourcePropType, Pressable, View } from "react-native";
-import { Badge } from "../ui/badge";
 import { ProfileStat } from "./ProfileStat";
 import { useUserIndustries } from "@/hooks/content/users/useUserIndustries";
 import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
@@ -36,13 +35,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as ImagePicker from "expo-image-picker";
 import { Skeleton } from "../ui/skeleton";
 import { Icon } from "../ui/icon";
-import { Pencil } from "lucide-react-native";
+import { Mail, Pencil } from "lucide-react-native";
 import { BaseProfileSkeleton } from "./BaseProfileSkeleton";
 import { ExperienceInstance } from "./experience/ExperienceInstance";
 import { EducationInstance } from "./education/EducationInstance";
 import { hslToHex } from "@/lib/theme";
 import { useColorPalette } from "@/hooks/useColorPalette";
-
+import { useScrollableElement } from "@/hooks/useScrollableElement";
 interface ProfileSection<T = unknown> {
   key: string;
   title: string;
@@ -63,6 +62,10 @@ export const InspectBaseProfile = ({
   id,
   coverExtra,
 }: InspectBaseProfileProps) => {
+  const { animatedHeaderStyle, handleScroll } = useScrollableElement({
+    deltaThreshold: 350,
+    duration: 250,
+  });
   const { palette } = useColorPalette();
   const queryClient = useQueryClient();
   const navigation = useNavigation();
@@ -179,6 +182,22 @@ export const InspectBaseProfile = ({
       },
     });
 
+  const { mutate: sendVerifyEmail, isPending: isSendVerifyEmailPending } =
+    useMutation({
+      mutationFn: () => api.auth.sendVerifyEmail(user?.email),
+      onSuccess: () => {
+        toast.success("Email sent successfully", {
+          description: "Check your email for verification link.",
+        });
+      },
+      onError: (error: ServerErrorResponse) => {
+        toast.error(
+          error.response?.data?.message || "Failed to update cover",
+          {},
+        );
+      },
+    });
+
   React.useEffect(() => {
     return () => {
       userStore?.reset();
@@ -229,7 +248,7 @@ export const InspectBaseProfile = ({
         return uri ? { uri } : undefined;
       }
       default:
-        return require("~/assets/images/partial-react-logo.png");
+        return undefined;
     }
   }, [coverSource]);
 
@@ -278,7 +297,7 @@ export const InspectBaseProfile = ({
         data: experiences as unknown[],
         editable: currentUser?.id === user?.id,
         renderItem: (experience: ResponseExperienceDto) => (
-          <ExperienceInstance className="mb-4" experience={experience} />
+          <ExperienceInstance experience={experience} />
         ),
       },
       {
@@ -287,7 +306,7 @@ export const InspectBaseProfile = ({
         data: educations as unknown[],
         editable: currentUser?.id === user?.id,
         renderItem: (education: ResponseEducationDto) => (
-          <EducationInstance className="mb-4" education={education} />
+          <EducationInstance education={education} />
         ),
       },
       {
@@ -298,9 +317,9 @@ export const InspectBaseProfile = ({
         ) as unknown[],
         editable: currentUser?.id === user?.id,
         renderItem: (industry: ResponseRefParamDto) => (
-          <Badge variant={"outline"} className={cn("px-2 py-1 rounded-full")}>
-            <Text className="text-xs">{industry.label}</Text>
-          </Badge>
+          <View className="rounded-full border border-border px-3 py-1.5">
+            <Text className="text-[13px] font-semibold">{industry.label}</Text>
+          </View>
         ),
       },
     ],
@@ -343,18 +362,19 @@ export const InspectBaseProfile = ({
             );
           }}
         >
-          {coverImageSource ? (
+          {/* Branded backdrop so empty covers feel intentional */}
+          {coverPreviewSource ? (
             <Image
-              source={coverImageSource}
-              className="w-full h-full opacity-70"
+              source={coverPreviewSource}
+              className="w-full h-full"
               resizeMode="cover"
             />
-          ) : (
-            <View className="flex flex-row gap-2 items-center pt-12">
+          ) : currentUser?.id === id ? (
+            <View className="flex flex-row gap-2 items-center">
               <Icon as={Pencil} color="white" />
-              <Text className="text-white">Add Cover Photo</Text>
+              <Text className="font-medium text-white">Add Cover Photo</Text>
             </View>
-          )}
+          ) : null}
         </PhotoPreview>
         {(isCoverUploadPending || isUpdateCoverPending) && (
           <View className="absolute inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -362,30 +382,51 @@ export const InspectBaseProfile = ({
           </View>
         )}
         {/* Header */}
-        <View className="flex-row items-center px-5 -mt-12">
-          {isProfilePicturePending ? (
-            <Skeleton className="w-[100px] h-[100px] rounded-full" />
-          ) : (
-            <PhotoPreview source={profilePictureSource}>
-              {profilePictures[0]}
-            </PhotoPreview>
-          )}
-          <View className="flex-1 mt-16">
-            <View className="flex-row items-center justify-between mx-2">
-              <View>
-                <Text className="text-xl font-semibold text-foreground">
-                  {identity}
-                </Text>
-                {id && (
+        <View className="-mt-12 px-5 z-50">
+          <View className="flex-row items-end justify-between">
+            {isProfilePicturePending ? (
+              <Skeleton className="h-[100px] w-[100px] rounded-full" />
+            ) : (
+              <PhotoPreview source={profilePictureSource}>
+                {profilePictures[0]}
+              </PhotoPreview>
+            )}
+            {currentUser?.id === id && <ProfileStat />}
+          </View>
+
+          {/* Identity */}
+          <View className="mt-3">
+            <Text className="text-2xl font-bold text-foreground">
+              {identity}
+            </Text>
+            {id && (
+              <View className="flex-col items-start justify-between gap-2">
+                <View className="flex flex-row items-center gap-2">
                   <Text className="text-sm text-muted-foreground">
                     @{user?.username}
                   </Text>
+                  {!!user?.email &&
+                    !user?.emailVerified &&
+                    currentUser?.id === id && (
+                      <Text className="text-xs text-yellow-600 font-bold">
+                        (Unverified Email)
+                      </Text>
+                    )}
+                </View>
+                {currentUser?.id === id && user?.email && !user.emailVerified && (
+                  <Pressable
+                    onPress={() => sendVerifyEmail()}
+                    disabled={isSendVerifyEmailPending}
+                    className="flex-row items-center gap-1.5 rounded-xl border border-border px-3.5 py-2 active:opacity-80 bg-yellow-700"
+                  >
+                    <Icon as={Mail} size={16} color={"white"} />
+                    <Text className="text-md font-semibold text-white">
+                      Verify email
+                    </Text>
+                  </Pressable>
                 )}
               </View>
-              {currentUser?.id === id && (
-                <ProfileStat className="flex flex-row gap-4" />
-              )}
-            </View>
+            )}
           </View>
         </View>
       </View>
@@ -420,6 +461,7 @@ export const InspectBaseProfile = ({
                 user={user}
                 onRefresh={onRefresh}
                 refreshing={refreshing}
+                onScroll={handleScroll}
               />
             )}
           </Tab.Screen>
@@ -435,6 +477,7 @@ export const InspectBaseProfile = ({
                 renderSection={RenderSection}
                 onRefresh={onRefresh}
                 refreshing={refreshing}
+                onScroll={handleScroll}
               />
             )}
           </Tab.Screen>
@@ -451,6 +494,7 @@ export const InspectBaseProfile = ({
                 userId={id}
                 onRefresh={onRefresh}
                 refreshing={refreshing}
+                onScroll={handleScroll}
               />
             )}
           </Tab.Screen>

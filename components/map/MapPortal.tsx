@@ -1,26 +1,47 @@
 import { useNotificationContext } from "@/contexts/NotificationsContext";
 import { cn } from "@/lib/utils";
 import { useMapStore } from "@/stores/useMapStore";
-import { IconMessageChatbot } from "@tabler/icons-react-native";
+import { IconMapPinCog, IconMessageChatbot } from "@tabler/icons-react-native";
 import { router } from "expo-router";
-import { Bell, Settings } from "lucide-react-native";
+import { Bell } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { MapRenderer } from "./MapRenderer";
-import { MapStatus } from "./MapDebugging/MapStatus";
 import { Loader } from "../shared/Loader";
 import { useChatContext } from "@/contexts/ChatContext";
+import { useActiveMapSessionContext } from "@/contexts/ActiveMapSessionContext";
+import { hslToHex } from "@/lib/theme";
+import { useColorPalette } from "@/hooks/useColorPalette";
+import { MapStatus } from "./MapDebugging/MapStatus";
+import { MapLockedOverlay } from "./MaplLockedOverlay";
 
 interface MapPortalProps {
   className?: string;
 }
 
 export const MapPortal = ({ className }: MapPortalProps) => {
-  const { t } = useTranslation("common");
   const mapStore = useMapStore();
+  const { activeSession, initialized } = useActiveMapSessionContext();
+  const { palette, colorScheme } = useColorPalette();
+
+  const mapHeaderIconColors = React.useMemo(() => {
+    if (colorScheme === "light" && mapStore.settings.mode === "sattelite") {
+      return hslToHex(palette.background);
+    }
+    return hslToHex(palette.foreground);
+  }, [palette, colorScheme, mapStore.settings.mode]);
+
+  const mapHeaderTitleClassName = React.useMemo(() => {
+    if (colorScheme === "light" && mapStore.settings.mode === "sattelite") {
+      return "text-background";
+    }
+    return "text-foreground";
+  }, [colorScheme, mapStore.settings.mode]);
+
+  const { t } = useTranslation("common");
   const { count: chatCount, resetCount: resetChatCount } = useChatContext();
   const { count, resetCount } = useNotificationContext();
 
@@ -34,7 +55,7 @@ export const MapPortal = ({ className }: MapPortalProps) => {
     longitude: 0,
   };
 
-  if (!mapStore.location) {
+  if (!initialized || !mapStore.location) {
     return (
       <View
         className={cn(
@@ -50,26 +71,35 @@ export const MapPortal = ({ className }: MapPortalProps) => {
   return (
     <View className={cn("flex-1 bg-background", className)}>
       <View className="absolute inset-0 border-y border-border top-0">
-        <MapRenderer
-          className="flex-1"
-          latitude={latitude}
-          longitude={longitude}
-          nearbyUsers={mapStore.nearbyUsers}
-        />
+        {activeSession ? (
+          <MapRenderer
+            className="flex-1"
+            latitude={latitude}
+            longitude={longitude}
+            nearbyUsers={mapStore.nearbyUsers}
+          />
+        ) : (
+          <MapLockedOverlay className="flex-1" />
+        )}
       </View>
 
       <StableSafeAreaView className="absolute top-0 left-0 right-0 z-20">
         <ApplicationHeader
           title={t("screens.map")}
+          classNames={{
+            title: mapHeaderTitleClassName,
+          }}
           shortcuts={[
             {
               key: "settings",
-              icon: Settings,
+              icon: IconMapPinCog,
+              color: mapHeaderIconColors,
               onPress: () => router.push("/main/maps/map-settings"),
             },
             {
               key: "notifications",
               icon: Bell,
+              color: mapHeaderIconColors,
               onPress: () => {
                 router.push("/main/notifications");
                 resetCount();
@@ -79,12 +109,19 @@ export const MapPortal = ({ className }: MapPortalProps) => {
             {
               key: "chat",
               icon: IconMessageChatbot,
+              color: mapHeaderIconColors,
               badgeText: chatCount > 0 ? String(chatCount) : undefined,
               onPress: handleChatPress,
             },
           ]}
         />
-        <MapStatus />
+        {activeSession && (
+          <MapStatus
+            classNames={{
+              text: mapHeaderTitleClassName,
+            }}
+          />
+        )}
         {/* <MapDebugDialog className="m-4" /> */}
       </StableSafeAreaView>
       {/* {!sessionStarted && (

@@ -1,8 +1,9 @@
 import React from "react";
 import { cn } from "~/lib/utils";
-import { View } from "react-native";
-import { Edit } from "lucide-react-native";
+import { Pressable, View } from "react-native";
+import { Pencil } from "lucide-react-native";
 import { Icon } from "../ui/icon";
+import { Text } from "../ui/text";
 import { router } from "expo-router";
 
 interface ProfileStatProps {
@@ -12,11 +13,13 @@ interface ProfileStatProps {
 export const ProfileStat = ({ className }: ProfileStatProps) => {
   return (
     <View className={cn(className)}>
-      <Icon
-        as={Edit}
-        size={24}
+      <Pressable
         onPress={() => router.push("/main/profile/update-profile")}
-      />
+        className="flex-row items-center gap-1.5 rounded-xl border border-border px-3.5 py-2 active:opacity-80"
+      >
+        <Icon as={Pencil} size={16} />
+        <Text className="text-md font-semibold">Edit profile</Text>
+      </Pressable>
     </View>
   );
 };

@@ -2,11 +2,15 @@
   "titles": {
     "TEST": "This is a test notification",
     "NEW_SIGNIN": "New Sign-in!",
-    "REQUEST_RECEIVED": "New Request Received"
+    "REQUEST_RECEIVED": "New Request Received",
+    "REQUEST_ACCEPTED": "Your request has been accepted",
+    "REQUEST_REJECTED": "Your request has been rejected"
   },
   "descriptions": {
     "TEST": "This is a test notification description designed to verify that the notification system is working properly.",
     "NEW_SIGNIN": "We noticed a new sigin from a new device",
-    "REQUEST_RECEIVED": "You have received a new request from {{senderIdentification}}. Click to view the request details and respond."
+    "REQUEST_RECEIVED": "You have received a new request from {{senderIdentification}}. Click to view the request details and respond.",
+    "REQUEST_ACCEPTED": "{{responderIdentification}} has accepted your request. You can now connect and start collaborating!",
+    "REQUEST_REJECTED": "{{responderIdentification}} has rejected your request. Don't worry"
   }
 }

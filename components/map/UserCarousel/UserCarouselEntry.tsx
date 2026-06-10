@@ -1,9 +1,9 @@
-import { StablePressable } from "@/components/shared/StablePressable";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { identifyUserAvatar } from "@/lib/user";
 import { cn } from "@/lib/utils";
 import { useMapStore } from "@/stores/useMapStore";
 import React from "react";
+import { Pressable } from "react-native";
 
 interface UserCarouselEntryProps {
   className?: string;
@@ -35,11 +35,11 @@ export const UserCarouselEntry = ({
   });
 
   return (
-    <StablePressable
+    <Pressable
       className={cn(className)}
       onPress={() => onPress?.({ ...nearbyUser, user })}
     >
       {profilePictures[0]}
-    </StablePressable>
+    </Pressable>
   );
 };

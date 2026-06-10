@@ -2,7 +2,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { useMapStore } from "@/stores/useMapStore";
 import { router } from "expo-router";
-import { ArrowLeft, Save } from "lucide-react-native";
+import { ArrowLeft } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { ScrollView, View } from "react-native";
 import {
@@ -16,7 +16,6 @@ import { Separator } from "../../ui/separator";
 import { Switch } from "../../ui/switch";
 import { Text } from "../../ui/text";
 import { Button } from "../../ui/button";
-import { Icon } from "../../ui/icon";
 import { RadiusSlider } from "./RadiusSlider";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/api";
@@ -207,10 +206,10 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
             <View
               key={section.key}
               className={
-                "border border-b-border border-t-border bg-card shadow-sm overflow-hidden"
+                "border border-b-border border-t-border shadow-sm overflow-hidden"
               }
             >
-              <View className="px-8 py-4 bg-background/75 mb-4">
+              <View className="px-8 py-4 bg-card mb-4">
                 <Text className="text-lg font-semibold">{section.title}</Text>
                 <Text className="text-sm text-muted-foreground mt-1">
                   {section.description}
@@ -232,16 +231,24 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
         </View>
       </ScrollView>
 
-      <View className="py-4 border-t-2 border-border">
-        <Button
-          size="sm"
-          className="mx-6 mb-4 rounded-full"
-          onPress={handleMapConfigurationUpdate}
-          disabled={isUpdateMapConfigurationPending}
-        >
-          <Icon as={Save} size={16} />
-          <Text>Update Configuration</Text>
-        </Button>
+      <View className="border-t border-border bg-card p-8 pt-4 gap-4">
+        <View className="flex flex-col justify-between gap-2">
+          <Button
+            size="lg"
+            variant="default"
+            className="rounded-xl"
+            onPress={() => {
+              handleMapConfigurationUpdate();
+            }}
+            disabled={isUpdateMapConfigurationPending}
+          >
+            <Text className="text-md font-bold">
+              {isUpdateMapConfigurationPending
+                ? "Updating..."
+                : "Update Configuration"}
+            </Text>
+          </Button>
+        </View>
       </View>
     </StableSafeAreaView>
   );

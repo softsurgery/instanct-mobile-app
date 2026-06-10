@@ -62,18 +62,18 @@ export const ActivitiesPortal = ({ className }: ActivitiesPortalProps) => {
         <ApplicationHeader
           title={t("screens.activities", "Activities")}
           shortcuts={[
-            {
-              key: "sessions",
-              icon: Clock,
-              color: "white",
-              onPress: () =>
-                router.push({
-                  pathname: "/main/sessions",
-                  params: {
-                    session: currentUser?.id,
-                  },
-                }),
-            },
+            // {
+            //   key: "sessions",
+            //   icon: Clock,
+            //   color: "white",
+            //   onPress: () =>
+            //     router.push({
+            //       pathname: "/main/sessions",
+            //       params: {
+            //         session: currentUser?.id,
+            //       },
+            //     }),
+            // },
             {
               key: "bell",
               icon: Bell,

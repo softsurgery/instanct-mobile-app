@@ -1,6 +1,6 @@
 import { usePreferencePersistStore } from "@/stores/usePreferencePersistStore";
 import { useTranslation } from "react-i18next";
-import Select from "./form-builder/Select";
+import Select from "./form-builder/components/Select";
 
 interface LanguageSwitcherProps {
   classNames?: {
@@ -24,9 +24,9 @@ export const LanguageSwitcher = ({ classNames }: LanguageSwitcherProps) => {
         preferencePersistStore.setLanguage(value as "en" | "fr" | "ar");
       }}
       options={[
-        { label: "English", value: "en" },
-        { label: "Français", value: "fr" },
-        { label: "Arabic", value: "ar" },
+        { label: t("language.options.en"), value: "en" },
+        { label: t("language.options.fr"), value: "fr" },
+        { label: t("language.options.ar"), value: "ar" },
       ]}
     />
   );

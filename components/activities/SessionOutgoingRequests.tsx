@@ -16,10 +16,9 @@ interface SessionOutgoingRequestsProps {
   handleScroll?: (event: any) => void;
 }
 
-type GroupedRequests = {
-  title: string;
-  data: ResponseRequestDto[];
-};
+type FlattenedItem =
+  | { type: "header"; title: string; id: string }
+  | { type: "item"; request: ResponseRequestDto; id: string };
 
 export const SessionOutgoingRequests = ({
   className,
@@ -36,7 +35,25 @@ export const SessionOutgoingRequests = ({
     join: ["session", "session.user", "receivers"],
   });
 
-  const groupedRequests = React.useMemo<GroupedRequests[]>(() => {
+  const renderItem = React.useCallback(({ item }: { item: FlattenedItem }) => {
+    if (item.type === "header") {
+      return (
+        <Text className="mb-2.5 mt-2 px-4 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+          {item.title}
+        </Text>
+      );
+    }
+
+    return (
+      <SessionRequestCard
+        className="mx-4 mb-3"
+        request={item.request}
+        isIncoming={false}
+      />
+    );
+  }, []);
+
+  const flattenedData = React.useMemo<FlattenedItem[]>(() => {
     const grouped: Record<string, ResponseRequestDto[]> = {};
 
     requests.forEach((request) => {
@@ -57,10 +74,19 @@ export const SessionOutgoingRequests = ({
       grouped[title].push(request);
     });
 
-    return Object.entries(grouped).map(([title, data]) => ({
-      title,
-      data,
-    }));
+    const flattened: FlattenedItem[] = [];
+    Object.entries(grouped).forEach(([title, data]) => {
+      flattened.push({ type: "header", title, id: `header-${title}` });
+      data.forEach((request) => {
+        flattened.push({
+          type: "item",
+          request,
+          id: `item-${request.id}`,
+        });
+      });
+    });
+
+    return flattened;
   }, [requests]);
 
   if (isRequestsPending) {
@@ -79,51 +105,58 @@ export const SessionOutgoingRequests = ({
   return (
     <View className={cn("flex-1 bg-background", className)}>
       <View className="flex-1">
-        <LegendList
-          style={{ flex: 1, paddingBlock: 12 }}
-          className="flex-1"
-          data={groupedRequests}
-          onScroll={handleScroll}
-          renderItem={({ item }) => (
-            <View className="mb-4">
-              <Text className="px-4 mb-2 text-sm font-semibold text-muted-foreground">
-                {item.title}
-              </Text>
-              {item.data.map((request) => (
-                <SessionRequestCard
-                  key={request.id}
-                  className="mx-4 mb-3"
-                  request={request}
-                  isIncoming={false}
-                />
-              ))}
-            </View>
-          )}
-          keyExtractor={(item) => item.title}
-          showsVerticalScrollIndicator={false}
-          recycleItems={true}
-          onEndReached={() => {
-            if (hasNextPage && !isFetchingNextPage) {
-              fetchNextPage();
+        {isRequestsPending ? (
+          <View className="flex flex-col flex-1 justify-center items-center">
+            <Loader />
+          </View>
+        ) : (
+          <LegendList
+            style={{ flex: 1, paddingBlock: 12 }}
+            data={flattenedData}
+            onScroll={handleScroll}
+            renderItem={renderItem}
+            recycleItems={true}
+            keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
+            onEndReached={() => {
+              if (hasNextPage && !isFetchingNextPage) {
+                fetchNextPage();
+              }
+            }}
+            refreshControl={
+              <RefreshControl
+                refreshing={isRequestsPending}
+                onRefresh={refetchRequests}
+              />
             }
-          }}
-          refreshControl={
-            <RefreshControl
-              refreshing={isRequestsPending}
-              onRefresh={refetchRequests}
-            />
-          }
-          onEndReachedThreshold={0.5}
-          contentContainerStyle={{
-            paddingHorizontal: 0,
-            paddingBottom: 24,
-          }}
-          ListEmptyComponent={() => (
-            <View className="flex flex-col flex-1 justify-center items-center">
-              <NotFound message="No outgoing requests were found" />
-            </View>
-          )}
-        />
+            onEndReachedThreshold={0.5}
+            contentContainerStyle={{
+              paddingHorizontal: 0,
+              paddingBottom: 24,
+              flexGrow: 1,
+            }}
+            ListEmptyComponent={() => (
+              <View className="flex flex-col flex-1 justify-center items-center">
+                <NotFound message="No outgoing requests were found" />
+              </View>
+            )}
+            ListFooterComponent={
+              flattenedData.length === 0 ? null : (
+                <View className="items-center mb-8">
+                  {isRequestsPending ? (
+                    <Loader size="small" className="flex items-center h-fit" />
+                  ) : !hasNextPage ? (
+                    <View className="flex flex-row items-center justify-center p-4">
+                      <Text variant={"p"} className="text-muted-foreground">
+                        You have caught up with all outgoing requests
+                      </Text>
+                    </View>
+                  ) : null}
+                </View>
+              )
+            }
+          />
+        )}
       </View>
     </View>
   );
