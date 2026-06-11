@@ -21,6 +21,7 @@ import {
   moveConversationToTop,
   replaceConversationInPages,
 } from "@/lib/chat";
+import { useSegments, useGlobalSearchParams } from "expo-router";
 
 interface useChatProps {
   search?: string;
@@ -31,20 +32,37 @@ interface useChatProps {
 
 let listenersInitialized = false;
 
+const defaultJoin = ["participants", "participants.user", "lastMessage"].join(
+  ",",
+);
+
 export const useChat = (
-  { search = "", limit = 20, join = "", enabled = true }: useChatProps = {
+  {
+    search = "",
+    limit = 20,
+    join = defaultJoin,
+    enabled = true,
+  }: useChatProps = {
     search: "",
     limit: 20,
-    join: ["participants", "participants.user", "lastMessage"].join(","),
+    join: defaultJoin,
     enabled: true,
   },
 ) => {
+  const segments = useSegments();
+  const params = useGlobalSearchParams();
+
   const { currentUser } = useCurrentUser();
   const [count, setCount] = React.useState(0);
   const authPersistStore = useAuthPersistStore();
   const queryClient = useQueryClient();
 
   const socketRef = React.useRef<Socket | null>(null);
+  const routeRef = React.useRef({ segments, params });
+
+  React.useEffect(() => {
+    routeRef.current = { segments, params };
+  }, [segments, params]);
 
   React.useEffect(() => {
     (async () => {
@@ -94,18 +112,23 @@ export const useChat = (
         (p) => p.user.id === updated.messages?.[0].userId,
       )?.user;
 
-      if (user?.id !== currentUser?.id) {
-        if (updated.messages?.[0]?.id === updated?.lastMessage?.id) {
-          setCount((prev) => prev + 1);
-          await Notifications.scheduleNotificationAsync({
-            content: {
-              title: identifyUser(user),
-              body: updated.lastMessage.content,
-              sound: true,
-            },
-            trigger: null,
-          });
-        } else if (
+      const { segments: currentSegments, params: currentParams } =
+        routeRef.current;
+      const currentRoute = currentSegments[currentSegments.length - 1];
+      const currentConversationId = currentParams.id;
+
+      const isCurrentConversation =
+        currentRoute === "conversation" &&
+        currentConversationId &&
+        Number(currentConversationId) === updated.id;
+
+      if (
+        user?.id !== currentUser?.id &&
+        currentRoute &&
+        currentRoute !== "chat" &&
+        !isCurrentConversation
+      ) {
+        if (
           updated.messages?.[0]?.variant === MessageVariant.STATIC &&
           updated.messages?.[0]?.static === StaticMessageEnum.POKE
         ) {
@@ -113,6 +136,25 @@ export const useChat = (
             content: {
               title: "Poked!!!",
               body: `You've been poked by ${identifyUser(user)}`,
+              sound: true,
+            },
+            trigger: null,
+          });
+        } else if (updated.messages?.[0]?.id === updated?.lastMessage?.id) {
+          setCount((prev) => prev + 1);
+          await Notifications.scheduleNotificationAsync({
+            content: {
+              title: identifyUser(user),
+              body:
+                updated.lastMessage.variant === MessageVariant.TEXT
+                  ? updated.lastMessage.content
+                  : updated.lastMessage.variant === MessageVariant.IMAGE
+                    ? "📷 Image"
+                    : updated.lastMessage.variant === MessageVariant.VIDEO
+                      ? "🎥 Video"
+                      : updated.lastMessage.variant === MessageVariant.EMOJI
+                        ? updated.lastMessage.content
+                        : "",
               sound: true,
             },
             trigger: null,
