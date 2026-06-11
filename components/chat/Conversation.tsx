@@ -42,6 +42,7 @@ export const Conversation = ({ id }: ConversationProps) => {
     input,
     setInput,
     sendMessage,
+    sendPoke,
     loadMore,
   } = useConversationFeatures({ id });
 
@@ -174,6 +175,7 @@ export const Conversation = ({ id }: ConversationProps) => {
               input={input}
               setInput={setInput}
               sendMessage={sendMessage}
+              sendPoke={sendPoke}
             />
           </View>
         </ImageBackground>

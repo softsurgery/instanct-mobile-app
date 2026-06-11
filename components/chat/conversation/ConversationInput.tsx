@@ -1,17 +1,21 @@
 import { Plus, SendHorizonal } from "lucide-react-native";
+import React from "react";
 import { Pressable, View } from "react-native";
+import { type ActionSheetRef } from "react-native-actions-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StablePressable } from "~/components/shared/StablePressable";
 import { Icon } from "~/components/ui/icon";
 import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
 import { useKeyboardVisible } from "~/hooks/useKeyboardVisible";
+import { ConversationInputActionsSheet } from "./ConversationInputActionsSheet";
 
 interface ConversationInputProps {
   className?: string;
   input: string;
   setInput: (text: string) => void;
   sendMessage: () => void;
+  sendPoke: () => void;
 }
 
 export const ConversationInput = ({
@@ -19,9 +23,11 @@ export const ConversationInput = ({
   input,
   setInput,
   sendMessage,
+  sendPoke,
 }: ConversationInputProps) => {
   const insets = useSafeAreaInsets();
   const isKeyboardVisible = useKeyboardVisible();
+  const actionSheetRef = React.useRef<ActionSheetRef>(null);
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -29,9 +35,11 @@ export const ConversationInput = ({
   };
 
   return (
-    <View
-      className={cn("bg-background/95 border-t border-border", className)}
-      style={{
+    <>
+      <ConversationInputActionsSheet ref={actionSheetRef} onPoke={sendPoke} />
+      <View
+        className={cn("bg-background/95 border-t border-border", className)}
+        style={{
         zIndex: 20,
         elevation: 10,
         paddingBottom: isKeyboardVisible ? 4 : Math.max(insets.bottom, 8),
@@ -41,7 +49,7 @@ export const ConversationInput = ({
         {/* Add Button */}
         <StablePressable
           className="w-10 h-10 flex items-center justify-center bg-primary/10 rounded-full mb-0.5"
-          onPress={() => {}}
+          onPress={() => actionSheetRef.current?.show()}
           accessibilityLabel="Add attachment"
         >
           <Icon as={Plus} size={20} />
@@ -75,5 +83,6 @@ export const ConversationInput = ({
         </Pressable>
       </View>
     </View>
+    </>
   );
 };

@@ -1,7 +1,11 @@
 import React from "react";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api";
-import { ResponseConversationDto } from "@/types";
+import {
+  MessageVariant,
+  ResponseConversationDto,
+  StaticMessageEnum,
+} from "@/types";
 import { Socket } from "socket.io-client";
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
 import { getSocket } from "@/lib/socket";
@@ -25,7 +29,6 @@ interface useChatProps {
   enabled?: boolean;
 }
 
-let activeInstances = 0;
 let listenersInitialized = false;
 
 export const useChat = (
@@ -65,7 +68,7 @@ export const useChat = (
       api.chat.conversation.findPaginatedUserConversations({
         page: String(pageParam),
         limit: String(limit),
-        search: search,
+        search,
         join,
       }),
     getNextPageParam: (lastPage) =>
@@ -84,25 +87,37 @@ export const useChat = (
 
     socketRef.current = s;
 
-    activeInstances++;
-
     const onConversationUpdatedMessage = async (
       updated: ResponseConversationDto,
     ) => {
       const user = updated.participants.find(
-        (p) => p.user.id === updated.lastMessage.userId,
+        (p) => p.user.id === updated.messages?.[0].userId,
       )?.user;
 
       if (user?.id !== currentUser?.id) {
-        setCount((prev) => prev + 1);
-        await Notifications.scheduleNotificationAsync({
-          content: {
-            title: identifyUser(user),
-            body: updated.lastMessage.content,
-            sound: true,
-          },
-          trigger: null,
-        });
+        if (updated.messages?.[0]?.id === updated?.lastMessage?.id) {
+          setCount((prev) => prev + 1);
+          await Notifications.scheduleNotificationAsync({
+            content: {
+              title: identifyUser(user),
+              body: updated.lastMessage.content,
+              sound: true,
+            },
+            trigger: null,
+          });
+        } else if (
+          updated.messages?.[0]?.variant === MessageVariant.STATIC &&
+          updated.messages?.[0]?.static === StaticMessageEnum.POKE
+        ) {
+          await Notifications.scheduleNotificationAsync({
+            content: {
+              title: "Poked!!!",
+              body: `You've been poked by ${identifyUser(user)}`,
+              sound: true,
+            },
+            trigger: null,
+          });
+        }
       }
 
       queryClient.setQueryData(
@@ -129,18 +144,9 @@ export const useChat = (
     }
 
     return () => {
-      activeInstances--;
-
-      if (activeInstances === 0) {
-        s.off("conversation-updated-message", onConversationUpdatedMessage);
-
-        s.off(
-          "conversation-updated-last-check",
-          onConversationUpdatedLastCheck,
-        );
-
-        listenersInitialized = false;
-      }
+      s.off("conversation-updated-message", onConversationUpdatedMessage);
+      s.off("conversation-updated-last-check", onConversationUpdatedLastCheck);
+      listenersInitialized = false;
     };
   }, [
     limit,

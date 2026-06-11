@@ -60,7 +60,7 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
             });
           }}
         >
-          <UserEntry className="py-2" conversation={item} />
+          <UserEntry className="py-2 px-5" conversation={item} />
         </Pressable>
       );
     },
@@ -106,7 +106,7 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
         />
         <Separator />
         {/* Manual Tabs */}
-        <View className="flex-1 px-4">
+        <View className="flex-1">
           <LegendList
             style={{ flex: 1, paddingBlock: 12 }}
             data={conversations}

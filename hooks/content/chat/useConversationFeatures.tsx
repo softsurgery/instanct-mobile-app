@@ -7,6 +7,7 @@ import {
   MessageFlatListItem,
   MessageVariant,
   ResponseMessageDto,
+  StaticMessageEnum,
 } from "@/types";
 import { useAudioPlayer } from "expo-audio";
 import {
@@ -58,6 +59,7 @@ export const useConversationFeatures = ({
   // Play sound function
   const playSound = React.useCallback(async () => {
     try {
+      soundPlayer.seekTo(0);
       await soundPlayer.play();
     } catch (error) {
       console.error("Error playing sound:", error);
@@ -169,9 +171,24 @@ export const useConversationFeatures = ({
   const sendMessage = React.useCallback(() => {
     const s = socketRef.current;
     if (!input.trim() || !s) return;
-    s.emit("message", { conversationId: id, content: input.trim() });
+    s.emit("message", {
+      conversationId: id,
+      content: input.trim(),
+      variant: MessageVariant.TEXT,
+    });
     setInput("");
   }, [input, id]);
+
+  // Send Poke **********************************************************************************************************************
+  const sendPoke = React.useCallback(() => {
+    const s = socketRef.current;
+    if (!s) return;
+    s.emit("message", {
+      conversationId: id,
+      variant: MessageVariant.STATIC,
+      static: StaticMessageEnum.POKE,
+    });
+  }, [id]);
 
   // Load More Messages *************************************************************************************************************
   const loadMore = React.useCallback(() => {
@@ -205,5 +222,6 @@ export const useConversationFeatures = ({
     input,
     setInput,
     sendMessage,
+    sendPoke,
   };
 };
