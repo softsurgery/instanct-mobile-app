@@ -1,5 +1,5 @@
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
-import { useLogout } from "@/hooks/useLogout";
+import { performLogout } from "@/lib/logout";
 import { delay } from "@/lib/time";
 import _axios from "axios";
 
@@ -68,8 +68,7 @@ axios.interceptors.response.use(
 
           return axios(originalRequest);
         } catch (err) {
-          const logout = useLogout();
-          logout();
+          performLogout();
           return Promise.reject(err);
         }
       }

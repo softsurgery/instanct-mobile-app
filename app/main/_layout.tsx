@@ -5,13 +5,13 @@ import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocati
 import { useNotifications } from "@/hooks/content/notification/useNotifications";
 import { useCheckHealth } from "@/hooks/content/useCheckHealth";
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
-import { hslToHex, THEME } from "@/lib/theme";
 import { Stack } from "expo-router";
-import { useColorScheme } from "nativewind";
 import * as Notifications from "expo-notifications";
 import React from "react";
 import { ActiveMapSessionContext } from "@/contexts/ActiveMapSessionContext";
 import { useActiveSessions } from "@/hooks/content/sessions/useActiveSessions";
+import { useColorPalette } from "@/hooks/useColorPalette";
+import { useQueryClient } from "@tanstack/react-query";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -24,8 +24,8 @@ Notifications.setNotificationHandler({
 });
 
 export default function MainLayout() {
-  const { colorScheme } = useColorScheme();
-  const isDarkColorScheme = colorScheme === "dark";
+  const queryClient = useQueryClient();
+  const { palette } = useColorPalette();
   const authPersistStore = useAuthPersistStore();
   const {} = useLiveGeolocation({
     enabled: authPersistStore.isAuthenticated,
@@ -43,6 +43,10 @@ export default function MainLayout() {
   } = useNotifications();
 
   const { mapSession, isSessionsPending } = useActiveSessions();
+
+  React.useEffect(() => {
+    queryClient.invalidateQueries();
+  }, []);
 
   return (
     <ActiveMapSessionContext.Provider
@@ -68,11 +72,7 @@ export default function MainLayout() {
             screenOptions={{
               contentStyle: {
                 flex: 1,
-                backgroundColor: hslToHex(
-                  isDarkColorScheme
-                    ? THEME.dark.background
-                    : THEME.light.background,
-                ),
+                backgroundColor: palette.background,
               },
             }}
           >
