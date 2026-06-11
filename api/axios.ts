@@ -32,6 +32,10 @@ axios.interceptors.request.use(
       config.headers["x-timezone"] = timezone;
     }
 
+    if (typeof FormData !== "undefined" && config.data instanceof FormData) {
+      delete config.headers["Content-Type"];
+    }
+
     return config;
   },
   function (err) {

@@ -10,6 +10,7 @@ import {
 
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { ChatBubble } from "./conversation/ChatBubble";
+import { ChatMediaBubble } from "./conversation/ChatMediaBubble";
 import { ChatHeaderLeft } from "./conversation/ChatHeaderLeft";
 import { ChatHeaderRight } from "./conversation/ChatHeaderRight";
 
@@ -20,6 +21,7 @@ import { useServerImages } from "@/hooks/content/useServerImages";
 import { Text } from "~/components/ui/text";
 
 import { useConversationFeatures } from "@/hooks/content/chat/useConversationFeatures";
+import { useSendChatMedia } from "@/hooks/content/chat/useSendChatMedia";
 import { useUserPresence } from "@/hooks/content/chat/useUserPresence";
 import { ImageBackground } from "expo-image";
 import { useColorScheme } from "nativewind";
@@ -43,8 +45,14 @@ export const Conversation = ({ id }: ConversationProps) => {
     setInput,
     sendMessage,
     sendPoke,
+    sendMediaMessage,
     loadMore,
   } = useConversationFeatures({ id });
+
+  const { pickImage, pickVideo, isSendingMedia } = useSendChatMedia({
+    conversationId: id,
+    onSend: sendMediaMessage,
+  });
 
   const { currentUser } = useCurrentUser();
 
@@ -149,6 +157,14 @@ export const Conversation = ({ id }: ConversationProps) => {
                       />
                     );
 
+                  if (item.type === "media")
+                    return (
+                      <ChatMediaBubble
+                        message={item.message}
+                        right={item.message.userId === currentUser?.id}
+                      />
+                    );
+
                   return <ChatStatic message={item.message} />;
                 }}
                 onEndReached={loadMore}
@@ -176,6 +192,9 @@ export const Conversation = ({ id }: ConversationProps) => {
               setInput={setInput}
               sendMessage={sendMessage}
               sendPoke={sendPoke}
+              onPickImage={pickImage}
+              onPickVideo={pickVideo}
+              isSendingMedia={isSendingMedia}
             />
           </View>
         </ImageBackground>

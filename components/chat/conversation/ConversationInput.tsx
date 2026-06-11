@@ -1,6 +1,10 @@
 import { Plus, SendHorizonal } from "lucide-react-native";
 import React from "react";
-import { Pressable, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  View,
+} from "react-native";
 import { type ActionSheetRef } from "react-native-actions-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StablePressable } from "~/components/shared/StablePressable";
@@ -16,6 +20,9 @@ interface ConversationInputProps {
   setInput: (text: string) => void;
   sendMessage: () => void;
   sendPoke: () => void;
+  onPickImage: () => void;
+  onPickVideo: () => void;
+  isSendingMedia?: boolean;
 }
 
 export const ConversationInput = ({
@@ -24,6 +31,9 @@ export const ConversationInput = ({
   setInput,
   sendMessage,
   sendPoke,
+  onPickImage,
+  onPickVideo,
+  isSendingMedia = false,
 }: ConversationInputProps) => {
   const insets = useSafeAreaInsets();
   const isKeyboardVisible = useKeyboardVisible();
@@ -36,7 +46,13 @@ export const ConversationInput = ({
 
   return (
     <>
-      <ConversationInputActionsSheet ref={actionSheetRef} onPoke={sendPoke} />
+      <ConversationInputActionsSheet
+        ref={actionSheetRef}
+        onPoke={sendPoke}
+        onPickImage={onPickImage}
+        onPickVideo={onPickVideo}
+        disabled={isSendingMedia}
+      />
       <View
         className={cn("bg-background/95 border-t border-border", className)}
         style={{
@@ -50,9 +66,14 @@ export const ConversationInput = ({
         <StablePressable
           className="w-10 h-10 flex items-center justify-center bg-primary/10 rounded-full mb-0.5"
           onPress={() => actionSheetRef.current?.show()}
+          disabled={isSendingMedia}
           accessibilityLabel="Add attachment"
         >
-          <Icon as={Plus} size={20} />
+          {isSendingMedia ? (
+            <ActivityIndicator size="small" />
+          ) : (
+            <Icon as={Plus} size={20} />
+          )}
         </StablePressable>
 
         {/* Text Input */}

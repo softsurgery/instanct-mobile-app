@@ -35,7 +35,7 @@ export default function MainLayout() {
     enabled: authPersistStore.isAuthenticated,
   });
 
-  const { count: chatCount, resetCount: resetChatCount } = useChat();
+  const { count: chatCount, resetCount: resetChatCount } = useChat({});
   const {
     count: notificationCount,
     notifications,

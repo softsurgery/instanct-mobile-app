@@ -95,12 +95,18 @@ export const useConversationFeatures = ({
         }
 
         return [
-          ...msgs.map(
-            (msg): MessageFlatListItem => ({
-              type: msg.variant === MessageVariant.TEXT ? "message" : "static",
-              message: msg,
-            }),
-          ),
+          ...msgs.map((msg): MessageFlatListItem => {
+            if (msg.variant === MessageVariant.TEXT) {
+              return { type: "message", message: msg };
+            }
+            if (
+              msg.variant === MessageVariant.IMAGE ||
+              msg.variant === MessageVariant.VIDEO
+            ) {
+              return { type: "media", message: msg };
+            }
+            return { type: "static", message: msg };
+          }),
           { type: "header" as const, date: label, key: `header-${date}` },
         ];
       });
@@ -190,6 +196,25 @@ export const useConversationFeatures = ({
     });
   }, [id]);
 
+  // Send Media Message *************************************************************************************************************
+  const sendMediaMessage = React.useCallback(
+    (payload: {
+      uploadIds: number[];
+      variant: MessageVariant.IMAGE | MessageVariant.VIDEO;
+      content?: string;
+    }) => {
+      const s = socketRef.current;
+      if (!s || payload.uploadIds.length === 0) return;
+      s.emit("message", {
+        conversationId: id,
+        uploadIds: payload.uploadIds,
+        variant: payload.variant,
+        content: payload.content,
+      });
+    },
+    [id],
+  );
+
   // Load More Messages *************************************************************************************************************
   const loadMore = React.useCallback(() => {
     const s = socketRef.current;
@@ -223,5 +248,6 @@ export const useConversationFeatures = ({
     setInput,
     sendMessage,
     sendPoke,
+    sendMediaMessage,
   };
 };

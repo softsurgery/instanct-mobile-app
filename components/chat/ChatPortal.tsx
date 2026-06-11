@@ -53,11 +53,11 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
           key={item.id}
           className="flex flex-col gap-4 active:bg-muted"
           onPress={() => {
-            seeConversation(item.id);
-            router.navigate({
+            router.push({
               pathname: "/main/chat/conversation",
               params: { id: item.id },
             });
+            seeConversation(item.id);
           }}
         >
           <UserEntry className="py-2 px-5" conversation={item} />

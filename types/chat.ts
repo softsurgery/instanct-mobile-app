@@ -27,6 +27,25 @@ export interface ResponseMessageDto extends DatabaseEntity {
   user: ResponseUserDto;
   variant?: MessageVariant;
   static?: StaticMessageEnum;
+  uploads?: ResponseMessageUploadDto[];
+}
+
+export interface ResponseMessageUploadDto extends DatabaseEntity {
+  id: number;
+  messageId: number;
+  uploadId: number;
+  upload?: ResponseMessageUploadFileDto;
+  order: number;
+}
+
+export interface ResponseMessageUploadFileDto extends DatabaseEntity {
+  id: number;
+  slug: string;
+  filename: string;
+  mimetype: string;
+  size: number;
+  isTemporary: boolean;
+  isPrivate: boolean;
 }
 
 export interface CreateConversationDto {
@@ -54,4 +73,5 @@ export enum StaticMessageEnum {
 export type MessageFlatListItem =
   | { type: "header"; date: string; key: string }
   | { type: "message"; message: ResponseMessageDto }
+  | { type: "media"; message: ResponseMessageDto }
   | { type: "static"; message: ResponseMessageDto };
