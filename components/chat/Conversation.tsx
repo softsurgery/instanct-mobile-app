@@ -87,7 +87,7 @@ export const Conversation = ({ id }: ConversationProps) => {
   return (
     <StableSafeAreaView className="flex-1 bg-card">
       {/* HEADER */}
-      <View className="flex flex-row justify-between items-center px-2 py-2.5 bg-card">
+      <View className="flex flex-row justify-between items-center px-2 py-2.5 bg-card border-b border-border">
         <ChatHeaderLeft
           id={user?.id as string}
           profilePicture={profilePictures[0]}

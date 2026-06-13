@@ -23,7 +23,7 @@ export const ChatHeaderRight = ({
         });
       }}
     >
-      <Icon as={EllipsisVertical} size={22} />
+      <Icon as={EllipsisVertical} size={24} />
     </Pressable>
   );
 };

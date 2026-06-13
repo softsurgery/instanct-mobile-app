@@ -358,7 +358,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
   return (
     <StableSafeAreaView className="flex-1 bg-card">
       <ApplicationHeader
-        title="Conversation details"
+        title={identification}
         titleVariant="large"
         shortcuts={[
           {
@@ -397,7 +397,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
             Customization
           </Text>
         </View>
-        <View className="bg-card mx-4 rounded-2xl overflow-hidden">
+        <View className="bg-card mx-4 rounded-2xl">
           <ConversationDetailsRow
             icon={Type}
             label="Nicknames"
@@ -433,13 +433,12 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
             icon={ImageIcon}
             label="View media, files, and links"
             onPress={() =>
-              Alert.alert(
-                "Coming soon",
-                "Media viewer will be added in a dedicated screen.",
-              )
+              router.push({
+                pathname: "/main/chat/conversation-media-details",
+                params: { id: conversationId },
+              })
             }
           />
-          <View className="h-[0.5px] bg-border ml-16" />
           <ConversationDetailsRow
             icon={Download}
             label="Save photos automatically"
@@ -452,7 +451,6 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
             label="Search in conversation"
             onPress={() => setIsSearching(true)}
           />
-          <View className="h-[0.5px] bg-border ml-16" />
           <ConversationDetailsRow
             icon={Bell}
             label="Sounds and notifications"
@@ -471,13 +469,10 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
           </Text>
         </View>
 
-        <View className="bg-card mx-4 rounded-2xl mb-12 overflow-hidden">
+        <View className="bg-card mx-4 rounded-2xl mb-12">
           <ConversationDetailsRow icon={Slash} label="Restrict" />
-          <View className="h-[0.5px] bg-border ml-16" />
           <ConversationDetailsRow icon={Ban} label="Block" />
-          <View className="h-[0.5px] bg-border ml-16" />
           <ConversationDetailsRow icon={AlertTriangle} label="Report" />
-          <View className="h-[0.5px] bg-border ml-16" />
           <ConversationDetailsRow
             icon={Trash2}
             label="Delete conversation"

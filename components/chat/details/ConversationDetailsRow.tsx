@@ -97,7 +97,7 @@ export const ConversationDetailsRow = ({
               <Icon
                 as={ChevronRight}
                 size={18}
-                color={hslToHex(palette.muted)}
+                color={hslToHex(palette.foreground)}
               />
             )}
           </>

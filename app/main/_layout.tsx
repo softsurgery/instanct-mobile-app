@@ -266,6 +266,13 @@ export default function MainLayout() {
                 headerShown: false,
               }}
             />
+            <Stack.Screen
+              name="chat/conversation-media-details"
+              options={{
+                title: "Media, files and links",
+                headerShown: false,
+              }}
+            />
             {/* *************************************************************************************************** */}
             {/* Settings  ****************************************************************************************** */}
             <Stack.Screen
