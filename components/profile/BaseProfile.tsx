@@ -42,6 +42,8 @@ import { EducationInstance } from "./education/EducationInstance";
 import { hslToHex } from "@/lib/theme";
 import { useColorPalette } from "@/hooks/useColorPalette";
 import { useScrollableElement } from "@/hooks/useScrollableElement";
+import Animated from "react-native-reanimated";
+import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 interface ProfileSection<T = unknown> {
   key: string;
   title: string;
@@ -63,8 +65,9 @@ export const InspectBaseProfile = ({
   coverExtra,
 }: InspectBaseProfileProps) => {
   const { animatedHeaderStyle, handleScroll } = useScrollableElement({
-    deltaThreshold: 350,
-    duration: 250,
+    deltaThreshold: 250,
+    duration: 400,
+    checkScrollable: true,
   });
   const { palette } = useColorPalette();
   const queryClient = useQueryClient();
@@ -341,7 +344,7 @@ export const InspectBaseProfile = ({
 
   return (
     <View className={cn("bg-background flex-1", className)}>
-      <View>
+      <Animated.View style={animatedHeaderStyle}>
         {/* Cover */}
         {coverExtra}
         <PhotoPreview
@@ -431,9 +434,9 @@ export const InspectBaseProfile = ({
             )}
           </View>
         </View>
-      </View>
+      </Animated.View>
       {/* Tabs */}
-      <View style={{ flex: 1 }}>
+      <StableSafeAreaView style={{ flex: 1 }}>
         <Tab.Navigator
           screenOptions={{
             tabBarScrollEnabled: false,
@@ -502,7 +505,7 @@ export const InspectBaseProfile = ({
             )}
           </Tab.Screen> */}
         </Tab.Navigator>
-      </View>
+      </StableSafeAreaView>
     </View>
   );
 };
