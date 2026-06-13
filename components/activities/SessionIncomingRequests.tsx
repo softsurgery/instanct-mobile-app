@@ -9,6 +9,7 @@ import { SessionRequestCard } from "../session/session-details/SessionRequestCar
 import { NotFound } from "../shared/NotFound";
 import { Text } from "../ui/text";
 import { format, isToday, isYesterday, parseISO } from "date-fns";
+import { SessionRequestCardSkeleton } from "./skeletons/SessionRequestCardSkeleton";
 
 interface SessionIncomingRequestsProps {
   className?: string;
@@ -92,9 +93,7 @@ export const SessionIncomingRequests = ({
     <View className={cn("flex-1 bg-background", className)}>
       <View className="flex-1">
         {isRequestsPending ? (
-          <View className="flex flex-col flex-1 justify-center items-center">
-            <Loader />
-          </View>
+          <SessionRequestCardSkeleton count={3} />
         ) : (
           <View className="flex-1">
             <LegendList

@@ -74,7 +74,11 @@ export const SessionRequestCard: React.FC<SessionRequestCardProps> = ({
           className="absolute -bottom-0.5 -right-0.5 h-6 w-6 items-center justify-center rounded-full border-2 border-card"
           style={{ backgroundColor: statusColor }}
         >
-          <Icon as={isIncoming ? ArrowDownLeft : ArrowUpRight} size={12} color="#ffffff" />
+          <Icon
+            as={isIncoming ? ArrowDownLeft : ArrowUpRight}
+            size={18}
+            color="#ffffff"
+          />
         </View>
       </View>
 
@@ -87,15 +91,16 @@ export const SessionRequestCard: React.FC<SessionRequestCardProps> = ({
         </Text>
 
         <View className="mt-1 flex-row items-center gap-2">
-          <Text
+          {/* <Text
             className="text-sm font-extrabold uppercase"
             style={{ color: statusColor }}
           >
             {request.status}
-          </Text>
+          </Text> */}
           {createdAt && (
             <Text className="text-xs font-medium text-muted-foreground">
-              • {timeAgo(createdAt)}
+              {/* • */}
+              {timeAgo(createdAt)}
             </Text>
           )}
         </View>

@@ -11,7 +11,6 @@ import { router } from "expo-router";
 import {
   ArrowLeft,
   Calendar,
-  CheckCircle2,
   Clock3,
   MapPin,
   MessageSquare,
@@ -20,51 +19,20 @@ import {
 import { Alert, View } from "react-native";
 import { Loader } from "../shared/Loader";
 import { useServerImages } from "@/hooks/content/useServerImages";
-import { identifyUser } from "@/lib/user";
+import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import { useIdentifiedUser } from "@/hooks/content/users/useIdentifiedUser";
 import { toDateOnly, toTimeOnly } from "@/lib/date";
 import { RequestEvent, RequestStatus } from "@/types";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { toast } from "sonner-native";
 import { RequestDetailsCard } from "./RequestDetailsCard";
+import { StatusBadge } from "./RequestStatus";
+import MapPinField from "../shared/form-builder/components/MapPinField";
 
 interface RequestProps {
   id: string;
   className?: string;
 }
-
-const StatusBadge = ({ status }: { status?: RequestStatus }) => {
-  if (status === RequestStatus.Accepted) {
-    return (
-      <View className="flex-row items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 dark:bg-emerald-950/40">
-        <Icon as={CheckCircle2} size={14} className="text-emerald-600" />
-        <Text className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">
-          Acceptée
-        </Text>
-      </View>
-    );
-  }
-
-  if (status === RequestStatus.Rejected) {
-    return (
-      <View className="flex-row items-center gap-1.5 rounded-full bg-red-100 px-3 py-1 dark:bg-red-950/40">
-        <Icon as={XCircle} size={14} className="text-red-600" />
-        <Text className="text-xs font-semibold text-red-700 dark:text-red-400">
-          Refusée
-        </Text>
-      </View>
-    );
-  }
-
-  return (
-    <View className="flex-row items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 dark:bg-amber-950/40">
-      <View className="h-2 w-2 rounded-full bg-amber-500" />
-      <Text className="text-xs font-semibold text-amber-700 dark:text-amber-400">
-        En attente
-      </Text>
-    </View>
-  );
-};
 
 export const Request = ({ id, className }: RequestProps) => {
   const { currentUser } = useCurrentUser();
@@ -134,11 +102,12 @@ export const Request = ({ id, className }: RequestProps) => {
   const { user, isUserPending } = useIdentifiedUser({
     id: request?.session?.user?.id!,
   });
+  const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
 
   const { jsxArray: profilePictures, isPending: isProfilePicturesPending } =
     useServerImages({
       ids: [user?.pictureId],
-      fallbacks: [identifyUser(user)],
+      fallbacks: [fallback],
       wrapperClassName:
         "border border-border bg-background rounded-full shadow-md",
       size: { width: 80, height: 80 },
@@ -173,22 +142,22 @@ export const Request = ({ id, className }: RequestProps) => {
         {isPending ? (
           <Loader className="flex flex-1 items-center justify-center" />
         ) : (
-          <View className="flex flex-col gap-6">
+          <View className="flex flex-col gap-4">
             {/* Profile + Status */}
-            <View className="items-center gap-3 rounded-2xl">
+            <View className="items-start gap-3">
               {user && (
-                <View className="flex flex-row items-center gap-4">
-                  <View className="overflow-hidden rounded-full border-2 border-border bg-muted">
-                    {profilePictures[0]}
+                <View className="flex flex-row items-center gap-2.5">
+                  <View className="overflow-hidden rounded-full">
+                    {profilePictures[0] ? profilePictures[0] : fallback}
                   </View>
-                  <View className="gap-1">
-                    <Text className="text-xl font-bold text-foreground">
+                  <View>
+                    <Text className="text-base font-bold text-foreground">
                       {identifyUser(user)}
                     </Text>
                     <Text className="text-sm text-muted-foreground">
                       {user?.email}
                     </Text>
-                    <View className="mt-2">
+                    <View>
                       <StatusBadge status={request?.status} />
                     </View>
                   </View>
@@ -197,7 +166,7 @@ export const Request = ({ id, className }: RequestProps) => {
             </View>
 
             {/* Details card */}
-            <View className="gap-1 p-4">
+            <View className="gap-1 py-4">
               <RequestDetailsCard
                 icon={MessageSquare}
                 label="Message"
@@ -231,6 +200,12 @@ export const Request = ({ id, className }: RequestProps) => {
                 label="Lieu"
                 value={request?.location}
               />
+              <MapPinField
+                className="mt-4"
+                placeholder="See the location on the map"
+                value={request?.location}
+                readOnly
+              />
             </View>
 
             {/* Status info banners */}
@@ -247,7 +222,7 @@ export const Request = ({ id, className }: RequestProps) => {
               <View className="flex-row items-center gap-2.5 rounded-2xl bg-red-50 p-4 dark:bg-red-950/20">
                 <Icon as={XCircle} size={18} className="text-red-600" />
                 <Text className="flex-1 text-sm text-red-700 dark:text-red-400">
-                  Vous avez refusé cette demande de réunion.
+                  Cette demande de réunion a été refusée.
                 </Text>
               </View>
             )}

@@ -58,8 +58,8 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
 
   const filterCount = React.useMemo(() => {
     return (
-      userFilerStore.filters.industry?.length +
-      userFilerStore.filters.objectives?.length
+      (userFilerStore.filters.industry?.length || 0) +
+      (userFilerStore.filters.objectives?.length || 0)
     );
   }, [userFilerStore.filters]);
 
@@ -188,7 +188,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
         ].filter(Boolean)}
       />
       {activeSession ? (
-        liveUsers.length - 1 === 0 ||
+        (users.length === 0 && filterCount === 0) ||
         !initialized ||
         !latitude ||
         !longitude ||

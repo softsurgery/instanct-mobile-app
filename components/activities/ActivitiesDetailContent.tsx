@@ -14,6 +14,7 @@ import { Loader } from "@/components/shared/Loader";
 import { cn } from "@/lib/utils";
 import { format, isToday, isYesterday, parseISO } from "date-fns";
 import { NotFound } from "../shared/NotFound";
+import { BookmarkSkeleton } from "./skeletons/BookmarkSkeleton";
 
 interface ActivitiesDetailContentProps {
   className?: string;
@@ -129,9 +130,7 @@ export const ActivitiesDetailContent = ({
         <Tab.Screen name="Bookmarks">
           {() =>
             isBookmarksPending ? (
-              <View className="flex-1 items-center justify-center">
-                <Loader />
-              </View>
+              <BookmarkSkeleton count={3} />
             ) : (
               <LegendList
                 style={{ flex: 1, paddingBlock: 12 }}
