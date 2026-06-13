@@ -15,7 +15,7 @@ import {
   UpdateUserCoverDto,
   Upload,
 } from "@/types";
-import { router, useFocusEffect, useNavigation } from "expo-router";
+import { useFocusEffect, useNavigation } from "expo-router";
 import { Image, ImageSourcePropType, Pressable, View } from "react-native";
 import { ProfileStat } from "./ProfileStat";
 import { useUserIndustries } from "@/hooks/content/users/useUserIndustries";
@@ -477,13 +477,14 @@ export const InspectBaseProfile = ({
               <CareerTab
                 profileSections={profileSections}
                 renderSection={RenderSection}
+                userId={id}
                 onRefresh={onRefresh}
                 refreshing={refreshing}
                 onScroll={handleScroll}
               />
             )}
           </Tab.Screen>
-          <Tab.Screen
+          {/* <Tab.Screen
             name="Interests"
             options={{
               tabBarLabel: "Interests",
@@ -499,7 +500,7 @@ export const InspectBaseProfile = ({
                 onScroll={handleScroll}
               />
             )}
-          </Tab.Screen>
+          </Tab.Screen> */}
         </Tab.Navigator>
       </View>
     </View>

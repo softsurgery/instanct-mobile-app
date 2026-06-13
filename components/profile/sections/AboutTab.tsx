@@ -25,7 +25,7 @@ import {
 
 interface AboutTabProps {
   className?: string;
-  user: ResponseUserDto;
+  user: ResponseUserDto | null;
   onRefresh?: () => void;
   refreshing?: boolean;
   onScroll?: (e: NativeSyntheticEvent<NativeScrollEvent>) => void;
