@@ -2,7 +2,7 @@ import { NAV_THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@react-navigation/native";
 import { PortalHost } from "@rn-primitives/portal";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
@@ -13,15 +13,20 @@ import "../i18n";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Toaster } from "sonner-native";
 import { useColorPalette } from "@/hooks/useColorPalette";
-
-const queryClient = new QueryClient();
+import { asyncStoragePersister, queryClient } from "@/lib/queryClient";
 
 export default function RootLayout() {
   const { colorScheme, palette } = useColorPalette();
 
   return (
     <ThemeProvider value={NAV_THEME[colorScheme ?? "light"]}>
-      <QueryClientProvider client={queryClient}>
+      <PersistQueryClientProvider
+        client={queryClient}
+        persistOptions={{
+          persister: asyncStoragePersister,
+          maxAge: 1000 * 60 * 60 * 24,
+        }}
+      >
         <SafeAreaProvider>
           <GestureHandlerRootView style={{ flex: 1 }}>
             <View className={cn("flex-1 light dark:dark")}>
@@ -57,7 +62,7 @@ export default function RootLayout() {
             </View>
           </GestureHandlerRootView>
         </SafeAreaProvider>
-      </QueryClientProvider>
+      </PersistQueryClientProvider>
     </ThemeProvider>
   );
 }
