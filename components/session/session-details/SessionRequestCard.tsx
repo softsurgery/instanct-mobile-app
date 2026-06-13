@@ -7,6 +7,8 @@ import { identifyUserAvatar, identifyUser } from "@/lib/user";
 import { cn } from "@/lib/utils";
 import { timeAgo } from "@/lib/date";
 import { RequestStatus, ResponseRequestDto } from "@/types";
+import { Icon } from "@/components/ui/icon";
+import { ArrowDownLeft, ArrowUpRight } from "lucide-react-native";
 
 interface SessionRequestCardProps {
   className?: string;
@@ -60,11 +62,20 @@ export const SessionRequestCard: React.FC<SessionRequestCardProps> = ({
         });
       }}
     >
-      <View
-        className="rounded-full"
-        style={{ backgroundColor: `${statusColor}15` }}
-      >
-        <View className="rounded-full">{personImage}</View>
+      {/* Avatar with brand ring + saved marker */}
+      <View className="relative">
+        <View
+          className="rounded-full p-[3px]"
+          style={{ backgroundColor: `${statusColor}1f` }}
+        >
+          <View className="rounded-full bg-muted">{personImage}</View>
+        </View>
+        <View
+          className="absolute -bottom-0.5 -right-0.5 h-6 w-6 items-center justify-center rounded-full border-2 border-card"
+          style={{ backgroundColor: statusColor }}
+        >
+          <Icon as={isIncoming ? ArrowDownLeft : ArrowUpRight} size={12} color="#ffffff" />
+        </View>
       </View>
 
       <View className="flex-1">

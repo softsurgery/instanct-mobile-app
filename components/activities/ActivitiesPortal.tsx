@@ -42,6 +42,7 @@ export const ActivitiesPortal = ({ className }: ActivitiesPortalProps) => {
   const { animatedHeaderStyle, handleScroll } = useScrollableElement({
     deltaThreshold: 40,
     duration: 250,
+    checkScrollable: true,
   });
 
   const session =
