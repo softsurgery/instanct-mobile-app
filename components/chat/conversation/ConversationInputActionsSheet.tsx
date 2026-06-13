@@ -1,10 +1,10 @@
 import React from "react";
 import { hslToHex } from "@/lib/theme";
 import { useColorPalette } from "@/hooks/useColorPalette";
-import { Hand, Image as ImageIcon, Lock, Video } from "lucide-react-native";
+import { Hand, Image as ImageIcon, Video } from "lucide-react-native";
 import { View } from "react-native";
 import ActionSheet, { type ActionSheetRef } from "react-native-actions-sheet";
-import { ActionGridItem, ActionItemConfig } from "./ActionGridItem";
+import { ChatActionGridItem } from "./ChatActionGridItem";
 
 interface ConversationInputActionsSheetProps {
   onPoke: () => void;
@@ -34,7 +34,7 @@ export const ConversationInputActionsSheet = React.forwardRef<
     setTimeout(action, 300);
   };
 
-  const actions: ActionItemConfig[] = [
+  const actions = [
     {
       label: "Photo",
       sublabel: "Send image",
@@ -81,7 +81,7 @@ export const ConversationInputActionsSheet = React.forwardRef<
       {/* Action grid */}
       <View className="flex-row flex-wrap pt-4 my-4 gap-y-5">
         {actions.map((item) => (
-          <ActionGridItem
+          <ChatActionGridItem
             key={item.label}
             {...item}
             className="flex-none basis-1/4 px-1.5 py-1.5"
