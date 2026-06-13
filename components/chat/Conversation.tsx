@@ -195,6 +195,7 @@ export const Conversation = ({ id }: ConversationProps) => {
               onPickImage={pickImage}
               onPickVideo={pickVideo}
               isSendingMedia={isSendingMedia}
+              isConversationLocked={!!conversation?.locked}
             />
           </View>
         </ImageBackground>

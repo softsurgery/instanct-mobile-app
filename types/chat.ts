@@ -16,6 +16,7 @@ export interface ResponseConversationDto extends DatabaseEntity {
   lastMessage: ResponseMessageDto;
   variant: MessageVariant;
   static?: StaticMessageEnum;
+  locked: boolean;
 }
 
 export interface ResponseMessageDto extends DatabaseEntity {
