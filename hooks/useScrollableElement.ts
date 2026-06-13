@@ -9,11 +9,13 @@ import {
 interface UseScrollableElementProps {
   duration?: number; // Duration for the animation in milliseconds
   deltaThreshold?: number; // Minimum scroll delta to trigger header visibility change
+  checkScrollable?: boolean; // Flag to only activate event if content is scrollable
 }
 
 export const useScrollableElement = ({
   duration = 250,
   deltaThreshold = 10,
+  checkScrollable = false,
 }: UseScrollableElementProps) => {
   const showHeader = useSharedValue(true);
 
@@ -43,6 +45,17 @@ export const useScrollableElement = ({
   const lastOffsetY = React.useRef(0);
 
   const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (checkScrollable) {
+      const contentHeight = e.nativeEvent.contentSize.height;
+      const layoutHeight = e.nativeEvent.layoutMeasurement.height;
+
+      // If content is not scrollable, force header to be visible and ignore scroll
+      if (contentHeight <= layoutHeight) {
+        handleHeaderVisibility(true);
+        return;
+      }
+    }
+
     const currentOffsetY = e.nativeEvent.contentOffset.y;
 
     const delta = currentOffsetY - lastOffsetY.current;

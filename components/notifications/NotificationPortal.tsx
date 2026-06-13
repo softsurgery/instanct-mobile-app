@@ -12,7 +12,6 @@ import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { Text } from "../ui/text";
 import { NotificationEntry } from "./NotificationEntry";
-import { Loader } from "../shared/Loader";
 import { NotificationEntrySkeleton } from "./NotificationEntrySkeleton";
 
 interface NotificationPortalProps {

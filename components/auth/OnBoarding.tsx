@@ -72,7 +72,7 @@ export default function OnBoarding({ className }: OnBoardingProps) {
           <Carousel
             width={width}
             ref={ref}
-            style={{ width: width, height: 350 }}
+            style={{ width: width, height: 300 }}
             data={ONBOARDING_DATA}
             onProgressChange={progress}
             renderItem={({ item, index }) => {

@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   Alert,
   TextInput,
-  useColorScheme,
   Pressable,
 } from "react-native";
 import { LegendList } from "@legendapp/list";

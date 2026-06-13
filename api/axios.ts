@@ -1,7 +1,7 @@
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
+import { performLogout } from "@/lib/logout";
 import { delay } from "@/lib/time";
 import _axios from "axios";
-import { router } from "expo-router";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 const GLOBAL_DELAY = process.env.EXPO_PUBLIC_GLOBAL_DELAY
@@ -32,6 +32,10 @@ axios.interceptors.request.use(
       config.headers["x-timezone"] = timezone;
     }
 
+    if (typeof FormData !== "undefined" && config.data instanceof FormData) {
+      delete config.headers["Content-Type"];
+    }
+
     return config;
   },
   function (err) {
@@ -44,7 +48,6 @@ axios.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     const authStore = useAuthPersistStore.getState();
-
     if (
       error.response &&
       error.response.status === 401 &&
@@ -69,8 +72,7 @@ axios.interceptors.response.use(
 
           return axios(originalRequest);
         } catch (err) {
-          authStore.logout();
-          router.push("/");
+          performLogout();
           return Promise.reject(err);
         }
       }

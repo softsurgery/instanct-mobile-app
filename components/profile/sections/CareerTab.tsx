@@ -11,7 +11,8 @@ import { cn } from "@/lib/utils";
 interface CarreerTabProps {
   className?: string;
   profileSections: ProfileSection[];
-  renderSection: (section: ProfileSection) => React.ReactNode;
+  renderSection: (section: ProfileSection, userId?: string) => React.ReactNode;
+  userId?: string;
   onRefresh?: () => void;
   refreshing?: boolean;
   onScroll?: (e: NativeSyntheticEvent<NativeScrollEvent>) => void;
@@ -21,6 +22,7 @@ export const CareerTab = ({
   className,
   profileSections,
   renderSection,
+  userId,
   onRefresh,
   refreshing,
   onScroll,
@@ -34,9 +36,7 @@ export const CareerTab = ({
     }
   >
     <View className="flex flex-col gap-4">
-      {profileSections
-        .filter((s) => s.key === "experience" || s.key === "education")
-        .map(renderSection)}
+      {profileSections.map((section) => renderSection({ ...section, userId }))}
     </View>
   </ScrollView>
 );

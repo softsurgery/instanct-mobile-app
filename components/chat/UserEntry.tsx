@@ -3,7 +3,11 @@ import React from "react";
 import { View } from "react-native";
 import { Text } from "~/components/ui/text";
 import { cn } from "~/lib/utils";
-import { ResponseConversationDto } from "~/types";
+import {
+  MessageVariant,
+  ResponseConversationDto,
+  StaticMessageEnum,
+} from "~/types";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { differenceInMilliseconds } from "date-fns";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
@@ -57,6 +61,95 @@ export const UserEntry = ({
     );
   }, [lastCheck, lastMessage?.createdAt]);
 
+  const messagePreview = React.useMemo(() => {
+    if (!lastMessage) {
+      return (
+        <Text
+          className="flex-1 text-sm font-bold text-primary"
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          Start a conversation 👋
+        </Text>
+      );
+    }
+
+    const isMe = lastMessage.userId === currentUser?.id;
+    const prefix =
+      isMe && lastMessage.static !== StaticMessageEnum.FIRST_MESSAGE
+        ? "You: "
+        : "";
+
+    const defaultStyle = cn(
+      "flex-1 text-sm",
+      seen
+        ? "text-gray-500 dark:text-gray-400 font-normal"
+        : "font-bold text-black dark:text-white",
+    );
+
+    if (lastMessage?.variant === MessageVariant.STATIC) {
+      if (lastMessage?.static === StaticMessageEnum.FIRST_MESSAGE) {
+        return (
+          <Text
+            className="flex-1 text-sm font-bold text-primary"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            Start a conversation 👋
+          </Text>
+        );
+      }
+      if (lastMessage?.static === StaticMessageEnum.POKE) {
+        return (
+          <Text
+            className="flex-1 text-sm font-bold text-primary"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {isMe ? "👉 You poked them" : "👈 Poked you"}
+          </Text>
+        );
+      }
+    }
+
+    if (lastMessage?.variant === MessageVariant.IMAGE) {
+      return (
+        <Text className={defaultStyle} numberOfLines={1} ellipsizeMode="tail">
+          {prefix}📷 Image
+        </Text>
+      );
+    }
+
+    if (lastMessage?.variant === MessageVariant.VIDEO) {
+      return (
+        <Text className={defaultStyle} numberOfLines={1} ellipsizeMode="tail">
+          {prefix}🎥 Video
+        </Text>
+      );
+    }
+
+    if (lastMessage?.variant === MessageVariant.EMOJI) {
+      return (
+        <Text className={defaultStyle} numberOfLines={1} ellipsizeMode="tail">
+          {prefix}
+          {lastMessage?.content}
+        </Text>
+      );
+    }
+
+    const text =
+      lastMessage?.content
+        ?.replaceAll("\n", " ")
+        ?.replace(/\s+/g, " ")
+        ?.trim() || "";
+    return (
+      <Text className={defaultStyle} numberOfLines={1} ellipsizeMode="tail">
+        {prefix}
+        {text}
+      </Text>
+    );
+  }, [lastMessage, currentUser?.id, seen]);
+
   return (
     <View
       className={cn(
@@ -94,25 +187,7 @@ export const UserEntry = ({
 
           {/* Bottom Row */}
           <View className="mt-1 flex-row items-center justify-between gap-4">
-            <Text
-              className={cn(
-                "flex-1 text-sm",
-                lastMessage
-                  ? "text-gray-600 dark:text-gray-300"
-                  : "text-primary font-bold",
-                seen ? "font-base" : "font-bold",
-              )}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {lastMessage?.userId === currentUser?.id && `You: `}
-              {lastMessage
-                ? lastMessage?.content
-                    .replaceAll("\n", " ")
-                    .replace(/\s+/g, " ")
-                    .trim()
-                : "You can send a message to start the conversation"}
-            </Text>
+            {messagePreview}
 
             {/* Status */}
             <View className="flex-row items-center gap-1">

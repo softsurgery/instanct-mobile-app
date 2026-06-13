@@ -77,7 +77,7 @@ export const ApplicationHeader = ({
               <Pressable
                 key={shortcut.key}
                 className={cn(
-                  "p-1 rounded-full active:bg-primary/50",
+                  "p-1 rounded-full active:opacity-50",
                   shortcut.hidden && "hidden",
                 )}
                 onPress={shortcut.onPress}

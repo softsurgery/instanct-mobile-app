@@ -3,10 +3,10 @@ import {
   ScrollView,
   RefreshControl,
   NativeSyntheticEvent,
+  NativeScrollEvent,
 } from "react-native";
 import { ProfileSection } from "./RenderSection";
 import { cn } from "@/lib/utils";
-import { NativeScrollEvent } from "react-native";
 
 interface InterestsTabProps {
   className?: string;

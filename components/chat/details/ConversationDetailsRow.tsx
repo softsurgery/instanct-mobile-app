@@ -1,3 +1,4 @@
+import React from "react";
 import { Icon } from "@/components/ui/icon";
 import { Switch } from "@/components/ui/switch";
 import { Text } from "@/components/ui/text";
@@ -32,26 +33,35 @@ export const ConversationDetailsRow = ({
 }: ConversationDetailsRowProps) => {
   const { palette } = useColorPalette();
 
+  const isToggle = toggleValue !== undefined;
+  const isInteractive = !!onPress && !isToggle;
+
   return (
     <TouchableOpacity
       onPress={onPress}
-      className="flex-row items-center px-4 py-2 active:bg-muted/50"
+      disabled={!isInteractive}
+      activeOpacity={isInteractive ? 0.6 : 1}
+      className={cn(
+        "flex-row items-center px-4 py-3.5",
+        isInteractive && "active:bg-muted/50",
+      )}
     >
       <View
         className={cn(
-          "w-9 h-9 items-center justify-center rounded-lg",
+          "h-9 w-9 items-center justify-center rounded-xl",
           destructive ? "bg-destructive/10" : "bg-muted",
         )}
       >
         <Icon
           as={icon}
-          size={20}
+          size={19}
           color={hslToHex(
             destructive ? palette.destructive : palette.foreground,
           )}
         />
       </View>
-      <View className="flex-1 ml-3">
+
+      <View className="ml-3 flex-1">
         <Text
           className={cn(
             "text-[15px]",
@@ -61,13 +71,14 @@ export const ConversationDetailsRow = ({
           {label}
         </Text>
         {description && (
-          <Text className="text-muted-foreground text-sm mt-0.5">
+          <Text className="mt-0.5 text-sm text-muted-foreground">
             {description}
           </Text>
         )}
       </View>
+
       <View className="flex-row items-center">
-        {toggleValue !== undefined ? (
+        {isToggle ? (
           <Switch
             checked={toggleValue}
             onCheckedChange={(checked) => onToggle?.(checked)}
@@ -75,15 +86,18 @@ export const ConversationDetailsRow = ({
         ) : (
           <>
             {value && (
-              <Text className="text-muted-foreground text-sm mr-2">
+              <Text
+                className="mr-2 max-w-[140px] text-sm text-muted-foreground"
+                numberOfLines={1}
+              >
                 {value}
               </Text>
             )}
-            {showChevron && (
+            {showChevron && isInteractive && (
               <Icon
                 as={ChevronRight}
                 size={18}
-                color={hslToHex(palette.foreground)}
+                color={hslToHex(palette.muted)}
               />
             )}
           </>

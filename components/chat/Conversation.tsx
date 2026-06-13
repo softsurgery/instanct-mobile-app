@@ -10,6 +10,7 @@ import {
 
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { ChatBubble } from "./conversation/ChatBubble";
+import { ChatMediaBubble } from "./conversation/ChatMediaBubble";
 import { ChatHeaderLeft } from "./conversation/ChatHeaderLeft";
 import { ChatHeaderRight } from "./conversation/ChatHeaderRight";
 
@@ -20,10 +21,12 @@ import { useServerImages } from "@/hooks/content/useServerImages";
 import { Text } from "~/components/ui/text";
 
 import { useConversationFeatures } from "@/hooks/content/chat/useConversationFeatures";
+import { useSendChatMedia } from "@/hooks/content/chat/useSendChatMedia";
 import { useUserPresence } from "@/hooks/content/chat/useUserPresence";
 import { ImageBackground } from "expo-image";
 import { useColorScheme } from "nativewind";
 import { Loader } from "../shared/Loader";
+import { ChatStatic } from "./conversation/ChatStatic";
 
 interface ConversationProps {
   id: number;
@@ -41,8 +44,15 @@ export const Conversation = ({ id }: ConversationProps) => {
     input,
     setInput,
     sendMessage,
+    sendPoke,
+    sendMediaMessage,
     loadMore,
   } = useConversationFeatures({ id });
+
+  const { pickImage, pickVideo, isSendingMedia } = useSendChatMedia({
+    conversationId: id,
+    onSend: sendMediaMessage,
+  });
 
   const { currentUser } = useCurrentUser();
 
@@ -103,7 +113,7 @@ export const Conversation = ({ id }: ConversationProps) => {
             width: "100%",
             height: "100%",
           }}
-          imageStyle={{ opacity: 0.7 }}
+          imageStyle={{ opacity: 0.3 }}
         >
           <View className="flex-1">
             {/* MESSAGES */}
@@ -138,13 +148,24 @@ export const Conversation = ({ id }: ConversationProps) => {
                     );
                   }
 
-                  return (
-                    <ChatBubble
-                      message={item.message.content}
-                      timestamp={item.message.createdAt}
-                      right={item.message.userId === currentUser?.id}
-                    />
-                  );
+                  if (item.type === "message")
+                    return (
+                      <ChatBubble
+                        message={item.message.content}
+                        timestamp={item.message.createdAt}
+                        right={item.message.userId === currentUser?.id}
+                      />
+                    );
+
+                  if (item.type === "media")
+                    return (
+                      <ChatMediaBubble
+                        message={item.message}
+                        right={item.message.userId === currentUser?.id}
+                      />
+                    );
+
+                  return <ChatStatic message={item.message} />;
                 }}
                 onEndReached={loadMore}
                 onEndReachedThreshold={0.3}
@@ -170,6 +191,11 @@ export const Conversation = ({ id }: ConversationProps) => {
               input={input}
               setInput={setInput}
               sendMessage={sendMessage}
+              sendPoke={sendPoke}
+              onPickImage={pickImage}
+              onPickVideo={pickVideo}
+              isSendingMedia={isSendingMedia}
+              isConversationLocked={!!conversation?.locked}
             />
           </View>
         </ImageBackground>

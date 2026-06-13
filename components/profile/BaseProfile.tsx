@@ -15,7 +15,7 @@ import {
   UpdateUserCoverDto,
   Upload,
 } from "@/types";
-import { router, useFocusEffect, useNavigation } from "expo-router";
+import { useFocusEffect, useNavigation } from "expo-router";
 import { Image, ImageSourcePropType, Pressable, View } from "react-native";
 import { ProfileStat } from "./ProfileStat";
 import { useUserIndustries } from "@/hooks/content/users/useUserIndustries";
@@ -42,6 +42,8 @@ import { EducationInstance } from "./education/EducationInstance";
 import { hslToHex } from "@/lib/theme";
 import { useColorPalette } from "@/hooks/useColorPalette";
 import { useScrollableElement } from "@/hooks/useScrollableElement";
+import Animated from "react-native-reanimated";
+import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 interface ProfileSection<T = unknown> {
   key: string;
   title: string;
@@ -63,8 +65,9 @@ export const InspectBaseProfile = ({
   coverExtra,
 }: InspectBaseProfileProps) => {
   const { animatedHeaderStyle, handleScroll } = useScrollableElement({
-    deltaThreshold: 350,
-    duration: 250,
+    deltaThreshold: 250,
+    duration: 400,
+    checkScrollable: true,
   });
   const { palette } = useColorPalette();
   const queryClient = useQueryClient();
@@ -341,7 +344,7 @@ export const InspectBaseProfile = ({
 
   return (
     <View className={cn("bg-background flex-1", className)}>
-      <View>
+      <Animated.View style={animatedHeaderStyle}>
         {/* Cover */}
         {coverExtra}
         <PhotoPreview
@@ -413,25 +416,27 @@ export const InspectBaseProfile = ({
                       </Text>
                     )}
                 </View>
-                {currentUser?.id === id && user?.email && !user.emailVerified && (
-                  <Pressable
-                    onPress={() => sendVerifyEmail()}
-                    disabled={isSendVerifyEmailPending}
-                    className="flex-row items-center gap-1.5 rounded-xl border border-border px-3.5 py-2 active:opacity-80 bg-yellow-700"
-                  >
-                    <Icon as={Mail} size={16} color={"white"} />
-                    <Text className="text-md font-semibold text-white">
-                      Verify email
-                    </Text>
-                  </Pressable>
-                )}
+                {currentUser?.id === id &&
+                  user?.email &&
+                  !user.emailVerified && (
+                    <Pressable
+                      onPress={() => sendVerifyEmail()}
+                      disabled={isSendVerifyEmailPending}
+                      className="flex-row items-center gap-1.5 rounded-xl border border-border px-3.5 py-2 active:opacity-80 bg-yellow-700"
+                    >
+                      <Icon as={Mail} size={16} color={"white"} />
+                      <Text className="text-md font-semibold text-white">
+                        Verify email
+                      </Text>
+                    </Pressable>
+                  )}
               </View>
             )}
           </View>
         </View>
-      </View>
+      </Animated.View>
       {/* Tabs */}
-      <View style={{ flex: 1 }}>
+      <StableSafeAreaView style={{ flex: 1 }}>
         <Tab.Navigator
           screenOptions={{
             tabBarScrollEnabled: false,
@@ -475,13 +480,14 @@ export const InspectBaseProfile = ({
               <CareerTab
                 profileSections={profileSections}
                 renderSection={RenderSection}
+                userId={id}
                 onRefresh={onRefresh}
                 refreshing={refreshing}
                 onScroll={handleScroll}
               />
             )}
           </Tab.Screen>
-          <Tab.Screen
+          {/* <Tab.Screen
             name="Interests"
             options={{
               tabBarLabel: "Interests",
@@ -497,9 +503,9 @@ export const InspectBaseProfile = ({
                 onScroll={handleScroll}
               />
             )}
-          </Tab.Screen>
+          </Tab.Screen> */}
         </Tab.Navigator>
-      </View>
+      </StableSafeAreaView>
     </View>
   );
 };

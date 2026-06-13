@@ -10,13 +10,12 @@ import { cn } from "~/lib/utils";
 import { ResponseConversationDto } from "~/types";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
-import { Text } from "../ui/text";
 import { UserEntry } from "./UserEntry";
 import { MarkedInput } from "../shared/MarkedInput";
 import { Separator } from "../ui/separator";
-import { Loader } from "../shared/Loader";
 import { NotFound } from "../shared/NotFound";
 import { useChat } from "@/hooks/content/chat/useChat";
+import { UserEntrySkeleton } from "./UserEntrySkeleton";
 
 interface ChatPortalProps {
   className?: string;
@@ -54,14 +53,14 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
           key={item.id}
           className="flex flex-col gap-4 active:bg-muted"
           onPress={() => {
-            seeConversation(item.id);
-            router.navigate({
+            router.push({
               pathname: "/main/chat/conversation",
               params: { id: item.id },
             });
+            seeConversation(item.id);
           }}
         >
-          <UserEntry className="py-2" conversation={item} />
+          <UserEntry className="py-2 px-5" conversation={item} />
         </Pressable>
       );
     },
@@ -107,51 +106,62 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
         />
         <Separator />
         {/* Manual Tabs */}
-        {isPending ? (
-          <View className="flex flex-col flex-1 justify-center items-center px-4">
-            <Loader />
-          </View>
-        ) : conversations.length === 0 ? (
-          <View className="flex flex-col flex-1 justify-center items-center px-4">
-            <NotFound />
-            <Text variant={"large"} className="text-center">
-              No conversations found. Start a new chat by searching for a user.
-            </Text>
-          </View>
-        ) : (
-          <View className="flex-1 px-2">
-            <LegendList
-              style={{ flex: 1, paddingVertical: 4 }}
-              data={conversations}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.id.toString()}
-              showsVerticalScrollIndicator={false}
-              refreshControl={
-                <RefreshControl
-                  refreshing={isRefetching}
-                  onRefresh={refetch}
-                  progressViewOffset={0}
-                  enabled={true}
-                />
+        <View className="flex-1">
+          <LegendList
+            style={{ flex: 1, paddingBlock: 12 }}
+            data={conversations}
+            renderItem={renderItem}
+            recycleItems={true}
+            keyExtractor={(item) => item.id.toString()}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={isRefetching}
+                onRefresh={refetch}
+                progressViewOffset={0}
+                enabled={true}
+              />
+            }
+            onEndReached={() => {
+              if (hasNextPage && !isFetchingNextPage) {
+                fetchNextPage();
               }
-              onEndReached={() => {
-                if (hasNextPage && !isFetchingNextPage) {
-                  fetchNextPage();
-                }
-              }}
-              onEndReachedThreshold={0.5}
-              ListEmptyComponent={
-                !isPending ? (
-                  <View className="p-6 items-center">
-                    <Text className="text-muted-foreground">
-                      No conversations available
-                    </Text>
-                  </View>
-                ) : null
-              }
-            />
-          </View>
-        )}
+            }}
+            onEndReachedThreshold={0.5}
+            contentContainerStyle={{
+              paddingHorizontal: 0,
+              paddingBottom: 24,
+              flexGrow: 1,
+            }}
+            ListEmptyComponent={
+              !isPending ? (
+                <View className="flex flex-col flex-1">
+                  <NotFound
+                    className="justify-center items-center"
+                    message={[
+                      "No conversations found.",
+                      "Start a new chat by searching for a user.",
+                    ]}
+                  />
+                </View>
+              ) : null
+            }
+            ListFooterComponent={
+              <View className="items-center mb-8 w-full">
+                {isPending ? (
+                  <>
+                    <UserEntrySkeleton className="py-2" />
+                    <UserEntrySkeleton className="py-2" />
+                    <UserEntrySkeleton className="py-2" />
+                    <UserEntrySkeleton className="py-2" />
+                    <UserEntrySkeleton className="py-2" />
+                    <UserEntrySkeleton className="py-2" />
+                  </>
+                ) : null}
+              </View>
+            }
+          />
+        </View>
       </View>
     </StableSafeAreaView>
   );

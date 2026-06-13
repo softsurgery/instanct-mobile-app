@@ -4,11 +4,11 @@ A modern, cross-platform mobile application built with React Native and Expo for
 
 ## 📱 Features
 
-- **Authentication** - Secure user authentication and session management
+- **Authentication** - Secure user authentication, SSO support (Google, LinkedIn, Apple), and session management
 - **Profile Management** - Create and manage user profiles with photos and information
 - **Network Discovery** - Explore and connect with professionals in your area
-- **Messaging** - Real-time chat with networking contacts
-- **Notifications** - Push notifications and in-app alerts
+- **Messaging** - Real-time chat with networking contacts, featuring smart caching, media sharing, and quick interactions (Pokes)
+- **Notifications** - Smart push notifications and in-app alerts that respect active user views
 - **Location Services** - Map-based discovery of nearby professionals
 - **Bookmarks** - Save and organize interesting profiles
 - **Sessions** - Schedule and manage professional sessions
@@ -116,7 +116,7 @@ Uses Zustand for global state management with persistence:
 
 - Centralized Axios instance with interceptors
 - API clients organized by domain/feature
-- React Query for server state and caching
+- React Query for server state, advanced data caching, and optimized infinite scrolling
 
 ### Navigation
 
@@ -133,6 +133,8 @@ Built with React Native Primitives:
 - Customizable UI components
 - Tailwind CSS styling via NativeWind
 - Theme support
+- Dynamic skeleton loaders for smooth perceived performance
+- Polished layouts with intelligent conditional scrolling behaviors
 
 ## 📍 Platform-Specific Setup
 
@@ -179,6 +181,7 @@ User authentication is managed through:
 - Auth store for state persistence
 - Automatic token refresh on session expiry
 - Protected routes via Expo Router
+- Single Sign-On (SSO) support with seamless mobile deep linking and redirection flows
 
 ## 📡 API Integration
 

@@ -1,8 +1,7 @@
 import { Pressable, View } from "react-native";
 import { cn } from "~/lib/utils";
 import { Text } from "../../ui/text";
-import { router, useNavigation } from "expo-router";
-import { NavigationProps } from "~/types/app.routes";
+import { router } from "expo-router";
 import { ArrowLeft } from "lucide-react-native";
 import { Icon } from "~/components/ui/icon";
 
@@ -23,12 +22,11 @@ export const ChatHeaderLeft = ({
   isOnline,
   lastSeen,
 }: ChatHeaderLeftProps) => {
-  const navigation = useNavigation<NavigationProps>();
   return (
     <View className={cn("flex flex-row items-center flex-1 gap-1", className)}>
       <Pressable
         className="p-2 rounded-full active:bg-muted"
-        onPress={() => navigation.goBack()}
+        onPress={() => router.back()}
       >
         <Icon as={ArrowLeft} size={24} />
       </Pressable>

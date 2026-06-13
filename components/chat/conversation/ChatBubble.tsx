@@ -1,3 +1,4 @@
+import { StaticMessageEnum } from "@/types";
 import { format } from "date-fns";
 import React from "react";
 import { Alert, Pressable } from "react-native";
@@ -17,6 +18,8 @@ interface ChatBubbleProps {
   timestamp: Date;
   right?: boolean;
   isPending?: boolean;
+  static?: boolean;
+  staticVariant?: StaticMessageEnum;
 }
 
 export const ChatBubble = ({
