@@ -1,6 +1,6 @@
 import { api } from "@/api";
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { type Socket } from "socket.io-client";
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
 import {
@@ -24,6 +24,16 @@ interface useConversationFeaturesProps {
   enabled?: boolean;
 }
 
+/**
+ * Cached messages structure stored in React Query.
+ * Mirrors the pattern used in useChat for conversations.
+ */
+interface CachedConversationMessages {
+  messages: ResponseMessageDto[];
+  hasMore: boolean;
+  currentPage: number;
+}
+
 export const useConversationFeatures = ({
   id,
   limit = 20,
@@ -33,18 +43,70 @@ export const useConversationFeatures = ({
     require("~/assets/sounds/receive-message.wav"),
   );
 
-  const pageRef = React.useRef(1);
-  const [messages, setMessages] = React.useState<ResponseMessageDto[]>([]);
+  const queryClient = useQueryClient();
   const [input, setInput] = React.useState("");
 
-  const [hasMore, setHasMore] = React.useState(true);
-  const [isInitialPending, setIsInitialPending] = React.useState(true);
+  const socketRef = React.useRef<Socket | null>(null);
+  const authPersistStore = useAuthPersistStore();
+
+  // ----- Query key for this conversation's messages -----
+  const messagesQueryKey = React.useMemo(
+    () => ["conversation-messages", id],
+    [id],
+  );
+
+  const defaultCacheValue: CachedConversationMessages = React.useMemo(
+    () => ({ messages: [], hasMore: true, currentPage: 0 }),
+    [],
+  );
+
+  // ----- Subscribe to cached messages via useQuery (ensures re-renders on setQueryData) -----
+  const { data: cachedData } = useQuery<CachedConversationMessages>({
+    queryKey: messagesQueryKey,
+    queryFn: () => defaultCacheValue,
+    enabled: false,
+    initialData: () =>
+      queryClient.getQueryData<CachedConversationMessages>(messagesQueryKey),
+  });
+
+  const messages = React.useMemo(
+    () => cachedData?.messages ?? [],
+    [cachedData],
+  );
+  const hasMore = cachedData?.hasMore ?? true;
+  const currentPage = cachedData?.currentPage ?? 0;
+
+  // ----- Helper to check if cache has real data -----
+  const getCachedMessages = React.useCallback(():
+    | CachedConversationMessages
+    | undefined => {
+    return queryClient.getQueryData<CachedConversationMessages>(
+      messagesQueryKey,
+    );
+  }, [queryClient, messagesQueryKey]);
+
+  // ----- Helper to set cached messages -----
+  const setCachedMessages = React.useCallback(
+    (
+      updater: (
+        prev: CachedConversationMessages | undefined,
+      ) => CachedConversationMessages,
+    ) => {
+      queryClient.setQueryData<CachedConversationMessages>(
+        messagesQueryKey,
+        updater,
+      );
+    },
+    [queryClient, messagesQueryKey],
+  );
+
+  // ----- Loading states (still local, UI-only) -----
+  const [isInitialPending, setIsInitialPending] = React.useState(() => {
+    // If cache already exists, we're not pending
+    return !getCachedMessages();
+  });
   const [isMoreMessagesLoading, setIsMoreMessagesLoading] =
     React.useState(false);
-
-  const socketRef = React.useRef<Socket | null>(null);
-
-  const authPersistStore = useAuthPersistStore();
 
   const { data: conversation, isPending: isConversationPending } = useQuery({
     queryKey: ["conversation", id],
@@ -118,11 +180,20 @@ export const useConversationFeatures = ({
     const s = getSocket("chat", { token: authPersistStore.accessToken });
     socketRef.current = s;
 
+    const existingCache = getCachedMessages();
+
     const joinAndFetch = () => {
       s.emit("join-conversation", { conversationId: id });
-      pageRef.current = 1;
-      setIsMoreMessagesLoading(true);
-      setIsInitialPending(true);
+
+      // Only fetch messages if we have NO cached data
+      if (!existingCache) {
+        setIsMoreMessagesLoading(true);
+        setIsInitialPending(true);
+      } else {
+        // Cache exists — skip fetching, just mark ready
+        setIsInitialPending(false);
+        setIsMoreMessagesLoading(false);
+      }
     };
 
     const onConnect = () => {
@@ -131,12 +202,21 @@ export const useConversationFeatures = ({
 
     const onConversationMessages = (newMessages: ResponseMessageDto[]) => {
       if (newMessages.length === 0) {
-        setHasMore(false);
+        setCachedMessages((prev) => ({
+          messages: prev?.messages ?? [],
+          hasMore: false,
+          currentPage: prev?.currentPage ?? 1,
+        }));
       } else {
-        setMessages((prev) => {
-          const existingIds = new Set(prev.map((m) => m.id));
+        setCachedMessages((prev) => {
+          const existing = prev?.messages ?? [];
+          const existingIds = new Set(existing.map((m) => m.id));
           const unique = newMessages.filter((m) => !existingIds.has(m.id));
-          return [...prev, ...unique];
+          return {
+            messages: [...existing, ...unique],
+            hasMore: prev?.hasMore ?? true,
+            currentPage: prev?.currentPage ?? 1,
+          };
         });
       }
       setIsMoreMessagesLoading(false);
@@ -144,7 +224,11 @@ export const useConversationFeatures = ({
     };
 
     const onMessage = (message: ResponseMessageDto) => {
-      setMessages((prev) => [message, ...prev]);
+      setCachedMessages((prev) => ({
+        messages: [message, ...(prev?.messages ?? [])],
+        hasMore: prev?.hasMore ?? true,
+        currentPage: prev?.currentPage ?? 1,
+      }));
       playSound();
     };
 
@@ -169,9 +253,17 @@ export const useConversationFeatures = ({
       s.off("conversation-messages", onConversationMessages);
       s.off("message", onMessage);
       s.off("error", onError);
-      setMessages([]);
+      // Do NOT clear the cache on unmount — that's the whole point
     };
-  }, [id, authPersistStore.accessToken, limit, enabled, playSound]);
+  }, [
+    id,
+    authPersistStore.accessToken,
+    limit,
+    enabled,
+    playSound,
+    getCachedMessages,
+    setCachedMessages,
+  ]);
 
   // Send Message *******************************************************************************************************************
   const sendMessage = React.useCallback(() => {
@@ -220,8 +312,13 @@ export const useConversationFeatures = ({
     const s = socketRef.current;
     if (isMoreMessagesLoading || !hasMore || messages.length === 0 || !s)
       return;
-    const nextPage = pageRef.current + 1;
-    pageRef.current = nextPage;
+    const nextPage = currentPage + 1;
+
+    setCachedMessages((prev) => ({
+      messages: prev?.messages ?? [],
+      hasMore: prev?.hasMore ?? true,
+      currentPage: nextPage,
+    }));
 
     setIsMoreMessagesLoading(true);
     s.emit("get-conversation-messages", {
@@ -229,7 +326,15 @@ export const useConversationFeatures = ({
       limit,
       conversationId: id,
     });
-  }, [isMoreMessagesLoading, hasMore, messages.length, id, limit]);
+  }, [
+    isMoreMessagesLoading,
+    hasMore,
+    messages.length,
+    id,
+    limit,
+    currentPage,
+    setCachedMessages,
+  ]);
 
   const flattenedMessages = React.useMemo(
     () => groupMessagesByDay(messages),
