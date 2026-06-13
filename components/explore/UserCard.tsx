@@ -323,10 +323,10 @@ export const UserCard = ({
                 {user.industries.map((ind) => (
                   <View
                     key={ind.id}
-                    className="rounded-full bg-primary/5 border border-primary/20 px-3 py-1 flex-row items-center gap-1.5"
+                    className="rounded-full border border-border/30 px-3 py-1 flex-row items-center gap-1.5"
                   >
-                    <View className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    <Text className="text-[13px] font-semibold text-primary">
+                    <View className="w-1.5 h-1.5 rounded-full bg-muted-foreground/60" />
+                    <Text className="text-[13px] font-semibold text-foreground">
                       {ind.label}
                     </Text>
                   </View>

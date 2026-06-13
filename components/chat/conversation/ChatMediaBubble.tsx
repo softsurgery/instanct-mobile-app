@@ -32,7 +32,7 @@ export const ChatMediaBubble = ({ message, right }: ChatMediaBubbleProps) => {
   const bubble = (
     <View
       className={cn(
-        "max-w-[75%] mx-3 mt-1.5 overflow-hidden rounded-xl",
+        "max-w-[75%] mx-3 mt-1.5 overflow-hidden",
         right ? "self-end" : "self-start",
       )}
     >
@@ -50,8 +50,8 @@ export const ChatMediaBubble = ({ message, right }: ChatMediaBubbleProps) => {
           </View>
         ) : (
           <Image
+            className="rounded-xl w-56 h-40"
             source={mediaSource}
-            style={{ width: 224, height: 160 }}
             contentFit="cover"
           />
         )}
