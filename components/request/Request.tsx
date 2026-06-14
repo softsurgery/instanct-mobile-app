@@ -11,34 +11,32 @@ import { router } from "expo-router";
 import {
   ArrowLeft,
   Calendar,
+  CheckCheck,
   Clock3,
-  MapPin,
   MessageSquare,
   XCircle,
 } from "lucide-react-native";
 import { Alert, View } from "react-native";
-import { Loader } from "../shared/Loader";
+import { Loader } from "@/components/shared/Loader";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import { useIdentifiedUser } from "@/hooks/content/users/useIdentifiedUser";
 import { toDateOnly, toTimeOnly } from "@/lib/date";
 import { RequestEvent, RequestStatus } from "@/types";
-import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { toast } from "sonner-native";
 import { RequestDetailsCard } from "./RequestDetailsCard";
+import { RequestLocationSection } from "./RequestLocationSection";
 import { StatusBadge } from "./RequestStatus";
-import MapPinField from "../shared/form-builder/components/MapPinField";
 
 interface RequestProps {
   id: string;
+  isIncoming?: boolean;
   className?: string;
 }
 
-export const Request = ({ id, className }: RequestProps) => {
-  const { currentUser } = useCurrentUser();
+export const Request = ({ id, className, isIncoming }: RequestProps) => {
   const queryClient = useQueryClient();
 
-  // track which action is in flight so only that button spins
   const [pendingEvent, setPendingEvent] = React.useState<RequestEvent | null>(
     null,
   );
@@ -46,8 +44,34 @@ export const Request = ({ id, className }: RequestProps) => {
   const { data: request, isPending: isRequestPending } = useQuery({
     queryKey: ["request", id],
     queryFn: () =>
-      api.request.findOneById(id, ["session", "session.user"].join(",")),
+      api.request.findOneById(
+        id,
+        ["session", "session.user", "receivers"].join(","),
+      ),
   });
+
+  const receiver = request?.receivers?.[0];
+  const displayUserId = isIncoming ? request?.session?.user?.id : receiver?.id;
+  const isPendingStatus =
+    !request?.status || request?.status === RequestStatus.Sent;
+
+  const { mutate: updateLocation, isPending: isUpdatingLocation } = useMutation(
+    {
+      mutationFn: (payload: {
+        location: string;
+        latitude: number;
+        longitude: number;
+      }) => api.request.update(id, payload),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["request", id] });
+        queryClient.invalidateQueries({ queryKey: ["requests"] });
+        toast.success("Lieu mis à jour");
+      },
+      onError: () => {
+        toast.error("Impossible de mettre à jour le lieu");
+      },
+    },
+  );
 
   const { mutate: updateStatus, isPending: isUpdating } = useMutation({
     mutationFn: (event: RequestEvent) =>
@@ -100,7 +124,7 @@ export const Request = ({ id, className }: RequestProps) => {
   };
 
   const { user, isUserPending } = useIdentifiedUser({
-    id: request?.session?.user?.id!,
+    id: displayUserId!,
   });
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
 
@@ -114,12 +138,14 @@ export const Request = ({ id, className }: RequestProps) => {
       enabled: !!user,
     });
 
+  const editable =
+    request?.status === RequestStatus.Accepted ||
+    request?.status === RequestStatus.Rejected
+      ? false
+      : true;
+
   const isPending =
     isRequestPending || isUserPending || isProfilePicturesPending;
-
-  const isOwner = currentUser?.id === request?.session?.user?.id;
-  const isPendingStatus =
-    !request?.status || request?.status === RequestStatus.Sent;
 
   return (
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
@@ -138,26 +164,25 @@ export const Request = ({ id, className }: RequestProps) => {
           },
         ]}
       />
-      <View className="flex-1 bg-background px-4 pt-6">
+      <View className="flex-1 bg-background px-4">
         {isPending ? (
           <Loader className="flex flex-1 items-center justify-center" />
         ) : (
           <View className="flex flex-col gap-4">
-            {/* Profile + Status */}
-            <View className="items-start gap-3">
+            <View className="p-4">
               {user && (
-                <View className="flex flex-row items-center gap-2.5">
+                <View className="flex flex-row items-center gap-3">
                   <View className="overflow-hidden rounded-full">
                     {profilePictures[0] ? profilePictures[0] : fallback}
                   </View>
-                  <View>
+                  <View className="flex-1">
                     <Text className="text-base font-bold text-foreground">
                       {identifyUser(user)}
                     </Text>
                     <Text className="text-sm text-muted-foreground">
                       {user?.email}
                     </Text>
-                    <View>
+                    <View className="mt-1">
                       <StatusBadge status={request?.status} />
                     </View>
                   </View>
@@ -165,18 +190,20 @@ export const Request = ({ id, className }: RequestProps) => {
               )}
             </View>
 
-            {/* Details card */}
-            <View className="gap-1 py-4">
+            <View className="flex flex-col gap-4">
               <RequestDetailsCard
                 icon={MessageSquare}
                 label="Message"
                 value={request?.message}
                 emptyText="Aucune description fournie"
+                editable={false}
               />
 
-              <View className="my-3 h-px bg-border" />
-
-              <RequestDetailsCard icon={Clock3} label="Date et heure">
+              <RequestDetailsCard
+                icon={Clock3}
+                label="Date et heure"
+                editable={editable}
+              >
                 {request?.time ? (
                   <View className="flex-row items-baseline gap-1.5">
                     <Text className="text-sm font-medium text-foreground">
@@ -193,22 +220,30 @@ export const Request = ({ id, className }: RequestProps) => {
                 )}
               </RequestDetailsCard>
 
-              <View className="my-3 h-px bg-border" />
+              <RequestLocationSection
+                location={request?.location}
+                latitude={request?.latitude}
+                longitude={request?.longitude}
+                editable={editable}
+                onLocationChange={(value) => {
+                  updateLocation({
+                    location: value.name,
+                    latitude: value.latitude,
+                    longitude: value.longitude,
+                  });
+                }}
+              />
 
-              <RequestDetailsCard
-                icon={MapPin}
-                label="Lieu"
-                value={request?.location}
-              />
-              <MapPinField
-                className="mt-4"
-                placeholder="See the location on the map"
-                value={request?.location}
-                readOnly
-              />
+              {isUpdatingLocation && (
+                <View className="mt-3 flex-row items-center gap-2">
+                  <Loader size="small" />
+                  <Text className="text-sm text-muted-foreground">
+                    Mise à jour du lieu...
+                  </Text>
+                </View>
+              )}
             </View>
 
-            {/* Status info banners */}
             {request?.status === RequestStatus.Accepted && (
               <View className="flex-row items-center gap-2.5 rounded-2xl bg-emerald-50 p-4 dark:bg-emerald-950/20">
                 <Icon as={Calendar} size={18} className="text-emerald-600" />
@@ -227,8 +262,7 @@ export const Request = ({ id, className }: RequestProps) => {
               </View>
             )}
 
-            {/* Awaiting response — shown to the sender (session owner) */}
-            {isPendingStatus && isOwner && (
+            {isPendingStatus && !isIncoming && (
               <View className="flex-row items-center gap-2.5 rounded-2xl bg-amber-50 p-4 dark:bg-amber-950/20">
                 <Icon as={Clock3} size={18} className="text-amber-600" />
                 <Text className="flex-1 text-sm text-amber-700 dark:text-amber-400">
@@ -240,25 +274,25 @@ export const Request = ({ id, className }: RequestProps) => {
         )}
       </View>
 
-      {!isPending && !isOwner && isPendingStatus && (
+      {!isPending && isIncoming && isPendingStatus && (
         <View className="gap-3 border-t border-border bg-card p-8 pt-4">
           <Button
             size="lg"
-            className="flex-row items-center justify-center gap-2 rounded-xl"
+            className="flex-row items-center justify-center gap-2 rounded-xl bg-emerald-600 active:bg-emerald-500"
             onPress={handleAccept}
             disabled={isUpdating}
           >
-            {pendingEvent === RequestEvent.Accept && <Loader size="small" />}
+            <Icon as={CheckCheck} size={24} />
             <Text className="text-md font-bold">Accepter</Text>
           </Button>
           <Button
             size="lg"
             variant="destructive"
-            className="flex-row items-center justify-center gap-2 rounded-xl"
+            className="flex-row items-center justify-center gap-2 rounded-xl active:bg-red-500"
             onPress={handleReject}
             disabled={isUpdating}
           >
-            {pendingEvent === RequestEvent.Reject && <Loader size="small" />}
+            <Icon as={XCircle} size={24} />
             <Text className="text-md font-bold">Refuser</Text>
           </Button>
         </View>

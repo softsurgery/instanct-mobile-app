@@ -110,10 +110,7 @@ export const SessionOutgoingRequests = ({
           }
         }}
         refreshControl={
-          <RefreshControl
-            refreshing={false}
-            onRefresh={refetchRequests}
-          />
+          <RefreshControl refreshing={false} onRefresh={refetchRequests} />
         }
         onEndReachedThreshold={0.5}
         contentContainerStyle={{

@@ -25,9 +25,9 @@ export const useCreateNewRequestFormStructure = ({
     label: "Message",
     variant: FieldVariant.TEXTAREA,
     required: true,
-    placeholder: "Write a message to the recipient",
+    placeholder: "Écrivez un message au destinataire",
     description:
-      "This message will be sent to the recipient along with the request.",
+      "Ce message sera envoyé au destinataire avec votre demande.",
     error: store.errors?.message?.[0] || "",
     props: {
       value: store.createDto?.message,
@@ -41,10 +41,10 @@ export const useCreateNewRequestFormStructure = ({
 
   const choiceField: Field<CustomFieldProps> = {
     id: "choicePicker",
-    label: "Location & Time",
+    label: "Lieu et horaire",
     variant: FieldVariant.CUSTOM,
     required: true,
-    placeholder: "Select a reason",
+    placeholder: "Choisir une option",
     description: "",
     error: "",
     className: "mt-4",
@@ -55,6 +55,8 @@ export const useCreateNewRequestFormStructure = ({
             onPress={() => {
               store.setNested("flags.mentionTimeAndPlace", true);
               store.setNested("createDto.location", undefined);
+              store.setNested("createDto.latitude", undefined);
+              store.setNested("createDto.longitude", undefined);
               store.setNested("createDto.time", undefined);
             }}
             className={cn(
@@ -72,7 +74,7 @@ export const useCreateNewRequestFormStructure = ({
                   : "text-foreground",
               )}
             >
-              Let me decide
+              Je choisis
             </Text>
           </Pressable>
           <Pressable
@@ -94,7 +96,7 @@ export const useCreateNewRequestFormStructure = ({
                   : "text-foreground",
               )}
             >
-              Let them decide
+              Laisser décider
             </Text>
           </Pressable>
         </View>
@@ -104,11 +106,11 @@ export const useCreateNewRequestFormStructure = ({
 
   const timeField: Field<TimeFieldProps> = {
     id: "time",
-    label: "Time",
+    label: "Heure",
     variant: FieldVariant.TIME,
     required: true,
-    placeholder: "Select a time",
-    description: "Select a time for your request",
+    placeholder: "Sélectionner une heure",
+    description: "Choisissez l'heure de la réunion",
     hidden: !store.flags.mentionTimeAndPlace,
     error: store.errors?.time?.[0] || "",
     props: {
@@ -122,16 +124,16 @@ export const useCreateNewRequestFormStructure = ({
 
   const locationField: Field<MapPinFieldProps> = {
     id: "location",
-    label: "Location",
+    label: "Lieu",
     variant: FieldVariant.MAPPIN,
     required: true,
-    placeholder: "Select a location",
-    description: "Select a location for your request",
+    placeholder: "Sélectionner un lieu sur la carte",
+    description: "Indiquez où se déroulera la réunion",
     hidden: !store.flags.mentionTimeAndPlace,
     error: store.errors?.location?.[0] || "",
     props: {
-      longitude: store.flags.location.longitude,
-      latitude: store.flags.location.latitude,
+      longitude: store.createDto.longitude ?? store.flags.location.longitude,
+      latitude: store.createDto.latitude ?? store.flags.location.latitude,
       locationName: store.createDto?.location,
       editable: true,
       onLocationChange: (value) => {
@@ -139,6 +141,8 @@ export const useCreateNewRequestFormStructure = ({
           latitude: value.latitude,
           longitude: value.longitude,
         });
+        store.setNested("createDto.latitude", value.latitude);
+        store.setNested("createDto.longitude", value.longitude);
         store.setNested("createDto.location", value.name);
         store.setNested("errors.location", []);
       },
@@ -146,10 +150,10 @@ export const useCreateNewRequestFormStructure = ({
   };
 
   const structure: FormStructure = {
-    title: "Send a Request",
+    title: "Envoyer une demande",
     fieldsets: [
       {
-        title: "Request Details",
+        title: "Détails de la demande",
         rows: [
           {
             id: 1,

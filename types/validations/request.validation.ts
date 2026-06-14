@@ -16,6 +16,14 @@ export const CreateRequestDtoSchema = (mention: boolean) =>
       ? z.string().min(1, "Location is required.")
       : z.string().optional(),
 
+    latitude: mention
+      ? z.number({ message: "Location coordinates are required." })
+      : z.number().optional(),
+
+    longitude: mention
+      ? z.number({ message: "Location coordinates are required." })
+      : z.number().optional(),
+
     time: mention
       ? z.date({
           message: "Time is required.",

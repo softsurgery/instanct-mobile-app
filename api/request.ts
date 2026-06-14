@@ -5,6 +5,7 @@ import {
   RequestEvent,
   ResponseRequestDto,
   ResponseRequestWorkflowDto,
+  UpdateRequestDto,
 } from "@/types";
 import axios from "./axios";
 
@@ -123,11 +124,23 @@ const updateStatus = async (
   return response.data;
 };
 
+const update = async (
+  id: string,
+  updateRequestDto: UpdateRequestDto,
+): Promise<ResponseRequestDto> => {
+  const response = await axios.put<ResponseRequestDto>(
+    `/requests/${id}`,
+    updateRequestDto,
+  );
+  return response.data;
+};
+
 export const request = {
   findAllPaginated,
   findOneById,
   findAllIncomingPaginated,
   findAllOutgoingPaginated,
   send,
+  update,
   updateStatus,
 };

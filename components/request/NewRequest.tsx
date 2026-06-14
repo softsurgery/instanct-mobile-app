@@ -44,6 +44,8 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
   React.useEffect(() => {
     if (latitude && longitude && !requestStore.flags.initialLocationSet) {
       requestStore.setNested("flags.location", { latitude, longitude });
+      requestStore.setNested("createDto.latitude", latitude);
+      requestStore.setNested("createDto.longitude", longitude);
       requestStore.setNested("flags.initialLocationSet", true);
     }
   }, [latitude, longitude]);
@@ -72,7 +74,8 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
 
   const { mutate: sendRequest, isPending: isSendingRequestPending } =
     useMutation({
-      mutationFn: async () => api.request.send(requestStore.createDto),
+      mutationFn: async (payload: typeof requestStore.createDto) =>
+        api.request.send(payload),
       onSuccess: async () => {
         router.back();
         queryClient.invalidateQueries({ queryKey: ["outgoing-requests"] });
@@ -89,15 +92,24 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
   });
 
   const handleSubmit = () => {
+    const payload = { ...requestStore.createDto };
+
+    if (!requestStore.flags.mentionTimeAndPlace) {
+      payload.location = undefined;
+      payload.latitude = undefined;
+      payload.longitude = undefined;
+      payload.time = undefined;
+    }
+
     const result = CreateRequestDtoSchema(
       requestStore.flags.mentionTimeAndPlace,
-    ).safeParse(requestStore.createDto);
+    ).safeParse(payload);
 
     if (!result.success) {
       requestStore.set("errors", zodErrorsToNested(result.error));
       return;
     }
-    sendRequest();
+    sendRequest(result.data);
   };
 
   return (
@@ -119,13 +131,12 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
       {isUserPending || isProfilePicturesPending ? (
         <Loader className="flex flex-1 h-full items-center justify-center" />
       ) : (
-        <>
+        <React.Fragment>
           <StableKeyboardAwareScrollView className="flex-1 bg-background">
-            <View className="px-4 pt-4">
-              <Text className="text-lg font-semibold text-foreground">
-                Partenaire de réunion
-              </Text>
-
+            <Text className="text-lg font-semibold text-foreground mx-4 mt-4">
+              Partenaire de réunion
+            </Text>
+            <View className="px-4 py-2">
               <View className="mt-4 flex-row items-center gap-4">
                 <View className="overflow-hidden rounded-full bg-muted">
                   {profilePictures}
@@ -135,7 +146,9 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
                   <Text className="text-lg font-semibold text-foreground">
                     {identity}
                   </Text>
-                  <Text className="text-lg opacity-50">{user?.email}</Text>
+                  <Text className="text-sm text-muted-foreground">
+                    {user?.email}
+                  </Text>
                 </View>
               </View>
             </View>
@@ -152,13 +165,15 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
                   disabled={isSendingRequestPending}
                 >
                   <Text>
-                    {isSendingRequestPending ? "Sending..." : "Send Request"}
+                    {isSendingRequestPending
+                      ? "Envoi en cours..."
+                      : "Envoyer la demande"}
                   </Text>
                 </Button>
               </View>
             </View>
           )}
-        </>
+        </React.Fragment>
       )}
     </StableSafeAreaView>
   );

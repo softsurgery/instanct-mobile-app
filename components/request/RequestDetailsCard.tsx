@@ -1,5 +1,5 @@
-import { LucideIcon } from "lucide-react-native";
-import { View } from "react-native";
+import { Edit3Icon, LucideIcon } from "lucide-react-native";
+import { Pressable, View } from "react-native";
 import { Icon } from "../ui/icon";
 import { Text } from "../ui/text";
 import { cn } from "@/lib/utils";
@@ -10,6 +10,8 @@ interface RequestDetailsCardProps {
   value?: string | null;
   emptyText?: string;
   children?: React.ReactNode;
+  editable?: boolean;
+  onEdit?: () => void;
 }
 
 export const RequestDetailsCard = ({
@@ -18,6 +20,8 @@ export const RequestDetailsCard = ({
   value,
   emptyText = "Non spécifié",
   children,
+  editable = true,
+  onEdit,
 }: RequestDetailsCardProps) => {
   const isEmpty = !children && !value;
   return (
@@ -25,6 +29,7 @@ export const RequestDetailsCard = ({
       <View className="h-9 w-9 items-center justify-center">
         <Icon as={icon} size={17} className="text-muted-foreground" />
       </View>
+
       <View className="flex-1 pt-0.5">
         <Text className="mb-0.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
           {label}
@@ -42,6 +47,16 @@ export const RequestDetailsCard = ({
           </Text>
         )}
       </View>
+
+      {/* {editable && (
+        <Pressable
+          onPress={onEdit}
+          hitSlop={8}
+          className="h-8 w-8 items-center justify-center rounded-full active:bg-muted"
+        >
+          <Icon as={Edit3Icon} size={16} className="text-muted-foreground" />
+        </Pressable>
+      )} */}
     </View>
   );
 };

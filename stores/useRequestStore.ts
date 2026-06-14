@@ -27,6 +27,8 @@ const initialState: RequestData = {
     receiverIds: [],
     message: "",
     location: undefined,
+    latitude: undefined,
+    longitude: undefined,
     time: undefined,
   },
   flags: {

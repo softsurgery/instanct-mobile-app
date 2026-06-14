@@ -25,11 +25,22 @@ export const NotificationEntry = ({
   const onPress = () => {
     switch (notification.type) {
       case NotificationType.REQUEST_RECEIVED:
+        router.push({
+          pathname: `/main/request/answer`,
+          params: {
+            id: notification.payload.requestId,
+            isIncoming: "1",
+          },
+        });
+        break;
       case NotificationType.REQUEST_ACCEPTED:
       case NotificationType.REQUEST_REJECTED:
         router.push({
           pathname: `/main/request/answer`,
-          params: { id: notification.payload.requestId },
+          params: {
+            id: notification.payload.requestId,
+            isIncoming: "0",
+          },
         });
         break;
       case NotificationType.NEW_SIGNIN:

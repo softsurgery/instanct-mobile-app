@@ -21,6 +21,8 @@ export interface ResponseRequestDto extends DatabaseEntity {
   status?: RequestStatus;
   message?: string;
   location?: string;
+  latitude?: number;
+  longitude?: number;
   time?: Date;
 }
 
@@ -33,6 +35,8 @@ export interface CreateRequestDto {
   receiverIds: string[];
   message?: string;
   location?: string;
+  latitude?: number;
+  longitude?: number;
   time?: Date;
 }
 

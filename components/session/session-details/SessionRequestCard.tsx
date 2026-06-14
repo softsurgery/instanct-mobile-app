@@ -58,7 +58,7 @@ export const SessionRequestCard: React.FC<SessionRequestCardProps> = ({
       onPress={() => {
         router.push({
           pathname: "/main/request/answer",
-          params: { id: request.id },
+          params: { id: request.id, isIncoming: isIncoming ? "1" : "0" },
         });
       }}
     >
