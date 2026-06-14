@@ -159,7 +159,7 @@ export default function MapPinField({
       <Button
         disabled={!editable}
         variant="outline"
-        className={cn("w-full h-9 p-0 px-2", className)}
+        className={cn("w-full h-11 rounded-xl p-0 px-2", className)}
         onPress={toggle}
       >
         <View className="flex flex-row items-center justify-between w-full">
