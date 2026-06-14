@@ -12,6 +12,7 @@ import { ActiveMapSessionContext } from "@/contexts/ActiveMapSessionContext";
 import { useActiveSessions } from "@/hooks/content/sessions/useActiveSessions";
 import { useColorPalette } from "@/hooks/useColorPalette";
 import { useQueryClient } from "@tanstack/react-query";
+import { NotificationType } from "@/types";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -40,7 +41,23 @@ export default function MainLayout() {
     count: notificationCount,
     notifications,
     resetCount: resetNotificationCount,
-  } = useNotifications();
+  } = useNotifications({
+    consequences: {
+      [NotificationType.TEST]: () => {
+      },
+      [NotificationType.NEW_SIGNIN]: () => {
+      },
+      [NotificationType.REQUEST_RECEIVED]: () => {
+        queryClient.invalidateQueries({ queryKey: ["incoming-requests"] });
+      },
+      [NotificationType.REQUEST_ACCEPTED]: () => {
+        queryClient.invalidateQueries({ queryKey: ["outgoing-requests"] });
+      },
+      [NotificationType.REQUEST_REJECTED]: () => {
+        queryClient.invalidateQueries({ queryKey: ["outgoing-requests"] });
+      },
+    }
+  });
 
   const { mapSession, isSessionsPending } = useActiveSessions();
 

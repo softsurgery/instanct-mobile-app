@@ -10,9 +10,14 @@ import * as Notifications from "expo-notifications";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Socket } from "socket.io-client";
-import { ResponseNotificationDto } from "~/types/notifications";
+import { NotificationType, ResponseNotificationDto } from "~/types/notifications";
 
-export function useNotifications() {
+interface useNotificationsProps {
+  enabled?: boolean;
+  consequences?: Record<NotificationType, (...args: any[]) => void>;
+}
+
+export function useNotifications({ enabled = true, consequences }: useNotificationsProps = { enabled: true }) {
   const queryClient = useQueryClient();
   const { t } = useTranslation("notifications");
   const [notifications, setNotifications] = React.useState<
@@ -37,9 +42,11 @@ export function useNotifications() {
     socketRef.current = socket;
 
     socket.on("notification", async (notification: ResponseNotificationDto) => {
+      if (!enabled) return;
       setNotifications((prev) => [...prev, notification]);
       setCount((prev) => prev + 1);
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      consequences?.[notification.type]?.(notification);
       await Notifications.scheduleNotificationAsync({
         content: {
           title: sanitizeText(
