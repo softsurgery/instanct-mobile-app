@@ -1,11 +1,9 @@
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import * as Haptics from "expo-haptics";
 import * as Location from "expo-location";
 import { ChevronDown, MapPin, Navigation, Pin } from "lucide-react-native";
-import { useColorScheme } from "nativewind";
 import React from "react";
 import {
   LayoutAnimation,
@@ -21,10 +19,12 @@ import { AndroidDarkMapStyle } from "@/components/map/utils/AndroidDarkMapStyle"
 import type { MapPinFieldProps } from "../types";
 import { Button } from "@/components/ui/button";
 import { Easing, useSharedValue, withTiming } from "react-native-reanimated";
+import { useColorPalette } from "@/hooks/useColorPalette";
 
 interface MapPinInputProps extends MapPinFieldProps {
   className?: string;
   placeholder?: string;
+  changedOnFocus?: boolean;
 }
 
 export default function MapPinField({
@@ -35,9 +35,10 @@ export default function MapPinField({
   locationName,
   onLocationChange,
   editable = true,
+  changedOnFocus = false,
 }: MapPinInputProps) {
-  const { colorScheme } = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const {colorScheme, palette } = useColorPalette();
+
   const sheetRef = React.useRef<ActionSheetRef>(null);
   const mapRef = React.useRef<MapView>(null);
 
@@ -141,7 +142,7 @@ export default function MapPinField({
         longitudeDelta: 0.05,
       };
 
-  const toggle = () => {
+  const toggle = async () => {
     if (!editable) return;
     Keyboard.dismiss();
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -150,12 +151,22 @@ export default function MapPinField({
       easing: Easing.out(Easing.ease),
     });
     sheetRef.current?.show();
+    if (changedOnFocus) {
+      console.log("changedOnFocus", initialRegion);
+      const placeName = await reverseGeocode(initialRegion.latitude, initialRegion.longitude);
+      setName(placeName);
+      onLocationChange?.({
+        latitude: initialRegion.latitude,
+        longitude: initialRegion.longitude,
+        name: placeName,
+      });
+    }
   };
+
+
 
   return (
     <>
-      {/* Trigger - looks like an input */}
-
       <Button
         disabled={!editable}
         variant="outline"
@@ -180,9 +191,7 @@ export default function MapPinField({
         statusBarTranslucent
         defaultOverlayOpacity={0.45}
         containerStyle={{
-          backgroundColor: isDark
-            ? THEME.dark.background
-            : THEME.light.background,
+          backgroundColor: palette.background,
           borderTopLeftRadius: 24,
           borderTopRightRadius: 24,
           paddingHorizontal: 16,
@@ -204,11 +213,11 @@ export default function MapPinField({
           <View className="flex-row items-center gap-2 mb-3 px-1">
             <Icon
               as={MapPin}
-              size={14}
-              color={isDark ? "#a78bfa" : "#7c3aed"}
+              size={24}
+              color={palette.primary}
             />
             <Text
-              className="text-sm text-muted-foreground flex-1"
+              className="text-base text-muted-foreground flex-1"
               numberOfLines={1}
             >
               {name}
@@ -221,7 +230,7 @@ export default function MapPinField({
         )}
 
         {/* Map */}
-        <View className="flex-1 rounded-xl overflow-hidden">
+        <View className="flex-1 rounded-xl overflow-hidden mb-4">
           <MapView
             ref={mapRef}
             style={{ flex: 1 }}
@@ -230,7 +239,7 @@ export default function MapPinField({
             showsUserLocation
             showsMyLocationButton={false}
             customMapStyle={
-              isDark && Platform.OS === "android"
+              colorScheme === "dark" && Platform.OS === "android"
                 ? AndroidDarkMapStyle
                 : undefined
             }
@@ -238,7 +247,7 @@ export default function MapPinField({
             {pin && (
               <Marker
                 coordinate={pin}
-                pinColor={isDark ? "#a78bfa" : "#7c3aed"}
+                pinColor={palette.primary}
               />
             )}
           </MapView>
@@ -258,7 +267,7 @@ export default function MapPinField({
             <Icon
               as={Navigation}
               size={18}
-              color={isDark ? "#a78bfa" : "#7c3aed"}
+              color={palette.primary}
             />
           </Pressable>
         </View>
@@ -267,12 +276,13 @@ export default function MapPinField({
         <Button
           onPress={handleConfirm}
           disabled={!pin}
-          className="mt-4 mx-2"
+          size="lg"
           variant="outline"
+          className="rounded-xl"
         >
           <Text
             className={cn(
-              "font-semibold text-base",
+              "text-md font-bold",
               pin ? "text-primary-foreground" : "text-muted-foreground",
             )}
           >

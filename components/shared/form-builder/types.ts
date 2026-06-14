@@ -104,6 +104,7 @@ export interface MapPinFieldProps {
     name: string;
   }) => void;
   editable?: boolean;
+  changedOnFocus?: boolean;
 }
 
 export interface DateFieldProps {

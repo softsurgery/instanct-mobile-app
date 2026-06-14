@@ -22,6 +22,7 @@ interface FieldBuilderProps {
 }
 
 export const FieldBuilder = ({ field }: FieldBuilderProps) => {
+  const editable = field?.props?.editable ?? true;
   switch (field?.variant) {
     case "text":
     case "tel":
@@ -29,7 +30,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
         <View className="flex flex-col w-full">
           <Input
             {...field?.props}
-            editable={field?.props?.editable}
+            editable={editable}
             keyboardType={
               field.variant === FieldVariant.TEL ? "phone-pad" : "default"
             }
@@ -46,7 +47,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
         <View className="flex flex-col w-full">
           <Input
             {...field?.props}
-            editable={field?.props?.editable}
+            editable={editable}
             keyboardType="number-pad"
             placeholder={field.placeholder}
             value={field?.props?.value}
@@ -64,7 +65,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
       return (
         <Input
           {...field?.props}
-          editable={field?.props?.editable}
+          editable={editable}
           keyboardType="email-address"
           placeholder={field.placeholder}
           value={field?.props?.value?.toString() || ""}
@@ -86,7 +87,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           placeholder={field?.placeholder}
           value={field?.props?.value?.toString() || ""}
           onChangeText={(text) => field?.props?.onChangeText?.(text)}
-          editable={field?.props?.editable}
+          editable={editable}
         />
       );
     case "select":
@@ -101,7 +102,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           placeholder={field?.placeholder}
           value={field?.props?.value?.toString()}
           onSelect={(value) => field?.props?.onSelect?.(value)}
-          disabled={!field?.props?.editable}
+          disabled={!editable}
           options={field?.props?.options}
         />
       );
@@ -117,7 +118,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           placeholder={field?.placeholder}
           value={field?.props?.value || []}
           onSelect={(value) => field?.props?.onSelect?.(value)}
-          disabled={!field?.props?.editable}
+          disabled={!editable}
           options={field?.props?.options}
           max={field?.props?.max || Infinity}
         />
@@ -132,7 +133,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           )}
           value={field?.props?.value}
           onDateChange={(date) => field?.props?.onDateChange?.(date)}
-          disabled={!field?.props?.editable}
+          disabled={!editable}
         />
       );
     case "time":
@@ -145,7 +146,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           )}
           value={field?.props?.value}
           onTimeChange={(time) => field?.props?.onTimeChange?.(time)}
-          disabled={!field?.props?.editable}
+          disabled={!editable}
         />
       );
     case "checkbox":
@@ -153,7 +154,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
         <View className="flex-row items-center gap-2 -mt-2">
           <Checkbox
             {...field?.props}
-            disabled={!field?.props?.editable === false}
+            disabled={!editable === false}
             checked={field?.props?.checked}
             onCheckedChange={(checked) => {
               field?.props?.onCheckedChange?.(checked);
@@ -172,7 +173,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           <Textarea
             {...field?.props}
             className={cn(field.className, field?.error && "border-red-500")}
-            editable={field?.props?.editable}
+            editable={editable}
             placeholder={field.placeholder}
             value={field?.props?.value?.toString() || ""}
             onChangeText={field?.props?.onChangeText}
@@ -189,7 +190,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           onChange={(rating) => field.props?.onValueChange?.(rating)}
           maxStars={field?.props?.maxStars || 5}
           color={field?.props?.color || "yellow"}
-          disabled={!field?.props?.editable}
+          disabled={!editable}
         />
       );
     case "picture":
@@ -202,7 +203,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           fallback={field?.props?.alt}
           onFileChange={field?.props?.onFileChange}
           onUpload={field?.props?.onUpload}
-          editable={field?.props?.editable}
+          editable={editable}
         />
       );
     // case "radio":
@@ -224,7 +225,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           className={cn(field.className, field?.error && "border-red-500")}
           checked={field?.props?.checked}
           onCheckedChange={field?.props?.onCheckedChange}
-          disabled={!field?.props?.editable}
+          disabled={!editable}
         />
       );
     case "choice-picker":
@@ -235,7 +236,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           options={field?.props?.options || []}
           value={field?.props?.value}
           onSelect={field?.props?.onSelectChange}
-          disabled={!field?.props?.editable}
+          disabled={!editable}
         />
       );
     case "map-pin":
@@ -248,7 +249,8 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           longitude={field?.props?.longitude}
           locationName={field?.props?.locationName}
           onLocationChange={field?.props?.onLocationChange}
-          editable={field?.props?.editable}
+          editable={editable}
+          changedOnFocus={field?.props?.changedOnFocus}
         />
       );
     case "custom":
