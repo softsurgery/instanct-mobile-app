@@ -73,7 +73,6 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           }
           onBlur={() => field?.props?.onBlur?.()}
           className={cn(field.className, field?.error && "border-red-500")}
-          {...field.props?.other}
         />
       );
     case "password":
@@ -102,7 +101,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           placeholder={field?.placeholder}
           value={field?.props?.value?.toString()}
           onSelect={(value) => field?.props?.onSelect?.(value)}
-          disabled={field?.props?.other}
+          disabled={!field?.props?.editable}
           options={field?.props?.options}
         />
       );
@@ -118,7 +117,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           placeholder={field?.placeholder}
           value={field?.props?.value || []}
           onSelect={(value) => field?.props?.onSelect?.(value)}
-          disabled={field?.props?.other}
+          disabled={!field?.props?.editable}
           options={field?.props?.options}
           max={field?.props?.max || Infinity}
         />
@@ -133,7 +132,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           )}
           value={field?.props?.value}
           onDateChange={(date) => field?.props?.onDateChange?.(date)}
-          disabled={field?.props?.editable}
+          disabled={!field?.props?.editable}
         />
       );
     case "time":
@@ -146,7 +145,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           )}
           value={field?.props?.value}
           onTimeChange={(time) => field?.props?.onTimeChange?.(time)}
-          disabled={field?.props?.editable}
+          disabled={!field?.props?.editable}
         />
       );
     case "checkbox":
@@ -154,7 +153,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
         <View className="flex-row items-center gap-2 -mt-2">
           <Checkbox
             {...field?.props}
-            disabled={field?.props?.editable === false}
+            disabled={!field?.props?.editable === false}
             checked={field?.props?.checked}
             onCheckedChange={(checked) => {
               field?.props?.onCheckedChange?.(checked);
@@ -173,11 +172,10 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           <Textarea
             {...field?.props}
             className={cn(field.className, field?.error && "border-red-500")}
-            editable={field?.props?.other}
+            editable={field?.props?.editable}
             placeholder={field.placeholder}
             value={field?.props?.value?.toString() || ""}
             onChangeText={field?.props?.onChangeText}
-            {...field.props?.other}
           />
         </View>
       );
@@ -191,6 +189,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           onChange={(rating) => field.props?.onValueChange?.(rating)}
           maxStars={field?.props?.maxStars || 5}
           color={field?.props?.color || "yellow"}
+          disabled={!field?.props?.editable}
         />
       );
     case "picture":
@@ -215,7 +214,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
     //       options={field?.props?.options || []}
     //       checked={field?.props?.checked}
     //       onCheckedChange={field?.props?.onCheckedChange}
-    //       disabled={field?.props?.disabled}
+    //       disabled={!field?.props?.disabled}
     //     />
     //   );
     case "switch":
@@ -225,7 +224,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           className={cn(field.className, field?.error && "border-red-500")}
           checked={field?.props?.checked}
           onCheckedChange={field?.props?.onCheckedChange}
-          disabled={field?.props?.disabled}
+          disabled={!field?.props?.editable}
         />
       );
     case "choice-picker":
@@ -236,7 +235,7 @@ export const FieldBuilder = ({ field }: FieldBuilderProps) => {
           options={field?.props?.options || []}
           value={field?.props?.value}
           onSelect={field?.props?.onSelectChange}
-          disabled={field?.props?.disabled}
+          disabled={!field?.props?.editable}
         />
       );
     case "map-pin":

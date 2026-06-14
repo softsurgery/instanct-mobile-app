@@ -30,7 +30,6 @@ export interface Field<T = any> {
   placeholder?: string;
   hidden?: boolean;
   error?: string;
-  disabled?: boolean;
   props?: T;
 }
 
