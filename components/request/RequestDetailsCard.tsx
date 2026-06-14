@@ -1,5 +1,5 @@
-import { Edit3Icon, LucideIcon } from "lucide-react-native";
-import { Pressable, View } from "react-native";
+import { LucideIcon } from "lucide-react-native";
+import { View } from "react-native";
 import { Icon } from "../ui/icon";
 import { Text } from "../ui/text";
 import { cn } from "@/lib/utils";

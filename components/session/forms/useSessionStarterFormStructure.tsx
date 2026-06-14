@@ -27,7 +27,6 @@ export const useSessionStarterFormStructure = ({
     label: "",
     description: "If checked, you can schedule the session for later.",
     variant: FieldVariant.CUSTOM,
-    disabled: isPending,
     props: {
       children: <SessionStartModeToggle store={store} disabled={isPending} />,
     },
@@ -41,8 +40,8 @@ export const useSessionStarterFormStructure = ({
     error: store.errors.plannedStart?.[0],
     description:
       "The start time of the session. If 'Start Now' is checked, this will be ignored and the session will start immediately.",
-    disabled: isPending,
     props: {
+      editable: !isPending,
       value: store.createDto.plannedStart,
       onTimeChange: (time) => {
         store.setNested("createDto.plannedStart", time);
@@ -58,8 +57,8 @@ export const useSessionStarterFormStructure = ({
     error: store.errors.plannedEnd?.[0],
     description:
       "The end time of the session. This will be ignored if 'Start Now' is checked.",
-    disabled: isPending,
     props: {
+      editable: !isPending,
       value: store.createDto.plannedEnd,
       onTimeChange: (time) => {
         store.setNested("createDto.plannedEnd", time);
@@ -76,6 +75,7 @@ export const useSessionStarterFormStructure = ({
     placeholder: "Select objectives",
     error: store.errors?.payload?.objectives?.[0],
     props: {
+      editable: !isPending,
       value: store.createDto?.payload?.objectives.map(String) || [],
       onSelect: (values) => {
         store.setNested("createDto.payload.objectives", values.map(Number));

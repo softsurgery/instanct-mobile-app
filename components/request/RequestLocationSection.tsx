@@ -1,14 +1,16 @@
-import MapPinField from "@/components/shared/form-builder/components/MapPinField";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
-import { Edit3, Maximize2, MapPin, X } from "lucide-react-native";
-import { useColorScheme } from "nativewind";
+import { Maximize2, MapPin, X } from "lucide-react-native";
 import React from "react";
-import { Modal, Platform, Pressable, View } from "react-native";
+import { Dimensions, Modal, Platform, Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MapView, { Marker } from "react-native-maps";
 import { AndroidDarkMapStyle } from "@/components/map/utils/AndroidDarkMapStyle";
+import { useColorPalette } from "@/hooks/useColorPalette";
+
+
+const screenHeight = Dimensions.get("window").height;
 
 interface RequestLocationSectionProps {
   className?: string;
@@ -16,12 +18,6 @@ interface RequestLocationSectionProps {
   latitude?: number | null;
   longitude?: number | null;
   editable?: boolean;
-  onEdit?: () => void;
-  onLocationChange?: (value: {
-    latitude: number;
-    longitude: number;
-    name: string;
-  }) => void;
 }
 
 export const RequestLocationSection = ({
@@ -29,13 +25,9 @@ export const RequestLocationSection = ({
   location,
   latitude,
   longitude,
-  editable = false,
-  onEdit,
-  onLocationChange,
 }: RequestLocationSectionProps) => {
-  const { colorScheme } = useColorScheme();
+  const { palette, colorScheme } = useColorPalette();
   const insets = useSafeAreaInsets();
-  const isDark = colorScheme === "dark";
 
   const [isFullscreen, setIsFullscreen] = React.useState(false);
 
@@ -52,8 +44,7 @@ export const RequestLocationSection = ({
   };
 
   const mapStyle =
-    isDark && Platform.OS === "android" ? AndroidDarkMapStyle : undefined;
-  const pinColor = isDark ? "#a78bfa" : "#7c3aed";
+  colorScheme === "dark" && Platform.OS === "android" ? AndroidDarkMapStyle : undefined;
 
   return (
     <View className={cn("gap-3", className)}>
@@ -90,7 +81,7 @@ export const RequestLocationSection = ({
       {hasCoordinates && (
         <View className="overflow-hidden rounded-xl mt-4">
           <MapView
-            style={{ width: "100%", height: 300 }}
+            style={{ width: "100%", height: screenHeight * 0.4 }}
             scrollEnabled={false}
             zoomEnabled={false}
             rotateEnabled={false}
@@ -98,7 +89,7 @@ export const RequestLocationSection = ({
             initialRegion={region}
             customMapStyle={mapStyle}
           >
-            <Marker coordinate={region} pinColor={pinColor} />
+            <Marker coordinate={region} pinColor={palette.primary} />
           </MapView>
 
           {/* expand button */}
@@ -134,7 +125,7 @@ export const RequestLocationSection = ({
               showsUserLocation={false}
               customMapStyle={mapStyle}
             >
-              <Marker coordinate={region} pinColor={pinColor} />
+              <Marker coordinate={region} pinColor={palette.primary} />
             </MapView>
           )}
 

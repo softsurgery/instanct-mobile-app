@@ -15,10 +15,12 @@ import { Pressable, View } from "react-native";
 
 interface UseCreateRequestFormStructureProps {
   store: RequestStore;
+  isPending?: boolean;
 }
 
 export const useCreateNewRequestFormStructure = ({
   store,
+  isPending,
 }: UseCreateRequestFormStructureProps) => {
   const messageField: Field<TextareaFieldProps> = {
     id: "message",
@@ -30,6 +32,7 @@ export const useCreateNewRequestFormStructure = ({
       "Ce message sera envoyé au destinataire avec votre demande.",
     error: store.errors?.message?.[0] || "",
     props: {
+      editable: !isPending,
       value: store.createDto?.message,
       onChangeText: (value) => {
         store.setNested("createDto.message", value);
@@ -45,12 +48,10 @@ export const useCreateNewRequestFormStructure = ({
     variant: FieldVariant.CUSTOM,
     required: true,
     placeholder: "Choisir une option",
-    description: "",
-    error: "",
     className: "mt-4",
     props: {
       children: (
-        <View className="-mt-4 pb-2 flex-row gap-2">
+        <View className="-mt-2 pb-2 flex-row gap-2">
           <Pressable
             onPress={() => {
               store.setNested("flags.mentionTimeAndPlace", true);
@@ -114,6 +115,7 @@ export const useCreateNewRequestFormStructure = ({
     hidden: !store.flags.mentionTimeAndPlace,
     error: store.errors?.time?.[0] || "",
     props: {
+      editable: !isPending,
       value: store.createDto?.time,
       onTimeChange: (value) => {
         store.setNested("createDto.time", new Date(value));
@@ -132,10 +134,11 @@ export const useCreateNewRequestFormStructure = ({
     hidden: !store.flags.mentionTimeAndPlace,
     error: store.errors?.location?.[0] || "",
     props: {
+      editable: !isPending,
+      changedOnFocus: true,
       longitude: store.createDto.longitude ?? store.flags.location.longitude,
       latitude: store.createDto.latitude ?? store.flags.location.latitude,
       locationName: store.createDto?.location,
-      editable: true,
       onLocationChange: (value) => {
         store.setNested("flags.location", {
           latitude: value.latitude,

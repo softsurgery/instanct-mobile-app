@@ -225,13 +225,6 @@ export const Request = ({ id, className, isIncoming }: RequestProps) => {
                 latitude={request?.latitude}
                 longitude={request?.longitude}
                 editable={editable}
-                onLocationChange={(value) => {
-                  updateLocation({
-                    location: value.name,
-                    latitude: value.latitude,
-                    longitude: value.longitude,
-                  });
-                }}
               />
 
               {isUpdatingLocation && (

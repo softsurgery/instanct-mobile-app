@@ -89,6 +89,7 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
 
   const { structure } = useCreateNewRequestFormStructure({
     store: requestStore,
+    isPending: isSendingRequestPending,
   });
 
   const handleSubmit = () => {
@@ -164,7 +165,7 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
                   onPress={() => handleSubmit()}
                   disabled={isSendingRequestPending}
                 >
-                  <Text>
+                  <Text className="text-md font-bold">
                     {isSendingRequestPending
                       ? "Envoi en cours..."
                       : "Envoyer la demande"}

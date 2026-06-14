@@ -11,6 +11,7 @@ export enum RequestStatus {
   Sent = "Sent",
   Accepted = "Accepted",
   Rejected = "Rejected",
+  Expired = "Expired",
 }
 
 export interface ResponseRequestDto extends DatabaseEntity {
