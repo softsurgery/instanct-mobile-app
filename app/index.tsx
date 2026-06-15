@@ -5,7 +5,6 @@ import { useColorScheme } from "nativewind";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Platform } from "react-native";
-import * as NavigationBar from "expo-navigation-bar";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -22,11 +21,6 @@ export default function Page() {
       // Set Android navigation bar
 
       SplashScreen.hideAsync();
-
-      if (Platform.OS === "android") {
-        NavigationBar.setVisibilityAsync("hidden");
-        NavigationBar.setBehaviorAsync("overlay-swipe");
-      }
 
       setTimeout(() => {
         // Set system color scheme
