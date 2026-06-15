@@ -4,7 +4,7 @@ import { router } from "expo-router";
 import { ArrowLeft } from "lucide-react-native";
 import { StableSafeAreaView } from "@/components/shared/StableSafeAreaView";
 import { ApplicationHeader } from "@/components/shared/AppHeader";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { createMaterialTopTabNavigator } from "expo-router/js-top-tabs";
 import { ConversationMediaDetails } from "./ConversationMediaDetails";
 
 const Tab = createMaterialTopTabNavigator();

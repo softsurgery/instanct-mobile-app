@@ -38,6 +38,10 @@ export default ({ config }) => ({
     "expo-notifications",
     "expo-router",
     "expo-web-browser",
+    "expo-asset",
+    "@react-native-community/datetimepicker",
+    "expo-image",
+    "expo-status-bar",
     [
       "expo-splash-screen",
       {

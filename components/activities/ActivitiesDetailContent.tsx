@@ -1,7 +1,6 @@
 import React from "react";
 import type { MapSessionPayload, ResponseSessionDto } from "@/types/session";
 import { View } from "react-native";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { SessionIncomingRequests } from "./SessionIncomingRequests";
 import { SessionOutgoingRequests } from "./SessionOutgoingRequests";
 import { Text } from "../ui/text";
@@ -15,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { format, isToday, isYesterday, parseISO } from "date-fns";
 import { NotFound } from "../shared/NotFound";
 import { BookmarkSkeleton } from "./skeletons/BookmarkSkeleton";
+import { createMaterialTopTabNavigator } from "expo-router/js-top-tabs";
 
 interface ActivitiesDetailContentProps {
   className?: string;
