@@ -108,7 +108,7 @@ export const PhotoPreview = ({
     <>
       {trigger}
 
-      {hasImageSource ? (
+      {hasImageSource && isVisible ? (
         <ImageView
           images={images}
           imageIndex={index}

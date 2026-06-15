@@ -175,7 +175,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
           {
             page: "1",
             limit: "100",
-            sort: "DESC",
+            sort: "createdAt,DESC",
           },
         );
         setMessages(response.data || []);
@@ -434,7 +434,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
             label="View media, files, and links"
             onPress={() =>
               router.push({
-                pathname: "/main/chat/conversation-media-details",
+                pathname: "/main/chat/conversation-resource-details",
                 params: { id: conversationId },
               })
             }

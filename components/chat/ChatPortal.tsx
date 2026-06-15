@@ -50,7 +50,6 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
       if (!user) return null;
       return (
         <Pressable
-          key={item.id}
           className="flex flex-col gap-4 active:bg-muted"
           onPress={() => {
             router.push({
