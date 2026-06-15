@@ -8,7 +8,6 @@ import {
   SelectOption,
   TimeFieldProps,
 } from "../../shared/form-builder/types";
-import React from "react";
 import { SessionStartModeToggle } from "../SessionStarterModeToggle";
 
 interface useSessionStarterFormStructureProps {

@@ -76,7 +76,7 @@ export const SessionStartModeToggle = ({
           <Text
             className={cn(
               "text-sm font-semibold",
-              active ? "text-secondary-foreground" : "text-muted-foreground",
+              active ? "text-white" : "text-muted-foreground",
             )}
           >
             {label}
