@@ -244,13 +244,13 @@ export default function MainLayout() {
                 headerShown: false,
               }}
             />
-            <Stack.Screen
+            {/* <Stack.Screen
               name="profile/objectives"
               options={{
                 title: "Objectives",
                 headerShown: false,
               }}
-            />
+            /> */}
             <Stack.Screen
               name="profile/user-calendar"
               options={{
@@ -384,13 +384,13 @@ export default function MainLayout() {
                 animationDuration: 200,
               }}
             />
-            <Stack.Screen
+            {/* <Stack.Screen
               name="profile/sessions/details"
               options={{
                 title: "Sessions",
                 headerShown: false,
               }}
-            />
+            /> */}
             <Stack.Screen
               name="profile/privacy-security"
               options={{
