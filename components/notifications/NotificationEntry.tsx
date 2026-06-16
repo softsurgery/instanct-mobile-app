@@ -1,6 +1,7 @@
 import { timeAgo } from "@/lib/date";
 import { useTranslation } from "react-i18next";
-import { Image, View } from "react-native";
+import { View } from "react-native";
+import { Image } from "@/components/ui/image";
 import { cn } from "~/lib/utils";
 import {
   NotificationType,
@@ -71,7 +72,7 @@ export const NotificationEntry = ({
         className="w-16 h-16 rounded-full"
         source={
           profilePictureSource
-            ? { uri: profilePictureSource }
+            ? profilePictureSource
             : require("@/assets/images/icon.png")
         }
       />
