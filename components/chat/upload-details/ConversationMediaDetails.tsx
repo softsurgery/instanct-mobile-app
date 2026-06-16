@@ -1,6 +1,5 @@
 import { Text } from "@/components/ui/text";
 import { useConversationMessages } from "@/hooks/content/chat/useConversationMessages";
-import { useServerImages } from "@/hooks/content/useServerImages";
 import { useColorPalette } from "@/hooks/useColorPalette";
 import { hslToHex } from "@/lib/theme";
 import { MessageVariant, ResponseMessageDto } from "@/types";
@@ -13,8 +12,8 @@ import {
   View,
 } from "react-native";
 import ImageView from "react-native-image-viewing";
+import { api } from "~/api";
 import { getMessageUploadId, MediaThumbnail } from "./MediaThumbnail";
-import { MediaThumbnailClone } from "./MediaThumbnail2";
 
 const NUM_COLUMNS = 3;
 
@@ -42,18 +41,9 @@ export const ConversationMediaDetails = ({
     query: {
       limit: "20",
       sort: "createdAt,DESC",
-      filter: "variant||$in||image,video",
     },
+    variants: [MessageVariant.IMAGE, MessageVariant.VIDEO],
   });
-
-  const mediaUploadIds = React.useMemo(
-    () => mediaMessages.map(getMessageUploadId),
-    [mediaMessages],
-  );
-
-  // const { getUploadSource, isUploadPending } = useServerImages({
-  //   ids: mediaUploadIds,
-  // });
 
   const imageMessages = React.useMemo(
     () =>
@@ -73,37 +63,32 @@ export const ConversationMediaDetails = ({
     return map;
   }, [imageMessages]);
 
-  // const viewerImages = React.useMemo(() => {
-  //   return imageMessages.flatMap((message) => {
-  //     const uploadId = getMessageUploadId(message);
+  const viewerImages = React.useMemo(() => {
+    return imageMessages.flatMap((message) => {
+      const uploadId = getMessageUploadId(message);
 
-  //     if (typeof uploadId !== "number") {
-  //       return [];
-  //     }
+      if (typeof uploadId !== "number") {
+        return [];
+      }
 
-  //     const source = getUploadSource(uploadId);
+      const source = api.upload.getUploadSource(uploadId);
+      return [source as ImageURISource];
+    });
+  }, [imageMessages]);
 
-  //     if (!source || !("uri" in source) || typeof source.uri !== "string") {
-  //       return [];
-  //     }
+  const openViewer = React.useCallback(
+    (messageId: number) => {
+      const index = imageIndexByMessageId.get(messageId);
 
-  //     return [{ uri: source.uri } satisfies ImageURISource];
-  //   });
-  // }, [imageMessages, getUploadSource]);
+      if (index === undefined || viewerImages[index] === undefined) {
+        return;
+      }
 
-  // const openViewer = React.useCallback(
-  //   (messageId: number) => {
-  //     const index = imageIndexByMessageId.get(messageId);
-
-  //     if (index === undefined || viewerImages[index] === undefined) {
-  //       return;
-  //     }
-
-  //     setViewerIndex(index);
-  //     setViewerVisible(true);
-  //   },
-  //   [imageIndexByMessageId, viewerImages],
-  // );
+      setViewerIndex(index);
+      setViewerVisible(true);
+    },
+    [imageIndexByMessageId, viewerImages],
+  );
 
   const mediaRows = React.useMemo(() => {
     const rows: ResponseMessageDto[][] = [];
@@ -131,11 +116,10 @@ export const ConversationMediaDetails = ({
   const renderMediaRow = React.useCallback(
     ({ item: row }: { item: ResponseMessageDto[] }) => (
       <View className="flex-row">
-        {/* {row.map((message) => {
+        {row.map((message) => {
           const uploadId = getMessageUploadId(message);
           const resolvedUploadId =
             typeof uploadId === "number" ? uploadId : undefined;
-          const mediaSource = getUploadSource(resolvedUploadId);
           const isImage = message.variant !== MessageVariant.VIDEO;
 
           return (
@@ -143,10 +127,9 @@ export const ConversationMediaDetails = ({
               key={message.id}
               message={message}
               size={imageSize}
-              mediaSource={mediaSource}
-              isLoading={isUploadPending(resolvedUploadId)}
+              uploadId={resolvedUploadId}
               onPress={
-                isImage && mediaSource
+                isImage && resolvedUploadId
                   ? () => openViewer(message.id)
                   : undefined
               }
@@ -160,22 +143,10 @@ export const ConversationMediaDetails = ({
                 style={{ width: imageSize, height: imageSize }}
               />
             ))
-          : null} */}
-        {row.map((message) => (
-          <MediaThumbnailClone
-            key={message.id}
-            message={message}
-            size={imageSize}
-          />
-        ))}
+          : null}
       </View>
     ),
-    [
-      // getUploadSource,
-      // imageSize,
-      // isUploadPending,
-      // openViewer,
-    ],
+    [imageSize, openViewer],
   );
 
   return (
@@ -212,7 +183,7 @@ export const ConversationMediaDetails = ({
           ) : null
         }
       />
-      {/* {viewerVisible && viewerImages.length > 0 ? (
+      {viewerVisible && viewerImages.length > 0 ? (
         <ImageView
           images={viewerImages}
           imageIndex={viewerIndex}
@@ -221,7 +192,7 @@ export const ConversationMediaDetails = ({
           backgroundColor="rgba(0, 0, 0, 0.9)"
           presentationStyle="overFullScreen"
         />
-      ) : null} */}
+      ) : null}
     </>
   );
 };

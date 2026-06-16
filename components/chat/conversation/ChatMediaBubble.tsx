@@ -24,6 +24,7 @@ export const ChatMediaBubble = ({ message, right }: ChatMediaBubbleProps) => {
     queryKey: ["chat-media", uploadId],
     queryFn: () => api.upload.getUploadById(uploadId as number),
     enabled: typeof uploadId === "number",
+    staleTime: Infinity,
   });
 
   const isVideo = message.variant === MessageVariant.VIDEO;

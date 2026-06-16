@@ -5,7 +5,8 @@ import { MessageVariant, ResponseMessageDto } from "@/types";
 import { ImageSource } from "expo-image";
 import { Play } from "lucide-react-native";
 import React from "react";
-import { ActivityIndicator, Pressable, View } from "react-native";
+import { Pressable, View } from "react-native";
+import { api } from "~/api";
 
 export const getMessageUploadId = (message: ResponseMessageDto) => {
   const upload = message.uploads?.[0]?.upload;
@@ -15,17 +16,23 @@ export const getMessageUploadId = (message: ResponseMessageDto) => {
 export const MediaThumbnail = React.memo(function MediaThumbnail({
   message,
   size,
-  mediaSource,
-  isLoading,
+  uploadId,
+  mediaSource: mediaSourceOverride,
   onPress,
 }: {
   message: ResponseMessageDto;
   size: number;
+  uploadId?: number;
   mediaSource?: ImageSource;
-  isLoading?: boolean;
   onPress?: () => void;
 }) {
   const isVideo = message.variant === MessageVariant.VIDEO;
+
+  const mediaSource = React.useMemo(() => {
+    if (mediaSourceOverride) return mediaSourceOverride;
+    if (typeof uploadId === "number") return api.upload.getUploadSource(uploadId);
+    return undefined;
+  }, [mediaSourceOverride, uploadId]);
 
   const content = (
     <View style={{ width: size, height: size, padding: 1 }}>
@@ -50,10 +57,6 @@ export const MediaThumbnail = React.memo(function MediaThumbnail({
           contentFit="cover"
           cachePolicy="memory-disk"
         />
-      ) : isLoading ? (
-        <View className="flex-1 bg-muted items-center justify-center">
-          <ActivityIndicator size="small" />
-        </View>
       ) : (
         <View className="flex-1 bg-muted items-center justify-center">
           <Text className="text-muted-foreground text-xs">No Media</Text>
@@ -72,3 +75,4 @@ export const MediaThumbnail = React.memo(function MediaThumbnail({
 
   return content;
 });
+

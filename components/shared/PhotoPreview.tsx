@@ -49,7 +49,10 @@ export const PhotoPreview = ({
           return null;
         }
 
-        return { uri: uri.trim() };
+        return {
+          ...value,
+          uri: uri.trim()
+        } as ImageURISource;
       }
 
       return null;

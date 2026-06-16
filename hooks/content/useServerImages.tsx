@@ -45,6 +45,7 @@ export const useServerImages = ({
       queryKey: ["server-image", id],
       queryFn: () => api.upload.getUploadById(id),
       enabled: enabled,
+      staleTime: Infinity,
     })),
   });
 
@@ -176,10 +177,28 @@ export const useServerImages = ({
     fallbackClassName,
   ]);
 
+  const getUploadSource = React.useCallback(
+    (id: number | undefined) => {
+      if (id === undefined) return undefined;
+      return queryMap.get(id)?.data as ImageSource | undefined;
+    },
+    [queryMap],
+  );
+
+  const isUploadPending = React.useCallback(
+    (id: number | undefined) => {
+      if (id === undefined) return false;
+      return queryMap.get(id)?.isPending ?? false;
+    },
+    [queryMap],
+  );
+
   return {
     uploads,
     isPending,
     jsxArray,
+    getUploadSource,
+    isUploadPending,
     refetch: () => queries.forEach((q) => q.refetch()),
   };
 };

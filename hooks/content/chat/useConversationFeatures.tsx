@@ -229,6 +229,37 @@ export const useConversationFeatures = ({
         hasMore: prev?.hasMore ?? true,
         currentPage: prev?.currentPage ?? 1,
       }));
+
+      if (
+        message.variant === MessageVariant.IMAGE ||
+        message.variant === MessageVariant.VIDEO
+      ) {
+        queryClient.setQueriesData(
+          {
+            queryKey: [
+              "messages",
+              [MessageVariant.IMAGE, MessageVariant.VIDEO],
+              id,
+            ],
+          },
+          (oldData: any) => {
+            if (!oldData || !oldData.pages) return oldData;
+            return {
+              ...oldData,
+              pages: oldData.pages.map((page: any, index: number) => {
+                if (index === 0) {
+                  return {
+                    ...page,
+                    data: [message, ...page.data],
+                  };
+                }
+                return page;
+              }),
+            };
+          },
+        );
+      }
+
       playSound();
     };
 
@@ -263,6 +294,7 @@ export const useConversationFeatures = ({
     playSound,
     getCachedMessages,
     setCachedMessages,
+    queryClient,
   ]);
 
   // Send Message *******************************************************************************************************************
