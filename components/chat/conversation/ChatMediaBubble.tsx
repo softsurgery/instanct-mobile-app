@@ -1,15 +1,13 @@
 import { format } from "date-fns";
 import { Play } from "lucide-react-native";
-import React from "react";
 import { ActivityIndicator, Pressable, View } from "react-native";
-import { useQuery } from "@tanstack/react-query";
 import { Image } from "@/components/ui/image";
 import { Text } from "~/components/ui/text";
 import { Icon } from "~/components/ui/icon";
 import { cn } from "~/lib/utils";
-import { api } from "~/api";
 import { MessageVariant, ResponseMessageDto } from "@/types";
 import { PhotoPreview } from "~/components/shared/PhotoPreview";
+import { useServerImages } from "~/hooks/content/useServerImages";
 
 interface ChatMediaBubbleProps {
   message: ResponseMessageDto;
@@ -20,12 +18,10 @@ export const ChatMediaBubble = ({ message, right }: ChatMediaBubbleProps) => {
   const upload = message.uploads?.[0]?.upload;
   const uploadId = message.uploads?.[0]?.uploadId ?? upload?.id;
 
-  const { data: mediaSource, isPending } = useQuery({
-    queryKey: ["chat-media", uploadId],
-    queryFn: () => api.upload.getUploadById(uploadId as number),
-    enabled: typeof uploadId === "number",
-    staleTime: Infinity,
+  const { uploads, isPending } = useServerImages({
+    ids: [uploadId as number | undefined],
   });
+  const mediaSource = uploads[0];
 
   const isVideo = message.variant === MessageVariant.VIDEO;
   const timestamp = format(new Date(message.createdAt), "hh:mm a");
