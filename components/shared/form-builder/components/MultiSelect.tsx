@@ -156,87 +156,89 @@ export default function MultiSelect({
           paddingBottom: 32,
         }}
       >
-        <View className="mb-4">
-          <Text className="text-lg font-semibold text-foreground">
-            {title || "Select Options"}
-          </Text>
-
-          {description && (
-            <Text className="mt-1 text-sm text-muted-foreground">
-              {description}
+        <View className="mb-8">
+          <View className="mb-4">
+            <Text className="text-lg font-semibold text-foreground">
+              {title || "Select Options"}
             </Text>
-          )}
 
-          {value.length > 0 && (
-            <Text className="mt-1 text-sm text-primary">
-              {value.length} selected
-            </Text>
-          )}
-        </View>
-
-        {searchable && (
-          <View className="relative mb-3">
-            <Icon
-              as={Search}
-              size={18}
-              className="absolute left-3 top-3 z-10 text-muted-foreground"
-            />
-            <Input
-              value={search}
-              onChangeText={setSearch}
-              placeholder="Search..."
-              className="pl-10"
-              autoFocus
-            />
-          </View>
-        )}
-
-        <ScrollView
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-          style={{ maxHeight: 400 }}
-        >
-          {sorted.length === 0 ? (
-            <View className="py-8 items-center">
-              <Text className="text-sm text-muted-foreground">
-                {search ? "No options found" : "No options available"}
+            {description && (
+              <Text className="mt-1 text-sm text-muted-foreground">
+                {description}
               </Text>
-            </View>
-          ) : (
-            sorted.map((option, index) => {
-              const isSelected = value.includes(option.value);
+            )}
 
-              return (
-                <TouchableOpacity
-                  key={option.value}
-                  activeOpacity={0.8}
-                  onPress={() => {
-                    Keyboard.dismiss();
-                    handleToggle(option.value);
-                  }}
-                  className={cn(
-                    "flex-row items-center justify-between rounded-xl px-4 py-3",
-                    index !== sorted.length - 1 && "mb-1",
-                    isSelected && "bg-primary/10",
-                  )}
-                >
-                  <Text
+            {value.length > 0 && (
+              <Text className="mt-1 text-sm text-primary">
+                {value.length} selected
+              </Text>
+            )}
+          </View>
+
+          {searchable && (
+            <View className="relative mb-3">
+              <Icon
+                as={Search}
+                size={18}
+                className="absolute left-3 top-3 z-10 text-muted-foreground"
+              />
+              <Input
+                value={search}
+                onChangeText={setSearch}
+                placeholder="Search..."
+                className="pl-10"
+                autoFocus
+              />
+            </View>
+          )}
+
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+            style={{ maxHeight: 400 }}
+          >
+            {sorted.length === 0 ? (
+              <View className="py-8 items-center">
+                <Text className="text-sm text-muted-foreground">
+                  {search ? "No options found" : "No options available"}
+                </Text>
+              </View>
+            ) : (
+              sorted.map((option, index) => {
+                const isSelected = value.includes(option.value);
+
+                return (
+                  <TouchableOpacity
+                    key={option.value}
+                    activeOpacity={0.8}
+                    onPress={() => {
+                      Keyboard.dismiss();
+                      handleToggle(option.value);
+                    }}
                     className={cn(
-                      "text-base text-foreground",
-                      isSelected && "font-semibold text-primary",
+                      "flex-row items-center justify-between rounded-xl px-4 py-3",
+                      index !== sorted.length - 1 && "mb-1",
+                      isSelected && "bg-primary/10",
                     )}
                   >
-                    {option.label}
-                  </Text>
+                    <Text
+                      className={cn(
+                        "text-base text-foreground",
+                        isSelected && "font-semibold text-primary",
+                      )}
+                    >
+                      {option.label}
+                    </Text>
 
-                  {isSelected && (
-                    <Icon as={Check} size={18} className="text-primary" />
-                  )}
-                </TouchableOpacity>
-              );
-            })
-          )}
-        </ScrollView>
+                    {isSelected && (
+                      <Icon as={Check} size={18} className="text-primary" />
+                    )}
+                  </TouchableOpacity>
+                );
+              })
+            )}
+          </ScrollView>
+        </View>
       </ActionSheet>
     </>
   );

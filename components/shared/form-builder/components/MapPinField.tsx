@@ -200,95 +200,97 @@ export default function MapPinField({
           height: "75%",
         }}
       >
-        {/* Header */}
-        <View className="flex-row items-center justify-between mb-3">
-          <Text className="text-lg font-semibold text-foreground">
-            Pick a Location
-          </Text>
-          {loading && <ActivityIndicator size="small" />}
-        </View>
-
-        {/* Location preview */}
-        {name ? (
-          <View className="flex-row items-center gap-2 mb-3 px-1">
-            <Icon
-              as={MapPin}
-              size={24}
-              color={palette.primary}
-            />
-            <Text
-              className="text-base text-muted-foreground flex-1"
-              numberOfLines={1}
-            >
-              {name}
+        <View className="mb-8">
+          {/* Header */}
+          <View className="flex-row items-center justify-between mb-3">
+            <Text className="text-lg font-semibold text-foreground">
+              Pick a Location
             </Text>
+            {loading && <ActivityIndicator size="small" />}
           </View>
-        ) : (
-          <Text className="text-sm text-muted-foreground mb-3 px-1">
-            Tap on the map to drop a pin
-          </Text>
-        )}
 
-        {/* Map */}
-        <View className="flex-1 rounded-xl overflow-hidden mb-4">
-          <MapView
-            ref={mapRef}
-            style={{ flex: 1 }}
-            initialRegion={initialRegion}
-            onPress={handleMapPress}
-            showsUserLocation
-            showsMyLocationButton={false}
-            customMapStyle={
-              colorScheme === "dark" && Platform.OS === "android"
-                ? AndroidDarkMapStyle
-                : undefined
-            }
-          >
-            {pin && (
-              <Marker
-                coordinate={pin}
-                pinColor={palette.primary}
+          {/* Location preview */}
+          {name ? (
+            <View className="flex-row items-center gap-2 mb-3 px-1">
+              <Icon
+                as={MapPin}
+                size={24}
+                color={palette.primary}
               />
-            )}
-          </MapView>
+              <Text
+                className="text-base text-muted-foreground flex-1"
+                numberOfLines={1}
+              >
+                {name}
+              </Text>
+            </View>
+          ) : (
+            <Text className="text-sm text-muted-foreground mb-3 px-1">
+              Tap on the map to drop a pin
+            </Text>
+          )}
 
-          {/* Current location button */}
-          <Pressable
-            onPress={handleGoToCurrentLocation}
-            className="absolute bottom-3 right-3 bg-background rounded-full p-2.5 shadow-md"
-            style={{
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.15,
-              shadowRadius: 4,
-              elevation: 4,
-            }}
+          {/* Map */}
+          <View className="flex-1 rounded-xl overflow-hidden mb-4">
+            <MapView
+              ref={mapRef}
+              style={{ flex: 1 }}
+              initialRegion={initialRegion}
+              onPress={handleMapPress}
+              showsUserLocation
+              showsMyLocationButton={false}
+              customMapStyle={
+                colorScheme === "dark" && Platform.OS === "android"
+                  ? AndroidDarkMapStyle
+                  : undefined
+              }
+            >
+              {pin && (
+                <Marker
+                  coordinate={pin}
+                  pinColor={palette.primary}
+                />
+              )}
+            </MapView>
+
+            {/* Current location button */}
+            <Pressable
+              onPress={handleGoToCurrentLocation}
+              className="absolute bottom-3 right-3 bg-background rounded-full p-2.5 shadow-md"
+              style={{
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.15,
+                shadowRadius: 4,
+                elevation: 4,
+              }}
+            >
+              <Icon
+                as={Navigation}
+                size={18}
+                color={palette.primary}
+              />
+            </Pressable>
+          </View>
+
+          {/* Confirm button */}
+          <Button
+            onPress={handleConfirm}
+            disabled={!pin}
+            size="lg"
+            variant="outline"
+            className="rounded-xl"
           >
-            <Icon
-              as={Navigation}
-              size={18}
-              color={palette.primary}
-            />
-          </Pressable>
+            <Text
+              className={cn(
+                "text-md font-bold",
+                pin ? "text-primary-foreground" : "text-muted-foreground",
+              )}
+            >
+              Confirm Location
+            </Text>
+          </Button>
         </View>
-
-        {/* Confirm button */}
-        <Button
-          onPress={handleConfirm}
-          disabled={!pin}
-          size="lg"
-          variant="outline"
-          className="rounded-xl"
-        >
-          <Text
-            className={cn(
-              "text-md font-bold",
-              pin ? "text-primary-foreground" : "text-muted-foreground",
-            )}
-          >
-            Confirm Location
-          </Text>
-        </Button>
       </ActionSheet>
     </>
   );

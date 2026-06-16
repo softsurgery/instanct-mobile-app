@@ -37,43 +37,46 @@ export const DeleteEducationActionSheet = React.forwardRef<
         paddingBottom: 32,
       }}
     >
-      <View className="p-4">
-        <View className="flex-row items-center justify-between mb-2">
-          <View className="flex-row items-center gap-2">
-            <Icon as={Trash2} size={20} />
-            <Text variant="large" className="text-foreground">
-              Delete Education
-            </Text>
+      <View className="mb-8">
+        <View className="p-4">
+          <View className="flex-row items-center justify-between mb-2">
+            <View className="flex-row items-center gap-2">
+              <Icon as={Trash2} size={20} />
+              <Text variant="large" className="text-foreground">
+                Delete Education
+              </Text>
+            </View>
           </View>
-        </View>
 
-        <Text className="mt-1 mb-4 text-sm text-muted-foreground">
-          Are you sure you want to delete this education? This action cannot be
-          undone.
-        </Text>
+          <Text className="mt-1 mb-4 text-sm text-muted-foreground">
+            Are you sure you want to delete this education? This action cannot be
+            undone.
+          </Text>
 
-        <View className="flex-row items-center gap-2 mt-2">
-          <Button
-            onPress={onConfirm}
-            className="w-1/2"
-            size="sm"
-            disabled={isPending}
-            variant="destructive"
-          >
-            <Text className="text-base font-semibold">Confirm</Text>
-          </Button>
-          <Button
-            className="w-1/2"
-            size="sm"
-            variant="outline"
-            onPress={onClose}
-            disabled={isPending}
-          >
-            <Text>Cancel</Text>
-          </Button>
+          <View className="flex-row items-center gap-2 mt-2">
+            <Button
+              onPress={onConfirm}
+              className="w-1/2"
+              size="sm"
+              disabled={isPending}
+              variant="destructive"
+            >
+              <Text className="text-base font-semibold">Confirm</Text>
+            </Button>
+            <Button
+              className="w-1/2"
+              size="sm"
+              variant="outline"
+              onPress={onClose}
+              disabled={isPending}
+            >
+              <Text>Cancel</Text>
+            </Button>
+          </View>
         </View>
       </View>
     </ActionSheet>
   );
 });
 
+DeleteEducationActionSheet.displayName = "DeleteEducationActionSheet";

@@ -78,15 +78,17 @@ export const ConversationInputActionsSheet = React.forwardRef<
         paddingBottom: 36,
       }}
     >
-      {/* Action grid */}
-      <View className="flex-row flex-wrap pt-4 my-4 gap-y-5">
-        {actions.map((item) => (
-          <ChatActionGridItem
-            key={item.label}
-            {...item}
-            className="flex-none basis-1/4 px-1.5 py-1.5"
-          />
-        ))}
+      <View className="mb-8">
+        {/* Action grid */}
+        <View className="flex-row flex-wrap pt-4 my-4 gap-y-5">
+          {actions.map((item) => (
+            <ChatActionGridItem
+              key={item.label}
+              {...item}
+              className="flex-none basis-1/4 px-1.5 py-1.5"
+            />
+          ))}
+        </View>
       </View>
     </ActionSheet>
   );
