@@ -19,7 +19,6 @@ import {
 import { Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { Icon } from "../ui/icon";
 import { Text } from "../ui/text";
-import { ImageBackground } from "expo-image";
 import { useStartConversation } from "@/hooks/content/chat/useStartConversation";
 import { useBookmarkActions } from "@/hooks/content/users/useBookmarkActions";
 import { useServerImages } from "@/hooks/content/useServerImages";
@@ -33,7 +32,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { ScrollView } from "react-native-gesture-handler";
-
+import { ImageBackground } from "expo-image";
 const { width, height: screenHeight } = Dimensions.get("window");
 
 const CARD_HEIGHT = screenHeight;
@@ -69,7 +68,7 @@ export const UserCard = ({
     size: { width: 100, height: 100 },
   });
 
-  const photoUri = uploadedProfilePicture[0] as string | undefined;
+  const photoUri = uploadedProfilePicture[0]?.uri as string | undefined;
 
   const { startConversation } = useStartConversation({
     onSuccess: (conversation: ResponseConversationDto) => {
@@ -212,12 +211,14 @@ export const UserCard = ({
           <Animated.View style={bookmarkStyle}>
             <Pressable
               onPressIn={() => {
+                // eslint-disable-next-line react-hooks/immutability
                 bookmarkScale.value = withSpring(0.85, {
                   damping: 12,
                   stiffness: 250,
                 });
               }}
               onPressOut={() => {
+                // eslint-disable-next-line react-hooks/immutability
                 bookmarkScale.value = withSpring(1, {
                   damping: 12,
                   stiffness: 250,
@@ -257,12 +258,14 @@ export const UserCard = ({
             <Animated.View style={requestStyle}>
               <Pressable
                 onPressIn={() => {
+                  // eslint-disable-next-line react-hooks/immutability
                   requestScale.value = withSpring(0.85, {
                     damping: 12,
                     stiffness: 250,
                   });
                 }}
                 onPressOut={() => {
+                  // eslint-disable-next-line react-hooks/immutability
                   requestScale.value = withSpring(1, {
                     damping: 12,
                     stiffness: 250,
@@ -290,12 +293,14 @@ export const UserCard = ({
           <Animated.View style={messageStyle}>
             <Pressable
               onPressIn={() => {
+                // eslint-disable-next-line react-hooks/immutability
                 messageScale.value = withSpring(0.85, {
                   damping: 12,
                   stiffness: 250,
                 });
               }}
               onPressOut={() => {
+                // eslint-disable-next-line react-hooks/immutability
                 messageScale.value = withSpring(1, {
                   damping: 12,
                   stiffness: 250,

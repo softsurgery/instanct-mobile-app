@@ -45,9 +45,11 @@ export const ChatBubble = ({
   const longPressGesture = Gesture.LongPress()
     .minDuration(300)
     .onStart(() => {
+      // eslint-disable-next-line react-hooks/immutability
       scale.value = withSpring(1.05);
     })
     .onEnd((e, success) => {
+      // eslint-disable-next-line react-hooks/immutability
       scale.value = withSpring(1);
       if (success) {
         runOnJS(handleLongPress)();
