@@ -37,7 +37,7 @@ export default function MapPinField({
   editable = true,
   changedOnFocus = false,
 }: MapPinInputProps) {
-  const {colorScheme, palette } = useColorPalette();
+  const { colorScheme, palette } = useColorPalette();
 
   const sheetRef = React.useRef<ActionSheetRef>(null);
   const mapRef = React.useRef<MapView>(null);
@@ -55,11 +55,13 @@ export default function MapPinField({
   // Sync external prop changes
   React.useEffect(() => {
     if (latitude != null && longitude != null) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPin({ latitude, longitude });
     }
   }, [latitude, longitude]);
 
   React.useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (locationName != null) setName(locationName);
   }, [locationName]);
 
@@ -153,7 +155,10 @@ export default function MapPinField({
     sheetRef.current?.show();
     if (changedOnFocus) {
       console.log("changedOnFocus", initialRegion);
-      const placeName = await reverseGeocode(initialRegion.latitude, initialRegion.longitude);
+      const placeName = await reverseGeocode(
+        initialRegion.latitude,
+        initialRegion.longitude,
+      );
       setName(placeName);
       onLocationChange?.({
         latitude: initialRegion.latitude,
@@ -162,8 +167,6 @@ export default function MapPinField({
       });
     }
   };
-
-
 
   return (
     <>
@@ -212,11 +215,7 @@ export default function MapPinField({
           {/* Location preview */}
           {name ? (
             <View className="flex-row items-center gap-2 mb-3 px-1">
-              <Icon
-                as={MapPin}
-                size={24}
-                color={palette.primary}
-              />
+              <Icon as={MapPin} size={24} color={palette.primary} />
               <Text
                 className="text-base text-muted-foreground flex-1"
                 numberOfLines={1}
@@ -245,12 +244,7 @@ export default function MapPinField({
                   : undefined
               }
             >
-              {pin && (
-                <Marker
-                  coordinate={pin}
-                  pinColor={palette.primary}
-                />
-              )}
+              {pin && <Marker coordinate={pin} pinColor={palette.primary} />}
             </MapView>
 
             {/* Current location button */}
@@ -265,11 +259,7 @@ export default function MapPinField({
                 elevation: 4,
               }}
             >
-              <Icon
-                as={Navigation}
-                size={18}
-                color={palette.primary}
-              />
+              <Icon as={Navigation} size={18} color={palette.primary} />
             </Pressable>
           </View>
 
