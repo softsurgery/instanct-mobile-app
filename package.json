@@ -78,6 +78,7 @@
     "react-native-awesome-slider": "^2.9.0",
     "react-native-gesture-handler": "~2.31.1",
     "react-native-image-viewing": "^0.2.2",
+    "react-native-keyboard-controller": "^1.21.11",
     "react-native-map-clustering": "^4.0.0",
     "react-native-maps": "1.27.2",
     "react-native-modal": "^14.0.0-rc.1",

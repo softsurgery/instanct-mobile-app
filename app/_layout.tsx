@@ -16,45 +16,48 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Toaster } from "sonner-native";
 import { useColorPalette } from "@/hooks/useColorPalette";
 import { asyncStoragePersister, queryClient } from "@/lib/queryClient";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 
 function RootLayoutContent() {
   const { colorScheme, palette } = useColorPalette();
   const insets = useSafeAreaInsets();
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <View
-        className={cn("flex-1 light dark:dark bg-background")}
-        style={{ paddingBottom: insets.bottom }}
-      >
-        <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: {
-              flex: 1,
-              backgroundColor: palette.background,
-            },
-            keyboardHandlingEnabled: true,
-            headerStyle: {
-              backgroundColor: palette.background,
-            },
-            headerTintColor: palette.foreground,
-            headerTitleStyle: {
-              fontSize: 20,
-              color: palette.foreground,
-            },
-          }}
-        />
-        <Toaster
-          duration={1000}
-          style={{
-            backgroundColor: palette.card,
-          }}
-        />
-        <PortalHost />
-      </View>
-    </GestureHandlerRootView>
+    <KeyboardProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View
+          className={cn("flex-1 light dark:dark bg-background")}
+          style={{ paddingBottom: insets.bottom }}
+        >
+          <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: {
+                flex: 1,
+                backgroundColor: palette.background,
+              },
+              keyboardHandlingEnabled: true,
+              headerStyle: {
+                backgroundColor: palette.background,
+              },
+              headerTintColor: palette.foreground,
+              headerTitleStyle: {
+                fontSize: 20,
+                color: palette.foreground,
+              },
+            }}
+          />
+          <Toaster
+            duration={1000}
+            style={{
+              backgroundColor: palette.card,
+            }}
+          />
+          <PortalHost />
+        </View>
+      </GestureHandlerRootView>
+    </KeyboardProvider>
   );
 }
 

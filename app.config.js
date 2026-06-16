@@ -28,6 +28,7 @@ export default ({ config }) => ({
         apiKey: process.env.GOOGLE_MAPS_API_KEY,
       },
     },
+    softwareKeyboardLayoutMode: "pan",
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
     package: "com.softsurgery.instanctmobileapp",

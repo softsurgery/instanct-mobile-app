@@ -1,12 +1,6 @@
 import { formatDistanceToNow } from "date-fns";
 import React from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  KeyboardAvoidingView,
-  Platform,
-  View,
-} from "react-native";
+import { ActivityIndicator, FlatList, View } from "react-native";
 
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { ChatBubble } from "./conversation/ChatBubble";
@@ -27,6 +21,9 @@ import { ImageBackground } from "expo-image";
 import { useColorScheme } from "nativewind";
 import { Loader } from "../shared/Loader";
 import { ChatStatic } from "./conversation/ChatStatic";
+import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import { useGradualAnimation } from "@/hooks/useGradualAnimation";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface ConversationProps {
   id: number;
@@ -34,6 +31,15 @@ interface ConversationProps {
 
 export const Conversation = ({ id }: ConversationProps) => {
   const { colorScheme } = useColorScheme();
+  const { height } = useGradualAnimation();
+  const insets = useSafeAreaInsets();
+
+  const fakeView = useAnimatedStyle(() => {
+    return {
+      height: Math.max(Math.abs(height.value) - insets.bottom, 0),
+    };
+  }, [insets.bottom]);
+
   const {
     conversation,
     isConversationPending,
@@ -98,108 +104,104 @@ export const Conversation = ({ id }: ConversationProps) => {
         <ChatHeaderRight conversationId={id} />
       </View>
 
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 24}
+      <ImageBackground
+        source={
+          colorScheme === "dark"
+            ? require("~/assets/images/message-background-dark.png")
+            : require("~/assets/images/message-background.png")
+        }
+        style={{
+          flex: 1,
+          width: "100%",
+          height: "100%",
+        }}
+        imageStyle={{ opacity: 0.3 }}
       >
-        <ImageBackground
-          source={
-            colorScheme === "dark"
-              ? require("~/assets/images/message-background-dark.png")
-              : require("~/assets/images/message-background.png")
-          }
-          style={{
-            width: "100%",
-            height: "100%",
-          }}
-          imageStyle={{ opacity: 0.3 }}
-        >
-          <View className="flex-1">
-            {/* MESSAGES */}
-            {isLoading ? (
-              <View className="flex-1 justify-center items-center gap-2">
-                <Loader size="large" />
-                <Text className="text-sm text-muted-foreground">
-                  Loading conversation...
-                </Text>
-              </View>
-            ) : (
-              <FlatList
-                ref={flatListRef}
-                data={flattenedMessages}
-                inverted
-                keyboardDismissMode="interactive"
-                keyboardShouldPersistTaps="handled"
-                contentContainerStyle={{ paddingVertical: 16 }}
-                keyExtractor={(item) =>
-                  item.type === "header" ? item.key : `m-${item.message.id}`
-                }
-                renderItem={({ item }) => {
-                  if (item.type === "header") {
-                    return (
-                      <View className="items-center py-3">
-                        <View className="bg-card/80 px-4 py-1.5 rounded-full">
-                          <Text className="text-xs font-semibold text-muted-foreground">
-                            {item.date}
-                          </Text>
-                        </View>
+        <View className="flex-1">
+          {/* MESSAGES */}
+          {isLoading ? (
+            <View className="flex-1 justify-center items-center gap-2">
+              <Loader size="large" />
+              <Text className="text-sm text-muted-foreground">
+                Loading conversation...
+              </Text>
+            </View>
+          ) : (
+            <FlatList
+              ref={flatListRef}
+              data={flattenedMessages}
+              inverted
+              keyboardDismissMode="interactive"
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={{ paddingVertical: 16 }}
+              keyExtractor={(item) =>
+                item.type === "header" ? item.key : `m-${item.message.id}`
+              }
+              renderItem={({ item }) => {
+                if (item.type === "header") {
+                  return (
+                    <View className="items-center py-3">
+                      <View className="bg-card/80 px-4 py-1.5 rounded-full">
+                        <Text className="text-xs font-semibold text-muted-foreground">
+                          {item.date}
+                        </Text>
                       </View>
-                    );
-                  }
-
-                  if (item.type === "message")
-                    return (
-                      <ChatBubble
-                        message={item.message.content}
-                        timestamp={item.message.createdAt}
-                        right={item.message.userId === currentUser?.id}
-                      />
-                    );
-
-                  if (item.type === "media")
-                    return (
-                      <ChatMediaBubble
-                        message={item.message}
-                        right={item.message.userId === currentUser?.id}
-                      />
-                    );
-
-                  return <ChatStatic message={item.message} />;
-                }}
-                onEndReached={loadMore}
-                onEndReachedThreshold={0.3}
-                ListFooterComponent={
-                  isMoreMessagesLoading ? (
-                    <View className="py-4 items-center">
-                      <ActivityIndicator size="small" />
                     </View>
-                  ) : null
+                  );
                 }
-                ListEmptyComponent={
-                  <View className="flex-1 justify-center items-center py-20">
-                    <Text className="text-muted-foreground text-sm">
-                      No messages yet. Say hello!
-                    </Text>
-                  </View>
-                }
-              />
-            )}
 
-            {/* INPUT */}
-            <ConversationInput
-              input={input}
-              setInput={setInput}
-              sendMessage={sendMessage}
-              sendPoke={sendPoke}
-              onPickImage={pickImage}
-              onPickVideo={pickVideo}
-              isSendingMedia={isSendingMedia}
-              isConversationLocked={!!conversation?.locked}
+                if (item.type === "message")
+                  return (
+                    <ChatBubble
+                      message={item.message.content}
+                      timestamp={item.message.createdAt}
+                      right={item.message.userId === currentUser?.id}
+                    />
+                  );
+
+                if (item.type === "media")
+                  return (
+                    <ChatMediaBubble
+                      message={item.message}
+                      right={item.message.userId === currentUser?.id}
+                    />
+                  );
+
+                return <ChatStatic message={item.message} />;
+              }}
+              onEndReached={loadMore}
+              onEndReachedThreshold={0.3}
+              ListFooterComponent={
+                isMoreMessagesLoading ? (
+                  <View className="py-4 items-center">
+                    <ActivityIndicator size="small" />
+                  </View>
+                ) : null
+              }
+              ListEmptyComponent={
+                <View className="flex-1 justify-center items-center py-20">
+                  <Text className="text-muted-foreground text-sm">
+                    No messages yet. Say hello!
+                  </Text>
+                </View>
+              }
             />
-          </View>
-        </ImageBackground>
-      </KeyboardAvoidingView>
+          )}
+
+          {/* INPUT */}
+          <ConversationInput
+            input={input}
+            setInput={setInput}
+            sendMessage={sendMessage}
+            sendPoke={sendPoke}
+            onPickImage={pickImage}
+            onPickVideo={pickVideo}
+            isSendingMedia={isSendingMedia}
+            isConversationLocked={!!conversation?.locked}
+          />
+          <Animated.View style={fakeView} />
+        </View>
+      </ImageBackground>
     </StableSafeAreaView>
   );
 };

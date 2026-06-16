@@ -1,18 +1,17 @@
 import { Plus, SendHorizonal } from "lucide-react-native";
 import React from "react";
-import { ActivityIndicator, Pressable, View } from "react-native";
+import { ActivityIndicator, Pressable, View, ViewStyle } from "react-native";
 import { type ActionSheetRef } from "react-native-actions-sheet";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StablePressable } from "~/components/shared/StablePressable";
 import { Icon } from "~/components/ui/icon";
 import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
-import { useKeyboardVisible } from "~/hooks/useKeyboardVisible";
 import { ConversationInputActionsSheet } from "./ConversationInputActionsSheet";
 import { Text } from "@/components/ui/text";
 
 interface ConversationInputProps {
   className?: string;
+  style?: ViewStyle;
   input: string;
   setInput: (text: string) => void;
   sendMessage: () => void;
@@ -25,6 +24,7 @@ interface ConversationInputProps {
 
 export const ConversationInput = ({
   className,
+  style,
   input,
   setInput,
   sendMessage,
@@ -34,8 +34,6 @@ export const ConversationInput = ({
   isSendingMedia = false,
   isConversationLocked = false,
 }: ConversationInputProps) => {
-  const insets = useSafeAreaInsets();
-  const isKeyboardVisible = useKeyboardVisible();
   const actionSheetRef = React.useRef<ActionSheetRef>(null);
 
   const handleSend = () => {
@@ -48,8 +46,8 @@ export const ConversationInput = ({
       <View
         className={cn("bg-background/95 border-t border-border", className)}
         style={{
+          ...style,
           zIndex: 20,
-          elevation: 10,
         }}
       >
         <View className="flex flex-row items-center justify-center gap-2 px-3 py-6">
@@ -70,11 +68,12 @@ export const ConversationInput = ({
         disabled={isSendingMedia}
       />
       <View
-        className={cn("bg-background/95 border-t border-border", className)}
+        className={cn(
+          "bg-background/95 border-t border-border py-2",
+          className,
+        )}
         style={{
           zIndex: 20,
-          elevation: 10,
-          paddingBottom: isKeyboardVisible ? 4 : Math.max(insets.bottom, 8),
         }}
       >
         <View className="flex flex-row items-end gap-2 px-3 py-2">
