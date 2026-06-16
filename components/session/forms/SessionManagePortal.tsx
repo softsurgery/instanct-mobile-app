@@ -24,6 +24,7 @@ import { useActiveSessions } from "@/hooks/content/sessions/useActiveSessions";
 import { Loader } from "../../shared/Loader";
 import { ActionSheetRef } from "react-native-actions-sheet";
 import { EndSessionActionSheet } from "../EndSessionActionSheet";
+import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
 
 interface SessionManagePortalProps {
   className?: string;
@@ -190,33 +191,31 @@ export const SessionManagePortal = ({
         )} */}
           </StableKeyboardAwareScrollView>
           {!isKeyboardVisible && (
-            <View className="border-t border-border bg-card p-8 pt-4 gap-4">
-              <View className="flex flex-col justify-between gap-2">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="rounded-xl"
-                  onPress={() => {
-                    onEndSessionPress(mapSession?.id!);
-                  }}
-                  disabled={isPending}
-                >
-                  <Text className="text-md font-bold">
-                    {isEndingSessionPending ? "Ending..." : "End Session"}
-                  </Text>
-                </Button>
-                <Button
-                  size="lg"
-                  className="rounded-xl"
-                  onPress={() => handleSessionEdit()}
-                  disabled={isPending}
-                >
-                  <Text className="text-md font-bold">
-                    {isUpdatingSession ? "Updating..." : "Confirm changes"}
-                  </Text>
-                </Button>
-              </View>
-            </View>
+            <BottomButtonWrapper>
+              <Button
+                size="lg"
+                variant="outline"
+                className="rounded-xl"
+                onPress={() => {
+                  onEndSessionPress(mapSession?.id!);
+                }}
+                disabled={isPending}
+              >
+                <Text className="text-md font-bold">
+                  {isEndingSessionPending ? "Ending..." : "End Session"}
+                </Text>
+              </Button>
+              <Button
+                size="lg"
+                className="rounded-xl"
+                onPress={() => handleSessionEdit()}
+                disabled={isPending}
+              >
+                <Text className="text-md font-bold">
+                  {isUpdatingSession ? "Updating..." : "Confirm changes"}
+                </Text>
+              </Button>
+            </BottomButtonWrapper>
           )}
         </>
       )}

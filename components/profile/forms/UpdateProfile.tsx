@@ -21,6 +21,7 @@ import { identifyUserAvatar } from "@/lib/user";
 import { useUploadMutation } from "@/hooks/useUploadMutation";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 import { toast } from "sonner-native";
+import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
 
 interface UpdateProfileProps {
   className?: string;
@@ -153,23 +154,21 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
         <FormBuilder structure={structure} className="px-2" />
       </StableKeyboardAwareScrollView>
       {!isKeyboardVisible && (
-        <View className="border-t border-border bg-card p-8 pt-4 gap-4">
-          <View className="flex flex-col justify-between gap-2">
-            <Button
-              size="lg"
-              variant="default"
-              className="rounded-xl"
-              onPress={() => {
-                handleUpdateSubmit();
-              }}
-              disabled={isUpdatePending}
-            >
-              <Text className="text-md font-bold">
-                {isUpdatePending ? "Updating..." : "Update Profile"}
-              </Text>
-            </Button>
-          </View>
-        </View>
+        <BottomButtonWrapper>
+          <Button
+            size="lg"
+            variant="default"
+            className="rounded-xl"
+            onPress={() => {
+              handleUpdateSubmit();
+            }}
+            disabled={isUpdatePending}
+          >
+            <Text className="text-md font-bold">
+              {isUpdatePending ? "Updating..." : "Update Profile"}
+            </Text>
+          </Button>
+        </BottomButtonWrapper>
       )}
     </StableSafeAreaView>
   );

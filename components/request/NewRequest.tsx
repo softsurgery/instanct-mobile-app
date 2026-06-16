@@ -23,6 +23,7 @@ import { CreateRequestDtoSchema } from "@/types/validations/request.validation";
 import { zodErrorsToNested } from "@/lib/object";
 import { useMapStore } from "@/stores/useMapStore";
 import { Loader } from "../shared/Loader";
+import { BottomButtonWrapper } from "../shared/BottomButtonBlockWrapper";
 
 interface NewRequestProps {
   className?: string;
@@ -156,23 +157,21 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
             <FormBuilder structure={structure} className="mt-4 px-2" />
           </StableKeyboardAwareScrollView>
           {!isKeyboardVisible && (
-            <View className="border-t border-border bg-card p-8 pt-4 gap-4">
-              <View className="flex flex-col justify-between gap-2">
-                <Button
-                  size="lg"
-                  variant="default"
-                  className="rounded-xl"
-                  onPress={() => handleSubmit()}
-                  disabled={isSendingRequestPending}
-                >
-                  <Text className="text-md font-bold">
-                    {isSendingRequestPending
-                      ? "Envoi en cours..."
-                      : "Envoyer la demande"}
-                  </Text>
-                </Button>
-              </View>
-            </View>
+            <BottomButtonWrapper>
+              <Button
+                size="lg"
+                variant="default"
+                className="rounded-xl"
+                onPress={() => handleSubmit()}
+                disabled={isSendingRequestPending}
+              >
+                <Text className="text-md font-bold">
+                  {isSendingRequestPending
+                    ? "Envoi en cours..."
+                    : "Envoyer la demande"}
+                </Text>
+              </Button>
+            </BottomButtonWrapper>
           )}
         </React.Fragment>
       )}

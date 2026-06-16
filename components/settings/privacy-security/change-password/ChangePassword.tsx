@@ -20,6 +20,7 @@ import { toast } from "sonner-native";
 import { ServerErrorResponse } from "@/types";
 import * as Haptics from "expo-haptics";
 import { useLogout } from "@/hooks/useLogout";
+import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
 
 interface ChangePasswordProps {
   className?: string;
@@ -101,34 +102,32 @@ export const ChangePassword = ({ className }: ChangePasswordProps) => {
       </StableKeyboardAwareScrollView>
 
       {!isKeyboardVisible && (
-        <View className="border-t border-border bg-card p-8 pt-4 gap-4">
-          <View className="flex flex-col justify-between gap-2">
-            <Button
-              size="lg"
-              className="rounded-xl"
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                handleSave();
-              }}
-              disabled={isPending}
-            >
-              {isPending ? (
-                <React.Fragment>
-                  <Icon
-                    as={Loader2}
-                    size={18}
-                    className="text-primary-foreground animate-spin"
-                  />
-                  <Text className="text-primary-foreground font-semibold">
-                    Updating...
-                  </Text>
-                </React.Fragment>
-              ) : (
-                <Text className="text-md font-bold">Update Password</Text>
-              )}
-            </Button>
-          </View>
-        </View>
+        <BottomButtonWrapper>
+          <Button
+            size="lg"
+            className="rounded-xl"
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              handleSave();
+            }}
+            disabled={isPending}
+          >
+            {isPending ? (
+              <React.Fragment>
+                <Icon
+                  as={Loader2}
+                  size={18}
+                  className="text-primary-foreground animate-spin"
+                />
+                <Text className="text-primary-foreground font-semibold">
+                  Updating...
+                </Text>
+              </React.Fragment>
+            ) : (
+              <Text className="text-md font-bold">Update Password</Text>
+            )}
+          </Button>
+        </BottomButtonWrapper>
       )}
     </StableSafeAreaView>
   );

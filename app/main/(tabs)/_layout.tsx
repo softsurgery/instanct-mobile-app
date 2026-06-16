@@ -14,11 +14,9 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function TabLayout() {
   const { palette } = useColorPalette();
-  const insets = useSafeAreaInsets();
   const segments = useSegments();
   const currentRoute = segments[segments.length - 1];
   const isMapScreen = currentRoute === "map";
@@ -128,7 +126,6 @@ export default function TabLayout() {
           borderTopEndRadius: !isMapScreen ? 28 : 0,
           borderTopStartRadius: !isMapScreen ? 28 : 0,
           paddingTop: 10,
-          marginBottom: insets.bottom,
           paddingInline: 10,
           backgroundColor: palette.card,
           borderColor: palette.border,
