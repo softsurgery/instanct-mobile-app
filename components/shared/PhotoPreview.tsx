@@ -1,6 +1,11 @@
 import React from "react";
 import type { ImageProps } from "expo-image";
-import { TouchableOpacity, View, type ImageURISource } from "react-native";
+import {
+  Pressable,
+  View,
+  Image as RNImage,
+  type ImageURISource,
+} from "react-native";
 import ImageView from "react-native-image-viewing";
 import { cn } from "@/lib/utils";
 
@@ -51,7 +56,7 @@ export const PhotoPreview = ({
 
         return {
           ...value,
-          uri: uri.trim()
+          uri: uri.trim(),
         } as ImageURISource;
       }
 
@@ -72,6 +77,19 @@ export const PhotoPreview = ({
   }, [source]);
 
   const hasImageSource = images.length > 0;
+
+  React.useEffect(() => {
+    images.forEach((img) => {
+      if (
+        typeof img === "object" &&
+        img !== null &&
+        "uri" in img &&
+        typeof img.uri === "string"
+      ) {
+        RNImage.prefetch(img.uri).catch(() => {});
+      }
+    });
+  }, [images]);
 
   const [isVisible, setIsVisible] = React.useState(false);
 
@@ -96,13 +114,12 @@ export const PhotoPreview = ({
   };
 
   const trigger = canPress ? (
-    <TouchableOpacity
-      className={cn("z-10", className)}
+    <Pressable
+      className={cn("z-10 active:opacity-80", className)}
       onPress={handlePress}
-      activeOpacity={0.8}
     >
       {children}
-    </TouchableOpacity>
+    </Pressable>
   ) : (
     <View className={cn(className)}>{children}</View>
   );
