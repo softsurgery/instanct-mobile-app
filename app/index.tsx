@@ -12,10 +12,7 @@ export default function Page() {
   const { i18n } = useTranslation();
   const { setColorScheme } = useColorScheme();
   const preferencePersistStore = usePreferencePersistStore();
-  const isDarkMode = React.useMemo(
-    () => preferencePersistStore.theme === "dark",
-    [preferencePersistStore.theme],
-  );
+
   React.useEffect(() => {
     if (preferencePersistStore.isReady) {
       // Set Android navigation bar
@@ -26,13 +23,12 @@ export default function Page() {
         // Set system color scheme
         setColorScheme(preferencePersistStore.theme);
         if (Platform.OS === "android")
-          setAndroidNavigationBar(isDarkMode ? "light" : "dark");
+          setAndroidNavigationBar(preferencePersistStore.theme);
         i18n.changeLanguage(preferencePersistStore.language);
         router.replace("/main");
       }, 100);
     }
   }, [
-    isDarkMode,
     preferencePersistStore.theme,
     preferencePersistStore.isReady,
   ]);

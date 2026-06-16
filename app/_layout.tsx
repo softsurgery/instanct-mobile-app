@@ -6,7 +6,10 @@ import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { View } from "react-native";
-import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import "../global.css";
 import "../i18n";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -21,7 +24,7 @@ function RootLayoutContent() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View
-        className={cn("flex-1 light dark:dark")}
+        className={cn("flex-1 light dark:dark bg-background")}
         style={{ paddingBottom: insets.bottom }}
       >
         <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
