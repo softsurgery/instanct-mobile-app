@@ -31,12 +31,6 @@ interface SettingsSection {
 }
 
 export const SettingsPortal = ({ className }: SettingsPortalProps) => {
-  const primaryCardClass =
-    "rounded-2xl border border-primary/10 bg-primary/5 shadow-sm overflow-hidden";
-
-  const destructiveCardClass =
-    "rounded-2xl border border-destructive/60 bg-destructive/5 shadow-sm overflow-hidden";
-
   const settingsRows: SettingsSection[] = [
     {
       key: "account",
@@ -179,27 +173,25 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
       <StableScrollView className="flex-1 bg-background">
         <View className="flex flex-col">
           <View className="px-4 mb-4">
-            <View className={cn("mt-4", primaryCardClass)}>
-              <View className="flex flex-col justify-between p-4">
-                <View className="flex flex-row justify-between items-center w-full">
-                  <Text variant="h4">
-                    {identifyUser(currentUser) || "Your account"}
-                  </Text>
-
-                  {currentUser?.username ? (
-                    <Badge variant="outline" className="self-start">
-                      <Text className="uppercase tracking-wide">
-                        @{currentUser.username}
-                      </Text>
-                    </Badge>
-                  ) : null}
-                </View>
-
-                <Text variant="muted">
-                  Signed in and synced across devices. Make changes that feel
-                  personal.
+            <View className="flex flex-col justify-between p-4">
+              <View className="flex flex-row justify-between items-center w-full">
+                <Text variant="h4">
+                  {identifyUser(currentUser) || "Your account"}
                 </Text>
+
+                {currentUser?.username ? (
+                  <Badge variant="outline" className="self-start">
+                    <Text className="uppercase tracking-wide">
+                      @{currentUser.username}
+                    </Text>
+                  </Badge>
+                ) : null}
               </View>
+
+              <Text variant="muted">
+                Signed in and synced across devices. Make changes that feel
+                personal.
+              </Text>
             </View>
           </View>
 
@@ -227,7 +219,7 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
             </View>
           ))}
           <View className="px-4 mt-4">
-            <View className={cn(destructiveCardClass, "mb-10")}>
+            <View className={cn("bg-card mb-10 rounded-xl")}>
               <View className="px-4 pt-4 pb-2">
                 <Text className="text-lg font-semibold">Session</Text>
                 <Text className="text-sm text-muted-foreground mt-1">
