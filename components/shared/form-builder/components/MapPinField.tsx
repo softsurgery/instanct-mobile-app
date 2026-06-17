@@ -203,7 +203,7 @@ export default function MapPinField({
           height: "75%",
         }}
       >
-        <View className="mb-8">
+        <View className="mb-8 flex-1">
           {/* Header */}
           <View className="flex-row items-center justify-between mb-3">
             <Text className="text-lg font-semibold text-foreground">
