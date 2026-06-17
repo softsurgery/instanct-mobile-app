@@ -26,7 +26,6 @@ import { Loader } from "../shared/Loader";
 import { createMaterialTopTabNavigator } from "expo-router/js-top-tabs";
 import { AboutTab } from "./sections/AboutTab";
 import { CareerTab } from "./sections/CareerTab";
-import { InterestsTab } from "./sections/InterestsTab";
 import { RenderSection } from "./sections/RenderSection";
 import { PhotoPreview } from "../shared/PhotoPreview";
 import { useUploadMutation } from "@/hooks/useUploadMutation";

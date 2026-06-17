@@ -159,10 +159,6 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
   const [autoSavePhotos, setAutoSavePhotos] = React.useState(false);
 
   React.useEffect(() => {
-    setNickname(identification);
-  }, [identification]);
-
-  React.useEffect(() => {
     const fetchMessages = async () => {
       try {
         if (!Number.isFinite(conversationId) || conversationId <= 0) {
@@ -392,7 +388,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
           <Text className="text-foreground text-xl font-bold">{nickname}</Text>
         </Pressable>
 
-        <View className="px-4 pt-6 pb-2">
+        {/* <View className="px-4 pt-6 pb-2">
           <Text className="text-primary text-sm font-semibold uppercase tracking-wider">
             Customization
           </Text>
@@ -421,11 +417,11 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
               )
             }
           />
-        </View>
+        </View> */}
 
         <View className="px-4 pt-6 pb-2">
           <Text className="text-primary text-sm font-semibold uppercase tracking-wider">
-            Other actions
+            Content actions
           </Text>
         </View>
         <View className="bg-card mx-4 rounded-2xl overflow-hidden">
@@ -439,19 +435,19 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
               })
             }
           />
-          <ConversationDetailsRow
+          {/* <ConversationDetailsRow
             icon={Download}
             label="Save photos automatically"
             toggleValue={autoSavePhotos}
             onToggle={setAutoSavePhotos}
             showChevron={false}
-          />
+          /> */}
           <ConversationDetailsRow
             icon={Search}
             label="Search in conversation"
             onPress={() => setIsSearching(true)}
           />
-          <ConversationDetailsRow
+          {/* <ConversationDetailsRow
             icon={Bell}
             label="Sounds and notifications"
             onPress={() =>
@@ -460,7 +456,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
                 "Detailed settings coming soon.",
               )
             }
-          />
+          /> */}
         </View>
 
         <View className="px-4 pt-6 pb-2">
