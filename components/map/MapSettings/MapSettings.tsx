@@ -59,14 +59,14 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
     mapStore.setNested("draftSettings.radius", value);
   }, []);
 
-  const savedRadiusRef = React.useRef(mapStore.settings.radius);
+  const [initialRadius] = React.useState(mapStore.settings.radius);
 
   const StableRadiusRow = React.useMemo(() => {
     return function RadiusRow() {
       const ms = useMapStore();
       return (
         <RadiusSlider
-          initialValue={savedRadiusRef.current}
+          initialValue={initialRadius}
           rangeMinValue={ms.parameters.rangeMin}
           rangeMaxValue={ms.parameters.rangeMax}
           onValueChange={handleDraftRadiusChange}
@@ -74,7 +74,7 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
         />
       );
     };
-  }, [handleDraftRadiusChange, step]);
+  }, [handleDraftRadiusChange, step, initialRadius]);
 
   const settingsRows: SettingsSection[] = [
     {

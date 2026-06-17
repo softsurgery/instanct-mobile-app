@@ -55,23 +55,19 @@ export const MapPortal = ({ className }: MapPortalProps) => {
     longitude: 0,
   };
 
-  if (!initialized || !mapStore.location) {
-    return (
-      <View
-        className={cn(
-          "flex-1 items-center justify-center bg-background",
-          className,
-        )}
-      >
-        <Loader size="large" />
-      </View>
-    );
-  }
-
   return (
     <View className={cn("flex-1 bg-background", className)}>
       <View className="absolute inset-0 border-y border-border top-0">
-        {activeSession ? (
+        {activeSession && (!initialized || !mapStore.location) ? (
+          <View
+            className={cn(
+              "flex-1 items-center justify-center bg-background",
+              className,
+            )}
+          >
+            <Loader size="large" />
+          </View>
+        ) : activeSession ? (
           <MapRenderer
             className="flex-1"
             latitude={latitude}
