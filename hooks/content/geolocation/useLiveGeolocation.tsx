@@ -5,6 +5,7 @@ import { NearbyUser } from "@/types";
 import * as Location from "expo-location";
 import React from "react";
 import { Socket } from "socket.io-client";
+import { useShallow } from "zustand/react/shallow";
 import { useLiveGeolocationParameters } from "./useLiveGeolocationParamters";
 
 interface useLiveGeolocationOptions {
@@ -26,13 +27,15 @@ export function useLiveGeolocation(
   const connected = useMapStore((s) => s.connected);
   const loading = useMapStore((s) => s.loading);
   const reconnection = useMapStore((s) => s.reconnection);
-  const nearbyUsers = useMapStore((s) => s.nearbyUsers);
-  const users = useMapStore((s) => s.users);
   const location = useMapStore((s) => s.location);
   const restartSignal = useMapStore((s) => s.restartSignal);
   const hasInitializedParameters = useMapStore(
     (s) => s.hasInitializedParameters,
   );
+
+  // Use shallow comparison for arrays to avoid re-renders when content hasn't changed
+  const nearbyUsers = useMapStore(useShallow((s) => s.nearbyUsers));
+  const users = useMapStore(useShallow((s) => s.users));
 
   const socketRef = React.useRef<Socket | null>(null);
   const intervalRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
@@ -227,4 +230,3 @@ export function useLiveGeolocation(
     refetchMapConfiguration,
   };
 }
-

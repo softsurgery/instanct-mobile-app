@@ -183,32 +183,44 @@ export const useMapStore = create<MapStore>((set, get) => ({
   setUsers: (users: ResponseUserDto[]) => {
     set((state) => {
       const updated = [...state.users];
+      let changed = false;
 
       for (const newUser of users) {
         const index = updated.findIndex((u) => u.id === newUser.id);
         if (index !== -1) {
-          updated[index] = { ...updated[index], ...newUser };
+          if (!isEqual(updated[index], newUser)) {
+            updated[index] = { ...updated[index], ...newUser };
+            changed = true;
+          }
         } else {
           updated.push(newUser);
+          changed = true;
         }
       }
 
+      if (!changed) return state;
       return { ...state, users: updated };
     });
   },
   setNearbyUsers: (users: NearbyUser[]) => {
     set((state) => {
       const updated = [...state.nearbyUsers];
+      let changed = false;
 
       for (const newUser of users) {
         const index = updated.findIndex((u) => u.userId === newUser.userId);
         if (index !== -1) {
-          updated[index] = { ...updated[index], ...newUser };
+          if (!isEqual(updated[index], newUser)) {
+            updated[index] = { ...updated[index], ...newUser };
+            changed = true;
+          }
         } else {
           updated.push(newUser);
+          changed = true;
         }
       }
 
+      if (!changed) return state;
       return { ...state, nearbyUsers: updated };
     });
   },
@@ -222,6 +234,11 @@ export const useMapStore = create<MapStore>((set, get) => ({
         data.updatedAt &&
         data.updatedAt < existing.updatedAt
       ) {
+        return state;
+      }
+
+      // If existing and data is identical, bail out
+      if (existing && isEqual(existing, data)) {
         return state;
       }
 
