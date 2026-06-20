@@ -1,3 +1,4 @@
+import { SegmentedToggle } from "@/components/shared/SegmentedToggle";
 import {
   CustomFieldProps,
   Field,
@@ -28,8 +29,7 @@ export const useCreateNewRequestFormStructure = ({
     variant: FieldVariant.TEXTAREA,
     required: true,
     placeholder: "Écrivez un message au destinataire",
-    description:
-      "Ce message sera envoyé au destinataire avec votre demande.",
+    description: "Ce message sera envoyé au destinataire avec votre demande.",
     error: store.errors?.message?.[0] || "",
     props: {
       editable: !isPending,
@@ -51,56 +51,25 @@ export const useCreateNewRequestFormStructure = ({
     className: "mt-4",
     props: {
       children: (
-        <View className="-mt-2 pb-2 flex-row gap-2">
-          <Pressable
-            onPress={() => {
+        <SegmentedToggle
+          disabled={isPending}
+          value={store.flags.mentionTimeAndPlace ? "choose" : "let-decide"}
+          onChange={(next) => {
+            if (next === "choose") {
               store.setNested("flags.mentionTimeAndPlace", true);
+            } else {
+              store.setNested("flags.mentionTimeAndPlace", false);
+              store.setNested("createDto.time", undefined);
               store.setNested("createDto.location", undefined);
               store.setNested("createDto.latitude", undefined);
               store.setNested("createDto.longitude", undefined);
-              store.setNested("createDto.time", undefined);
-            }}
-            className={cn(
-              "flex-1 py-3 px-4 rounded-lg items-center justify-center border-2",
-              store.flags.mentionTimeAndPlace
-                ? "bg-primary border-primary"
-                : "bg-transparent border-border",
-            )}
-          >
-            <Text
-              className={cn(
-                "font-semibold",
-                store.flags.mentionTimeAndPlace
-                  ? "text-primary-foreground"
-                  : "text-foreground",
-              )}
-            >
-              Je choisis
-            </Text>
-          </Pressable>
-          <Pressable
-            onPress={() => {
-              store.setNested("flags.mentionTimeAndPlace", false);
-            }}
-            className={cn(
-              "flex-1 py-3 px-4 rounded-lg items-center justify-center border-2",
-              !store.flags.mentionTimeAndPlace
-                ? "bg-primary border-primary"
-                : "bg-transparent border-border",
-            )}
-          >
-            <Text
-              className={cn(
-                "font-semibold",
-                !store.flags.mentionTimeAndPlace
-                  ? "text-primary-foreground"
-                  : "text-foreground",
-              )}
-            >
-              Laisser décider
-            </Text>
-          </Pressable>
-        </View>
+            }
+          }}
+          options={[
+            { label: "Je choisis", value: "choose" },
+            { label: "Laisser décider", value: "let-decide" },
+          ]}
+        />
       ),
     },
   };
