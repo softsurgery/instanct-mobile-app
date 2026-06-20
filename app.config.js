@@ -4,7 +4,7 @@ export default ({ config }) => ({
   slug: "instanct-mobile-app",
   version: "1.0.0",
   orientation: "portrait",
-  icon: "./assets/images/logo.png",
+  icon: "./assets/images/icon.png",
   scheme: "instanctmobileapp",
   userInterfaceStyle: "automatic",
   assetBundlePatterns: ["**/*"],
@@ -14,6 +14,9 @@ export default ({ config }) => ({
     bundleIdentifier: "com.softsurgery.instanctmobileapp",
     infoPlist: {
       UIDesignRequiresCompatibility: true,
+      NSAppTransportSecurity: {
+        NSAllowsArbitraryLoads: true
+      }
     },
   },
   android: {
@@ -60,7 +63,8 @@ export default ({ config }) => ({
       {
         "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
       }
-    ]
+    ],
+    "expo-video"
   ],
   experiments: {
     typedRoutes: true,
