@@ -26,7 +26,7 @@ export const LanguageSwitcher = ({ classNames }: LanguageSwitcherProps) => {
       options={[
         { label: t("language.options.en"), value: "en" },
         { label: t("language.options.fr"), value: "fr" },
-        { label: t("language.options.ar"), value: "ar" },
+        // { label: t("language.options.ar"), value: "ar" },
       ]}
     />
   );
