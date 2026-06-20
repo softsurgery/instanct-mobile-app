@@ -227,23 +227,25 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
                 </Text>
               </View>
 
-              <View className="px-4 pb-4 flex flex-col gap-3">
+              <View className="px-4 pb-4 mt-4 flex flex-col gap-3">
                 <Button
                   variant="outline"
-                  className="flex flex-row items-center justify-center gap-2"
+                  size="lg"
+                  className="flex flex-row items-center justify-center gap-2 rounded-xl"
                   onPress={logout}
                 >
-                  <Icon as={LogOut} size={18} className="text-foreground" />
-                  <Text>Logout</Text>
+                  <Icon as={LogOut} size={18} />
+                  <Text className="text-md font-bold">Logout</Text>
                 </Button>
 
                 <Button
                   variant="destructive"
-                  className="flex flex-row items-center justify-center gap-2"
+                  size="lg"
+                  className="flex flex-row items-center justify-center gap-2 rounded-xl"
                   onPress={() => Alert.alert("Delete account", "Coming soon!")}
                 >
                   <Icon as={Trash2} size={18} color="white" />
-                  <Text>Delete Account</Text>
+                  <Text className="text-md font-bold">Delete Account</Text>
                 </Button>
               </View>
             </View>

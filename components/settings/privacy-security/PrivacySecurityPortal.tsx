@@ -37,7 +37,7 @@ export const PrivacySecurityPortal = ({
 }: PrivacySecurityPortalProps) => {
   const { t } = useTranslation();
   const cardClass =
-    "border border-b-border border-t-border bg-card shadow-sm overflow-hidden";
+    "border-b-border border-t-border bg-background";
 
   const sections: SettingsSection[] = [
     {
@@ -121,11 +121,11 @@ export const PrivacySecurityPortal = ({
         ]}
       />
 
-      <StableScrollView className="bg-background">
+      <StableScrollView className="bg-background ">
         <View className="flex flex-col">
           {sections.map((section) => (
             <View key={section.key} className={cardClass}>
-              <View className="px-8 py-4 bg-background/75 mb-4">
+              <View className="px-8 py-4 bg-card mb-4">
                 <Text className="text-lg font-semibold">{section.title}</Text>
                 <Text className="text-sm text-muted-foreground mt-1">
                   {section.description}
