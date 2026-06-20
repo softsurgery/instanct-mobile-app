@@ -7,6 +7,7 @@ import { Play } from "lucide-react-native";
 import React from "react";
 import { Pressable, View } from "react-native";
 import { api } from "~/api";
+import { VideoPreview } from "~/components/shared/VideoPreview";
 
 export const getMessageUploadId = (message: ResponseMessageDto) => {
   const upload = message.uploads?.[0]?.upload;
@@ -65,6 +66,10 @@ export const MediaThumbnail = React.memo(function MediaThumbnail({
     </View>
   );
 
+  if (isVideo && mediaSource) {
+    return <VideoPreview source={mediaSource}>{content}</VideoPreview>;
+  }
+
   if (!isVideo && mediaSource && onPress) {
     return (
       <Pressable onPress={onPress} accessibilityRole="button">
@@ -75,4 +80,3 @@ export const MediaThumbnail = React.memo(function MediaThumbnail({
 
   return content;
 });
-
