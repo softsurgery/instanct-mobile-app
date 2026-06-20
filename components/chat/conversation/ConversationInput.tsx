@@ -70,6 +70,7 @@ export const ConversationInput = ({
       <View
         className={cn(
           "bg-background/95 border-t border-border py-2",
+          "pb-4",
           className,
         )}
         style={{

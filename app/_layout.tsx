@@ -5,7 +5,7 @@ import { PortalHost } from "@rn-primitives/portal";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
@@ -27,7 +27,7 @@ function RootLayoutContent() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <View
           className={cn("flex-1 light dark:dark bg-background")}
-          style={{ paddingBottom: insets.bottom }}
+          style={{ paddingBottom: Platform.OS === "ios" ? 0 : insets.bottom }}
         >
           <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
           <Stack

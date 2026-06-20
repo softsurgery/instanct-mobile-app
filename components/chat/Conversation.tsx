@@ -1,6 +1,6 @@
 import { formatDistanceToNow } from "date-fns";
 import React from "react";
-import { ActivityIndicator, FlatList, View } from "react-native";
+import { ActivityIndicator, FlatList, Platform, View } from "react-native";
 
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { ChatBubble } from "./conversation/ChatBubble";
@@ -36,7 +36,10 @@ export const Conversation = ({ id }: ConversationProps) => {
 
   const fakeView = useAnimatedStyle(() => {
     return {
-      height: Math.max(Math.abs(height.value) - insets.bottom, 0),
+      height:
+        Platform.OS === "ios"
+          ? height.value
+          : Math.max(Math.abs(height.value) - insets.bottom, 0),
     };
   }, [insets.bottom]);
 
