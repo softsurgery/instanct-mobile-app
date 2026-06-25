@@ -13,6 +13,7 @@ import {
 import { UserStore } from "@/stores/useUserStore";
 import { Pressable, View } from "react-native";
 import { Text } from "@/components/ui/text";
+import { useTranslation } from "react-i18next";
 
 interface useUpdateProfileFormStructureProps {
   store: UserStore;
@@ -32,12 +33,15 @@ export const useUpdateProfileFormStructure = ({
   isProfilePictureUploadPending,
   isPending = false,
 }: useUpdateProfileFormStructureProps) => {
+  const { t } = useTranslation("settings");
   // picture
   const pictureField: Field<PictureFieldProps> = {
     id: "picture",
-    label: "Profile Picture",
+    label: t("settings.account.screens.profile.form.profile-picture"),
     variant: FieldVariant.PICTURE,
-    description: "Upload a profile picture to personalize your account.",
+    description: t(
+      "settings.account.screens.profile.form.descriptions.profile-picture",
+    ),
     className: "h-40 w-40 rounded-full mt-2",
     wrapperClassName: "flex flex-row items-center justify-center",
     props: {
@@ -74,7 +78,9 @@ export const useUpdateProfileFormStructure = ({
             }}
             className="mt-2 rounded-full border border-border px-3 py-2 active:bg-muted"
           >
-            <Text className="text-sm font-bold">Remove Picture</Text>
+            <Text className="text-sm font-bold">
+              {t("settings.account.screens.profile.actions.remove-picture")}
+            </Text>
           </Pressable>
         </View>
       ),
@@ -84,14 +90,14 @@ export const useUpdateProfileFormStructure = ({
   //name
   const firstNameField: Field<TextFieldProps> = {
     id: "firstName",
-    label: "First Name",
+    label: t("settings.account.screens.profile.form.first-name"),
     variant: FieldVariant.TEXT,
     required: true,
-    placeholder: "Enter your first name",
-    disabled: isPending,
-    description: "Your first name (e.g., John).",
+    placeholder: t("settings.account.screens.profile.form.placeholders.first-name"),
+    description: t("settings.account.screens.profile.form.descriptions.first-name"),
     error: store?.errors?.firstName?.[0],
     props: {
+      editable: !isPending,
       value: store?.updateDto?.firstName,
       onChangeText: (value: string) => {
         store.setNested("updateDto.firstName", value);
@@ -103,14 +109,14 @@ export const useUpdateProfileFormStructure = ({
   //surname
   const lastNameField: Field<TextFieldProps> = {
     id: "lastName",
-    label: "Last Name",
+    label: t("settings.account.screens.profile.form.last-name"),
     variant: FieldVariant.TEXT,
     required: true,
-    placeholder: "Enter your last name",
-    disabled: isPending,
-    description: "Your last name (e.g., Doe).",
+    placeholder: t("settings.account.screens.profile.form.placeholders.last-name"),
+    description: t("settings.account.screens.profile.form.descriptions.last-name"),
     error: store?.errors?.lastName?.[0],
     props: {
+      editable: !isPending,
       value: store?.updateDto?.lastName,
       onChangeText: (value: string) => {
         store.setNested("updateDto.lastName", value);
@@ -122,12 +128,12 @@ export const useUpdateProfileFormStructure = ({
   // date of birth
   const dateOfBirthField: Field<DateFieldProps> = {
     id: "dateOfBirth",
-    label: "Date of Birth",
+    label: t("settings.account.screens.profile.form.date-of-birth"),
     variant: FieldVariant.DATE,
-    disabled: isPending,
-    description: "Let us know when you celebrate!",
+    description: t("settings.account.screens.profile.form.descriptions.date-of-birth"),
     error: store?.errors?.dateOfBirth?.[0],
     props: {
+      editable: !isPending,
       value: store?.updateDto?.dateOfBirth,
       onDateChange: (value: Date) => {
         store.setNested("updateDto.dateOfBirth", value);
@@ -139,13 +145,13 @@ export const useUpdateProfileFormStructure = ({
   //bio
   const bioField: Field<TextareaFieldProps> = {
     id: "bio",
-    label: "Bio",
+    label: t("settings.account.screens.profile.form.bio"),
     variant: FieldVariant.TEXTAREA,
-    placeholder: "Write a short bio...",
-    disabled: isPending,
-    description: "Tell us a little bit about yourself.",
+    placeholder: t("settings.account.screens.profile.form.placeholders.bio"),
+    description: t("settings.account.screens.profile.form.descriptions.bio"),
     error: store?.errors?.bio?.[0],
     props: {
+      editable: !isPending,
       value: store?.updateDto?.bio,
       onChangeText: (value: string) => {
         store.setNested("updateDto.bio", value);
@@ -157,12 +163,12 @@ export const useUpdateProfileFormStructure = ({
   //gender
   const genderField: Field<SelectFieldProps> = {
     id: "gender",
-    label: "Gender",
+    label: t("settings.account.screens.profile.form.gender"),
     variant: FieldVariant.SELECT,
-    disabled: isPending,
-    description: "Specifying your gender helps us personalize your experience.",
+    description: t("settings.account.screens.profile.form.descriptions.gender"),
     error: store?.errors?.gender?.[0],
     props: {
+      editable: !isPending,
       value: store?.updateDto?.gender?.toString(),
       onSelect: (value: string) => {
         store.setNested("updateDto.gender", value);
@@ -178,12 +184,11 @@ export const useUpdateProfileFormStructure = ({
   //website
   const websiteField: Field<TextFieldProps> = {
     id: "website",
-    label: "Website",
+    label: t("settings.account.screens.profile.form.website"),
     variant: FieldVariant.TEXT,
     required: false,
-    placeholder: "Enter your personal or professional website URL",
-    description:
-      "Share a link to your personal blog, portfolio, or professional website.",
+    placeholder: t("settings.account.screens.profile.form.placeholders.website"),
+    description: t("settings.account.screens.profile.form.descriptions.website"),
     error: store?.errors?.website?.[0],
     props: {
       value: store?.updateDto?.website,
@@ -197,12 +202,11 @@ export const useUpdateProfileFormStructure = ({
   //linkedin
   const linkedinField: Field<TextFieldProps> = {
     id: "linkedin",
-    label: "LinkedIn",
+    label: t("settings.account.screens.profile.form.linkedin"),
     variant: FieldVariant.TEXT,
     required: false,
-    placeholder: "Enter your LinkedIn profile URL",
-    description:
-      "Connect your LinkedIn profile to showcase your professional experience and network.",
+    placeholder: t("settings.account.screens.profile.form.placeholders.linkedin"),
+    description: t("settings.account.screens.profile.form.descriptions.linkedin"),
     error: store?.errors?.linkedin?.[0],
     props: {
       value: store?.updateDto?.linkedin,
@@ -214,10 +218,10 @@ export const useUpdateProfileFormStructure = ({
   };
 
   const structure: FormStructure = {
-    title: "Update Profile",
+    title: t("settings.account.screens.profile.title"),
     fieldsets: [
       {
-        title: "Personal Information",
+        title: t("settings.account.screens.profile.form.personal-information"),
         rows: [
           {
             id: 1,

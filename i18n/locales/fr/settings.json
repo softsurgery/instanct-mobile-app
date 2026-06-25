@@ -1,0 +1,145 @@
+{
+  "settings": {
+    "general": {
+      "description": "Connecté et synchronisé sur tous vos appareils. Effectuez des modifications qui vous ressemblent."
+    },
+    "account": {
+      "title": "Compte",
+      "description": "Gardez vos informations de profil et de sécurité à jour.",
+      "screens": {
+        "profile": {
+          "title": "Mettre à jour le profil",
+          "description": "Mettez à jour les informations de votre profil.",
+          "form": {
+            "profile-picture": "Photo de profil",
+            "first-name": "Prénom",
+            "last-name": "Nom",
+            "date-of-birth": "Date de naissance",
+            "bio": "Biographie",
+            "gender": "Genre",
+            "website": "Site web",
+            "linkedin": "LinkedIn",
+            "placeholders": {
+              "first-name": "Entrez votre prénom",
+              "last-name": "Entrez votre nom",
+              "date-of-birth": "Entrez votre date de naissance",
+              "bio": "Parlez-nous de vous",
+              "gender": "Sélectionnez votre genre",
+              "website": "Entrez l’URL de votre site web",
+              "linkedin": "Entrez l’URL de votre profil LinkedIn"
+            },
+            "descriptions": {
+              "profile-picture": "Téléversez une photo de profil pour personnaliser votre compte.",
+              "first-name": "Votre prénom tel qu’il apparaît sur votre profil.",
+              "last-name": "Votre nom tel qu’il apparaît sur votre profil.",
+              "date-of-birth": "Célébrons votre anniversaire !",
+              "bio": "Une courte description à votre sujet qui sera visible sur votre profil.",
+              "gender": "Votre genre est utilisé pour la récupération du compte et les notifications.",
+              "website": "L’URL de votre site web est utilisée pour la récupération du compte et les notifications.",
+              "linkedin": "L’URL de votre profil LinkedIn est utilisée pour la récupération du compte et les notifications."
+            }
+          },
+          "actions": {
+            "update-profile": "Mettre à jour le profil",
+            "update-profile-pending": "Mise à jour...",
+            "remove-picture": "Supprimer la photo"
+          }
+        },
+        "privacy-security": {
+          "title": "Confidentialité et sécurité",
+          "description": "Gérez vos paramètres de confidentialité et de sécurité.",
+          "screens": {
+            "account-security": {
+              "title": "Sécurité du compte",
+              "description": "Gérez les actions de sécurité les plus importantes de votre compte.",
+              "change-email": {
+                "title": "Modifier l’adresse e-mail",
+                "description": "Mettez à jour l’adresse e-mail associée à votre compte."
+              },
+              "change-password": {
+                "title": "Modifier le mot de passe",
+                "description": "Mettez à jour votre mot de passe afin de protéger votre compte."
+              },
+              "two-factor-authentication": {
+                "title": "Authentification à deux facteurs",
+                "description": "Ajoutez une couche de protection supplémentaire lors de la connexion."
+              }
+            },
+            "privacy": {
+              "title": "Confidentialité",
+              "description": "Gérez vos paramètres de confidentialité.",
+              "data-visibility": {
+                "title": "Visibilité des données",
+                "description": "Contrôlez qui peut voir votre profil et votre activité."
+              },
+              "download-data": {
+                "title": "Télécharger vos données",
+                "description": "Exportez une copie des informations de votre compte."
+              }
+            }
+          }
+        }
+      }
+    },
+    "preferences": {
+      "title": "Préférences",
+      "description": "Personnalisez votre expérience dans l’application.",
+      "screens": {
+        "language": {
+          "title": "Langue",
+          "description": "Choisissez votre langue préférée pour l’application."
+        },
+        "theme": {
+          "title": "Thème",
+          "description": "Sélectionnez votre thème préféré pour l’application."
+        }
+      }
+    },
+    "support": {
+      "title": "Assistance",
+      "description": "Signalez des problèmes ou envoyez-nous vos commentaires.",
+      "screens": {
+        "report-bug": {
+          "title": "Signaler un bug",
+          "description": "Aidez-nous à améliorer l’application en signalant les bugs que vous rencontrez."
+        },
+        "send-feedback": {
+          "title": "Envoyer un commentaire",
+          "description": "Votre avis nous intéresse ! Partagez vos idées et suggestions avec nous."
+        },
+        "faqs": {
+          "title": "Questions fréquentes",
+          "description": "Trouvez des réponses aux questions fréquemment posées sur l’application."
+        }
+      }
+    },
+    "info-legal": {
+      "title": "Informations et mentions légales",
+      "description": "Découvrez davantage l’application et ses informations légales.",
+      "screens": {
+        "about": {
+          "title": "À propos d’Instanct",
+          "description": "Découvrez davantage l’application et ses fonctionnalités."
+        },
+        "terms-of-service": {
+          "title": "Conditions d’utilisation",
+          "description": "Lisez les conditions générales qui régissent votre utilisation de l’application."
+        },
+        "privacy-policy": {
+          "title": "Politique de confidentialité",
+          "description": "Comprenez comment nous collectons, utilisons et protégeons vos informations personnelles."
+        }
+      }
+    },
+    "session": {
+      "title": "Session",
+      "description": "Déconnectez-vous ou supprimez votre compte.",
+      "actions": {
+        "sign-out": "Se déconnecter",
+        "remove-account": "Supprimer le compte"
+      }
+    }
+  },
+  "map-settings": {}
+}
+

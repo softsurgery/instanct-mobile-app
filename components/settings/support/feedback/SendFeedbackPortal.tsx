@@ -73,7 +73,7 @@ export const SendFeedbackPortal = ({ className }: SendFeedbackPortalProps) => {
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
         classNames={{ wrapper: "border-b border-border pb-2" }}
-        title={t("screens.sendFeedback")}
+        title={t("screens.settings.sendFeedback")}
         titleVariant="large"
         reverse
         shortcuts={[
