@@ -1,6 +1,15 @@
 import { formatDistanceToNow } from "date-fns";
 import React from "react";
-import { ActivityIndicator, FlatList, Platform, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  Platform,
+  View,
+  Pressable,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
+} from "react-native";
+import { ChevronDown } from "lucide-react-native";
 
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { ChatBubble } from "./conversation/bubbles/ChatBubble";
@@ -19,20 +28,24 @@ import { useConversationFeatures } from "@/hooks/content/chat/useConversationFea
 import { useSendChatMedia } from "@/hooks/content/chat/useSendChatMedia";
 import { useUserPresence } from "@/hooks/content/chat/useUserPresence";
 import { ImageBackground } from "expo-image";
-import { useColorScheme } from "nativewind";
 import { Loader } from "../shared/Loader";
 import { ChatStaticBubble } from "./conversation/bubbles/ChatStaticBubble";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { useGradualAnimation } from "@/hooks/useGradualAnimation";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MessageFlatListItem } from "@/types";
+import { useColorPalette } from "@/hooks/useColorPalette";
 
 interface ConversationProps {
   id: number;
 }
 
 export const Conversation = ({ id }: ConversationProps) => {
-  const { colorScheme } = useColorScheme();
+  const { colorScheme, palette } = useColorPalette();
   const { height } = useGradualAnimation();
   const insets = useSafeAreaInsets();
 
@@ -78,6 +91,40 @@ export const Conversation = ({ id }: ConversationProps) => {
   const { currentUser } = useCurrentUser();
 
   const flatListRef = React.useRef<FlatList>(null);
+  const [showScrollDown, setShowScrollDown] = React.useState(false);
+  const scrollDownOpacity = useSharedValue(0);
+
+  React.useEffect(() => {
+    scrollDownOpacity.value = withTiming(showScrollDown ? 1 : 0, {
+      duration: 200,
+    });
+  }, [showScrollDown, scrollDownOpacity]);
+
+  const animatedScrollDownStyle = useAnimatedStyle(() => {
+    return {
+      opacity: scrollDownOpacity.value,
+      transform: [
+        {
+          translateY: withTiming(showScrollDown ? 0 : 20, { duration: 200 }),
+        },
+      ],
+    };
+  });
+
+  const handleScroll = React.useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const offsetY = event.nativeEvent.contentOffset.y;
+      const shouldShow = offsetY > 200;
+      if (shouldShow !== showScrollDown) {
+        setShowScrollDown(shouldShow);
+      }
+    },
+    [showScrollDown],
+  );
+
+  const scrollToBottom = React.useCallback(() => {
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+  }, []);
 
   const user = React.useMemo(() => {
     if (!conversation || !currentUser) return null;
@@ -153,70 +200,93 @@ export const Conversation = ({ id }: ConversationProps) => {
               </Text>
             </View>
           ) : (
-            <FlatList
-              ref={flatListRef}
-              data={listData}
-              inverted
-              contentContainerStyle={{ paddingVertical: 16 }}
-              keyExtractor={(item) =>
-                item.type === "header"
-                  ? item.key
-                  : item.type === "pending-media"
+            <View className="flex-1">
+              <FlatList
+                ref={flatListRef}
+                data={listData}
+                inverted
+                contentContainerStyle={{ paddingVertical: 16 }}
+                onScroll={handleScroll}
+                scrollEventThrottle={16}
+                keyExtractor={(item) =>
+                  item.type === "header"
                     ? item.key
-                    : `m-${item.message.id}`
-              }
-              renderItem={({ item }) => {
-                if (item.type === "header") {
-                  return (
-                    <View className="items-center py-3">
-                      <View className="bg-card/80 px-4 py-1.5 rounded-full">
-                        <Text className="text-xs font-semibold text-muted-foreground">
-                          {item.date}
-                        </Text>
-                      </View>
-                    </View>
-                  );
+                    : item.type === "pending-media"
+                      ? item.key
+                      : `m-${item.message.id}`
                 }
+                renderItem={({ item }) => {
+                  if (item.type === "header") {
+                    return (
+                      <View className="items-center py-3">
+                        <View className="bg-card/80 px-4 py-1.5 rounded-full">
+                          <Text className="text-xs font-semibold text-muted-foreground">
+                            {item.date}
+                          </Text>
+                        </View>
+                      </View>
+                    );
+                  }
 
-                if (item.type === "pending-media")
-                  return <ChatMediaBubble pending={item.pending} right />;
+                  if (item.type === "pending-media")
+                    return <ChatMediaBubble pending={item.pending} right />;
 
-                if (item.type === "message")
-                  return (
-                    <ChatBubble
-                      message={item.message.content}
-                      timestamp={item.message.createdAt}
-                      right={item.message.userId === currentUser?.id}
-                    />
-                  );
+                  if (item.type === "message")
+                    return (
+                      <ChatBubble
+                        message={item.message.content}
+                        timestamp={item.message.createdAt}
+                        right={item.message.userId === currentUser?.id}
+                      />
+                    );
 
-                if (item.type === "media")
-                  return (
-                    <ChatMediaBubble
-                      message={item.message}
-                      right={item.message.userId === currentUser?.id}
-                    />
-                  );
+                  if (item.type === "media")
+                    return (
+                      <ChatMediaBubble
+                        message={item.message}
+                        right={item.message.userId === currentUser?.id}
+                      />
+                    );
 
-                return <ChatStaticBubble message={item.message} />;
-              }}
-              onEndReached={loadMore}
-              onEndReachedThreshold={0.3}
-              ListFooterComponent={
-                isMoreMessagesLoading ? (
-                  <View className="py-4 items-center">
-                    <ActivityIndicator size="small" />
+                  return <ChatStaticBubble message={item.message} />;
+                }}
+                onEndReached={loadMore}
+                onEndReachedThreshold={0.3}
+                ListFooterComponent={
+                  isMoreMessagesLoading ? (
+                    <View className="py-4 items-center">
+                      <ActivityIndicator size="small" />
+                    </View>
+                  ) : null
+                }
+                ListEmptyComponent={
+                  <View className="flex-1 justify-center items-center py-20">
+                    <Text className="text-muted-foreground text-sm">
+                      No messages yet. Say hello!
+                    </Text>
                   </View>
-                ) : null
-              }
-              ListEmptyComponent={
-                <View className="flex-1 justify-center items-center py-20">
-                  <Text className="text-muted-foreground text-sm">
-                    No messages yet. Say hello!
-                  </Text>
-                </View>
-              }
-            />
+                }
+              />
+              <Animated.View
+                pointerEvents={showScrollDown ? "auto" : "none"}
+                style={[
+                  {
+                    position: "absolute",
+                    right: "45%",
+                    bottom: 16,
+                    zIndex: 50,
+                  },
+                  animatedScrollDownStyle,
+                ]}
+              >
+                <Pressable
+                  onPress={scrollToBottom}
+                  className="bg-card border border-border w-10 h-10 rounded-full items-center justify-center shadow-md active:bg-secondary"
+                >
+                  <ChevronDown size={20} color={palette.foreground} />
+                </Pressable>
+              </Animated.View>
+            </View>
           )}
 
           {/* INPUT */}
