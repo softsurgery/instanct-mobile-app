@@ -1,7 +1,7 @@
 import React from "react";
 import { hslToHex } from "@/lib/theme";
 import { useColorPalette } from "@/hooks/useColorPalette";
-import { Hand, Image as ImageIcon, Video } from "lucide-react-native";
+import { File, Hand, Image as ImageIcon, Video } from "lucide-react-native";
 import { View } from "react-native";
 import ActionSheet, { type ActionSheetRef } from "react-native-actions-sheet";
 import { ChatActionGridItem } from "./ChatActionGridItem";
@@ -53,6 +53,15 @@ export const ConversationInputActionsSheet = React.forwardRef<
       disabled,
     },
     {
+      label: "File",
+      sublabel: "Send file",
+      icon: File,
+      iconColor: "#eab308",
+
+      onPress: () => runAction(onPickVideo),
+      disabled,
+    },
+    {
       label: "Poke",
       sublabel: "Say hello",
       icon: Hand,
@@ -78,17 +87,15 @@ export const ConversationInputActionsSheet = React.forwardRef<
         paddingBottom: 36,
       }}
     >
-      <View className="mb-8">
-        {/* Action grid */}
-        <View className="flex-row flex-wrap pt-4 my-4 gap-y-5">
-          {actions.map((item) => (
-            <ChatActionGridItem
-              key={item.label}
-              {...item}
-              className="flex-none basis-1/4 px-1.5 py-1.5"
-            />
-          ))}
-        </View>
+      {/* Action grid */}
+      <View className="flex-row flex-wrap pt-4 my-4 gap-y-5">
+        {actions.map((item) => (
+          <ChatActionGridItem
+            key={item.label}
+            {...item}
+            className="flex-none basis-1/4 px-1.5 py-1.5"
+          />
+        ))}
       </View>
     </ActionSheet>
   );

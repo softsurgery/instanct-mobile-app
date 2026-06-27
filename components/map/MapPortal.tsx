@@ -79,7 +79,7 @@ export const MapPortal = ({ className }: MapPortalProps) => {
         )}
       </View>
 
-      <StableSafeAreaView className="absolute top-0 left-0 right-0 z-20">
+      <StableSafeAreaView className="absolute top-0 left-0 right-0 z-20 pb-2">
         <ApplicationHeader
           title={t("screens.map")}
           classNames={{

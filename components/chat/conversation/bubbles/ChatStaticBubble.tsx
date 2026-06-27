@@ -5,11 +5,14 @@ import { Pressable } from "react-native";
 import { Text } from "~/components/ui/text";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 
-interface ChatStaticProps {
+interface ChatStaticBubbleProps {
   message: ResponseMessageDto;
   className?: string;
 }
-export const ChatStatic = ({ className, message }: ChatStaticProps) => {
+export const ChatStaticBubble = ({
+  className,
+  message,
+}: ChatStaticBubbleProps) => {
   const { currentUser } = useCurrentUser();
 
   const content = React.useMemo(() => {

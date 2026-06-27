@@ -125,7 +125,7 @@ export const PhotoPreview = ({
   );
 
   return (
-    <>
+    <View className={cn(className)}>
       {trigger}
 
       {hasImageSource && isVisible ? (
@@ -146,6 +146,6 @@ export const PhotoPreview = ({
           )}
         />
       ) : null}
-    </>
+    </View>
   );
 };

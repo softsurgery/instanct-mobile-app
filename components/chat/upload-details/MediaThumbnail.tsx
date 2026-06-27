@@ -8,6 +8,7 @@ import React from "react";
 import { Pressable, View } from "react-native";
 import { api } from "~/api";
 import { VideoPreview } from "~/components/shared/VideoPreview";
+import { VideoThumbnailPreview } from "~/components/shared/VideoThumbnailPreview";
 
 export const getMessageUploadId = (message: ResponseMessageDto) => {
   const upload = message.uploads?.[0]?.upload;
@@ -31,7 +32,8 @@ export const MediaThumbnail = React.memo(function MediaThumbnail({
 
   const mediaSource = React.useMemo(() => {
     if (mediaSourceOverride) return mediaSourceOverride;
-    if (typeof uploadId === "number") return api.upload.getUploadSource(uploadId);
+    if (typeof uploadId === "number")
+      return api.upload.getUploadSource(uploadId);
     return undefined;
   }, [mediaSourceOverride, uploadId]);
 
@@ -40,16 +42,9 @@ export const MediaThumbnail = React.memo(function MediaThumbnail({
       {isVideo ? (
         <View className="flex-1 bg-muted items-center justify-center relative">
           <View className="w-10 h-10 rounded-full items-center justify-center bg-black/50 absolute z-10">
-            <Icon as={Play} size={20} color="white" />
+            <Icon as={Play} size={16} color="white" fill="white" />
           </View>
-          {mediaSource ? (
-            <Image
-              className="w-full h-full"
-              source={mediaSource}
-              contentFit="cover"
-              cachePolicy="memory-disk"
-            />
-          ) : null}
+          {mediaSource ? <VideoThumbnailPreview source={mediaSource} /> : null}
         </View>
       ) : mediaSource ? (
         <Image

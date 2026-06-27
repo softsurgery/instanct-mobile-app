@@ -3,14 +3,15 @@ import React from "react";
 import { ActivityIndicator, FlatList, Platform, View } from "react-native";
 
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
-import { ChatBubble } from "./conversation/ChatBubble";
-import { ChatMediaBubble } from "./conversation/ChatMediaBubble";
+import { ChatBubble } from "./conversation/bubbles/ChatBubble";
+import { ChatMediaBubble } from "./conversation/bubbles/ChatMediaBubble";
 import { ChatHeaderLeft } from "./conversation/ChatHeaderLeft";
 import { ChatHeaderRight } from "./conversation/ChatHeaderRight";
 
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
-import { ConversationInput } from "./conversation/ConversationInput";
+import { ConversationInput } from "./conversation/input/ConversationInput";
+import { ConversationMediaStaging } from "./conversation/ConversationMediaStaging";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { Text } from "~/components/ui/text";
 
@@ -20,10 +21,11 @@ import { useUserPresence } from "@/hooks/content/chat/useUserPresence";
 import { ImageBackground } from "expo-image";
 import { useColorScheme } from "nativewind";
 import { Loader } from "../shared/Loader";
-import { ChatStatic } from "./conversation/ChatStatic";
+import { ChatStaticBubble } from "./conversation/bubbles/ChatStaticBubble";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { useGradualAnimation } from "@/hooks/useGradualAnimation";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { MessageFlatListItem } from "@/types";
 
 interface ConversationProps {
   id: number;
@@ -47,6 +49,7 @@ export const Conversation = ({ id }: ConversationProps) => {
     conversation,
     isConversationPending,
     flattenedMessages,
+    messages,
     isInitialPending,
     isMoreMessagesLoading,
 
@@ -58,8 +61,17 @@ export const Conversation = ({ id }: ConversationProps) => {
     loadMore,
   } = useConversationFeatures({ id });
 
-  const { pickImage, pickVideo, isSendingMedia } = useSendChatMedia({
-    conversationId: id,
+  const {
+    pickImage,
+    pickVideo,
+    stagedMedia,
+    pendingUploads,
+    confirmSendStagedMedia,
+    cancelStagedMedia,
+    removeStagedMedia,
+    addMoreStagedMedia,
+  } = useSendChatMedia({
+    messages,
     onSend: sendMediaMessage,
   });
 
@@ -91,12 +103,23 @@ export const Conversation = ({ id }: ConversationProps) => {
     return "";
   }, [isOnline, lastSeen]);
 
+  const listData = React.useMemo(() => {
+    const pendingItems = pendingUploads.map(
+      (pending): MessageFlatListItem => ({
+        type: "pending-media",
+        key: pending.clientId,
+        pending,
+      }),
+    );
+    return [...pendingItems, ...flattenedMessages];
+  }, [pendingUploads, flattenedMessages]);
+
   const isLoading = isConversationPending || isInitialPending;
 
   return (
     <StableSafeAreaView className="flex-1 bg-card">
       {/* HEADER */}
-      <View className="flex flex-row justify-between items-center px-2 py-2.5 bg-card border-b border-border">
+      <View className="flex flex-row justify-between items-center px-2 py-1 bg-card border-b border-border">
         <ChatHeaderLeft
           id={user?.id as string}
           profilePicture={profilePictures[0]}
@@ -118,7 +141,7 @@ export const Conversation = ({ id }: ConversationProps) => {
           width: "100%",
           height: "100%",
         }}
-        imageStyle={{ opacity: 0.3 }}
+        imageStyle={{ opacity: colorScheme === "dark" ? 0.3 : 1 }}
       >
         <View className="flex-1">
           {/* MESSAGES */}
@@ -132,13 +155,15 @@ export const Conversation = ({ id }: ConversationProps) => {
           ) : (
             <FlatList
               ref={flatListRef}
-              data={flattenedMessages}
+              data={listData}
               inverted
-              keyboardDismissMode="interactive"
-              keyboardShouldPersistTaps="handled"
               contentContainerStyle={{ paddingVertical: 16 }}
               keyExtractor={(item) =>
-                item.type === "header" ? item.key : `m-${item.message.id}`
+                item.type === "header"
+                  ? item.key
+                  : item.type === "pending-media"
+                    ? item.key
+                    : `m-${item.message.id}`
               }
               renderItem={({ item }) => {
                 if (item.type === "header") {
@@ -152,6 +177,9 @@ export const Conversation = ({ id }: ConversationProps) => {
                     </View>
                   );
                 }
+
+                if (item.type === "pending-media")
+                  return <ChatMediaBubble pending={item.pending} right />;
 
                 if (item.type === "message")
                   return (
@@ -170,7 +198,7 @@ export const Conversation = ({ id }: ConversationProps) => {
                     />
                   );
 
-                return <ChatStatic message={item.message} />;
+                return <ChatStaticBubble message={item.message} />;
               }}
               onEndReached={loadMore}
               onEndReachedThreshold={0.3}
@@ -193,18 +221,26 @@ export const Conversation = ({ id }: ConversationProps) => {
 
           {/* INPUT */}
           <ConversationInput
+            className="bg-card"
             input={input}
             setInput={setInput}
             sendMessage={sendMessage}
             sendPoke={sendPoke}
             onPickImage={pickImage}
             onPickVideo={pickVideo}
-            isSendingMedia={isSendingMedia}
             isConversationLocked={!!conversation?.locked}
           />
           <Animated.View style={fakeView} />
         </View>
       </ImageBackground>
+
+      <ConversationMediaStaging
+        stagedMedia={stagedMedia}
+        onConfirm={confirmSendStagedMedia}
+        onCancel={cancelStagedMedia}
+        onRemove={removeStagedMedia}
+        onAddMore={addMoreStagedMedia}
+      />
     </StableSafeAreaView>
   );
 };

@@ -10,10 +10,7 @@ import {
 import { LegendList } from "@legendapp/list";
 import { useQuery } from "@tanstack/react-query";
 import {
-  Bell,
-  Type,
   Image as ImageIcon,
-  Download,
   Search,
   Slash,
   Ban,
@@ -149,14 +146,12 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
     className: "rounded-full",
     wrapperClassName: "rounded-full border border-border",
     fallbacks: [identifyUserAvatar(user)],
-    size: { width: 150, height: 150 },
+    size: { width: 70, height: 70 },
     enabled: !!user,
   });
   const profilePicture = profilePictures[0];
 
-  const [nickname, setNickname] = React.useState(identification);
   const [messages, setMessages] = React.useState<ResponseMessageDto[]>([]);
-  const [autoSavePhotos, setAutoSavePhotos] = React.useState(false);
 
   React.useEffect(() => {
     const fetchMessages = async () => {
@@ -371,7 +366,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
         showsVerticalScrollIndicator={false}
       >
         <Pressable
-          className="flex flex-col items-center gap-4 m-4 pt-4 px-4 rounded-xl"
+          className="flex flex-col items-center gap-4 m-4 p-4 rounded-xl"
           onPress={() => {
             router.push({
               pathname: "/main/profile/inspect-profile",
@@ -382,10 +377,17 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
           <View className="relative">
             {profilePicture}
             {isOnline && (
-              <View className="absolute bottom-0 right-0 w-8 h-8 bg-green-500 border-2 border-card rounded-full" />
+              <View className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-card rounded-full" />
             )}
           </View>
-          <Text className="text-foreground text-xl font-bold">{nickname}</Text>
+          <View>
+            <Text className="text-foreground text-xl font-bold text-center">
+              {identification}
+            </Text>
+            <Text className="text-foreground text-sm text-center">
+              @{user?.username}
+            </Text>
+          </View>
         </Pressable>
 
         {/* <View className="px-4 pt-6 pb-2">

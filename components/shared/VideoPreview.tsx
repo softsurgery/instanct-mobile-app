@@ -83,7 +83,8 @@ const VideoPlayerModal = ({ source, onClose }: VideoPlayerModalProps) => {
           player={player}
           nativeControls
           contentFit="contain"
-          fullscreenOptions={{ enable: true }}
+          fullscreenOptions={{ enable: false }}
+          allowsPictureInPicture={false}
         />
         <Pressable
           onPress={onClose}

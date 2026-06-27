@@ -376,6 +376,7 @@ export const useConversationFeatures = ({
   return {
     conversation,
     flattenedMessages,
+    messages,
     loadMore,
     isConversationPending,
     isInitialPending,
