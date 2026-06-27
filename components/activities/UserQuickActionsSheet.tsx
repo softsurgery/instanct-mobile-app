@@ -1,14 +1,13 @@
 import React from "react";
 import { View } from "react-native";
 import ActionSheet, { type ActionSheetRef } from "react-native-actions-sheet";
-import { useColorScheme } from "nativewind";
 import { Text } from "../ui/text";
 import { Button } from "../ui/button";
 import { Icon } from "../ui/icon";
-import { hslToHex, THEME } from "@/lib/theme";
 import { identifyUser } from "@/lib/user";
 import { ResponseUserDto } from "@/types";
 import { LucideIcon } from "lucide-react-native";
+import { useColorPalette } from "@/hooks/useColorPalette";
 
 export interface QuickAction {
   key: string;
@@ -29,15 +28,9 @@ export const UserQuickActionsSheet = React.forwardRef<
   ActionSheetRef,
   UserQuickActionsSheetProps
 >(({ user, avatar, subtitle, actions }, ref) => {
+  const { palette } = useColorPalette();
   const innerRef = React.useRef<ActionSheetRef>(null);
   React.useImperativeHandle(ref, () => innerRef.current as ActionSheetRef);
-
-  const { colorScheme } = useColorScheme();
-  const isDark = colorScheme === "dark";
-
-  const foreground = hslToHex(
-    isDark ? THEME.dark.foreground : THEME.light.foreground,
-  );
 
   return (
     <ActionSheet
@@ -46,9 +39,7 @@ export const UserQuickActionsSheet = React.forwardRef<
       statusBarTranslucent
       defaultOverlayOpacity={0.45}
       containerStyle={{
-        backgroundColor: isDark
-          ? THEME.dark.background
-          : THEME.light.background,
+        backgroundColor: palette.background,
         borderTopLeftRadius: 24,
         borderTopRightRadius: 24,
         paddingHorizontal: 16,
@@ -56,7 +47,7 @@ export const UserQuickActionsSheet = React.forwardRef<
         paddingBottom: 32,
       }}
     >
-      <View className="mb-8">
+      <View>
         <View className="px-2 my-5">
           {/* identity header */}
           <View className="mb-4 flex-row items-center gap-3">
@@ -66,7 +57,11 @@ export const UserQuickActionsSheet = React.forwardRef<
               </View>
             )}
             <View className="flex-1 ">
-              <Text numberOfLines={1} variant="large" className="text-foreground">
+              <Text
+                numberOfLines={1}
+                variant="large"
+                className="text-foreground"
+              >
                 {identifyUser(user)}
               </Text>
               {!!subtitle && (
@@ -96,7 +91,7 @@ export const UserQuickActionsSheet = React.forwardRef<
                 <Icon
                   as={a.icon as LucideIcon}
                   size={18}
-                  color={a.destructive ? "#ffffff" : foreground}
+                  color={a.destructive ? "#ffffff" : palette.foreground}
                 />
                 <Text className="text-md font-bold">{a.label}</Text>
               </Button>

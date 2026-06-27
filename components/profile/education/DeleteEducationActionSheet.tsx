@@ -1,12 +1,11 @@
 import React from "react";
 import ActionSheet, { type ActionSheetRef } from "react-native-actions-sheet";
-import { useColorScheme } from "nativewind";
-import { THEME } from "~/lib/theme";
 import { View } from "react-native";
 import { Text } from "~/components/ui/text";
 import { Button } from "~/components/ui/button";
 import { Icon } from "~/components/ui/icon";
 import { Trash2 } from "lucide-react-native";
+import { useColorPalette } from "@/hooks/useColorPalette";
 
 interface DeleteEducationActionSheetProps {
   onConfirm: () => void;
@@ -18,8 +17,8 @@ export const DeleteEducationActionSheet = React.forwardRef<
   ActionSheetRef,
   DeleteEducationActionSheetProps
 >(({ onConfirm, onClose, isPending }, ref) => {
-  const { colorScheme } = useColorScheme();
-  const isDarkColorScheme = colorScheme === "dark";
+  const { palette } = useColorPalette();
+
   return (
     <ActionSheet
       ref={ref}
@@ -27,9 +26,7 @@ export const DeleteEducationActionSheet = React.forwardRef<
       statusBarTranslucent
       defaultOverlayOpacity={0.45}
       containerStyle={{
-        backgroundColor: isDarkColorScheme
-          ? THEME.dark.background
-          : THEME.light.background,
+        backgroundColor: palette.background,
         borderTopLeftRadius: 24,
         borderTopRightRadius: 24,
         paddingHorizontal: 16,
@@ -49,8 +46,8 @@ export const DeleteEducationActionSheet = React.forwardRef<
           </View>
 
           <Text className="mt-1 mb-4 text-sm text-muted-foreground">
-            Are you sure you want to delete this education? This action cannot be
-            undone.
+            Are you sure you want to delete this education? This action cannot
+            be undone.
           </Text>
 
           <View className="flex-row items-center gap-2 mt-2">

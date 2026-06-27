@@ -79,7 +79,7 @@ export const ConversationInputActionsSheet = React.forwardRef<
       defaultOverlayOpacity={0.45}
       onClose={handleClose}
       containerStyle={{
-        backgroundColor: hslToHex(palette.background),
+        backgroundColor: palette.background,
         borderTopLeftRadius: 28,
         borderTopRightRadius: 28,
         paddingHorizontal: 16,

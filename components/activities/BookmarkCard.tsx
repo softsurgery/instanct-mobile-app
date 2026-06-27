@@ -17,11 +17,11 @@ import {
   SendIcon,
   UserRound,
 } from "lucide-react-native";
-import { useColorScheme } from "nativewind";
 import {
   UserQuickActionsSheet,
   type QuickAction,
 } from "./UserQuickActionsSheet";
+import { useColorPalette } from "@/hooks/useColorPalette";
 
 interface BookmarkCardProps {
   className?: string;
@@ -36,17 +36,11 @@ export const BookmarkCard = ({
   user,
   onRemoved,
 }: BookmarkCardProps) => {
+  const { palette } = useColorPalette();
   const ids = [user?.pictureId];
   const fallbacks = [identifyUserAvatar(user)];
   const router = useRouter();
-  const { colorScheme } = useColorScheme();
   const sheetRef = React.useRef<ActionSheetRef>(null);
-
-  const mutedFg = hslToHex(
-    colorScheme === "dark"
-      ? THEME.dark.mutedForeground
-      : THEME.light.mutedForeground,
-  );
 
   const { jsxArray: bookmarkImages } = useServerImages({
     ids,
@@ -116,7 +110,7 @@ export const BookmarkCard = ({
         onLongPress={handleLongPress}
         delayLongPress={220}
       >
-        <View className="flex-row items-center gap-3.5 p-3 ">
+        <View className="flex-row items-center gap-3.5 p-3">
           {/* Avatar with brand ring + saved marker */}
           <View className="relative">
             <View
@@ -150,7 +144,7 @@ export const BookmarkCard = ({
               </Text>
             )}
           </View>
-          <Icon as={ChevronRight} size={20} color={mutedFg} />
+          <Icon as={ChevronRight} size={20} color={palette.foreground} />
         </View>
       </TouchableOpacity>
 
