@@ -1,7 +1,7 @@
 import React from "react";
 import { hslToHex } from "@/lib/theme";
 import { useColorPalette } from "@/hooks/useColorPalette";
-import { Hand, Image as ImageIcon, Video } from "lucide-react-native";
+import { File, Hand, Image as ImageIcon, Video } from "lucide-react-native";
 import { View } from "react-native";
 import ActionSheet, { type ActionSheetRef } from "react-native-actions-sheet";
 import { ChatActionGridItem } from "./ChatActionGridItem";
@@ -48,6 +48,15 @@ export const ConversationInputActionsSheet = React.forwardRef<
       sublabel: "Send video",
       icon: Video,
       iconColor: "#8B5CF6",
+
+      onPress: () => runAction(onPickVideo),
+      disabled,
+    },
+    {
+      label: "File",
+      sublabel: "Send file",
+      icon: File,
+      iconColor: "#eab308",
 
       onPress: () => runAction(onPickVideo),
       disabled,

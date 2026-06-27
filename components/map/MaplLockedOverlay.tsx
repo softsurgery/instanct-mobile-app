@@ -4,7 +4,7 @@ import { useColorPalette } from "@/hooks/useColorPalette";
 import { hslToHex } from "@/lib/theme";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import { MapPin } from "lucide-react-native";
+import { MapPinOff } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { Image, StyleSheet, Text, View } from "react-native";
 import Animated, {
@@ -50,7 +50,7 @@ const RadarRing = ({ delay, color }: { delay: number; color: string }) => {
     <Animated.View
       pointerEvents="none"
       style={[
-        StyleSheet.absoluteFillObject,
+        StyleSheet.absoluteFill,
         { borderRadius: 999, borderWidth: 1.5, borderColor: color },
         style,
       ]}
@@ -110,19 +110,19 @@ export const MapLockedOverlay = ({
         source={require("@/assets/images/map-lock.jpg")}
         resizeMode="cover"
         blurRadius={blurRadius}
-        style={StyleSheet.absoluteFillObject}
+        style={StyleSheet.absoluteFill}
       />
       {/* Frost + scrim + bottom atmosphere */}
       <BlurView
         intensity={colorScheme === "dark" ? 24 : 36}
         tint={colorScheme === "dark" ? "dark" : "light"}
         experimentalBlurMethod="dimezisBlurView"
-        style={StyleSheet.absoluteFillObject}
+        style={StyleSheet.absoluteFill}
       />
       <View className="absolute inset-0 bg-background/25" />
       <LinearGradient
         colors={[`${bg}00`, `${bg}99`]}
-        style={StyleSheet.absoluteFillObject}
+        style={StyleSheet.absoluteFill}
         pointerEvents="none"
       />
 
@@ -145,7 +145,7 @@ export const MapLockedOverlay = ({
             />
 
             <View className="h-16 w-16 items-center justify-center">
-              <Icon as={MapPin} size={32} />
+              <Icon as={MapPinOff} size={32} />
             </View>
           </Animated.View>
 

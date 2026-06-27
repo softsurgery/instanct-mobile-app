@@ -1,16 +1,18 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import React from "react";
 import { api } from "~/api";
-import { QueryParams } from "~/types";
+import { MessageVariant, QueryParams } from "~/types";
 
 interface useConversationMessagesProps {
   id: number;
   query?: QueryParams;
+  variants?: MessageVariant[];
 }
 
 export const useConversationMessages = ({
   id,
   query,
+  variants = [],
 }: useConversationMessagesProps) => {
   const {
     data,
@@ -21,11 +23,13 @@ export const useConversationMessages = ({
     isRefetching,
     isPending: isMessagesPending,
   } = useInfiniteQuery({
-    queryKey: ["messages", id, query],
+    queryKey: ["messages", variants, id, query],
     initialPageParam: 1,
     queryFn: ({ pageParam = 1 }) =>
       api.chat.message.findPaginatedConversationMessages(id, {
         ...query,
+        filter:
+          variants.length > 0 ? `variant||$in||${variants.join(",")}` : "",
         page: String(pageParam),
       }),
     getNextPageParam: (lastPage) =>

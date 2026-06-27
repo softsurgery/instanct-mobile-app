@@ -4,7 +4,7 @@ import { usePreferencePersistStore } from "@/stores/usePreferencePersistStore";
 import { MoonStar, Sun } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import React from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { StablePressable } from "./StablePressable";
 import { Icon } from "../ui/icon";
 
@@ -13,16 +13,17 @@ interface ThemeToggleProps {
 }
 
 export function ThemeToggle({ className }: ThemeToggleProps) {
-  const { toggleColorScheme } = useColorScheme();
-  const { theme, toggleTheme } = usePreferencePersistStore();
+  const { setColorScheme } = useColorScheme();
+  const { theme, setTheme } = usePreferencePersistStore();
   const isDarkMode = React.useMemo(() => theme === "dark", [theme]);
 
   return (
     <StablePressable
       onPress={() => {
-        toggleTheme();
-        setAndroidNavigationBar(theme);
-        toggleColorScheme();
+        const newTheme = theme === "dark" ? "light" : "dark";
+        setColorScheme(newTheme);
+        if (Platform.OS === "android") setAndroidNavigationBar(newTheme);
+        setTheme(newTheme);
       }}
       onPressClassname="bg-none"
     >

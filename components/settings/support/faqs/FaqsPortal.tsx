@@ -80,7 +80,7 @@ export const FaqsPortal = ({ className }: FaqsPortalProps) => {
         classNames={{
           wrapper: "border-b border-border pb-2 bg-transparent",
         }}
-        title={t("screens.faqs")}
+        title={t("screens.settings.faqs")}
         titleVariant="large"
         reverse
         shortcuts={[

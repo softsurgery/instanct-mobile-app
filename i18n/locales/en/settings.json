@@ -1,0 +1,144 @@
+{
+    "settings": {
+        "general": {
+            "description": "Signed in and synced across devices. Make changes tha feel personal to you."
+        },
+            "account": {
+                "title": "Account",
+                "description": "Keep you profile & security details up to date.",
+                "screens":{
+                    "profile": {
+                        "title": "Update Profile",
+                        "description": "Update your profile information.",
+                        "form": {
+                            "profile-picture": "Profile Picture",
+                            "first-name": "First Name",
+                            "last-name": "Last Name",
+                            "date-of-birth": "Date of Birth",
+                            "bio": "Bio",
+                            "gender": "Gender",
+                            "website": "Website",
+                            "linkedin": "LinkedIn",
+                            "placeholders": {
+                                "first-name": "Enter your first name",
+                                "last-name": "Enter your last name",
+                                "date-of-birth": "Enter your date of birth",
+                                "bio": "Tell us about yourself",
+                                "gender": "Select your gender",
+                                "website": "Enter your website URL",
+                                "linkedin": "Enter your LinkedIn profile URL"
+                            },
+                            "descriptions": {
+                                "profile-picture": "Upload a profile picture to personalize your account.",
+                                "first-name": "Your first name as it appears on your profile.",
+                                "last-name": "Your last name as it appears on your profile.",
+                                "date-of-birth": "let's celebrate your birthday!",
+                                "bio": "A short description about yourself that will be visible on your profile.",
+                                "gender": "Your gender is used for account recovery and notifications.",
+                                "website": "Your website URL is used for account recovery and notifications.",
+                                "linkedin": "Your LinkedIn profile URL is used for account recovery and notifications."
+                            }
+                        },
+                        "actions": {
+                            "update-profile": "Update Profile",
+                            "update-profile-pending": "Updating...",
+                            "remove-picture": "Remove Picture"
+                        }
+                    },
+                    "privacy-security": {
+                        "title": "Privacy & Security",
+                        "description": "Manage your privacy and security settings.",
+                        "screens":{
+                            "account-security":{
+                                "title": "Account Security",
+                                "description": "Manage the most important account security actions.",
+                                    "change-email":{
+                                        "title": "Change Email",
+                                        "description": "Update the email address linked to your account"
+                                     },
+                                    "change-password":{
+                                        "title": "Change Password",
+                                        "description": "Update your password and keep your account protected",
+                                    },
+                                    "two-factor-authentication":{
+                                        "title": "Two-Factor Authentication",
+                                        "description": "Add an extra layer of protection for sign in",
+                                    }
+                            },
+                            "privacy":{
+                                "title": "Privacy",
+                                "description": "Manage your privacy settings.",
+                                "data-visibility":{
+                                    "title": "Data Visibility",
+                                    "description": "Control who can see your profile and activity",
+                                },
+                                "download-data":{
+                                    "title": "Download Your Data",
+                                    "description": "Export a copy of your account information",
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+        "preferences": {
+            "title": "Preferences",
+            "description": "Customize your app experience.",
+            "screens": {
+                "language": {
+                    "title": "Language",
+                    "description": "Choose your preferred language for the app."
+                },
+                "theme": {
+                    "title": "Theme",
+                    "description": "Select your preferred theme for the app."
+                }
+            }
+        },
+        "support": {
+            "title": "Support",
+            "description": "Report issues or send us your feedback.",
+            "screens":{
+                "report-bug": {
+                    "title": "Report a Bug",
+                    "description": "Help us improve the app by reporting any bugs you encounter."
+                },
+                "send-feedback": {
+                    "title": "Send Feedback",
+                    "description": "We value your feedback! Share your thoughts and suggestions with us."
+                },
+                "faqs": {
+                    "title": "Frequently Asked Questions",
+                    "description": "Find answers to frequently asked questions about the app."
+                }
+            }
+        },
+        "info-legal": {
+            "title": "Info & Legal",
+            "description": "Learn more about the app and its legal information.",
+            "screens": {
+                "about": {
+                    "title": "About Instanct",
+                    "description": "Discover more about the app & its features"
+                },
+                "terms-of-service": {
+                    "title": "Terms of Service",
+                    "description": "Read the terms and conditions that govern your use of the app."
+                },
+                "privacy-policy": {
+                    "title": "Privacy Policy",
+                    "description": "Understand how we collect, use, and protect your personal information."
+                }
+            }
+        },
+        "session": {
+            "title": "Session",
+            "description": "Sign out or remove your account",
+            "actions": {
+                "sign-out": "Sign Out",
+                "remove-account": "Remove Account"
+            }
+        }
+    },
+    "map-settings": {}
+}

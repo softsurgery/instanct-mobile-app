@@ -43,10 +43,8 @@ export default function MainLayout() {
     resetCount: resetNotificationCount,
   } = useNotifications({
     consequences: {
-      [NotificationType.TEST]: () => {
-      },
-      [NotificationType.NEW_SIGNIN]: () => {
-      },
+      [NotificationType.TEST]: () => {},
+      [NotificationType.NEW_SIGNIN]: () => {},
       [NotificationType.REQUEST_RECEIVED]: () => {
         queryClient.invalidateQueries({ queryKey: ["incoming-requests"] });
       },
@@ -56,7 +54,7 @@ export default function MainLayout() {
       [NotificationType.REQUEST_REJECTED]: () => {
         queryClient.invalidateQueries({ queryKey: ["outgoing-requests"] });
       },
-    }
+    },
   });
 
   const { mapSession, isSessionsPending } = useActiveSessions();
@@ -246,13 +244,13 @@ export default function MainLayout() {
                 headerShown: false,
               }}
             />
-            <Stack.Screen
+            {/* <Stack.Screen
               name="profile/objectives"
               options={{
                 title: "Objectives",
                 headerShown: false,
               }}
-            />
+            /> */}
             <Stack.Screen
               name="profile/user-calendar"
               options={{
@@ -284,7 +282,7 @@ export default function MainLayout() {
               }}
             />
             <Stack.Screen
-              name="chat/conversation-media-details"
+              name="chat/conversation-resource-details"
               options={{
                 title: "Media, files and links",
                 headerShown: false,
@@ -386,13 +384,13 @@ export default function MainLayout() {
                 animationDuration: 200,
               }}
             />
-            <Stack.Screen
+            {/* <Stack.Screen
               name="profile/sessions/details"
               options={{
                 title: "Sessions",
                 headerShown: false,
               }}
-            />
+            /> */}
             <Stack.Screen
               name="profile/privacy-security"
               options={{

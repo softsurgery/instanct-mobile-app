@@ -1,46 +1,50 @@
-import { Plus, SendHorizonal } from "lucide-react-native";
+import { Hand, Plus, SendHorizonal } from "lucide-react-native";
 import React from "react";
-import { ActivityIndicator, Pressable, View } from "react-native";
+import { View, ViewStyle, TouchableOpacity } from "react-native";
 import { type ActionSheetRef } from "react-native-actions-sheet";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { StablePressable } from "~/components/shared/StablePressable";
 import { Icon } from "~/components/ui/icon";
 import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
-import { useKeyboardVisible } from "~/hooks/useKeyboardVisible";
 import { ConversationInputActionsSheet } from "./ConversationInputActionsSheet";
 import { Text } from "@/components/ui/text";
+import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
+import Animated, {
+  FadeIn,
+  FadeOut,
+  ZoomIn,
+  ZoomOut,
+} from "react-native-reanimated";
 
 interface ConversationInputProps {
   className?: string;
+  style?: ViewStyle;
   input: string;
   setInput: (text: string) => void;
   sendMessage: () => void;
   sendPoke: () => void;
   onPickImage: () => void;
   onPickVideo: () => void;
-  isSendingMedia?: boolean;
   isConversationLocked?: boolean;
 }
 
 export const ConversationInput = ({
   className,
+  style,
   input,
   setInput,
   sendMessage,
   sendPoke,
   onPickImage,
   onPickVideo,
-  isSendingMedia = false,
   isConversationLocked = false,
 }: ConversationInputProps) => {
-  const insets = useSafeAreaInsets();
   const isKeyboardVisible = useKeyboardVisible();
   const actionSheetRef = React.useRef<ActionSheetRef>(null);
 
   const handleSend = () => {
     if (!input.trim()) return;
     sendMessage();
+    setInput("");
   };
 
   if (isConversationLocked)
@@ -48,8 +52,8 @@ export const ConversationInput = ({
       <View
         className={cn("bg-background/95 border-t border-border", className)}
         style={{
+          ...style,
           zIndex: 20,
-          elevation: 10,
         }}
       >
         <View className="flex flex-row items-center justify-center gap-2 px-3 py-6">
@@ -67,30 +71,23 @@ export const ConversationInput = ({
         onPoke={sendPoke}
         onPickImage={onPickImage}
         onPickVideo={onPickVideo}
-        disabled={isSendingMedia}
       />
       <View
-        className={cn("bg-background/95 border-t border-border", className)}
+        className={cn(
+          "bg-background/95 border-t border-border py-2",
+          isKeyboardVisible ? "pb-4" : "pb-8",
+          className,
+        )}
         style={{
           zIndex: 20,
-          elevation: 10,
-          paddingBottom: isKeyboardVisible ? 4 : Math.max(insets.bottom, 8),
         }}
       >
-        <View className="flex flex-row items-end gap-2 px-3 py-2">
+        <View className="flex flex-row items-center justify-between gap-2 px-6 py-0.5">
           {/* Add Button */}
-          <StablePressable
-            className="w-10 h-10 flex items-center justify-center bg-primary/10 rounded-full mb-0.5"
-            onPress={() => actionSheetRef.current?.show()}
-            disabled={isSendingMedia}
-            accessibilityLabel="Add attachment"
-          >
-            {isSendingMedia ? (
-              <ActivityIndicator size="small" />
-            ) : (
-              <Icon as={Plus} size={20} />
-            )}
-          </StablePressable>
+
+          <TouchableOpacity onPress={() => actionSheetRef.current?.show()}>
+            <Icon as={Plus} size={24} />
+          </TouchableOpacity>
 
           {/* Text Input */}
           <Textarea
@@ -103,21 +100,42 @@ export const ConversationInput = ({
           />
 
           {/* Send Button */}
-          <Pressable
-            className={cn(
-              "w-10 h-10 flex items-center justify-center rounded-full mb-0.5",
-              input.trim() ? "bg-primary" : "bg-muted",
-            )}
-            onPress={handleSend}
-            disabled={!input.trim()}
-            accessibilityLabel="Send message"
+          <View
+            style={{
+              width: 32,
+              height: 32,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
-            <Icon
-              as={SendHorizonal}
-              size={18}
-              color={input.trim() ? "white" : "gray"}
-            />
-          </Pressable>
+            {input.trim().length > 0 ? (
+              <Animated.View
+                key="send"
+                entering={FadeIn.duration(180).springify()}
+                exiting={FadeOut.duration(120)}
+              >
+                <TouchableOpacity onPress={handleSend}>
+                  <Icon
+                    as={SendHorizonal}
+                    size={24}
+                    strokeWidth={1.5}
+                    fill="white"
+                    color="white"
+                  />
+                </TouchableOpacity>
+              </Animated.View>
+            ) : (
+              <Animated.View
+                key="hand"
+                entering={ZoomIn.duration(180)}
+                exiting={ZoomOut.duration(120)}
+              >
+                <TouchableOpacity onPress={sendPoke}>
+                  <Icon as={Hand} size={24} strokeWidth={1.5} />
+                </TouchableOpacity>
+              </Animated.View>
+            )}
+          </View>
         </View>
       </View>
     </>

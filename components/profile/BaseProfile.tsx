@@ -16,16 +16,16 @@ import {
   Upload,
 } from "@/types";
 import { useFocusEffect, useNavigation } from "expo-router";
-import { Image, ImageSourcePropType, Pressable, View } from "react-native";
+import { Pressable, View } from "react-native";
+import { ImageSource } from "expo-image";
 import { ProfileStat } from "./ProfileStat";
 import { useUserIndustries } from "@/hooks/content/users/useUserIndustries";
 import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { Loader } from "../shared/Loader";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { createMaterialTopTabNavigator } from "expo-router/js-top-tabs";
 import { AboutTab } from "./sections/AboutTab";
 import { CareerTab } from "./sections/CareerTab";
-import { InterestsTab } from "./sections/InterestsTab";
 import { RenderSection } from "./sections/RenderSection";
 import { PhotoPreview } from "../shared/PhotoPreview";
 import { useUploadMutation } from "@/hooks/useUploadMutation";
@@ -44,6 +44,8 @@ import { useColorPalette } from "@/hooks/useColorPalette";
 import { useScrollableElement } from "@/hooks/useScrollableElement";
 import Animated from "react-native-reanimated";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
+import { Image } from "@/components/ui/image";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 interface ProfileSection<T = unknown> {
   key: string;
   title: string;
@@ -69,6 +71,7 @@ export const InspectBaseProfile = ({
     duration: 400,
     checkScrollable: true,
   });
+  const insets = useSafeAreaInsets();
   const { palette } = useColorPalette();
   const queryClient = useQueryClient();
   const navigation = useNavigation();
@@ -237,27 +240,12 @@ export const InspectBaseProfile = ({
     });
   };
 
-  const coverImageSource = React.useMemo<
-    ImageSourcePropType | undefined
-  >(() => {
-    switch (typeof coverSource) {
-      case "string":
-        return { uri: coverSource };
-      case "number":
-        return coverSource;
-      case "object": {
-        if (!coverSource || !("uri" in coverSource)) return undefined;
-        const uri = String(coverSource.uri ?? "");
-        return uri ? { uri } : undefined;
-      }
-      default:
-        return undefined;
-    }
-  }, [coverSource]);
-
-  const coverPreviewSource = React.useMemo<ImageSourcePropType | undefined>(
-    () => (draftCoverUri ? { uri: draftCoverUri } : coverImageSource),
-    [draftCoverUri, coverImageSource],
+  const coverPreviewSource = React.useMemo<ImageSource | undefined>(
+    () =>
+      draftCoverUri
+        ? { uri: draftCoverUri }
+        : (coverSource as ImageSource | undefined),
+    [draftCoverUri, coverSource],
   );
 
   const onRefresh = React.useCallback(async () => {
@@ -357,6 +345,9 @@ export const InspectBaseProfile = ({
             return (
               <Pressable
                 className="flex flex-row gap-2 items-center px-4 py-2 m-4 mx-auto border border-border rounded-full active:bg-muted"
+                style={{
+                  marginBottom: insets.bottom * 2,
+                }}
                 onPress={handlePickCover}
               >
                 <Icon as={Pencil} color="white" />
@@ -369,7 +360,7 @@ export const InspectBaseProfile = ({
           {coverPreviewSource ? (
             <Image
               source={coverPreviewSource}
-              className="w-full h-full"
+              style={{ width: "100%", height: "100%" }}
               resizeMode="cover"
             />
           ) : currentUser?.id === id ? (

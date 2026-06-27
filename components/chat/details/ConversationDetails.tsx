@@ -10,10 +10,7 @@ import {
 import { LegendList } from "@legendapp/list";
 import { useQuery } from "@tanstack/react-query";
 import {
-  Bell,
-  Type,
   Image as ImageIcon,
-  Download,
   Search,
   Slash,
   Ban,
@@ -149,18 +146,12 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
     className: "rounded-full",
     wrapperClassName: "rounded-full border border-border",
     fallbacks: [identifyUserAvatar(user)],
-    size: { width: 150, height: 150 },
+    size: { width: 70, height: 70 },
     enabled: !!user,
   });
   const profilePicture = profilePictures[0];
 
-  const [nickname, setNickname] = React.useState(identification);
   const [messages, setMessages] = React.useState<ResponseMessageDto[]>([]);
-  const [autoSavePhotos, setAutoSavePhotos] = React.useState(false);
-
-  React.useEffect(() => {
-    setNickname(identification);
-  }, [identification]);
 
   React.useEffect(() => {
     const fetchMessages = async () => {
@@ -175,7 +166,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
           {
             page: "1",
             limit: "100",
-            sort: "DESC",
+            sort: "createdAt,DESC",
           },
         );
         setMessages(response.data || []);
@@ -375,7 +366,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
         showsVerticalScrollIndicator={false}
       >
         <Pressable
-          className="flex flex-col items-center gap-4 m-4 pt-4 px-4 rounded-xl"
+          className="flex flex-col items-center gap-4 m-4 p-4 rounded-xl"
           onPress={() => {
             router.push({
               pathname: "/main/profile/inspect-profile",
@@ -386,13 +377,20 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
           <View className="relative">
             {profilePicture}
             {isOnline && (
-              <View className="absolute bottom-0 right-0 w-8 h-8 bg-green-500 border-2 border-card rounded-full" />
+              <View className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-card rounded-full" />
             )}
           </View>
-          <Text className="text-foreground text-xl font-bold">{nickname}</Text>
+          <View>
+            <Text className="text-foreground text-xl font-bold text-center">
+              {identification}
+            </Text>
+            <Text className="text-foreground text-sm text-center">
+              @{user?.username}
+            </Text>
+          </View>
         </Pressable>
 
-        <View className="px-4 pt-6 pb-2">
+        {/* <View className="px-4 pt-6 pb-2">
           <Text className="text-primary text-sm font-semibold uppercase tracking-wider">
             Customization
           </Text>
@@ -421,11 +419,11 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
               )
             }
           />
-        </View>
+        </View> */}
 
         <View className="px-4 pt-6 pb-2">
           <Text className="text-primary text-sm font-semibold uppercase tracking-wider">
-            Other actions
+            Content actions
           </Text>
         </View>
         <View className="bg-card mx-4 rounded-2xl overflow-hidden">
@@ -434,24 +432,24 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
             label="View media, files, and links"
             onPress={() =>
               router.push({
-                pathname: "/main/chat/conversation-media-details",
+                pathname: "/main/chat/conversation-resource-details",
                 params: { id: conversationId },
               })
             }
           />
-          <ConversationDetailsRow
+          {/* <ConversationDetailsRow
             icon={Download}
             label="Save photos automatically"
             toggleValue={autoSavePhotos}
             onToggle={setAutoSavePhotos}
             showChevron={false}
-          />
+          /> */}
           <ConversationDetailsRow
             icon={Search}
             label="Search in conversation"
             onPress={() => setIsSearching(true)}
           />
-          <ConversationDetailsRow
+          {/* <ConversationDetailsRow
             icon={Bell}
             label="Sounds and notifications"
             onPress={() =>
@@ -460,7 +458,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
                 "Detailed settings coming soon.",
               )
             }
-          />
+          /> */}
         </View>
 
         <View className="px-4 pt-6 pb-2">

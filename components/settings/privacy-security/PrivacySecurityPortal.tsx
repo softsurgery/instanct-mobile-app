@@ -35,35 +35,49 @@ interface SettingsSection {
 export const PrivacySecurityPortal = ({
   className,
 }: PrivacySecurityPortalProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("settings");
   const cardClass =
-    "border border-b-border border-t-border bg-card shadow-sm overflow-hidden";
+    "border-b-border border-t-border bg-background";
 
   const sections: SettingsSection[] = [
     {
       key: "security",
-      title: "Account Security",
-      description: "Manage the most important account security actions.",
+      title: t("settings.account.screens.privacy-security.screens.account-security.title"),
+      description: t(
+        "settings.account.screens.privacy-security.screens.account-security.description",
+      ),
       rows: [
         createSettingRow({
-          title: "Change Email",
-          description: "Update the email address linked to your account",
+          title: t(
+            "settings.account.screens.privacy-security.screens.account-security.change-email.title",
+          ),
+          description: t(
+            "settings.account.screens.privacy-security.screens.account-security.change-email.description",
+          ),
           leftIcon: Mail,
           rightIcon: ChevronRight,
           className: "p-1 px-4",
           onPress: () => router.push("/main/profile/change-email"),
         }),
         createSettingRow({
-          title: "Change Password",
-          description: "Update your password and keep your account protected",
+          title: t(
+            "settings.account.screens.privacy-security.screens.account-security.change-password.title",
+          ),
+          description: t(
+            "settings.account.screens.privacy-security.screens.account-security.change-password.description",
+          ),
           leftIcon: Lock,
           rightIcon: ChevronRight,
           className: "p-1 px-4",
           onPress: () => router.push("/main/profile/change-password"),
         }),
         createSettingRow({
-          title: "Two-Factor Authentication",
-          description: "Add an extra layer of protection for sign in",
+          title: t(
+            "settings.account.screens.privacy-security.screens.account-security.two-factor-authentication.title",
+          ),
+          description: t(
+            "settings.account.screens.privacy-security.screens.account-security.two-factor-authentication.description",
+          ),
           leftIcon: Smartphone,
           className: "p-1 px-4",
           rightComponent: (
@@ -76,12 +90,18 @@ export const PrivacySecurityPortal = ({
     },
     {
       key: "privacy",
-      title: "Privacy Controls",
-      description: "Choose what you want to share and download.",
+      title: t("settings.account.screens.privacy-security.screens.privacy.title"),
+      description: t(
+        "settings.account.screens.privacy-security.screens.privacy.description",
+      ),
       rows: [
         createSettingRow({
-          title: "Data Visibility",
-          description: "Control who can see your profile and activity",
+          title: t(
+            "settings.account.screens.privacy-security.screens.privacy.data-visibility.title",
+          ),
+          description: t(
+            "settings.account.screens.privacy-security.screens.privacy.data-visibility.description",
+          ),
           leftIcon: Eye,
           className: "p-1 px-4",
           rightComponent: (
@@ -91,8 +111,12 @@ export const PrivacySecurityPortal = ({
           ),
         }),
         createSettingRow({
-          title: "Download Your Data",
-          description: "Export a copy of your account information",
+          title: t(
+            "settings.account.screens.privacy-security.screens.privacy.download-data.title",
+          ),
+          description: t(
+            "settings.account.screens.privacy-security.screens.privacy.download-data.description",
+          ),
           leftIcon: Download,
           className: "p-1 px-4",
           rightComponent: (
@@ -121,11 +145,11 @@ export const PrivacySecurityPortal = ({
         ]}
       />
 
-      <StableScrollView className="bg-background">
+      <StableScrollView className="bg-background ">
         <View className="flex flex-col">
           {sections.map((section) => (
             <View key={section.key} className={cardClass}>
-              <View className="px-8 py-4 bg-background/75 mb-4">
+              <View className="px-8 py-4 bg-card mb-4">
                 <Text className="text-lg font-semibold">{section.title}</Text>
                 <Text className="text-sm text-muted-foreground mt-1">
                   {section.description}

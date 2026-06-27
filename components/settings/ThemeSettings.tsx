@@ -23,7 +23,7 @@ export const ThemeSettingsPortal = ({
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
         classNames={{ wrapper: "border-b border-border pb-2 bg-transparent" }}
-        title={t("screens.theme")}
+        title={t("screens.settings.theme")}
         titleVariant="large"
         reverse
         shortcuts={[

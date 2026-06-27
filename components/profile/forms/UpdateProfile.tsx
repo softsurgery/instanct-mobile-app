@@ -11,7 +11,6 @@ import { ServerErrorResponse, UpdateUserDto, Upload } from "@/types";
 import { api } from "@/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateUserSchema } from "@/types/validations/user.validation";
-import { View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
@@ -21,6 +20,8 @@ import { identifyUserAvatar } from "@/lib/user";
 import { useUploadMutation } from "@/hooks/useUploadMutation";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 import { toast } from "sonner-native";
+import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
+import { useTranslation } from "react-i18next";
 
 interface UpdateProfileProps {
   className?: string;
@@ -30,6 +31,7 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
   const isKeyboardVisible = useKeyboardVisible();
   const userStore = useUserStore();
   const queryClient = useQueryClient();
+  const { t } = useTranslation("settings");
 
   const { mutate: updateUser, isPending: isUpdatePending } = useMutation({
     mutationFn: (user: UpdateUserDto) => api.user.updateCurrent(user),
@@ -138,7 +140,7 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
         classNames={{ wrapper: "border-b border-border pb-2" }}
-        title={"Update Profile"}
+        title={t("settings.account.screens.profile.title")}
         titleVariant="large"
         reverse
         shortcuts={[
@@ -153,23 +155,25 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
         <FormBuilder structure={structure} className="px-2" />
       </StableKeyboardAwareScrollView>
       {!isKeyboardVisible && (
-        <View className="border-t border-border bg-card p-8 pt-4 gap-4">
-          <View className="flex flex-col justify-between gap-2">
-            <Button
-              size="lg"
-              variant="default"
-              className="rounded-xl"
-              onPress={() => {
-                handleUpdateSubmit();
-              }}
-              disabled={isUpdatePending}
-            >
-              <Text className="text-md font-bold">
-                {isUpdatePending ? "Updating..." : "Update Profile"}
-              </Text>
-            </Button>
-          </View>
-        </View>
+        <BottomButtonWrapper>
+          <Button
+            size="lg"
+            variant="default"
+            className="rounded-xl"
+            onPress={() => {
+              handleUpdateSubmit();
+            }}
+            disabled={isUpdatePending}
+          >
+            <Text className="text-md font-bold">
+              {isUpdatePending
+                ? t(
+                    "settings.account.screens.profile.actions.update-profile-pending",
+                  )
+                : t("settings.account.screens.profile.actions.update-profile")}
+            </Text>
+          </Button>
+        </BottomButtonWrapper>
       )}
     </StableSafeAreaView>
   );

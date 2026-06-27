@@ -20,6 +20,7 @@ import { RadiusSlider } from "./RadiusSlider";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/api";
 import { toast } from "sonner-native";
+import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
 
 interface MapSettingsProps {
   className?: string;
@@ -58,14 +59,14 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
     mapStore.setNested("draftSettings.radius", value);
   }, []);
 
-  const savedRadiusRef = React.useRef(mapStore.settings.radius);
+  const [initialRadius] = React.useState(mapStore.settings.radius);
 
   const StableRadiusRow = React.useMemo(() => {
     return function RadiusRow() {
       const ms = useMapStore();
       return (
         <RadiusSlider
-          initialValue={savedRadiusRef.current}
+          initialValue={initialRadius}
           rangeMinValue={ms.parameters.rangeMin}
           rangeMaxValue={ms.parameters.rangeMax}
           onValueChange={handleDraftRadiusChange}
@@ -73,7 +74,7 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
         />
       );
     };
-  }, [handleDraftRadiusChange, step]);
+  }, [handleDraftRadiusChange, step, initialRadius]);
 
   const settingsRows: SettingsSection[] = [
     {
@@ -231,25 +232,23 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
         </View>
       </ScrollView>
 
-      <View className="border-t border-border bg-card p-8 pt-4 gap-4">
-        <View className="flex flex-col justify-between gap-2">
-          <Button
-            size="lg"
-            variant="default"
-            className="rounded-xl"
-            onPress={() => {
-              handleMapConfigurationUpdate();
-            }}
-            disabled={isUpdateMapConfigurationPending}
-          >
-            <Text className="text-md font-bold">
-              {isUpdateMapConfigurationPending
-                ? "Updating..."
-                : "Update Configuration"}
-            </Text>
-          </Button>
-        </View>
-      </View>
+      <BottomButtonWrapper>
+        <Button
+          size="lg"
+          variant="default"
+          className="rounded-xl"
+          onPress={() => {
+            handleMapConfigurationUpdate();
+          }}
+          disabled={isUpdateMapConfigurationPending}
+        >
+          <Text className="text-md font-bold">
+            {isUpdateMapConfigurationPending
+              ? "Updating..."
+              : "Update Configuration"}
+          </Text>
+        </Button>
+      </BottomButtonWrapper>
     </StableSafeAreaView>
   );
 };

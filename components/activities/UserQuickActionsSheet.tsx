@@ -56,50 +56,52 @@ export const UserQuickActionsSheet = React.forwardRef<
         paddingBottom: 32,
       }}
     >
-      <View className="px-2 my-5">
-        {/* identity header */}
-        <View className="mb-4 flex-row items-center gap-3">
-          {!!avatar && (
-            <View className="overflow-hidden rounded-full bg-muted">
-              {avatar}
-            </View>
-          )}
-          <View className="flex-1 ">
-            <Text numberOfLines={1} variant="large" className="text-foreground">
-              {identifyUser(user)}
-            </Text>
-            {!!subtitle && (
-              <Text
-                numberOfLines={1}
-                className="mt-0.5 text-sm text-muted-foreground"
-              >
-                {subtitle}
-              </Text>
+      <View className="mb-8">
+        <View className="px-2 my-5">
+          {/* identity header */}
+          <View className="mb-4 flex-row items-center gap-3">
+            {!!avatar && (
+              <View className="overflow-hidden rounded-full bg-muted">
+                {avatar}
+              </View>
             )}
+            <View className="flex-1 ">
+              <Text numberOfLines={1} variant="large" className="text-foreground">
+                {identifyUser(user)}
+              </Text>
+              {!!subtitle && (
+                <Text
+                  numberOfLines={1}
+                  className="mt-0.5 text-sm text-muted-foreground"
+                >
+                  {subtitle}
+                </Text>
+              )}
+            </View>
           </View>
-        </View>
 
-        {/* actions as buttons */}
-        <View className="flex flex-col gap-2">
-          {actions.map((a) => (
-            <Button
-              key={a.key}
-              size="lg"
-              variant={a.destructive ? "destructive" : "outline"}
-              className="flex-row items-center justify-center gap-2 rounded-xl"
-              onPress={() => {
-                innerRef.current?.hide();
-                requestAnimationFrame(a.onPress);
-              }}
-            >
-              <Icon
-                as={a.icon as LucideIcon}
-                size={18}
-                color={a.destructive ? "#ffffff" : foreground}
-              />
-              <Text className="text-md font-bold">{a.label}</Text>
-            </Button>
-          ))}
+          {/* actions as buttons */}
+          <View className="flex flex-col gap-2">
+            {actions.map((a) => (
+              <Button
+                key={a.key}
+                size="lg"
+                variant={a.destructive ? "destructive" : "outline"}
+                className="flex-row items-center justify-center gap-2 rounded-xl"
+                onPress={() => {
+                  innerRef.current?.hide();
+                  requestAnimationFrame(a.onPress);
+                }}
+              >
+                <Icon
+                  as={a.icon as LucideIcon}
+                  size={18}
+                  color={a.destructive ? "#ffffff" : foreground}
+                />
+                <Text className="text-md font-bold">{a.label}</Text>
+              </Button>
+            ))}
+          </View>
         </View>
       </View>
     </ActionSheet>

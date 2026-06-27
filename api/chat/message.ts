@@ -12,12 +12,12 @@ const findPaginatedConversationMessages = async (
     join = "",
   }: QueryParams
 ): Promise<Paginated<ResponseMessageDto>> => {
-  const params: { [key: string]: any } = {
+  const params: { [key: string]: string } = {
     page,
     limit,
-    sort,
   };
 
+  if (sort) params.sort = sort;
   if (search) params.search = search;
   if (filter) params.filter = filter;
   if (join) params.join = join;

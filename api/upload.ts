@@ -1,7 +1,8 @@
-import { Buffer } from "buffer";
-import { Platform } from "react-native";
+import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
 import { Upload } from "~/types/upload";
 import axios from "./axios";
+
+const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
 export const uploadFiles = async (
   files: File[],
@@ -31,42 +32,51 @@ export const uploadFiles = async (
   return response.data;
 };
 
+/**
+ * Returns an ImageSource with a direct URL and auth headers.
+ * expo-image handles streaming, caching, and progressive loading natively —
+ * no binary download or base64 conversion needed.
+ */
 export const getUploadById = async (id: number) => {
-  const url = `/storage/view/id/${id}`;
-  const { data, headers } = await axios.get(url, {
-    responseType: "arraybuffer",
-  });
-
-  const mimeType = headers["content-type"] || "application/octet-stream";
-
-  if (Platform.OS === "web") {
-    const blob = new Blob([data], { type: mimeType });
-    return URL.createObjectURL(blob);
-  } else {
-    const base64 = Buffer.from(data, "binary").toString("base64");
-    return `data:${mimeType};base64,${base64}`;
-  }
+  const authStore = useAuthPersistStore.getState();
+  return {
+    uri: `${BASE_URL}/storage/view/id/${id}`,
+    headers: {
+      Authorization: `Bearer ${authStore.accessToken}`,
+    },
+  };
 };
 
+/**
+ * Returns an ImageSource with a direct URL and auth headers.
+ */
 export const getUploadBySlug = async (slug: string) => {
-  const url = `/storage/view/slug/${slug}`;
-  const { data, headers } = await axios.get(url, {
-    responseType: "arraybuffer",
-  });
+  const authStore = useAuthPersistStore.getState();
+  return {
+    uri: `${BASE_URL}/storage/view/slug/${slug}`,
+    headers: {
+      Authorization: `Bearer ${authStore.accessToken}`,
+    },
+  };
+};
 
-  const mimeType = headers["content-type"] || "application/octet-stream";
-
-  if (Platform.OS === "web") {
-    const blob = new Blob([data], { type: mimeType });
-    return URL.createObjectURL(blob);
-  } else {
-    const base64 = Buffer.from(data, "binary").toString("base64");
-    return `data:${mimeType};base64,${base64}`;
-  }
+/**
+ * Synchronous helper — constructs an ImageSource with direct URL + auth headers.
+ * Use this when you don't need React Query (e.g. inside components that load their own image).
+ */
+export const getUploadSource = (id: number) => {
+  const authStore = useAuthPersistStore.getState();
+  return {
+    uri: `${BASE_URL}/storage/view/id/${id}`,
+    headers: {
+      Authorization: `Bearer ${authStore.accessToken}`,
+    },
+  };
 };
 
 export const upload = {
   uploadFiles,
   getUploadBySlug,
   getUploadById,
+  getUploadSource,
 };

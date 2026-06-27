@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { BlurView } from "expo-blur";
 import { MapPinned } from "lucide-react-native";
-import React from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Icon } from "../ui/icon";

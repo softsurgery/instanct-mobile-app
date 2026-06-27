@@ -20,6 +20,7 @@ import { api } from "@/api";
 import { toast } from "sonner-native";
 import { ServerErrorResponse } from "@/types";
 import { Icon } from "@/components/ui/icon";
+import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
 
 interface ChangeEmailPortalProps {
   className?: string;
@@ -93,34 +94,32 @@ export const ChangeEmailPortal = ({ className }: ChangeEmailPortalProps) => {
         <FormBuilder className="px-2" structure={updateMailFormStructure} />
       </StableKeyboardAwareScrollView>
       {!isKeyboardVisible && (
-        <View className="border-t border-border bg-card p-8 pt-4 gap-4">
-          <View className="flex flex-col justify-between gap-2">
-            <Button
-              size="lg"
-              className="rounded-xl"
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                handleSave();
-              }}
-              disabled={isPending}
-            >
-              {isPending ? (
-                <React.Fragment>
-                  <Icon
-                    as={Loader2}
-                    size={18}
-                    className="text-primary-foreground animate-spin"
-                  />
-                  <Text className="text-primary-foreground font-semibold">
-                    Updating...
-                  </Text>
-                </React.Fragment>
-              ) : (
-                <Text className="text-md font-bold">Update Email</Text>
-              )}
-            </Button>
-          </View>
-        </View>
+        <BottomButtonWrapper>
+          <Button
+            size="lg"
+            className="rounded-xl"
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              handleSave();
+            }}
+            disabled={isPending}
+          >
+            {isPending ? (
+              <React.Fragment>
+                <Icon
+                  as={Loader2}
+                  size={18}
+                  className="text-primary-foreground animate-spin"
+                />
+                <Text className="text-primary-foreground font-semibold">
+                  Updating...
+                </Text>
+              </React.Fragment>
+            ) : (
+              <Text className="text-md font-bold">Update Email</Text>
+            )}
+          </Button>
+        </BottomButtonWrapper>
       )}
     </StableSafeAreaView>
   );

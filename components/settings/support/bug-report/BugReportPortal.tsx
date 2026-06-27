@@ -20,6 +20,7 @@ import { toast } from "sonner-native";
 import { ServerErrorResponse } from "@/types";
 import { Icon } from "@/components/ui/icon";
 import * as Haptics from "expo-haptics";
+import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
 
 interface BugReportPortalProps {
   className?: string;
@@ -69,7 +70,7 @@ export const BugReportPortal = ({ className }: BugReportPortalProps) => {
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
         classNames={{ wrapper: "border-b border-border pb-2" }}
-        title={t("screens.reportBug")}
+        title={t("screens.settings.reportBug")}
         titleVariant="large"
         reverse
         shortcuts={[
@@ -90,34 +91,32 @@ export const BugReportPortal = ({ className }: BugReportPortalProps) => {
         <FormBuilder structure={bugFormStructure} className="px-2" />
       </StableKeyboardAwareScrollView>
       {!isKeyboardVisible && (
-        <View className="border-t border-border bg-card p-8 pt-4 gap-4">
-          <View className="flex flex-col justify-between gap-2">
-            <Button
-              size="lg"
-              className="rounded-xl"
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                handleSubmit();
-              }}
-              disabled={isReportBugPending}
-            >
-              {isReportBugPending ? (
-                <React.Fragment>
-                  <Icon
-                    as={Loader2}
-                    size={18}
-                    className="text-primary-foreground animate-spin"
-                  />
-                  <Text className="text-primary-foreground font-semibold">
-                    Submitting...
-                  </Text>
-                </React.Fragment>
-              ) : (
-                <Text className="text-md font-bold">Submit Bug</Text>
-              )}
-            </Button>
-          </View>
-        </View>
+        <BottomButtonWrapper>
+          <Button
+            size="lg"
+            className="rounded-xl"
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              handleSubmit();
+            }}
+            disabled={isReportBugPending}
+          >
+            {isReportBugPending ? (
+              <React.Fragment>
+                <Icon
+                  as={Loader2}
+                  size={18}
+                  className="text-primary-foreground animate-spin"
+                />
+                <Text className="text-primary-foreground font-semibold">
+                  Submitting...
+                </Text>
+              </React.Fragment>
+            ) : (
+              <Text className="text-md font-bold">Submit Bug</Text>
+            )}
+          </Button>
+        </BottomButtonWrapper>
       )}
     </StableSafeAreaView>
   );

@@ -17,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import React from "react";
 import { toast } from "sonner-native";
+import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
 
 interface UserFilterPortalProps {
   className?: string;
@@ -96,25 +97,19 @@ export const UserFilterPortal = ({ className }: UserFilterPortalProps) => {
         </StableKeyboardAwareScrollView>
       </View>
       {!isKeyboardVisible && (
-        <View className="border-t border-border bg-card p-8 pt-4 gap-4">
-          <View className="flex flex-col justify-between gap-2">
-            <Button
-              size="lg"
-              variant="outline"
-              className="rounded-xl"
-              onPress={handleResetFilters}
-            >
-              <Text className="text-md font-bold">Remove Filters</Text>
-            </Button>
-            <Button
-              size="lg"
-              className="rounded-xl"
-              onPress={handleApplyFilters}
-            >
-              <Text className="text-md font-bold">Save Filters</Text>
-            </Button>
-          </View>
-        </View>
+        <BottomButtonWrapper>
+          <Button
+            size="lg"
+            variant="outline"
+            className="rounded-xl"
+            onPress={handleResetFilters}
+          >
+            <Text className="text-md font-bold">Remove Filters</Text>
+          </Button>
+          <Button size="lg" className="rounded-xl" onPress={handleApplyFilters}>
+            <Text className="text-md font-bold">Save Filters</Text>
+          </Button>
+        </BottomButtonWrapper>
       )}
     </StableSafeAreaView>
   );

@@ -59,7 +59,7 @@ export default function OnBoarding({ className }: OnBoardingProps) {
       <View className="flex-1 flex flex-col justify-between py-4">
         <View className="flex flex-row gap-3 px-6 items-center">
           <Image
-            source={require("~/assets/images/logo.png")}
+            source={require("~/assets/images/icon.png")}
             style={{ width: 60, height: 60, borderRadius: 12 }}
             contentFit="cover"
           />

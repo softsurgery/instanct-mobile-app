@@ -31,40 +31,42 @@ export const EndSessionActionSheet = React.forwardRef<
         paddingBottom: 32,
       }}
     >
-      <View className="px-4">
-        <View className="flex-row items-center justify-between mb-2">
-          <View className="flex-row items-center gap-2">
-            <Text variant="large" className="text-foreground">
-              End Session
-            </Text>
+      <View className="mb-8">
+        <View className="px-4">
+          <View className="flex-row items-center justify-between mb-2">
+            <View className="flex-row items-center gap-2">
+              <Text variant="large" className="text-foreground">
+                End Session
+              </Text>
+            </View>
           </View>
-        </View>
 
-        <Text className="mb-4 text-sm text-muted-foreground">
-          Are you sure you want to end this session? This action cannot be
-          undone.
-        </Text>
+          <Text className="mb-4 text-sm text-muted-foreground">
+            Are you sure you want to end this session? This action cannot be
+            undone.
+          </Text>
 
-        <View className="pt-4">
-          <View className="flex flex-col justify-between gap-2">
-            <Button
-              size="lg"
-              variant="destructive"
-              className="rounded-xl"
-              onPress={onConfirm}
-              disabled={isPending}
-            >
-              <Text className="text-md font-bold">Yes, end session</Text>
-            </Button>
-            <Button
-              size="lg"
-              className="rounded-xl"
-              variant="outline"
-              onPress={onClose}
-              disabled={isPending}
-            >
-              <Text className="text-md font-bold">No, cancel</Text>
-            </Button>
+          <View className="pt-4">
+            <View className="flex flex-col justify-between gap-2">
+              <Button
+                size="lg"
+                variant="destructive"
+                className="rounded-xl"
+                onPress={onConfirm}
+                disabled={isPending}
+              >
+                <Text className="text-md font-bold">Yes, end session</Text>
+              </Button>
+              <Button
+                size="lg"
+                className="rounded-xl"
+                variant="outline"
+                onPress={onClose}
+                disabled={isPending}
+              >
+                <Text className="text-md font-bold">No, cancel</Text>
+              </Button>
+            </View>
           </View>
         </View>
       </View>

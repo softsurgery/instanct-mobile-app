@@ -71,8 +71,21 @@ export enum StaticMessageEnum {
   POKE = "Poke",
 }
 
+export type PendingMediaUpload = {
+  clientId: string;
+  uri: string;
+  kind: "image" | "video";
+  variant: MessageVariant.IMAGE | MessageVariant.VIDEO;
+  progress: number;
+  status: "uploading" | "failed";
+  createdAt: Date;
+  uploadId?: number;
+  content?: string;
+};
+
 export type MessageFlatListItem =
   | { type: "header"; date: string; key: string }
   | { type: "message"; message: ResponseMessageDto }
   | { type: "media"; message: ResponseMessageDto }
-  | { type: "static"; message: ResponseMessageDto };
+  | { type: "static"; message: ResponseMessageDto }
+  | { type: "pending-media"; key: string; pending: PendingMediaUpload };

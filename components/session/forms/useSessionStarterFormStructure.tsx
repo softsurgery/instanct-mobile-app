@@ -8,8 +8,7 @@ import {
   SelectOption,
   TimeFieldProps,
 } from "../../shared/form-builder/types";
-import React from "react";
-import { SessionStartModeToggle } from "../SessionStarterModeToggle";
+import { SegmentedToggle } from "@/components/shared/SegmentedToggle";
 
 interface useSessionStarterFormStructureProps {
   store: SessionStore;
@@ -24,11 +23,29 @@ export const useSessionStarterFormStructure = ({
 }: useSessionStarterFormStructureProps) => {
   const nowField: Field<CustomFieldProps> = {
     id: "start-now",
-    label: "",
-    description: "If checked, you can schedule the session for later.",
+    label: "Starting Option",
+    description:
+      "Choose whether to start the session immediately or schedule it for later.",
     variant: FieldVariant.CUSTOM,
     props: {
-      children: <SessionStartModeToggle store={store} disabled={isPending} />,
+      children: (
+        <SegmentedToggle
+          disabled={isPending}
+          value={store.flags.startNow ? "now" : "schedule"}
+          onChange={(next) => {
+            if (next === "now") {
+              store.setNested("flags.startNow", true);
+              store.setNested("createDto.plannedStart", undefined);
+            } else {
+              store.setNested("flags.startNow", false);
+            }
+          }}
+          options={[
+            { label: "Démarrer maintenant", value: "now" },
+            { label: "Planifier", value: "schedule" },
+          ]}
+        />
+      ),
     },
   };
 

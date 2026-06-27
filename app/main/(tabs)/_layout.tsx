@@ -1,11 +1,10 @@
 import { Icon } from "@/components/ui/icon";
+import { useColorPalette } from "@/hooks/useColorPalette";
 import { useRTL } from "@/hooks/useRTL";
-import { NAV_THEME } from "@/lib/theme";
 import { IconChecklist, IconMapPinHeart } from "@tabler/icons-react-native";
 import * as Haptics from "expo-haptics";
 import { Tabs, useSegments } from "expo-router";
 import { Telescope, User } from "lucide-react-native";
-import { useColorScheme } from "nativewind";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
@@ -17,19 +16,13 @@ import Animated, {
 } from "react-native-reanimated";
 
 export default function TabLayout() {
+  const { palette } = useColorPalette();
   const segments = useSegments();
   const currentRoute = segments[segments.length - 1];
   const isMapScreen = currentRoute === "map";
 
-  const { colorScheme } = useColorScheme();
   const isRTL = useRTL();
   const { t } = useTranslation("common");
-
-  const isDarkColorScheme = colorScheme === "dark";
-
-  const colors = isDarkColorScheme
-    ? NAV_THEME.dark.colors
-    : NAV_THEME.light.colors;
 
   const tabsConfig = React.useMemo(
     () => [
@@ -109,7 +102,7 @@ export default function TabLayout() {
             className="mt-1 h-1 w-8 rounded-full"
           >
             <View
-              style={{ backgroundColor: colors.primary }}
+              style={{ backgroundColor: palette.primary }}
               className="h-full w-full rounded-full"
             />
           </Animated.View>
@@ -127,14 +120,15 @@ export default function TabLayout() {
           backgroundColor: "transparent",
         },
         tabBarShowLabel: true,
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.text,
+        tabBarActiveTintColor: palette.primary,
+        tabBarInactiveTintColor: palette.foreground,
         tabBarStyle: {
-          borderRadius: !isMapScreen ? 28 : 0,
+          borderTopEndRadius: !isMapScreen ? 28 : 0,
+          borderTopStartRadius: !isMapScreen ? 28 : 0,
           paddingTop: 10,
           paddingInline: 10,
-          backgroundColor: colors.card,
-          borderColor: colors.border,
+          backgroundColor: palette.card,
+          borderColor: palette.border,
           borderTopWidth: 0,
           height: "9%",
         },

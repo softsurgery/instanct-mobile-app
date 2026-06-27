@@ -22,6 +22,7 @@ import {
   MultiSelectFieldProps,
 } from "@/components/shared/form-builder/types";
 import { StableKeyboardAwareScrollView } from "@/components/shared/StableKeyboardAwareScrollView";
+import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
 
 interface IndustriesManagementProps {
   className?: string;
@@ -147,36 +148,34 @@ export const IndustriesManagement = ({
         </StableKeyboardAwareScrollView>
       </View>
       {!isKeyboardVisible && (
-        <View className="border-t border-border bg-card p-8 pt-4 gap-4">
-          <View className="flex flex-col justify-between gap-2">
-            <Button
-              size="lg"
-              className="rounded-xl"
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                handleSave();
-              }}
-              disabled={isPending || selectedIndustries.length === 0}
-            >
-              {isPending ? (
-                <React.Fragment>
-                  <Icon
-                    as={Loader2}
-                    size={18}
-                    className="text-primary-foreground animate-spin"
-                  />
-                  <Text className="text-primary-foreground font-semibold">
-                    Saving...
-                  </Text>
-                </React.Fragment>
-              ) : (
+        <BottomButtonWrapper>
+          <Button
+            size="lg"
+            className="rounded-xl"
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              handleSave();
+            }}
+            disabled={isPending || selectedIndustries.length === 0}
+          >
+            {isPending ? (
+              <React.Fragment>
+                <Icon
+                  as={Loader2}
+                  size={18}
+                  className="text-primary-foreground animate-spin"
+                />
                 <Text className="text-primary-foreground font-semibold">
-                  Update Industries
+                  Saving...
                 </Text>
-              )}
-            </Button>
-          </View>
-        </View>
+              </React.Fragment>
+            ) : (
+              <Text className="text-primary-foreground font-semibold">
+                Update Industries
+              </Text>
+            )}
+          </Button>
+        </BottomButtonWrapper>
       )}
     </StableSafeAreaView>
   );

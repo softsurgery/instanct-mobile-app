@@ -23,7 +23,12 @@ export const ChatHeaderLeft = ({
   lastSeen,
 }: ChatHeaderLeftProps) => {
   return (
-    <View className={cn("flex flex-row items-center flex-1 gap-1", className)}>
+    <View
+      className={cn(
+        "flex flex-row items-center flex-1 gap-1 bg-card",
+        className,
+      )}
+    >
       <Pressable
         className="p-2 rounded-full active:bg-muted"
         onPress={() => router.back()}

@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { useObjectives } from "@/hooks/content/reference-types/useObjectives";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { createMaterialTopTabNavigator } from "expo-router/js-top-tabs";
 import { Separator } from "@/components/ui/separator";
 import { ArrowRight } from "lucide-react-native";
 import { Icon } from "@/components/ui/icon";

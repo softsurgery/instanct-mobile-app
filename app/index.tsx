@@ -5,7 +5,6 @@ import { useColorScheme } from "nativewind";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Platform } from "react-native";
-import * as NavigationBar from "expo-navigation-bar";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -13,32 +12,23 @@ export default function Page() {
   const { i18n } = useTranslation();
   const { setColorScheme } = useColorScheme();
   const preferencePersistStore = usePreferencePersistStore();
-  const isDarkMode = React.useMemo(
-    () => preferencePersistStore.theme === "dark",
-    [preferencePersistStore.theme],
-  );
+
   React.useEffect(() => {
     if (preferencePersistStore.isReady) {
       // Set Android navigation bar
 
       SplashScreen.hideAsync();
 
-      if (Platform.OS === "android") {
-        NavigationBar.setVisibilityAsync("hidden");
-        NavigationBar.setBehaviorAsync("overlay-swipe");
-      }
-
       setTimeout(() => {
         // Set system color scheme
         setColorScheme(preferencePersistStore.theme);
         if (Platform.OS === "android")
-          setAndroidNavigationBar(isDarkMode ? "light" : "dark");
+          setAndroidNavigationBar(preferencePersistStore.theme);
         i18n.changeLanguage(preferencePersistStore.language);
         router.replace("/main");
       }, 100);
     }
   }, [
-    isDarkMode,
     preferencePersistStore.theme,
     preferencePersistStore.isReady,
   ]);

@@ -20,6 +20,7 @@ import { ServerErrorResponse } from "@/types/utils/server.interfaces";
 import { toast } from "sonner-native";
 import { Icon } from "@/components/ui/icon";
 import * as Haptics from "expo-haptics";
+import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
 
 interface SendFeedbackPortalProps {
   className?: string;
@@ -72,7 +73,7 @@ export const SendFeedbackPortal = ({ className }: SendFeedbackPortalProps) => {
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
         classNames={{ wrapper: "border-b border-border pb-2" }}
-        title={t("screens.sendFeedback")}
+        title={t("screens.settings.sendFeedback")}
         titleVariant="large"
         reverse
         shortcuts={[
@@ -93,34 +94,32 @@ export const SendFeedbackPortal = ({ className }: SendFeedbackPortalProps) => {
         <FormBuilder structure={feedbackFormStructure} className="px-2" />
       </StableKeyboardAwareScrollView>
       {!isKeyboardVisible && (
-        <View className="border-t border-border bg-card p-8 pt-4 gap-4">
-          <View className="flex flex-col justify-between gap-2">
-            <Button
-              size="lg"
-              className="rounded-xl"
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                handleSubmit();
-              }}
-              disabled={isSendFeedbackPending}
-            >
-              {isSendFeedbackPending ? (
-                <React.Fragment>
-                  <Icon
-                    as={Loader2}
-                    size={18}
-                    className="text-primary-foreground animate-spin"
-                  />
-                  <Text className="text-primary-foreground font-semibold">
-                    Sending...
-                  </Text>
-                </React.Fragment>
-              ) : (
-                <Text className="text-md font-bold">Send Feedback</Text>
-              )}
-            </Button>
-          </View>
-        </View>
+        <BottomButtonWrapper>
+          <Button
+            size="lg"
+            className="rounded-xl"
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              handleSubmit();
+            }}
+            disabled={isSendFeedbackPending}
+          >
+            {isSendFeedbackPending ? (
+              <React.Fragment>
+                <Icon
+                  as={Loader2}
+                  size={18}
+                  className="text-primary-foreground animate-spin"
+                />
+                <Text className="text-primary-foreground font-semibold">
+                  Sending...
+                </Text>
+              </React.Fragment>
+            ) : (
+              <Text className="text-md font-bold">Send Feedback</Text>
+            )}
+          </Button>
+        </BottomButtonWrapper>
       )}
     </StableSafeAreaView>
   );

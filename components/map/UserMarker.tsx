@@ -46,7 +46,7 @@ export const UserMarker = ({
   //pulse animation
   const { scale, opacity } = usePulseAnimation({ active: isOnline });
 
-  const OnlinePulseBlock = () => {
+  const onlinePulseBlock = React.useMemo(() => {
     return (
       <Animated.View
         style={{
@@ -60,7 +60,7 @@ export const UserMarker = ({
         }}
       />
     );
-  };
+  }, []);
 
   return (
     <View
@@ -69,7 +69,7 @@ export const UserMarker = ({
     >
       <View>
         {/* Online pulsing highlight */}
-        {isOnline ? <OnlinePulseBlock /> : null}
+        {isOnline ? onlinePulseBlock : null}
         {/* Avatar */}
         <View
           style={{

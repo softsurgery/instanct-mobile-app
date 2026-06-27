@@ -1,6 +1,6 @@
 import React from "react";
 import { Platform, View } from "react-native";
-import ViewShot from "react-native-view-shot";
+import ViewShot, { ViewShotRef } from "react-native-view-shot";
 
 interface MarkerCaptureLayerProps {
   items: {
@@ -49,7 +49,7 @@ const MarkerCaptureItem = ({
   children,
   onCapture,
 }: MarkerCaptureItemProps) => {
-  const viewShotRef = React.useRef<ViewShot>(null);
+  const viewShotRef = React.useRef<ViewShotRef>(null);
   const captureTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
