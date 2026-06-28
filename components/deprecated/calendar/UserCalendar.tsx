@@ -23,14 +23,13 @@ import {
   CalendarDays,
   Search,
   Plus,
-  ArrowLeft,
 } from "lucide-react-native";
 import React from "react";
 import { View, ScrollView } from "react-native";
 import { StableSafeAreaView } from "../../shared/StableSafeAreaView";
-import { router } from "expo-router";
 import { ApplicationHeader } from "../../shared/AppHeader";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 // Mock event types for demonstration
 export interface CalendarEvent {
   id: string;
@@ -195,10 +194,7 @@ export const UserCalendar = ({
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => {
-              router.back();
-            },
+            render: <AppHeaderBack />,
           },
         ]}
       />

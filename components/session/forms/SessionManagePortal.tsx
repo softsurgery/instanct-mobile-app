@@ -26,6 +26,7 @@ import { ActionSheetRef } from "react-native-actions-sheet";
 import { EndSessionActionSheet } from "../EndSessionActionSheet";
 import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface SessionManagePortalProps {
   className?: string;
 }
@@ -160,10 +161,7 @@ export const SessionManagePortal = ({
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => {
-              router.back();
-            },
+            render: <AppHeaderBack />,
           },
         ]}
       />

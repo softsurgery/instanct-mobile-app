@@ -1,18 +1,20 @@
 import { format } from "date-fns";
 import { Play } from "lucide-react-native";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, Dimensions, View } from "react-native";
 import { Image } from "expo-image";
 import { Text } from "~/components/ui/text";
 import { Icon } from "~/components/ui/icon";
 import { cn } from "~/lib/utils";
-import { MessageVariant, ResponseMessageDto } from "@/types";
+import {
+  MessageVariant,
+  ResponseMessageDto,
+  PendingMediaUpload,
+} from "@/types";
 import { PhotoPreview } from "~/components/shared/PhotoPreview";
 import { VideoPreview } from "~/components/shared/VideoPreview";
 import { VideoThumbnailPreview } from "~/components/shared/VideoThumbnailPreview";
 import { useServerImages } from "~/hooks/content/useServerImages";
-import { PendingMediaUpload } from "@/types";
 import { MediaUploadProgress } from "../MediaUploadProgress";
-import { CHAT_MEDIA_HEIGHT, CHAT_MEDIA_WIDTH } from "../chatMediaDimensions";
 
 interface ChatMediaBubbleProps {
   className?: string;
@@ -27,6 +29,11 @@ export const ChatMediaBubble = ({
   pending,
   right,
 }: ChatMediaBubbleProps) => {
+  const screenWidth = Dimensions.get("window").width;
+
+  const CHAT_MEDIA_WIDTH = Math.round(screenWidth * 0.75);
+  const CHAT_MEDIA_HEIGHT = Math.round(CHAT_MEDIA_WIDTH * 0.75);
+
   const upload = message?.uploads?.[0]?.upload;
   const uploadId = message?.uploads?.[0]?.uploadId ?? upload?.id;
 

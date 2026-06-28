@@ -22,6 +22,7 @@ import { Icon } from "@/components/ui/icon";
 import * as Haptics from "expo-haptics";
 import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface BugReportPortalProps {
   className?: string;
 }
@@ -76,8 +77,7 @@ export const BugReportPortal = ({ className }: BugReportPortalProps) => {
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => router.back(),
+            render: <AppHeaderBack />,
           },
         ]}
       />

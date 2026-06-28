@@ -2,7 +2,7 @@ import { Pressable, View } from "react-native";
 import { cn } from "~/lib/utils";
 import { Text } from "../../ui/text";
 import { router } from "expo-router";
-import { ArrowLeft } from "lucide-react-native";
+import {  ChevronLeft } from "lucide-react-native";
 import { Icon } from "~/components/ui/icon";
 
 interface ChatHeaderLeftProps {
@@ -33,7 +33,7 @@ export const ChatHeaderLeft = ({
         className="p-2 rounded-full active:bg-muted"
         onPress={() => router.back()}
       >
-        <Icon as={ArrowLeft} size={24} />
+        <Icon as={ChevronLeft} size={28} />
       </Pressable>
 
       <Pressable

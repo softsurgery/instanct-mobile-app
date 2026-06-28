@@ -6,6 +6,7 @@ import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { StableKeyboardAwareScrollView } from "@/components/shared/StableKeyboardAwareScrollView";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface VerifyEmailPortalProps {
   className?: string;
 }
@@ -22,8 +23,7 @@ export const VerifyEmailPortal = ({ className }: VerifyEmailPortalProps) => {
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => router.back(),
+            render: <AppHeaderBack />,
           },
         ]}
       />

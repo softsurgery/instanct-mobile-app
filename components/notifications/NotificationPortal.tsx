@@ -14,6 +14,7 @@ import { Text } from "../ui/text";
 import { NotificationEntry } from "./NotificationEntry";
 import { NotificationEntrySkeleton } from "./NotificationEntrySkeleton";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface NotificationPortalProps {
   className?: string;
 }
@@ -70,10 +71,7 @@ export const NotificationsPortal = ({ className }: NotificationPortalProps) => {
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => {
-              router.back();
-            },
+            render: <AppHeaderBack />,
           },
         ]}
       />

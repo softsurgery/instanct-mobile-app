@@ -19,6 +19,7 @@ import { useCreateExperienceFormStructure } from "./useCreateExperienceFormStruc
 import { toast } from "sonner-native";
 import React from "react";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface CreateExperienceProps {
   className?: string;
 }
@@ -81,8 +82,7 @@ export const CreateExperience = ({ className }: CreateExperienceProps) => {
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => router.back(),
+            render: <AppHeaderBack />,
           },
         ]}
       />

@@ -23,6 +23,7 @@ import StableScrollView from "@/components/shared/StableScrollView";
 import { Loader } from "@/components/shared/Loader";
 import { Icon } from "@/components/ui/icon";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface Faq {
   question: string;
   answer: string;
@@ -86,8 +87,7 @@ export const FaqsPortal = ({ className }: FaqsPortalProps) => {
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => router.back(),
+            render: <AppHeaderBack />,
           },
         ]}
       />

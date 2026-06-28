@@ -22,6 +22,7 @@ import * as Haptics from "expo-haptics";
 import { useLogout } from "@/hooks/useLogout";
 import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface ChangePasswordProps {
   className?: string;
 }
@@ -79,8 +80,7 @@ export const ChangePassword = ({ className }: ChangePasswordProps) => {
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => router.back(),
+            render: <AppHeaderBack />,
           },
         ]}
       />

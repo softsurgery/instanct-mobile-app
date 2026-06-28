@@ -11,6 +11,7 @@ import { View } from "react-native";
 import { SessionDetailsContent } from "./SessionDetailsContent";
 import { useTranslation } from "react-i18next";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface SessionDetailsPortalProps {
   className?: string;
 }
@@ -59,8 +60,7 @@ export const SessionDetailsPortal = ({
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => router.back(),
+            render: <AppHeaderBack />,
           },
         ]}
       />

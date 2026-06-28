@@ -22,6 +22,7 @@ import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 import { toast } from "sonner-native";
 import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
 import { useTranslation } from "react-i18next";
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 
 interface UpdateProfileProps {
   className?: string;
@@ -146,8 +147,7 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => router.back(),
+           render: <AppHeaderBack />
           },
         ]}
       />

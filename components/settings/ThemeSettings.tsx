@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import { ApplicationHeader } from "~/components/shared/AppHeader";
 import { ThemeSwitcher } from "../shared/ThemeSwitcher";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface ThemeSettingsPortalProps {
   className?: string;
 }
@@ -29,8 +30,7 @@ export const ThemeSettingsPortal = ({
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => router.back(),
+            render: <AppHeaderBack />,
           },
         ]}
       />

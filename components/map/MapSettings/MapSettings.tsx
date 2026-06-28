@@ -2,7 +2,6 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { useMapStore } from "@/stores/useMapStore";
 import { router } from "expo-router";
-import { ArrowLeft } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { ScrollView, View } from "react-native";
 import {
@@ -22,6 +21,7 @@ import { api } from "@/api";
 import { toast } from "sonner-native";
 import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface MapSettingsProps {
   className?: string;
 }
@@ -193,8 +193,7 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => router.back(),
+            render: <AppHeaderBack />,
           },
         ]}
       />

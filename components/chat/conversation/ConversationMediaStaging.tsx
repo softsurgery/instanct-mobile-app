@@ -91,9 +91,9 @@ const StagedThumbnail = ({
     <Pressable
       onPress={onRemove}
       hitSlop={8}
-      className="absolute top-1 right-2 w-5 h-5 rounded-full bg-black/70 items-center justify-center"
+      className="absolute top-1 right-2 w-6 h-6 rounded-full bg-black/70 items-center justify-center"
     >
-      <Icon as={X} size={20} color="white" />
+      <Icon as={X} size={16} color="white" />
     </Pressable>
   </Pressable>
 );

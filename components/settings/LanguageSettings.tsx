@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import { ApplicationHeader } from "~/components/shared/AppHeader";
 import { LanguageSwitcher } from "../shared/LanguageSwitcher";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface LanguageSettingsPortalProps {
   className?: string;
 }
@@ -29,8 +30,7 @@ export const LanguageSettingsPortal = ({
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => router.back(),
+            render: <AppHeaderBack />,
           },
         ]}
       />

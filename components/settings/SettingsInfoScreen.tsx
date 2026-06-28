@@ -16,6 +16,7 @@ import {
 } from "../ui/card";
 import { Text } from "../ui/text";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface InfoSection {
   title: string;
   description?: string;
@@ -47,8 +48,7 @@ export const SettingsInfoScreen = ({
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => router.back(),
+            render: <AppHeaderBack />,
           },
         ]}
       />

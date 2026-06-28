@@ -26,6 +26,7 @@ import { toast } from "sonner-native";
 import { ActionSheetRef } from "react-native-actions-sheet";
 import { DeleteExperienceActionSheet } from "./DeleteExperienceActionSheet";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface UpdateExperiencesProps {
   className?: string;
 }
@@ -100,10 +101,7 @@ export const UpdateExperiences = ({ className }: UpdateExperiencesProps) => {
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => {
-              router.back();
-            },
+            render: <AppHeaderBack />,
           },
         ]}
       />

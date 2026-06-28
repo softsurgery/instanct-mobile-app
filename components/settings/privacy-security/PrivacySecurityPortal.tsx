@@ -21,6 +21,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import StableScrollView from "@/components/shared/StableScrollView";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface PrivacySecurityPortalProps {
   className?: string;
 }
@@ -139,8 +140,7 @@ export const PrivacySecurityPortal = ({
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => router.back(),
+            render: <AppHeaderBack />,
           },
         ]}
       />

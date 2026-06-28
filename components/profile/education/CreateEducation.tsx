@@ -18,6 +18,7 @@ import { View } from "react-native";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 import { toast } from "sonner-native";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface CreateEducationProps {
   className?: string;
 }
@@ -74,8 +75,7 @@ export const CreateEducation = ({ className }: CreateEducationProps) => {
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => router.back(),
+            render: <AppHeaderBack />,
           },
         ]}
       />

@@ -3,7 +3,7 @@ import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { useDebounce } from "@/hooks/useDebounce";
 import { LegendList } from "@legendapp/list";
 import { router, useFocusEffect } from "expo-router";
-import { ArrowLeft, Search } from "lucide-react-native";
+import { Search } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { Pressable, RefreshControl, View } from "react-native";
 import { cn } from "~/lib/utils";
@@ -17,6 +17,7 @@ import { NotFound } from "../shared/NotFound";
 import { useChat } from "@/hooks/content/chat/useChat";
 import { UserEntrySkeleton } from "./UserEntrySkeleton";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface ChatPortalProps {
   className?: string;
 }
@@ -86,10 +87,7 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => {
-              router.back();
-            },
+            render: <AppHeaderBack />,
           },
         ]}
       />

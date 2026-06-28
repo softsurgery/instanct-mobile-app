@@ -31,7 +31,7 @@ export const EndSessionActionSheet = React.forwardRef<
         paddingBottom: 32,
       }}
     >
-      <View className="mb-8">
+      <View>
         <View className="px-4">
           <View className="flex-row items-center justify-between mb-2">
             <View className="flex-row items-center gap-2">

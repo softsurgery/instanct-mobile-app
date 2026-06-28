@@ -24,6 +24,7 @@ import {
 import { StableKeyboardAwareScrollView } from "@/components/shared/StableKeyboardAwareScrollView";
 import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface IndustriesManagementProps {
   className?: string;
 }
@@ -130,8 +131,7 @@ export const IndustriesManagement = ({
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => router.back(),
+            render: <AppHeaderBack />,
           },
         ]}
       />

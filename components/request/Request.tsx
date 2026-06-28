@@ -28,6 +28,7 @@ import { RequestDetailsCard } from "./RequestDetailsCard";
 import { RequestLocationSection } from "./RequestLocationSection";
 import { StatusBadge } from "./RequestStatus";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface RequestProps {
   id: string;
   isIncoming?: boolean;
@@ -157,10 +158,7 @@ export const Request = ({ id, className, isIncoming }: RequestProps) => {
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => {
-              router.back();
-            },
+            render: <AppHeaderBack />,
           },
         ]}
       />

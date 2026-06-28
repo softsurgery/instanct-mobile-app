@@ -22,6 +22,7 @@ import { Icon } from "@/components/ui/icon";
 import * as Haptics from "expo-haptics";
 import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface SendFeedbackPortalProps {
   className?: string;
 }
@@ -79,8 +80,7 @@ export const SendFeedbackPortal = ({ className }: SendFeedbackPortalProps) => {
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => router.back(),
+            render: <AppHeaderBack />,
           },
         ]}
       />

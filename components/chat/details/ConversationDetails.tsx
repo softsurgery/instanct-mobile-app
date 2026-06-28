@@ -37,6 +37,7 @@ import { useColorPalette } from "@/hooks/useColorPalette";
 import { hslToHex } from "@/lib/theme";
 import { useUserPresence } from "@/hooks/content/chat/useUserPresence";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface MessageResultItemProps {
   message: ResponseMessageDto;
   searchQuery: string;
@@ -250,10 +251,9 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
           title=""
           shortcuts={[
             {
-              key: "back",
-              icon: ArrowLeft,
-              onPress: () => router.back(),
-            },
+            key: "back",
+            render: <AppHeaderBack />,
+          },
           ]}
           reverse
           classNames={{ wrapper: "border-b border-border pb-2 bg-transparent" }}
@@ -354,8 +354,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => router.back(),
+            render: <AppHeaderBack />,
           },
         ]}
         reverse

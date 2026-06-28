@@ -156,7 +156,7 @@ export default function MultiSelect({
           paddingBottom: 32,
         }}
       >
-        <View className="mb-8">
+        <View>
           <View className="mb-4">
             <Text className="text-lg font-semibold text-foreground">
               {title || "Select Options"}

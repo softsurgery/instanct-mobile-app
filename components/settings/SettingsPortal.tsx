@@ -17,6 +17,7 @@ import { Text } from "../ui/text";
 import { createSettingRow, SettingRow } from "./SettingsRow";
 import type { SettingRowConfig } from "./SettingsRow";
 import { useLogout } from "@/hooks/useLogout";
+import { AppHeaderBack } from "../shared/AppHeaderBack";
 
 interface SettingsPortalProps {
   className?: string;
@@ -187,8 +188,7 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => router.back(),
+            render: <AppHeaderBack />,
           },
         ]}
       />

@@ -104,7 +104,7 @@ export default function MainLayout() {
             <Stack.Screen
               name="(tabs)"
               options={{
-                title: "",
+                title: "Explore",
                 headerShown: false,
                 animation: "fade_from_bottom",
                 animationDuration: 200,

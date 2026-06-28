@@ -26,6 +26,7 @@ import { useTranslation } from "react-i18next";
 import { Loader } from "../shared/Loader";
 import { SessionStatusLegend } from "./SessionStatusLegend";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface SessionHistoryPortalProps {
   className?: string;
 }
@@ -124,10 +125,7 @@ export const SessionHistoryPortal = ({
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => {
-              router.back();
-            },
+            render: <AppHeaderBack />,
           },
         ]}
       />

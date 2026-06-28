@@ -2,7 +2,6 @@ import { ApplicationHeader } from "@/components/shared/AppHeader";
 import { FormBuilder } from "@/components/shared/form-builder/FormBuilder";
 import { StableSafeAreaView } from "@/components/shared/StableSafeAreaView";
 import { router } from "expo-router";
-import { ArrowLeft } from "lucide-react-native";
 import { View } from "react-native";
 import { useExploreFilterFormStructure } from "./useExploreFilterFormStructure";
 import { StableKeyboardAwareScrollView } from "@/components/shared/StableKeyboardAwareScrollView";
@@ -18,6 +17,7 @@ import { cn } from "@/lib/utils";
 import React from "react";
 import { toast } from "sonner-native";
 import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 
 interface UserFilterPortalProps {
   className?: string;
@@ -76,11 +76,7 @@ export const UserFilterPortal = ({ className }: UserFilterPortalProps) => {
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => {
-              exploreFilterStore.reset();
-              router.back();
-            },
+            render: <AppHeaderBack />,
           },
         ]}
       />

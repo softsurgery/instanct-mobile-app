@@ -6,7 +6,6 @@ import { FormBuilder } from "../shared/form-builder/FormBuilder";
 import { useSignUpFormStructure } from "./useSignupFormStructure";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { ApplicationHeader } from "../shared/AppHeader";
-import { ArrowLeft } from "lucide-react-native";
 import { Stepper } from "../shared/Stepper";
 import React from "react";
 import { useAuthValidation } from "@/hooks/useAuthValidation";
@@ -17,6 +16,7 @@ import { toast } from "sonner-native";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/api";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface SignupLayoutProps {
   className?: string;
 }
@@ -98,10 +98,7 @@ export const SignupLayout = ({ className }: SignupLayoutProps) => {
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => {
-              router.back();
-            },
+            render: <AppHeaderBack />,
           },
         ]}
       />

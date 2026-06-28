@@ -19,6 +19,7 @@ import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 import { toast } from "sonner-native";
 import React from "react";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface UpdateExperienceProps {
   className?: string;
 }
@@ -82,8 +83,7 @@ export const UpdateExperience = ({ className }: UpdateExperienceProps) => {
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => router.back(),
+            render: <AppHeaderBack />,
           },
         ]}
       />

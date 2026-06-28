@@ -21,6 +21,7 @@ import { mapToSelectOptions } from "../../shared/form-builder/utils/map-select-o
 import { zodErrorsToNested } from "@/lib/object";
 import { toast } from "sonner-native";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface SessionStarterPortalProps {
   className?: string;
 }
@@ -103,8 +104,7 @@ export const SessionStarterPortal = ({
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => router.back(),
+            render: <AppHeaderBack />,
           },
         ]}
       />

@@ -22,6 +22,7 @@ import { ServerErrorResponse } from "@/types";
 import { Icon } from "@/components/ui/icon";
 import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface ChangeEmailPortalProps {
   className?: string;
 }
@@ -78,8 +79,7 @@ export const ChangeEmailPortal = ({ className }: ChangeEmailPortalProps) => {
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => router.back(),
+            render: <AppHeaderBack />,
           },
         ]}
       />

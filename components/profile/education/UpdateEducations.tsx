@@ -23,6 +23,7 @@ import { toast } from "sonner-native";
 import { DeleteEducationActionSheet } from "./DeleteEducationActionSheet";
 import { ActionSheetRef } from "react-native-actions-sheet";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface UpdateEducationsProps {
   className?: string;
 }
@@ -94,10 +95,7 @@ export const UpdateEducations = ({ className }: UpdateEducationsProps) => {
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => {
-              router.back();
-            },
+            render: <AppHeaderBack />,
           },
         ]}
       />

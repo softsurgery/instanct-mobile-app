@@ -115,7 +115,7 @@ export default function Select({
           paddingBottom: 32,
         }}
       >
-        <View className="mb-8">
+        <View>
           <View className="mb-4">
             <Text
               className={cn(

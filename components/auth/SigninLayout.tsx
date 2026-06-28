@@ -16,9 +16,9 @@ import { useSignInFormStructure } from "./useSigninFormStructure";
 import { SSOButtons } from "./SSOButtons";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { ApplicationHeader } from "../shared/AppHeader";
-import { ArrowLeft } from "lucide-react-native";
 import { toast } from "sonner-native";
 
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface SigninProps {
   className?: string;
 }
@@ -63,10 +63,7 @@ export const SigninLayout = ({ className }: SigninProps) => {
         shortcuts={[
           {
             key: "back",
-            icon: ArrowLeft,
-            onPress: () => {
-              router.back();
-            },
+            render: <AppHeaderBack />,
           },
         ]}
       />
