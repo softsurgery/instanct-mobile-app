@@ -37,7 +37,7 @@ export const uploadFiles = async (
  * expo-image handles streaming, caching, and progressive loading natively —
  * no binary download or base64 conversion needed.
  */
-export const getUploadById = async (id: number) => {
+export const getUploadById = (id: number) => {
   const authStore = useAuthPersistStore.getState();
   return {
     uri: `${BASE_URL}/storage/view/id/${id}`,
@@ -50,24 +50,10 @@ export const getUploadById = async (id: number) => {
 /**
  * Returns an ImageSource with a direct URL and auth headers.
  */
-export const getUploadBySlug = async (slug: string) => {
+export const getUploadBySlug = (slug: string) => {
   const authStore = useAuthPersistStore.getState();
   return {
     uri: `${BASE_URL}/storage/view/slug/${slug}`,
-    headers: {
-      Authorization: `Bearer ${authStore.accessToken}`,
-    },
-  };
-};
-
-/**
- * Synchronous helper — constructs an ImageSource with direct URL + auth headers.
- * Use this when you don't need React Query (e.g. inside components that load their own image).
- */
-export const getUploadSource = (id: number) => {
-  const authStore = useAuthPersistStore.getState();
-  return {
-    uri: `${BASE_URL}/storage/view/id/${id}`,
     headers: {
       Authorization: `Bearer ${authStore.accessToken}`,
     },
@@ -78,5 +64,4 @@ export const upload = {
   uploadFiles,
   getUploadBySlug,
   getUploadById,
-  getUploadSource,
 };

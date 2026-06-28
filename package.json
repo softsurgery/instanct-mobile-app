@@ -78,7 +78,7 @@
     "react-native-actions-sheet": "^10.1.2",
     "react-native-awesome-slider": "^2.9.0",
     "react-native-gesture-handler": "~2.31.1",
-    "react-native-image-viewing": "^0.2.2",
+    "react-native-gesture-image-viewer": "^2.3.2",
     "react-native-keyboard-controller": "^1.21.11",
     "react-native-map-clustering": "^4.0.0",
     "react-native-maps": "1.27.2",

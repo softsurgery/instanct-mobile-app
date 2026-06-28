@@ -119,32 +119,23 @@ export const InspectBaseProfile = ({
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
 
   //profile picture side-effect
-  const {
-    uploads: profileUploads,
-    jsxArray: profilePictures,
-    isPending: isProfilePicturePending,
-    refetch: refetchProfilePictures,
-  } = useServerImages({
-    ids: [user?.pictureId],
-    fallbacks: [fallback],
-    className: "rounded-full",
-    wrapperClassName: "border border-border bg-background rounded-full",
-    size: { width: 100, height: 100 },
-    enabled: !!user && !!user.pictureId,
-  });
-  const profilePictureSource = profileUploads?.[0];
+  const { uploads: profilePictureUploads, jsxArray: profilePictures } =
+    useServerImages({
+      ids: [user?.pictureId],
+      fallbacks: [fallback],
+      className: "rounded-full",
+      wrapperClassName: "border border-border bg-background rounded-full",
+      size: { width: 100, height: 100 },
+    });
+  const profilePictureSource = profilePictureUploads?.[0];
+  console.log(profilePictureSource);
 
   // cover picture side-effect
-  const {
-    uploads: coverUploads,
-    isPending: isCoverPending,
-    refetch: refetchCover,
-  } = useServerImages({
+  const { uploads: coverUploads } = useServerImages({
     ids: [user?.coverId],
     fallbacks: [""],
     wrapperClassName: "",
     size: { width: 100, height: 100 },
-    enabled: !!user && !!user.coverId,
   });
   const coverSource = coverUploads?.[0];
 
@@ -255,8 +246,6 @@ export const InspectBaseProfile = ({
       refetchExperiences(),
       refetchEducations(),
       refetchUserIndustries(),
-      refetchCover(),
-      refetchProfilePictures(),
     ]);
   }, []);
 
@@ -265,9 +254,7 @@ export const InspectBaseProfile = ({
     isExperiencesPending ||
     isEducationsPending ||
     isIndustriesSubTypePending ||
-    isUserIndustriesPending ||
-    isCoverPending ||
-    isProfilePicturePending;
+    isUserIndustriesPending;
 
   useFocusEffect(
     React.useCallback(() => {
@@ -378,7 +365,7 @@ export const InspectBaseProfile = ({
         {/* Header */}
         <View className="-mt-12 px-5 z-50">
           <View className="flex-row items-end justify-between">
-            {isProfilePicturePending ? (
+            {!profilePictureSource ? (
               <Skeleton className="h-[100px] w-[100px] rounded-full" />
             ) : (
               <PhotoPreview source={profilePictureSource}>

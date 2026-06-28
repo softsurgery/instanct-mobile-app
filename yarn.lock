@@ -7665,6 +7665,11 @@ react-native-gesture-handler@~2.31.1:
     hoist-non-react-statics "^3.3.0"
     invariant "^2.2.4"
 
+react-native-gesture-image-viewer@^2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/react-native-gesture-image-viewer/-/react-native-gesture-image-viewer-2.3.2.tgz#b50809c74bd229c9fcdd34e4424310949528eea4"
+  integrity sha512-1Ak0XmtZV+axp6f6n9znkz8Dlxk/3vkyXvSYNs1TVY9W+5nBIoh1iKVF4wHDGly9qDJK3qwXLkEg9cp8W9Js+A==
+
 react-native-image-viewing@^0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/react-native-image-viewing/-/react-native-image-viewing-0.2.2.tgz#fb26e57d7d3d9ce4559a3af3d244387c0367242b"

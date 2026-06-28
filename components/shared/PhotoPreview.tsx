@@ -1,21 +1,20 @@
-import React from "react";
-import type { ImageProps } from "expo-image";
-import {
-  Pressable,
-  View,
-  Image as RNImage,
-  type ImageURISource,
-} from "react-native";
-import ImageView from "react-native-image-viewing";
+import React, { useCallback } from "react";
+import { Modal, Pressable, ScrollView, View } from "react-native";
+import { Image, ImageSource } from "expo-image";
+import { GestureViewer } from "react-native-gesture-image-viewer";
 import { cn } from "@/lib/utils";
 
 interface PhotoPreviewProps {
   className?: string;
   children: React.ReactNode;
-  source?: ImageProps["source"] | null;
+  source?: ImageSource;
   index?: number;
   color?: string;
-  presentationStyle?: "fullScreen" | "overFullScreen" | "pageSheet";
+  presentationStyle?:
+    | "fullScreen"
+    | "overFullScreen"
+    | "pageSheet"
+    | "formSheet";
   onPress?: () => void;
   footer?: (helpers: {
     close: () => void;
@@ -23,129 +22,68 @@ interface PhotoPreviewProps {
   }) => React.ReactNode;
 }
 
-export const PhotoPreview = ({
+export function PhotoPreview({
   className,
   children,
   source,
-  color = "rgba(0, 0, 0, 0.8)",
+  index = 0,
+  color = "rgba(0,0,0,0.8)",
   presentationStyle = "overFullScreen",
   onPress,
   footer,
-  index = 0,
-}: PhotoPreviewProps) => {
-  type ViewerImage = ImageURISource | number;
+}: PhotoPreviewProps) {
+  const [visible, setVisible] = React.useState(false);
 
-  const images = React.useMemo<ViewerImage[]>(() => {
-    const normalize = (value: unknown): ViewerImage | null => {
-      if (typeof value === "number") return value;
-
-      if (typeof value === "string") {
-        const uri = value.trim();
-
-        if (!uri) return null;
-
-        return { uri };
-      }
-
-      if (typeof value === "object" && value !== null && "uri" in value) {
-        const uri = (value as { uri?: unknown }).uri;
-
-        if (typeof uri !== "string" || uri.trim().length === 0) {
-          return null;
-        }
-
-        return {
-          ...value,
-          uri: uri.trim(),
-        } as ImageURISource;
-      }
-
-      return null;
-    };
-
-    if (!source) return [];
-
-    if (Array.isArray(source)) {
-      return source
-        .map(normalize)
-        .filter((img): img is ViewerImage => img !== null);
-    }
-
-    const single = normalize(source);
-
-    return single ? [single] : [];
-  }, [source]);
-
-  const hasImageSource = images.length > 0;
-
-  React.useEffect(() => {
-    images.forEach((img) => {
-      if (
-        typeof img === "object" &&
-        img !== null &&
-        "uri" in img &&
-        typeof img.uri === "string"
-      ) {
-        RNImage.prefetch(img.uri).catch(() => {});
-      }
-    });
-  }, [images]);
-
-  const [isVisible, setIsVisible] = React.useState(false);
-
-  const openPreview = React.useCallback(() => {
-    if (!hasImageSource) return;
-
-    setIsVisible(true);
-  }, [hasImageSource]);
-
-  const closePreview = React.useCallback(() => {
-    setIsVisible(false);
-  }, []);
-
-  const canPress = hasImageSource || !!onPress;
-
-  const handlePress = () => {
-    if (hasImageSource) {
-      openPreview();
-    } else {
-      onPress?.();
-    }
+  const open = async () => {
+    onPress?.();
+    setVisible(true);
   };
 
-  const trigger = canPress ? (
-    <Pressable
-      className={cn("z-10 active:opacity-80", className)}
-      onPress={handlePress}
-    >
-      {children}
-    </Pressable>
-  ) : (
-    <View className={cn(className)}>{children}</View>
-  );
+  const close = () => setVisible(false);
+
+  const images = source ? [source] : [];
+
+  const renderImage = useCallback((item: ImageSource) => {
+    return (
+      <Image
+        source={item}
+        style={{ width: "100%", height: "100%" }}
+        contentFit="contain"
+      />
+    );
+  }, []);
 
   return (
-    <View className={cn(className)}>
-      {trigger}
+    <View className={className}>
+      <Pressable className={cn("active:opacity-80", className)} onPress={open}>
+        {children}
+      </Pressable>
 
-      {hasImageSource && isVisible ? (
-        <ImageView
-          images={images}
-          imageIndex={index}
-          visible={isVisible}
-          onRequestClose={closePreview}
-          backgroundColor={color}
-          presentationStyle={presentationStyle}
-          FooterComponent={() => (
-            <>
-              {footer?.({
-                close: closePreview,
-                open: openPreview,
-              })}
-            </>
-          )}
+      <Modal
+        transparent
+        visible={visible}
+        presentationStyle={presentationStyle}
+        onRequestClose={close}
+      >
+        <GestureViewer
+          data={images}
+          initialIndex={0}
+          renderItem={renderImage}
+          ListComponent={ScrollView}
+          onDismiss={close}
+          backdropStyle={{ backgroundColor: color }}
+          renderContainer={
+            footer
+              ? (children, helpers) => (
+                  <View style={{ flex: 1 }}>
+                    {children}
+                    {footer({ close: helpers.dismiss, open })}
+                  </View>
+                )
+              : undefined
+          }
         />
-      ) : null}
+      </Modal>
     </View>
   );
-};
+}

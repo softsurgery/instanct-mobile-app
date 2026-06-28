@@ -148,8 +148,8 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
     wrapperClassName: "rounded-full border border-border",
     fallbacks: [identifyUserAvatar(user)],
     size: { width: 70, height: 70 },
-    enabled: !!user,
   });
+
   const profilePicture = profilePictures[0];
 
   const [messages, setMessages] = React.useState<ResponseMessageDto[]>([]);
@@ -251,9 +251,9 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
           title=""
           shortcuts={[
             {
-            key: "back",
-            render: <AppHeaderBack />,
-          },
+              key: "back",
+              render: <AppHeaderBack />,
+            },
           ]}
           reverse
           classNames={{ wrapper: "border-b border-border pb-2 bg-transparent" }}
@@ -420,7 +420,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
           />
         </View> */}
 
-        <View className="px-4 pt-6 pb-2">
+        <View className="px-4 pb-2">
           <Text className="text-primary text-sm font-semibold uppercase tracking-wider">
             Content actions
           </Text>

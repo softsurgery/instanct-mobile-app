@@ -20,7 +20,7 @@ import { ChatHeaderRight } from "./conversation/ChatHeaderRight";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import { ConversationInput } from "./conversation/input/ConversationInput";
-import { ConversationMediaStaging } from "./conversation/ConversationMediaStaging";
+import { ConversationMediaStaging } from "./conversation/staging/ConversationMediaStaging";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { Text } from "~/components/ui/text";
 
@@ -139,7 +139,6 @@ export const Conversation = ({ id }: ConversationProps) => {
     className: "rounded-full",
     wrapperClassName: "rounded-full border border-border",
     size: { width: 40, height: 40 },
-    enabled: !!user?.pictureId,
   });
 
   const { isOnline, lastSeen } = useUserPresence({ userId: user?.id });

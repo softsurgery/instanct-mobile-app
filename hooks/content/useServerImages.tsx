@@ -1,10 +1,8 @@
 import { Image } from "@/components/ui/image";
 import { cn } from "@/lib/utils";
-import { useQueries } from "@tanstack/react-query";
 import { ImageSource } from "expo-image";
 import React from "react";
 import { View } from "react-native";
-import { api } from "~/api";
 import {
   Avatar,
   AvatarFallback,
@@ -12,6 +10,8 @@ import {
 } from "~/components/shared/StableAvatar";
 import { Skeleton } from "~/components/ui/skeleton";
 import { Text } from "~/components/ui/text";
+import { useAuthPersistStore } from "../useAuthPersistStore";
+import { api } from "@/api";
 
 interface UseServerImagesProps {
   ids: (number | undefined)[];
@@ -20,7 +20,6 @@ interface UseServerImagesProps {
   className?: string;
   wrapperClassName?: string;
   fallbackClassName?: string;
-  enabled?: boolean;
 }
 
 export const useServerImages = ({
@@ -30,78 +29,55 @@ export const useServerImages = ({
   className,
   wrapperClassName,
   fallbackClassName,
-  enabled = true,
 }: UseServerImagesProps) => {
-  const uniqueIds = React.useMemo(
-    () =>
-      Array.from(
-        new Set(ids.filter((id) => typeof id === "number")),
-      ) as number[],
-    [ids],
+  const accessToken = useAuthPersistStore((s) => s.accessToken);
+
+  const getUploadSource = React.useCallback(
+    (id?: number): ImageSource | undefined => {
+      if (!id || !accessToken) return undefined;
+
+      return api.upload.getUploadById(id);
+    },
+    [accessToken],
   );
 
-  const queries = useQueries({
-    queries: uniqueIds.map((id) => ({
-      queryKey: ["server-image", id],
-      queryFn: () => api.upload.getUploadById(id),
-      enabled: enabled,
-      staleTime: Infinity,
-    })),
-  });
+  const idsString = JSON.stringify(ids);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const memoizedIds = React.useMemo(() => ids, [idsString]);
 
-  // Build a map from ID to query result for O(1) lookups
-  const queryMap = React.useMemo(() => {
-    const map = new Map<number, (typeof queries)[0]>();
-    uniqueIds.forEach((id, index) => {
-      map.set(id, queries[index]);
+  const uploads = React.useMemo(() => {
+    return memoizedIds.map((id) => {
+      if (!id) return undefined;
+      return getUploadSource(id);
     });
-    return map;
-  }, [uniqueIds, queries]);
-
-  const uploads = uniqueIds.map(
-    (id) => queryMap.get(id)?.data as ImageSource | undefined,
-  );
-  const isPending = queries.some((q) => q.isPending);
+  }, [memoizedIds, getUploadSource]);
 
   const jsxArray = React.useMemo(() => {
-    return ids.map((id, index) => {
-      const upload = id !== undefined ? queryMap.get(id)?.data : undefined;
-      const query = id !== undefined ? queryMap.get(id) : undefined;
+    return memoizedIds.map((id, index) => {
+      const source = getUploadSource(id);
       const fallback = fallbacks[index];
 
-      if (upload && !query?.isPending) {
+      if (source) {
         return (
           <View
             key={index}
-            className={cn(wrapperClassName, "flex items-center justify-center")}
+            className={cn(wrapperClassName, "items-center justify-center")}
             style={{
-              width: size?.width ? size.width : "100%",
-              height: size?.height ? size.height : "100%",
+              width: size?.width ?? "100%",
+              height: size?.height ?? "100%",
             }}
           >
             <Image
-              className={cn(className)}
-              source={upload}
+              source={source}
+              className={className}
               style={{
                 width: size?.width,
                 height: size?.height,
               }}
               contentFit="cover"
+              cachePolicy="memory-disk"
             />
           </View>
-        );
-      }
-
-      if (query?.isFetching && id !== undefined) {
-        return (
-          <Skeleton
-            key={index}
-            className={cn(className)}
-            style={{
-              width: size?.width,
-              height: size?.height,
-            }}
-          />
         );
       }
 
@@ -113,15 +89,15 @@ export const useServerImages = ({
         return (
           <View
             key={index}
-            className={cn(wrapperClassName, "flex items-center justify-center")}
+            className={cn(wrapperClassName, "items-center justify-center")}
             style={{
-              width: size?.width ? size.width : "100%",
-              height: size?.height ? size.height : "100%",
+              width: size?.width ?? "100%",
+              height: size?.height ?? "100%",
             }}
           >
             <Image
-              source={fallback as ImageSource}
-              className={cn(className)}
+              source={fallback}
+              className={className}
               style={{
                 width: size?.width,
                 height: size?.height,
@@ -136,7 +112,7 @@ export const useServerImages = ({
         return (
           <Avatar
             key={index}
-            className={cn(className)}
+            className={className}
             style={{
               width: size?.width,
               height: size?.height,
@@ -158,8 +134,8 @@ export const useServerImages = ({
 
       return (
         <Skeleton
-          className={cn(className)}
           key={index}
+          className={className}
           style={{
             width: size?.width,
             height: size?.height,
@@ -168,37 +144,18 @@ export const useServerImages = ({
       );
     });
   }, [
-    queryMap,
-    ids,
+    memoizedIds,
     fallbacks,
+    getUploadSource,
     size,
     className,
     wrapperClassName,
     fallbackClassName,
   ]);
 
-  const getUploadSource = React.useCallback(
-    (id: number | undefined) => {
-      if (id === undefined) return undefined;
-      return queryMap.get(id)?.data as ImageSource | undefined;
-    },
-    [queryMap],
-  );
-
-  const isUploadPending = React.useCallback(
-    (id: number | undefined) => {
-      if (id === undefined) return false;
-      return queryMap.get(id)?.isPending ?? false;
-    },
-    [queryMap],
-  );
-
   return {
     uploads,
-    isPending,
     jsxArray,
     getUploadSource,
-    isUploadPending,
-    refetch: () => queries.forEach((q) => q.refetch()),
   };
 };

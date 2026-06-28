@@ -33,7 +33,7 @@ export const MediaThumbnail = React.memo(function MediaThumbnail({
   const mediaSource = React.useMemo(() => {
     if (mediaSourceOverride) return mediaSourceOverride;
     if (typeof uploadId === "number")
-      return api.upload.getUploadSource(uploadId);
+      return api.upload.getUploadById(uploadId);
     return undefined;
   }, [mediaSourceOverride, uploadId]);
 

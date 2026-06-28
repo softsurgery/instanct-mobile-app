@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { Play } from "lucide-react-native";
-import { ActivityIndicator, Dimensions, View } from "react-native";
+import { Dimensions, View } from "react-native";
 import { Image } from "expo-image";
 import { Text } from "~/components/ui/text";
 import { Icon } from "~/components/ui/icon";
@@ -14,7 +14,7 @@ import { PhotoPreview } from "~/components/shared/PhotoPreview";
 import { VideoPreview } from "~/components/shared/VideoPreview";
 import { VideoThumbnailPreview } from "~/components/shared/VideoThumbnailPreview";
 import { useServerImages } from "~/hooks/content/useServerImages";
-import { MediaUploadProgress } from "../MediaUploadProgress";
+import { MediaUploadProgress } from "../staging/MediaUploadProgress";
 
 interface ChatMediaBubbleProps {
   className?: string;
@@ -34,26 +34,28 @@ export const ChatMediaBubble = ({
   const CHAT_MEDIA_WIDTH = Math.round(screenWidth * 0.75);
   const CHAT_MEDIA_HEIGHT = Math.round(CHAT_MEDIA_WIDTH * 0.75);
 
-  const upload = message?.uploads?.[0]?.upload;
-  const uploadId = message?.uploads?.[0]?.uploadId ?? upload?.id;
-
-  const { uploads, isPending } = useServerImages({
-    ids: [uploadId as number | undefined],
-    enabled: !!message && !pending,
-  });
-  const mediaSource = uploads[0];
-
-  const isVideo =
-    pending?.variant === MessageVariant.VIDEO ||
-    message?.variant === MessageVariant.VIDEO;
-  const timestamp = pending ? pending.createdAt : new Date(message!.createdAt);
-  const isUploading = pending?.status === "uploading";
-  const uploadFailed = pending?.status === "failed";
-
   const mediaFrameStyle = {
     width: CHAT_MEDIA_WIDTH,
     height: CHAT_MEDIA_HEIGHT,
   };
+
+  const upload = message?.uploads?.[0]?.upload;
+  const uploadId = message?.uploads?.[0]?.uploadId ?? upload?.id;
+
+  const { uploads } = useServerImages({
+    ids: [uploadId as number],
+  });
+
+  const mediaSource = uploads[0];
+  console.log(mediaSource);
+
+  const isVideo =
+    pending?.variant === MessageVariant.VIDEO ||
+    message?.variant === MessageVariant.VIDEO;
+
+  const timestamp = pending ? pending.createdAt : new Date(message!.createdAt);
+  const isUploading = pending?.status === "uploading";
+  const uploadFailed = pending?.status === "failed";
 
   const mediaContent = pending ? (
     <View
@@ -88,23 +90,6 @@ export const ChatMediaBubble = ({
           failed={uploadFailed}
         />
       )}
-    </View>
-  ) : isPending ? (
-    <View
-      className="rounded-xl bg-muted items-center justify-center"
-      style={mediaFrameStyle}
-    >
-      <ActivityIndicator size="small" />
-    </View>
-  ) : isVideo ? (
-    <View
-      className="relative bg-muted items-center justify-center overflow-hidden rounded-xl"
-      style={mediaFrameStyle}
-    >
-      {mediaSource ? <VideoThumbnailPreview source={mediaSource} /> : null}
-      <View className="w-10 h-10 rounded-full items-center justify-center bg-black/50 z-10">
-        <Icon as={Play} size={14} color="white" fill="white" />
-      </View>
     </View>
   ) : (
     <Image

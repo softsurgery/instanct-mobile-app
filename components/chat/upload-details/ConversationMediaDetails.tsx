@@ -9,10 +9,13 @@ import {
   ActivityIndicator,
   Dimensions,
   ImageURISource,
+  Modal,
+  ScrollView,
   View,
 } from "react-native";
-import ImageView from "react-native-image-viewing";
-import { api } from "~/api";
+import { GestureViewer } from "react-native-gesture-image-viewer";
+import { Image } from "expo-image";
+import { useServerImages } from "@/hooks/content/useServerImages";
 import { getMessageUploadId, MediaThumbnail } from "./MediaThumbnail";
 
 const NUM_COLUMNS = 3;
@@ -63,18 +66,19 @@ export const ConversationMediaDetails = ({
     return map;
   }, [imageMessages]);
 
-  const viewerImages = React.useMemo(() => {
-    return imageMessages.flatMap((message) => {
-      const uploadId = getMessageUploadId(message);
-
-      if (typeof uploadId !== "number") {
-        return [];
-      }
-
-      const source = api.upload.getUploadSource(uploadId);
-      return [source as ImageURISource];
-    });
+  const imageUploadIds = React.useMemo(() => {
+    return imageMessages
+      .map(getMessageUploadId)
+      .filter((id) => typeof id === "number") as number[];
   }, [imageMessages]);
+
+  const { uploads } = useServerImages({
+    ids: imageUploadIds,
+  });
+
+  const viewerImages = React.useMemo(() => {
+    return uploads.filter((u: any) => !!u) as ImageURISource[];
+  }, [uploads]);
 
   const openViewer = React.useCallback(
     (messageId: number) => {
@@ -184,14 +188,22 @@ export const ConversationMediaDetails = ({
         }
       />
       {viewerVisible && viewerImages.length > 0 ? (
-        <ImageView
-          images={viewerImages}
-          imageIndex={viewerIndex}
-          visible={viewerVisible}
-          onRequestClose={() => setViewerVisible(false)}
-          backgroundColor="rgba(0, 0, 0, 0.9)"
-          presentationStyle="overFullScreen"
-        />
+        <Modal transparent visible={viewerVisible} presentationStyle="overFullScreen" onRequestClose={() => setViewerVisible(false)}>
+          <GestureViewer
+            data={viewerImages}
+            initialIndex={viewerIndex}
+            renderItem={(item) => (
+              <Image
+                source={item}
+                style={{ width: "100%", height: "100%" }}
+                contentFit="contain"
+              />
+            )}
+            ListComponent={ScrollView}
+            onDismiss={() => setViewerVisible(false)}
+            backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.9)" }}
+          />
+        </Modal>
       ) : null}
     </>
   );
