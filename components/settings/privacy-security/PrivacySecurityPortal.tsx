@@ -2,7 +2,6 @@ import React from "react";
 import { View } from "react-native";
 import { router } from "expo-router";
 import {
-  ArrowLeft,
   ChevronRight,
   Download,
   Eye,
@@ -37,13 +36,14 @@ export const PrivacySecurityPortal = ({
   className,
 }: PrivacySecurityPortalProps) => {
   const { t } = useTranslation("settings");
-  const cardClass =
-    "border-b-border border-t-border bg-background";
+  const cardClass = "border-b-border border-t-border bg-background";
 
   const sections: SettingsSection[] = [
     {
       key: "security",
-      title: t("settings.account.screens.privacy-security.screens.account-security.title"),
+      title: t(
+        "settings.account.screens.privacy-security.screens.account-security.title",
+      ),
       description: t(
         "settings.account.screens.privacy-security.screens.account-security.description",
       ),
@@ -83,7 +83,9 @@ export const PrivacySecurityPortal = ({
           className: "p-1 px-4",
           rightComponent: (
             <Badge variant="outline">
-              <Text className="text-xs font-medium">Soon</Text>
+              <Text className="text-xs font-medium">
+                {t("settings.general.soon")}
+              </Text>
             </Badge>
           ),
         }),
@@ -91,7 +93,9 @@ export const PrivacySecurityPortal = ({
     },
     {
       key: "privacy",
-      title: t("settings.account.screens.privacy-security.screens.privacy.title"),
+      title: t(
+        "settings.account.screens.privacy-security.screens.privacy.title",
+      ),
       description: t(
         "settings.account.screens.privacy-security.screens.privacy.description",
       ),
@@ -107,7 +111,9 @@ export const PrivacySecurityPortal = ({
           className: "p-1 px-4",
           rightComponent: (
             <Badge variant="outline">
-              <Text className="text-xs font-medium">Soon</Text>
+              <Text className="text-xs font-medium">
+                {t("settings.general.soon")}
+              </Text>
             </Badge>
           ),
         }),
@@ -122,7 +128,9 @@ export const PrivacySecurityPortal = ({
           className: "p-1 px-4",
           rightComponent: (
             <Badge variant="outline">
-              <Text className="text-xs font-medium">Soon</Text>
+              <Text className="text-xs font-medium">
+                {t("settings.general.soon")}
+              </Text>
             </Badge>
           ),
         }),

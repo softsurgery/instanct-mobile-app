@@ -34,7 +34,7 @@ interface SettingsSection {
 }
 
 export const MapSettings = ({ className }: MapSettingsProps) => {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("settings");
   const mapStore = useMapStore();
 
   React.useEffect(() => {
@@ -79,8 +79,8 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
   const settingsRows: SettingsSection[] = [
     {
       key: "discovery",
-      title: "Discovery Range",
-      description: "Control how far you can see other users.",
+      title: t("map-settings.discovery-range.title"),
+      description: t("map-settings.discovery-range.description"),
       rows: [
         createSettingRow({
           Component: StableRadiusRow,
@@ -89,12 +89,12 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
     },
     {
       key: "display",
-      title: "Display Preferences",
-      description: "Customize how the map looks and feels.",
+      title: t("map-settings.display-preferences.title"),
+      description: t("map-settings.display-preferences.description"),
       rows: [
         createSettingRow({
-          title: "Show User Clusters",
-          description: "Group nearby users into clusters",
+          title: t("map-settings.display-preferences.show-clusters.title"),
+          description: t("map-settings.display-preferences.show-clusters.description"),
           rightComponent: (
             <Switch
               checked={mapStore.draftSettings.clusters}
@@ -105,8 +105,8 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
           ),
         }),
         createSettingRow({
-          title: "Show Usernames",
-          description: "Display usernames on map markers",
+          title: t("map-settings.display-preferences.show-usernames.title"),
+          description: t("map-settings.display-preferences.show-usernames.description"),
           rightComponent: (
             <Switch
               checked={mapStore.draftSettings.showUsernames}
@@ -187,7 +187,7 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
     <StableSafeAreaView className={cn("flex flex-1 bg-card", className)}>
       <ApplicationHeader
         classNames={{ wrapper: "border-b border-border pb-2" }}
-        title={t("screens.mapSettings")}
+        title={t("map-settings.title")}
         titleVariant="large"
         reverse
         shortcuts={[

@@ -2,7 +2,7 @@ import React from "react";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "~/api";
 import { View } from "react-native";
-import { ArrowLeft, Loader2 } from "lucide-react-native";
+import { Loader2 } from "lucide-react-native";
 import { Text } from "~/components/ui/text";
 import { createFeedbackSchema } from "~/types/validations/system-reports.validation";
 import { Button } from "~/components/ui/button";
@@ -28,7 +28,7 @@ interface SendFeedbackPortalProps {
 }
 
 export const SendFeedbackPortal = ({ className }: SendFeedbackPortalProps) => {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("settings");
   const isKeyboardVisible = useKeyboardVisible();
   const sendFeedbackStore = useSendFeedbackStore();
 
@@ -74,7 +74,7 @@ export const SendFeedbackPortal = ({ className }: SendFeedbackPortalProps) => {
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
         classNames={{ wrapper: "border-b border-border pb-2" }}
-        title={t("screens.settings.sendFeedback")}
+        title={t("settings.support.screens.send-feedback.title")}
         titleVariant="large"
         reverse
         shortcuts={[
@@ -87,8 +87,7 @@ export const SendFeedbackPortal = ({ className }: SendFeedbackPortalProps) => {
       <StableKeyboardAwareScrollView className="flex-1 bg-background">
         <View className="px-5 pt-4 pb-2">
           <Text className="text-sm text-muted-foreground leading-relaxed">
-            Have suggestions or ideas to make Instinct better? We&apos;d love to
-            hear them!
+            {t("settings.support.screens.send-feedback.description")}
           </Text>
         </View>
         <FormBuilder structure={feedbackFormStructure} className="px-2" />
@@ -112,11 +111,17 @@ export const SendFeedbackPortal = ({ className }: SendFeedbackPortalProps) => {
                   className="text-primary-foreground animate-spin"
                 />
                 <Text className="text-primary-foreground font-semibold">
-                  Sending...
+                  {t(
+                    "settings.support.screens.send-feedback.forms.actions.submit-feedback-pending",
+                  )}
                 </Text>
               </React.Fragment>
             ) : (
-              <Text className="text-md font-bold">Send Feedback</Text>
+              <Text className="text-md font-bold">
+                {t(
+                  "settings.support.screens.send-feedback.forms.actions.submit-feedback",
+                )}
+              </Text>
             )}
           </Button>
         </BottomButtonWrapper>

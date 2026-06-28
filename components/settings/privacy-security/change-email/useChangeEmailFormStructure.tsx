@@ -1,4 +1,5 @@
 import { UserStore } from "@/stores/useUserStore";
+import { useTranslation } from "react-i18next";
 import {
   Field,
   FieldVariant,
@@ -14,13 +15,21 @@ interface UseChangeEmailFormStructureProps {
 export const useChangeEmailFormStructure = ({
   store,
 }: UseChangeEmailFormStructureProps) => {
+  const { t } = useTranslation("settings");
+
   const currentEmailField: Field<EmailFieldProps> = {
     id: "currentEmail",
-    label: "Current Email",
+    label: t(
+      "settings.account.screens.privacy-security.screens.account-security.change-email.forms.current-email",
+    ),
     variant: FieldVariant.EMAIL,
     required: true,
-    placeholder: "Enter your current Email",
-    description: "Use the Email associated with your account.",
+    placeholder: t(
+      "settings.account.screens.privacy-security.screens.account-security.change-email.forms.placeholders.current-email",
+    ),
+    description: t(
+      "settings.account.screens.privacy-security.screens.account-security.change-email.forms.descriptions.current-email",
+    ),
     props: {
       editable: false,
       value: store.response?.email,
@@ -29,12 +38,17 @@ export const useChangeEmailFormStructure = ({
 
   const newEmailField: Field<EmailFieldProps> = {
     id: "newEmail",
-    label: "New Email",
+    label: t(
+      "settings.account.screens.privacy-security.screens.account-security.change-email.forms.new-email",
+    ),
     variant: FieldVariant.EMAIL,
     required: true,
-    placeholder: "Enter your new Email",
-    description:
-      "Choose a stronger Email that is different from the one you already use.",
+    placeholder: t(
+      "settings.account.screens.privacy-security.screens.account-security.change-email.forms.placeholders.new-email",
+    ),
+    description: t(
+      "settings.account.screens.privacy-security.screens.account-security.change-email.forms.descriptions.new-email",
+    ),
     props: {
       value: store.updateDto.email,
       onChangeText: (text) => store.setNested("updateDto.email", text),
@@ -43,11 +57,17 @@ export const useChangeEmailFormStructure = ({
 
   const passwordField: Field<PasswordFieldProps> = {
     id: "currentPassword",
-    label: "Current Password",
+    label: t(
+      "settings.account.screens.privacy-security.screens.account-security.change-email.forms.current-password",
+    ),
     variant: FieldVariant.PASSWORD,
     required: true,
-    placeholder: "Enter your current password",
-    description: "Use the password associated with your account.",
+    placeholder: t(
+      "settings.account.screens.privacy-security.screens.account-security.change-email.forms.placeholders.current-password",
+    ),
+    description: t(
+      "settings.account.screens.privacy-security.screens.account-security.change-email.forms.descriptions.current-password",
+    ),
     props: {
       value: store.updateDto.password,
       onChangeText: (text) => store.setNested("updateDto.password", text),

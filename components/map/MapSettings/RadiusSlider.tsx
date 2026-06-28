@@ -1,11 +1,12 @@
 import { Badge } from "@/components/ui/badge";
 import { Text } from "@/components/ui/text";
-import { hslToHex, THEME } from "@/lib/theme";
+import { hslToHex } from "@/lib/theme";
 import { Slider } from "@miblanchard/react-native-slider";
-import { useColorScheme } from "nativewind";
 import React from "react";
 import { View } from "react-native";
 import * as Haptics from "expo-haptics";
+import { useTranslation } from "react-i18next";
+import { useColorPalette } from "@/hooks/useColorPalette";
 
 interface RadiusSliderProps {
   initialValue: number;
@@ -22,7 +23,8 @@ export const RadiusSlider = ({
   rangeMaxValue = 100,
   step = 50,
 }: RadiusSliderProps) => {
-  const { colorScheme } = useColorScheme();
+  const { palette } = useColorPalette();
+  const { t } = useTranslation("settings");
   const [localRadius, setLocalRadius] = React.useState(initialValue);
 
   const handleValueChange = (value: number | number[]) => {
@@ -38,7 +40,9 @@ export const RadiusSlider = ({
     <View className="flex flex-col">
       <View className="flex flex-row justify-between items-center">
         <View>
-          <Text className="font-semibold text-base">Search Radius</Text>
+          <Text className="font-semibold text-base">
+            {t("map-settings.discovery-range.search-radius")}
+          </Text>
         </View>
         <Badge variant="outline">
           <Text className="text-sm font-bold">{localRadius} km</Text>
@@ -47,17 +51,9 @@ export const RadiusSlider = ({
 
       <View className="flex flex-col">
         <Slider
-          thumbTintColor={hslToHex(
-            colorScheme === "dark" ? THEME.dark.primary : THEME.light.primary,
-          )}
-          minimumTrackTintColor={hslToHex(
-            colorScheme === "dark" ? THEME.dark.primary : THEME.light.primary,
-          )}
-          maximumTrackTintColor={hslToHex(
-            colorScheme === "dark"
-              ? THEME.dark.foreground
-              : THEME.light.foreground,
-          )}
+          thumbTintColor={hslToHex(palette.primary)}
+          minimumTrackTintColor={hslToHex(palette.primary)}
+          maximumTrackTintColor={hslToHex(palette.foreground)}
           animateTransitions
           value={localRadius}
           minimumValue={rangeMinValue}

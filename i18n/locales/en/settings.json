@@ -1,86 +1,129 @@
 {
     "settings": {
         "general": {
-            "description": "Signed in and synced across devices. Make changes tha feel personal to you."
+            "description": "Signed in and synced across devices. Make changes tha feel personal to you.",
+            "soon": "Soon"
         },
-            "account": {
-                "title": "Account",
-                "description": "Keep you profile & security details up to date.",
-                "screens":{
-                    "profile": {
-                        "title": "Update Profile",
-                        "description": "Update your profile information.",
-                        "form": {
-                            "profile-picture": "Profile Picture",
-                            "first-name": "First Name",
-                            "last-name": "Last Name",
-                            "date-of-birth": "Date of Birth",
-                            "bio": "Bio",
-                            "gender": "Gender",
-                            "website": "Website",
-                            "linkedin": "LinkedIn",
-                            "placeholders": {
-                                "first-name": "Enter your first name",
-                                "last-name": "Enter your last name",
-                                "date-of-birth": "Enter your date of birth",
-                                "bio": "Tell us about yourself",
-                                "gender": "Select your gender",
-                                "website": "Enter your website URL",
-                                "linkedin": "Enter your LinkedIn profile URL"
-                            },
-                            "descriptions": {
-                                "profile-picture": "Upload a profile picture to personalize your account.",
-                                "first-name": "Your first name as it appears on your profile.",
-                                "last-name": "Your last name as it appears on your profile.",
-                                "date-of-birth": "let's celebrate your birthday!",
-                                "bio": "A short description about yourself that will be visible on your profile.",
-                                "gender": "Your gender is used for account recovery and notifications.",
-                                "website": "Your website URL is used for account recovery and notifications.",
-                                "linkedin": "Your LinkedIn profile URL is used for account recovery and notifications."
-                            }
+        "account": {
+            "title": "Account",
+            "description": "Keep you profile & security details up to date.",
+            "screens": {
+                "profile": {
+                    "title": "Update Profile",
+                    "description": "Update your profile information.",
+                    "form": {
+                        "profile-picture": "Profile Picture",
+                        "first-name": "First Name",
+                        "last-name": "Last Name",
+                        "date-of-birth": "Date of Birth",
+                        "bio": "Bio",
+                        "gender": "Gender",
+                        "website": "Website",
+                        "linkedin": "LinkedIn",
+                        "placeholders": {
+                            "first-name": "Enter your first name",
+                            "last-name": "Enter your last name",
+                            "date-of-birth": "Enter your date of birth",
+                            "bio": "Tell us about yourself",
+                            "gender": "Select your gender",
+                            "website": "Enter your website URL",
+                            "linkedin": "Enter your LinkedIn profile URL"
                         },
-                        "actions": {
-                            "update-profile": "Update Profile",
-                            "update-profile-pending": "Updating...",
-                            "remove-picture": "Remove Picture"
+                        "descriptions": {
+                            "profile-picture": "Upload a profile picture to personalize your account.",
+                            "first-name": "Your first name as it appears on your profile.",
+                            "last-name": "Your last name as it appears on your profile.",
+                            "date-of-birth": "let's celebrate your birthday!",
+                            "bio": "A short description about yourself that will be visible on your profile.",
+                            "gender": "Your gender is used for account recovery and notifications.",
+                            "website": "Your website URL is used for account recovery and notifications.",
+                            "linkedin": "Your LinkedIn profile URL is used for account recovery and notifications."
                         }
                     },
-                    "privacy-security": {
-                        "title": "Privacy & Security",
-                        "description": "Manage your privacy and security settings.",
-                        "screens":{
-                            "account-security":{
-                                "title": "Account Security",
-                                "description": "Manage the most important account security actions.",
-                                    "change-email":{
-                                        "title": "Change Email",
-                                        "description": "Update the email address linked to your account"
-                                     },
-                                    "change-password":{
-                                        "title": "Change Password",
-                                        "description": "Update your password and keep your account protected",
+                    "actions": {
+                        "update-profile": "Update Profile",
+                        "update-profile-pending": "Updating...",
+                        "remove-picture": "Remove Picture"
+                    }
+                },
+                "privacy-security": {
+                    "title": "Privacy & Security",
+                    "description": "Manage your privacy and security settings.",
+                    "screens": {
+                        "account-security": {
+                            "title": "Account Security",
+                            "description": "Manage the most important account security actions.",
+                            "change-email": {
+                                "title": "Change Email",
+                                "description": "Update the email address linked to your account",
+                                "forms": {
+                                    "title": "Change Email",
+                                    "description": "To change your email, we need to verify your identity. Please enter your current email and password to proceed.",
+                                    "current-email": "Current Email",
+                                    "new-email": "New Email",
+                                    "current-password": "Current Password",
+                                    "placeholders": {
+                                        "current-email": "Enter your current email address",
+                                        "new-email": "Enter your new email address",
+                                        "current-password": "Enter your current password"
                                     },
-                                    "two-factor-authentication":{
-                                        "title": "Two-Factor Authentication",
-                                        "description": "Add an extra layer of protection for sign in",
+                                    "descriptions": {
+                                        "current-email": "Your current email address is used for account recovery and notifications.",
+                                        "new-email": "Your new email address will be used for account recovery and notifications.",
+                                        "current-password": "Please enter your current password to verify your identity."
+                                    },
+                                    "actions": {
+                                        "update-email": "Update Email",
+                                        "update-email-pending": "Updating..."
                                     }
-                            },
-                            "privacy":{
-                                "title": "Privacy",
-                                "description": "Manage your privacy settings.",
-                                "data-visibility":{
-                                    "title": "Data Visibility",
-                                    "description": "Control who can see your profile and activity",
-                                },
-                                "download-data":{
-                                    "title": "Download Your Data",
-                                    "description": "Export a copy of your account information",
                                 }
+                            },
+                            "change-password": {
+                                "title": "Change Password",
+                                "description": "Update your password and keep your account protected",
+                                "forms": {
+                                    "title": "Change Password",
+                                    "description": "To change your password, we need to verify your identity. Please enter your current password and new password to proceed.",
+                                    "current-password": "Current Password",
+                                    "new-password": "New Password",
+                                    "confirm-new-password": "Confirm New Password",
+                                    "placeholders": {
+                                        "current-password": "Enter your current password",
+                                        "new-password": "Enter your new password",
+                                        "confirm-new-password": "Confirm your new password"
+                                    },
+                                    "descriptions": {
+                                        "current-password": "Your current password is used for account recovery and notifications.",
+                                        "new-password": "Your new password will be used for account recovery and notifications.",
+                                        "confirm-new-password": "Please confirm your new password to ensure it matches."
+                                    },
+                                    "actions": {
+                                        "update-password": "Update Password",
+                                        "update-password-pending": "Updating..."
+                                    }
+                                }
+                            },
+                            "two-factor-authentication": {
+                                "title": "Two-Factor Authentication",
+                                "description": "Add an extra layer of protection for sign in",
+                            }
+                        },
+                        "privacy": {
+                            "title": "Privacy",
+                            "description": "Manage your privacy settings.",
+                            "data-visibility": {
+                                "title": "Data Visibility",
+                                "description": "Control who can see your profile and activity",
+                            },
+                            "download-data": {
+                                "title": "Download Your Data",
+                                "description": "Export a copy of your account information",
                             }
                         }
                     }
                 }
-            },
+            }
+        },
         "preferences": {
             "title": "Preferences",
             "description": "Customize your app experience.",
@@ -98,18 +141,68 @@
         "support": {
             "title": "Support",
             "description": "Report issues or send us your feedback.",
-            "screens":{
+            "screens": {
                 "report-bug": {
                     "title": "Report a Bug",
-                    "description": "Help us improve the app by reporting any bugs you encounter."
+                    "description": "Help us improve the app by reporting any bugs you encounter.",
+                    "forms": {
+                        "title": "Report a Bug",
+                        "description": "Please provide a detailed description of the bug you encountered, including steps to reproduce it, the expected behavior, and any relevant screenshots or error messages.",
+                        "bug-title": "Bug Title",
+                        "bug-description": "Bug Description",
+                        "bug-category": "Bug Category",
+                        "placeholders": {
+                            "bug-title": "Enter a brief title for the bug",
+                            "bug-description": "Describe the bug in detail, including steps to reproduce it",
+                            "bug-category": "Select the category that best describes the bug"
+                        },
+                        "descriptions": {
+                            "bug-title": "A brief title that summarizes the bug you encountered.",
+                            "bug-description": "A detailed description of the bug, including steps to reproduce it, the expected behavior, and any relevant screenshots or error messages.",
+                            "bug-category": "Select the category that best describes the bug you encountered."
+                        },
+                        "actions": {
+                            "submit-bug": "Submit Report",
+                            "submit-bug-pending": "Submitting..."
+                        }
+                    }
                 },
                 "send-feedback": {
                     "title": "Send Feedback",
-                    "description": "We value your feedback! Share your thoughts and suggestions with us."
+                    "description": "We value your feedback! Share your thoughts and suggestions with us.",
+                    "forms": {
+                        "title": "Send Feedback",
+                        "description": "We appreciate your feedback and suggestions. Please let us know your ideas for improving the app.",
+                        "message": "Feedback Message",
+                        "category": "Feedback Category",
+                        "rating": "Rating",
+                        "placeholders": {
+                            "message": "Enter your feedback here",
+                            "category": "Select the category that best describes your feedback",
+                            "rating": "Select your rating"
+                        },
+                        "descriptions": {
+                            "message": "A detailed message describing your feedback, suggestions, or ideas for improving the app.",
+                            "category": "Select the category that best describes your feedback, such as feature request, bug report, or general feedback.",
+                            "rating": "Provide a rating to help us understand your overall experience with the app."
+                        },
+                        "actions": {
+                            "submit-feedback": "Submit Feedback",
+                            "submit-feedback-pending": "Submitting..."
+                        }
+                    }
                 },
                 "faqs": {
                     "title": "Frequently Asked Questions",
-                    "description": "Find answers to frequently asked questions about the app."
+                    "description": "Find answers to frequently asked questions about the app.",
+                    "intro": {
+                        "title": "How can we help you ?",
+                        "description": "Here you'll find answers to the most common questions about our app. If you have any other questions, feel free to contact our support team."
+                    },
+                    "still-need-help": {
+                        "title": "Still need help?",
+                        "description": "Can't find what you're looking for? Our support team is here for you."
+                    }
                 }
             }
         },
@@ -140,5 +233,28 @@
             }
         }
     },
-    "map-settings": {}
+    "map-settings": {
+        "title": "Map Settings",
+        "discovery-range": {
+            "title": "Discover Range",
+            "description": "Control how far you can see other users.",
+            "search-radius": "Search Radius"
+        },
+        "display-preferences": {
+            "title": "Display Preferences",
+            "description": "Customize how the map is displayed.",
+            "show-clusters": {
+                "title": "Show User Clusters",
+                "description": "Group nearby users into clusters for better visibility on the map."
+            },
+            "show-usernames": {
+                "title": "Show Usernames",
+                "description": "Toggle the display of usernames on the map."
+            }
+        },
+        "actions": {
+            "update-map-config": "Update Map Settings",
+            "update-map-config-pending": "Updating..."
+        }
+    }
 }

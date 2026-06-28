@@ -1,7 +1,8 @@
 {
   "settings": {
     "general": {
-      "description": "Connecté et synchronisé sur tous vos appareils. Effectuez des modifications qui vous ressemblent."
+      "description": "Connecté et synchronisé sur tous vos appareils. Effectuez des modifications qui vous ressemblent.",
+      "soon": "Bientôt"
     },
     "account": {
       "title": "Compte",
@@ -51,18 +52,60 @@
           "screens": {
             "account-security": {
               "title": "Sécurité du compte",
-              "description": "Gérez les actions de sécurité les plus importantes de votre compte.",
+              "description": "Gérez les actions les plus importantes liées à la sécurité de votre compte.",
               "change-email": {
-                "title": "Modifier l’adresse e-mail",
-                "description": "Mettez à jour l’adresse e-mail associée à votre compte."
+                "title": "Modifier l'adresse e-mail",
+                "description": "Mettez à jour l'adresse e-mail associée à votre compte",
+                "forms": {
+                  "title": "Modifier l'adresse e-mail",
+                  "description": "Pour modifier votre adresse e-mail, nous devons vérifier votre identité. Veuillez saisir votre adresse e-mail actuelle ainsi que votre mot de passe pour continuer.",
+                  "current-email": "Adresse e-mail actuelle",
+                  "new-email": "Nouvelle adresse e-mail",
+                  "current-password": "Mot de passe actuel",
+                  "placeholders": {
+                    "current-email": "Saisissez votre adresse e-mail actuelle",
+                    "new-email": "Saisissez votre nouvelle adresse e-mail",
+                    "current-password": "Saisissez votre mot de passe actuel"
+                  },
+                  "descriptions": {
+                    "current-email": "Votre adresse e-mail actuelle est utilisée pour la récupération de votre compte et les notifications.",
+                    "new-email": "Votre nouvelle adresse e-mail sera utilisée pour la récupération de votre compte et les notifications.",
+                    "current-password": "Veuillez saisir votre mot de passe actuel afin de vérifier votre identité."
+                  },
+                  "actions": {
+                    "update-email": "Mettre à jour l'adresse e-mail",
+                    "update-email-pending": "Mise à jour..."
+                  }
+                }
               },
               "change-password": {
                 "title": "Modifier le mot de passe",
-                "description": "Mettez à jour votre mot de passe afin de protéger votre compte."
+                "description": "Mettez à jour votre mot de passe et protégez votre compte.",
+                "forms": {
+                  "title": "Modifier le mot de passe",
+                  "description": "Pour modifier votre mot de passe, nous devons vérifier votre identité. Veuillez saisir votre mot de passe actuel ainsi que votre nouveau mot de passe pour continuer.",
+                  "current-password": "Mot de passe actuel",
+                  "new-password": "Nouveau mot de passe",
+                  "confirm-new-password": "Confirmer le nouveau mot de passe",
+                  "placeholders": {
+                    "current-password": "Saisissez votre mot de passe actuel",
+                    "new-password": "Saisissez votre nouveau mot de passe",
+                    "confirm-new-password": "Confirmez votre nouveau mot de passe"
+                  },
+                  "descriptions": {
+                    "current-password": "Veuillez saisir votre mot de passe actuel afin de vérifier votre identité.",
+                    "new-password": "Votre nouveau mot de passe doit contenir au moins 8 caractères et inclure une combinaison de lettres, chiffres et symboles.",
+                    "confirm-new-password": "Veuillez confirmer votre nouveau mot de passe en le saisissant à nouveau."
+                  },
+                  "actions": {
+                    "update-password": "Mettre à jour le mot de passe",
+                    "update-password-pending": "Mise à jour..."
+                  }
+                }
               },
               "two-factor-authentication": {
                 "title": "Authentification à deux facteurs",
-                "description": "Ajoutez une couche de protection supplémentaire lors de la connexion."
+                "description": "Ajoutez une couche de sécurité supplémentaire lors de la connexion."
               }
             },
             "privacy": {
@@ -101,15 +144,60 @@
       "screens": {
         "report-bug": {
           "title": "Signaler un bug",
-          "description": "Aidez-nous à améliorer l’application en signalant les bugs que vous rencontrez."
+          "description": "Aidez-nous à améliorer l’application en signalant les bugs que vous rencontrez.",
+          "forms": {
+            "title": "Signaler un bug",
+            "description": "Veuillez fournir autant de détails que possible sur le bug que vous avez rencontré. Cela nous aidera à identifier et à résoudre le problème plus rapidement.",
+            "bug-title": "Titre du bug",
+            "bug-description": "Description du bug",
+            "bug-category": "Catégorie du bug",
+            "placeholders": {
+              "bug-title": "Entrez un titre concis pour le bug",
+              "bug-description": "Décrivez le bug en détail",
+              "bug-category": "Sélectionnez la catégorie qui décrit le mieux le bug"
+            },
+            "actions": {
+              "submit-bug": "Soumettre le rapport",
+              "submit-bug-pending": "Soumission en cours..."
+            }
+          }
         },
         "send-feedback": {
           "title": "Envoyer un commentaire",
-          "description": "Votre avis nous intéresse ! Partagez vos idées et suggestions avec nous."
+          "description": "Votre avis nous intéresse ! Partagez vos idées et suggestions avec nous.",
+          "forms": {
+            "title": "Envoyer un commentaire",
+            "description": "Nous apprécions vos commentaires et suggestions. Veuillez nous faire part de vos idées pour améliorer l’application.",
+            "message": "Feedback massage",
+            "category": "Catégorie du commentaire",
+            "rating": "Évaluation",
+            "placeholders": {
+              "message": "Entrez votre commentaire ici",
+              "category": "Sélectionnez la catégorie qui décrit le mieux votre commentaire",
+              "rating": "Sélectionnez votre évaluation"
+            },
+            "descriptions": {
+              "message": "Votre commentaire est précieux pour nous aider à améliorer l’application.",
+              "category": "Sélectionnez la catégorie qui décrit le mieux votre commentaire.",
+              "rating": "Sélectionnez votre évaluation de l’application."
+            },
+            "actions": {
+              "submit-feedback": "Soumettre le commentaire",
+              "submit-feedback-pending": "Soumission en cours..."
+            }
+          }
         },
         "faqs": {
           "title": "Questions fréquentes",
-          "description": "Trouvez des réponses aux questions fréquemment posées sur l’application."
+          "description": "Trouvez des réponses aux questions fréquemment posées sur l’application.",
+          "intro": {
+            "title": "Comment pouvons-nous vous aider ?",
+            "description": "Ici, vous trouverez des réponses aux questions les plus courantes sur notre application. Si vous avez d'autres questions, n'hésitez pas à contacter notre équipe d'assistance."
+          },
+          "still-need-help": {
+            "title": "Vous avez encore besoin d'aide ?",
+            "description": "Vous ne trouvez pas ce que vous cherchez ? Notre équipe d'assistance est là pour vous aider."
+          }
         }
       }
     },
@@ -140,6 +228,28 @@
       }
     }
   },
-  "map-settings": {}
+  "map-settings": {
+    "title": "Paramètres de la carte",
+    "discovery-range": {
+      "title": "Portée de découverte",
+      "description": "Définissez la distance à laquelle vous pouvez voir les autres utilisateurs.",
+      "search-radius": "Rayon de recherche"
+    },
+    "display-preferences": {
+      "title": "Préférences d'affichage",
+      "description": "Personnalisez l'affichage de la carte.",
+      "show-clusters": {
+        "title": "Afficher les groupes d'utilisateurs",
+        "description": "Regroupez les utilisateurs proches pour une meilleure visibilité sur la carte."
+      },
+      "show-usernames": {
+        "title": "Afficher les noms d'utilisateur",
+        "description": "Afficher ou masquer les noms d'utilisateur sur la carte."
+      }
+    },
+    "actions": {
+      "update-map-config": "Mettre à jour les paramètres de la carte",
+      "update-map-config-pending": "Mise à jour..."
+    }
+  }
 }
-

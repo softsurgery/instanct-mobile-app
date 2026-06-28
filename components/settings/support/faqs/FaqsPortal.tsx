@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  ArrowLeft,
-  HelpCircle,
-  MessageCircleQuestion,
-} from "lucide-react-native";
+import { HelpCircle, MessageCircleQuestion } from "lucide-react-native";
 import { View } from "react-native";
 import {
   Accordion,
@@ -17,7 +13,6 @@ import { StoreIDs } from "~/types";
 import { StableSafeAreaView } from "~/components/shared/StableSafeAreaView";
 import { ApplicationHeader } from "~/components/shared/AppHeader";
 import { useTranslation } from "react-i18next";
-import { router } from "expo-router";
 import { useDataStore } from "@/hooks/content/useDataStore";
 import StableScrollView from "@/components/shared/StableScrollView";
 import { Loader } from "@/components/shared/Loader";
@@ -67,7 +62,7 @@ interface FaqsPortalProps {
 }
 
 export const FaqsPortal = ({ className }: FaqsPortalProps) => {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("settings");
 
   const { dataStore, isDataStorePending } = useDataStore<Faq[]>({
     id: StoreIDs.FAQS,
@@ -81,7 +76,7 @@ export const FaqsPortal = ({ className }: FaqsPortalProps) => {
         classNames={{
           wrapper: "border-b border-border pb-2 bg-transparent",
         }}
-        title={t("screens.settings.faqs")}
+        title={t("settings.support.screens.faqs.title")}
         titleVariant="large"
         reverse
         shortcuts={[
@@ -108,12 +103,12 @@ export const FaqsPortal = ({ className }: FaqsPortalProps) => {
             </View>
             <View className="flex-1 gap-1">
               <Text className="text-lg font-semibold text-foreground">
-                How can we help?
+                {t("settings.support.screens.faqs.intro.title")}
               </Text>
             </View>
           </View>
           <Text className="text-sm leading-relaxed text-muted-foreground mb-4">
-            Find quick answers to common questions and get the support you need.
+            {t("settings.support.screens.faqs.intro.description")}
           </Text>
 
           {/* FAQ list */}
@@ -151,11 +146,10 @@ export const FaqsPortal = ({ className }: FaqsPortalProps) => {
                 <Icon as={HelpCircle} size={24} />
               </View>
               <Text className="text-base font-semibold text-foreground">
-                Still need help?
+                {t("settings.support.screens.faqs.still-need-help.title")}
               </Text>
               <Text className="text-center text-sm leading-relaxed text-muted-foreground">
-                Can't find what you're looking for? Our support team is here for
-                you.
+                {t("settings.support.screens.faqs.still-need-help.description")}
               </Text>
             </View>
           )}

@@ -1,6 +1,6 @@
 import React from "react";
 import { useMutation } from "@tanstack/react-query";
-import { ArrowLeft, Loader2 } from "lucide-react-native";
+import { Loader2 } from "lucide-react-native";
 import { api } from "~/api";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
@@ -28,7 +28,7 @@ interface BugReportPortalProps {
 }
 
 export const BugReportPortal = ({ className }: BugReportPortalProps) => {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("settings");
   const isKeyboardVisible = useKeyboardVisible();
   const bugStore = useReportBugStore();
 
@@ -71,7 +71,7 @@ export const BugReportPortal = ({ className }: BugReportPortalProps) => {
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
         classNames={{ wrapper: "border-b border-border pb-2" }}
-        title={t("screens.settings.reportBug")}
+        title={t("settings.support.screens.report-bug.forms.title")}
         titleVariant="large"
         reverse
         shortcuts={[
@@ -84,8 +84,7 @@ export const BugReportPortal = ({ className }: BugReportPortalProps) => {
       <StableKeyboardAwareScrollView className="flex-1 bg-background">
         <View className="px-5 pt-4 pb-2">
           <Text className="text-sm text-muted-foreground leading-relaxed">
-            Encountered a bug? Let us know the details, and we&apos;ll work on
-            fixing it as soon as possible!
+            {t("settings.support.screens.report-bug.forms.description")}
           </Text>
         </View>
         <FormBuilder structure={bugFormStructure} className="px-2" />
@@ -109,11 +108,17 @@ export const BugReportPortal = ({ className }: BugReportPortalProps) => {
                   className="text-primary-foreground animate-spin"
                 />
                 <Text className="text-primary-foreground font-semibold">
-                  Submitting...
+                  {t(
+                    "settings.support.screens.report-bug.forms.actions.submit-bug-pending",
+                  )}
                 </Text>
               </React.Fragment>
             ) : (
-              <Text className="text-md font-bold">Submit Bug</Text>
+              <Text className="text-md font-bold">
+                {t(
+                  "settings.support.screens.report-bug.forms.actions.submit-bug",
+                )}
+              </Text>
             )}
           </Button>
         </BottomButtonWrapper>

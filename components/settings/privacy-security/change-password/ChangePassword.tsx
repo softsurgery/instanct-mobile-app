@@ -1,7 +1,6 @@
 import React from "react";
 import { View } from "react-native";
-import { router } from "expo-router";
-import { ArrowLeft, Lock, Loader2 } from "lucide-react-native";
+import { Lock, Loader2 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { cn } from "~/lib/utils";
 import { ApplicationHeader } from "~/components/shared/AppHeader";
@@ -28,7 +27,7 @@ interface ChangePasswordProps {
 }
 
 export const ChangePassword = ({ className }: ChangePasswordProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("settings");
   const userStore = useUserStore();
   const isKeyboardVisible = useKeyboardVisible();
   const logout = useLogout();
@@ -74,7 +73,9 @@ export const ChangePassword = ({ className }: ChangePasswordProps) => {
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
         classNames={{ wrapper: "border-b border-border pb-2" }}
-        title={t("screens.changePassword", "Change Password")}
+        title={t(
+          "settings.account.screens.privacy-security.screens.account-security.change-password.forms.title",
+        )}
         titleVariant="large"
         reverse
         shortcuts={[
@@ -93,8 +94,9 @@ export const ChangePassword = ({ className }: ChangePasswordProps) => {
               className="mt-0.5 flex-shrink-0 text-primary"
             />
             <Text className="flex-1 text-sm leading-5 text-muted-foreground">
-              After changing your password, you may be asked to sign in again on
-              other devices.
+              {t(
+                "settings.account.screens.privacy-security.screens.account-security.change-password.forms.description",
+              )}
             </Text>
           </View>
         </View>
@@ -120,11 +122,17 @@ export const ChangePassword = ({ className }: ChangePasswordProps) => {
                   className="text-primary-foreground animate-spin"
                 />
                 <Text className="text-primary-foreground font-semibold">
-                  Updating...
+                  {t(
+                    "settings.account.screens.privacy-security.screens.account-security.change-password.forms.actions.updating-password",
+                  )}
                 </Text>
               </React.Fragment>
             ) : (
-              <Text className="text-md font-bold">Update Password</Text>
+              <Text className="text-md font-bold">
+                {t(
+                  "settings.account.screens.privacy-security.screens.account-security.change-password.forms.actions.update-password",
+                )}
+              </Text>
             )}
           </Button>
         </BottomButtonWrapper>

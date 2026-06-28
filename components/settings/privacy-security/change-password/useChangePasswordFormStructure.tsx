@@ -1,4 +1,5 @@
 import { UserStore } from "@/stores/useUserStore";
+import { useTranslation } from "react-i18next";
 import {
   Field,
   FieldVariant,
@@ -13,43 +14,65 @@ interface UseChangePasswordFormStructureProps {
 export const useChangePasswordFormStructure = ({
   store,
 }: UseChangePasswordFormStructureProps) => {
+  const { t } = useTranslation("settings");
+
   const currentPasswordField: Field<PasswordFieldProps> = {
     id: "currentPassword",
-    label: "Current Password",
+    label: t(
+      "settings.account.screens.privacy-security.screens.account-security.change-password.forms.current-password"
+    ),
     variant: FieldVariant.PASSWORD,
     required: true,
-    placeholder: "Enter your current password",
-    description: "Use the password associated with your account.",
+    placeholder: t(
+      "settings.account.screens.privacy-security.screens.account-security.change-password.forms.placeholders.current-password"
+    ),
+    description: t(
+      "settings.account.screens.privacy-security.screens.account-security.change-password.forms.descriptions.current-password"
+    ),
     props: {
       value: store.updatePasswordDto.currentPassword,
-      onChangeText: (text) => store.setNested("updatePasswordDto.currentPassword", text),
+      onChangeText: (text) =>
+        store.setNested("updatePasswordDto.currentPassword", text),
     },
   };
 
   const newPasswordField: Field<PasswordFieldProps> = {
     id: "newPassword",
-    label: "New Password",
+    label: t(
+      "settings.account.screens.privacy-security.screens.account-security.change-password.forms.new-password"
+    ),
     variant: FieldVariant.PASSWORD,
     required: true,
-    placeholder: "Enter your new password",
-    description:
-      "Choose a stronger password that is different from the one you already use.",
+    placeholder: t(
+      "settings.account.screens.privacy-security.screens.account-security.change-password.forms.placeholders.new-password"
+    ),
+    description: t(
+      "settings.account.screens.privacy-security.screens.account-security.change-password.forms.descriptions.new-password"
+    ),
     props: {
       value: store.updatePasswordDto.newPassword,
-      onChangeText: (text) => store.setNested("updatePasswordDto.newPassword", text),
+      onChangeText: (text) =>
+        store.setNested("updatePasswordDto.newPassword", text),
     },
   };
 
   const confirmPasswordField: Field<PasswordFieldProps> = {
     id: "confirmPassword",
-    label: "Confirm Password",
+    label: t(
+      "settings.account.screens.privacy-security.screens.account-security.change-password.forms.confirm-new-password"
+    ),
     variant: FieldVariant.PASSWORD,
     required: true,
-    placeholder: "Re-enter your new password",
-    description: "Repeat the new password to make sure it matches.",
+    placeholder: t(
+      "settings.account.screens.privacy-security.screens.account-security.change-password.forms.placeholders.confirm-new-password"
+    ),
+    description: t(
+      "settings.account.screens.privacy-security.screens.account-security.change-password.forms.descriptions.confirm-new-password"
+    ),
     props: {
       value: store.updatePasswordDto.confirmPassword,
-      onChangeText: (text) => store.setNested("updatePasswordDto.confirmPassword", text),
+      onChangeText: (text) =>
+        store.setNested("updatePasswordDto.confirmPassword", text),
     },
   };
 

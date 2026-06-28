@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import { router } from "expo-router";
-import { ArrowLeft, Loader2 } from "lucide-react-native";
+import { Loader2 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { cn } from "~/lib/utils";
 import { ApplicationHeader } from "~/components//shared/AppHeader";
@@ -29,7 +29,7 @@ interface ChangeEmailPortalProps {
 
 export const ChangeEmailPortal = ({ className }: ChangeEmailPortalProps) => {
   const isKeyboardVisible = useKeyboardVisible();
-  const { t } = useTranslation();
+  const { t } = useTranslation("settings");
   const userStore = useUserStore();
   const { currentUser, refetchCurrentUser } = useCurrentUser();
 
@@ -73,7 +73,10 @@ export const ChangeEmailPortal = ({ className }: ChangeEmailPortalProps) => {
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
         classNames={{ wrapper: "border-b border-border pb-2" }}
-        title={t("screens.updateEmail", "Update Email")}
+        title={t(
+          "settings.account.screens.privacy-security.screens.account-security.change-email.title",
+          "Update Email",
+        )}
         titleVariant="large"
         reverse
         shortcuts={[
@@ -87,8 +90,9 @@ export const ChangeEmailPortal = ({ className }: ChangeEmailPortalProps) => {
       <StableKeyboardAwareScrollView className="flex-1 bg-background">
         <View className="px-5 pt-4 pb-2">
           <Text className="text-sm text-muted-foreground leading-relaxed">
-            To change your email, we need to verify your identity. Please enter
-            your current email and password to proceed.
+            {t(
+              "settings.account.screens.privacy-security.screens.account-security.change-email.forms.description",
+            )}
           </Text>
         </View>
         <FormBuilder className="px-2" structure={updateMailFormStructure} />
@@ -112,11 +116,17 @@ export const ChangeEmailPortal = ({ className }: ChangeEmailPortalProps) => {
                   className="text-primary-foreground animate-spin"
                 />
                 <Text className="text-primary-foreground font-semibold">
-                  Updating...
+                  {t(
+                    "settings.account.screens.privacy-security.screens.account-security.change-email.forms.actions.update-email-pending",
+                  )}
                 </Text>
               </React.Fragment>
             ) : (
-              <Text className="text-md font-bold">Update Email</Text>
+              <Text className="text-md font-bold">
+                {t(
+                  "settings.account.screens.privacy-security.screens.account-security.change-email.forms.actions.update-email",
+                )}
+              </Text>
             )}
           </Button>
         </BottomButtonWrapper>
