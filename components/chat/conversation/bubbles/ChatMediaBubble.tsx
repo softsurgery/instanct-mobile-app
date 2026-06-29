@@ -56,6 +56,7 @@ export const ChatMediaBubble = ({
 
   const timestamp = pending ? pending.createdAt : new Date(message!.createdAt);
   const isUploading = pending?.status === "uploading";
+  const isSending = pending?.status === "sending";
   const uploadFailed = pending?.status === "failed";
 
   const isSingleImage = !isVideo && mediaCount === 1;
@@ -143,7 +144,10 @@ export const ChatMediaBubble = ({
         right ? "self-end" : "self-start",
         className,
       )}
-      style={{ maxWidth: CHAT_MEDIA_WIDTH + 24 }}
+      style={{
+        maxWidth: CHAT_MEDIA_WIDTH + 24,
+        opacity: isSending ? 0.5 : 1,
+      }}
     >
       <View>{mediaContent}</View>
 

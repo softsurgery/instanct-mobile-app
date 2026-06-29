@@ -1,6 +1,7 @@
 import { ChatContext } from "@/contexts/ChatContext";
 import { NotificationContext } from "@/contexts/NotificationsContext";
 import { useChat } from "@/hooks/content/chat/useChat";
+import { useChatPendingSync } from "@/hooks/content/chat/useChatPendingSync";
 import { useLiveGeolocation } from "@/hooks/content/geolocation/useLiveGeolocation";
 import { useNotifications } from "@/hooks/content/notification/useNotifications";
 import { useCheckHealth } from "@/hooks/content/useCheckHealth";
@@ -37,6 +38,7 @@ export default function MainLayout() {
   });
 
   const { count: chatCount, resetCount: resetChatCount } = useChat({});
+  useChatPendingSync();
   const {
     count: notificationCount,
     notifications,

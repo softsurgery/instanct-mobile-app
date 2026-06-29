@@ -1,3 +1,5 @@
+import React from "react";
+import { Alert, Platform } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { api } from "@/api";
 import {
@@ -7,14 +9,15 @@ import {
   ResponseMessageDto,
   StagedMedia,
 } from "@/types";
-import React from "react";
-import { Alert, Platform } from "react-native";
 import { waitForUiReady } from "@/lib/device";
 import { toast } from "sonner-native";
+import { useChatPendingStore } from "@/stores/useChatPendingStore";
+import { useShallow } from "zustand/react/shallow";
 
 const MAX_SELECTION = 10;
 
 interface useSendChatMediaProps {
+  conversationId: number;
   messages: ResponseMessageDto[];
   onSend: (payload: {
     uploadIds: number[];
@@ -24,6 +27,7 @@ interface useSendChatMediaProps {
 }
 
 export const useSendChatMedia = ({
+  conversationId,
   messages,
   onSend,
 }: useSendChatMediaProps) => {
@@ -34,19 +38,23 @@ export const useSendChatMedia = ({
     stagedMediaRef.current = stagedMedia;
   }, [stagedMedia]);
 
-  const [pendingUploads, setPendingUploads] = React.useState<
-    PendingMediaUpload[]
-  >([]);
+  const pendingUploads = useChatPendingStore(
+    useShallow((state) =>
+      state.pendingMediaUploads.filter(
+        (pending) => pending.conversationId === conversationId,
+      ),
+    ),
+  );
+  const addPendingMedia = useChatPendingStore((state) => state.addPendingMedia);
+  const updatePendingMedia = useChatPendingStore(
+    (state) => state.updatePendingMedia,
+  );
 
   const updatePending = React.useCallback(
     (clientId: string, patch: Partial<PendingMediaUpload>) => {
-      setPendingUploads((current) =>
-        current.map((item) =>
-          item.clientId === clientId ? { ...item, ...patch } : item,
-        ),
-      );
+      updatePendingMedia(clientId, patch);
     },
-    [],
+    [updatePendingMedia],
   );
 
   const serverUploadIds = React.useMemo(
@@ -121,6 +129,7 @@ export const useSendChatMedia = ({
 
       const pending: PendingMediaUpload = {
         clientId,
+        conversationId,
         items: items.map((item) => ({ uri: item.uri, kind: item.kind })),
         variant,
         progress: 0,
@@ -129,7 +138,7 @@ export const useSendChatMedia = ({
         content,
       };
 
-      setPendingUploads((current) => [pending, ...current]);
+      addPendingMedia(pending);
 
       try {
         const totalBytes = items.reduce(
@@ -152,7 +161,11 @@ export const useSendChatMedia = ({
           throw new Error("Upload failed");
         }
 
-        updatePending(clientId, { progress: 100, uploadIds });
+        updatePending(clientId, {
+          progress: 100,
+          uploadIds,
+          status: "sending",
+        });
         onSend({ uploadIds, variant, content });
       } catch (error) {
         console.error("Failed to send media:", error);
@@ -160,7 +173,7 @@ export const useSendChatMedia = ({
         Alert.alert("Upload failed", "Could not send your media. Try again.");
       }
     },
-    [onSend, updatePending],
+    [conversationId, onSend, updatePending, addPendingMedia],
   );
 
   const confirmSendStagedMedia = React.useCallback(

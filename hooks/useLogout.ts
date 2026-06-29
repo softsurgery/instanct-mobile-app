@@ -8,6 +8,7 @@ import { useRequestStore } from "@/stores/useRequestStore";
 import { useExploreFilterStore } from "@/stores/userExploreFilterStore";
 import { useReportBugStore } from "@/stores/useReportBugStore";
 import { useSendFeedbackStore } from "@/stores/useFeedbackManager";
+import { useChatPendingStore } from "@/stores/useChatPendingStore";
 import { disconnectAllSockets } from "@/lib/socket";
 import { router } from "expo-router";
 
@@ -39,6 +40,7 @@ export const useLogout = () => {
     exploreFilterStore.reset();
     reportBugStore.reset();
     sendFeedbackStore.reset();
+    useChatPendingStore.getState().reset();
 
     // 4. Disconnect all sockets
     disconnectAllSockets();

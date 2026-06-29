@@ -17,6 +17,9 @@ import {
   isYesterday,
 } from "date-fns";
 import { getSocket } from "@/lib/socket";
+import { useCurrentUser } from "../users/useCurrentUser";
+import { useChatPendingStore } from "@/stores/useChatPendingStore";
+import { useShallow } from "zustand/react/shallow";
 
 interface useConversationFeaturesProps {
   id: number;
@@ -46,8 +49,27 @@ export const useConversationFeatures = ({
   const queryClient = useQueryClient();
   const [input, setInput] = React.useState("");
 
+  const pendingTextMessages = useChatPendingStore(
+    useShallow((state) =>
+      state.pendingTextMessages.filter(
+        (pending) => pending.conversationId === id,
+      ),
+    ),
+  );
+  const addPendingText = useChatPendingStore((state) => state.addPendingText);
+  const enqueueSentText = useChatPendingStore((state) => state.enqueueSentText);
+  const reconcileTextPending = useChatPendingStore(
+    (state) => state.reconcileTextPending,
+  );
+
   const socketRef = React.useRef<Socket | null>(null);
+  const currentUserIdRef = React.useRef<string | undefined>(undefined);
   const authPersistStore = useAuthPersistStore();
+  const { currentUser } = useCurrentUser();
+
+  React.useEffect(() => {
+    currentUserIdRef.current = currentUser?.id;
+  }, [currentUser?.id]);
 
   // ----- Query key for this conversation's messages -----
   const messagesQueryKey = React.useMemo(
@@ -75,6 +97,11 @@ export const useConversationFeatures = ({
   );
   const hasMore = cachedData?.hasMore ?? true;
   const currentPage = cachedData?.currentPage ?? 0;
+
+  React.useEffect(() => {
+    if (!currentUser?.id) return;
+    reconcileTextPending(id, messages, currentUser.id);
+  }, [id, messages, currentUser?.id, reconcileTextPending]);
 
   // ----- Helper to check if cache has real data -----
   const getCachedMessages = React.useCallback(():
@@ -224,11 +251,22 @@ export const useConversationFeatures = ({
     };
 
     const onMessage = (message: ResponseMessageDto) => {
-      setCachedMessages((prev) => ({
-        messages: [message, ...(prev?.messages ?? [])],
-        hasMore: prev?.hasMore ?? true,
-        currentPage: prev?.currentPage ?? 1,
-      }));
+      setCachedMessages((prev) => {
+        const existing = prev?.messages ?? [];
+        if (existing.some((item) => item.id === message.id)) {
+          return prev ?? {
+            messages: existing,
+            hasMore: true,
+            currentPage: 1,
+          };
+        }
+
+        return {
+          messages: [message, ...existing],
+          hasMore: prev?.hasMore ?? true,
+          currentPage: prev?.currentPage ?? 1,
+        };
+      });
 
       if (
         message.variant === MessageVariant.IMAGE ||
@@ -300,14 +338,26 @@ export const useConversationFeatures = ({
   // Send Message *******************************************************************************************************************
   const sendMessage = React.useCallback(() => {
     const s = socketRef.current;
-    if (!input.trim() || !s) return;
+    const trimmed = input.trim();
+    if (!trimmed || !s) return;
+
+    const clientId = `text-${Date.now()}-${Math.random()}`;
+    enqueueSentText(id, clientId);
+    addPendingText({
+      clientId,
+      conversationId: id,
+      content: trimmed,
+      createdAt: new Date(),
+      status: "pending",
+    });
+
     s.emit("message", {
       conversationId: id,
-      content: input.trim(),
+      content: trimmed,
       variant: MessageVariant.TEXT,
     });
     setInput("");
-  }, [input, id]);
+  }, [input, id, addPendingText, enqueueSentText]);
 
   // Send Poke **********************************************************************************************************************
   const sendPoke = React.useCallback(() => {
@@ -387,5 +437,6 @@ export const useConversationFeatures = ({
     sendMessage,
     sendPoke,
     sendMediaMessage,
+    pendingTextMessages,
   };
 };

@@ -71,6 +71,7 @@ export const Conversation = ({ id }: ConversationProps) => {
     sendMessage,
     sendPoke,
     sendMediaMessage,
+    pendingTextMessages,
     loadMore,
   } = useConversationFeatures({ id });
 
@@ -84,6 +85,7 @@ export const Conversation = ({ id }: ConversationProps) => {
     removeStagedMedia,
     addMoreStagedMedia,
   } = useSendChatMedia({
+    conversationId: id,
     messages,
     onSend: sendMediaMessage,
   });
@@ -150,15 +152,22 @@ export const Conversation = ({ id }: ConversationProps) => {
   }, [isOnline, lastSeen]);
 
   const listData = React.useMemo(() => {
-    const pendingItems = pendingUploads.map(
+    const pendingTextItems = pendingTextMessages.map(
+      (pending): MessageFlatListItem => ({
+        type: "pending-text",
+        key: pending.clientId,
+        pending,
+      }),
+    );
+    const pendingMediaItems = pendingUploads.map(
       (pending): MessageFlatListItem => ({
         type: "pending-media",
         key: pending.clientId,
         pending,
       }),
     );
-    return [...pendingItems, ...flattenedMessages];
-  }, [pendingUploads, flattenedMessages]);
+    return [...pendingTextItems, ...pendingMediaItems, ...flattenedMessages];
+  }, [pendingTextMessages, pendingUploads, flattenedMessages]);
 
   const isLoading = isConversationPending || isInitialPending;
 
@@ -210,7 +219,8 @@ export const Conversation = ({ id }: ConversationProps) => {
                 keyExtractor={(item) =>
                   item.type === "header"
                     ? item.key
-                    : item.type === "pending-media"
+                    : item.type === "pending-media" ||
+                        item.type === "pending-text"
                       ? item.key
                       : `m-${item.message.id}`
                 }
@@ -229,6 +239,16 @@ export const Conversation = ({ id }: ConversationProps) => {
 
                   if (item.type === "pending-media")
                     return <ChatMediaBubble pending={item.pending} right />;
+
+                  if (item.type === "pending-text")
+                    return (
+                      <ChatBubble
+                        message={item.pending.content}
+                        timestamp={item.pending.createdAt}
+                        right
+                        isPending
+                      />
+                    );
 
                   if (item.type === "message")
                     return (

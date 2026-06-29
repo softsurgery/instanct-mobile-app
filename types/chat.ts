@@ -78,13 +78,22 @@ export type PendingMediaItem = {
 
 export type PendingMediaUpload = {
   clientId: string;
+  conversationId: number;
   items: PendingMediaItem[];
   variant: MessageVariant.IMAGE | MessageVariant.VIDEO;
   progress: number;
-  status: "uploading" | "failed";
+  status: "uploading" | "sending" | "failed";
   createdAt: Date;
   uploadIds?: number[];
   content?: string;
+};
+
+export type PendingTextMessage = {
+  clientId: string;
+  conversationId: number;
+  content: string;
+  createdAt: Date;
+  status: "pending" | "failed";
 };
 
 export type MessageFlatListItem =
@@ -92,7 +101,8 @@ export type MessageFlatListItem =
   | { type: "message"; message: ResponseMessageDto }
   | { type: "media"; message: ResponseMessageDto }
   | { type: "static"; message: ResponseMessageDto }
-  | { type: "pending-media"; key: string; pending: PendingMediaUpload };
+  | { type: "pending-media"; key: string; pending: PendingMediaUpload }
+  | { type: "pending-text"; key: string; pending: PendingTextMessage };
 
 export type MediaKind = "image" | "video";
 
