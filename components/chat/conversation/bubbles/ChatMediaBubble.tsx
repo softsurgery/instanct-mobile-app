@@ -47,7 +47,6 @@ export const ChatMediaBubble = ({
   });
 
   const mediaSource = uploads[0];
-  console.log(mediaSource);
 
   const isVideo =
     pending?.variant === MessageVariant.VIDEO ||

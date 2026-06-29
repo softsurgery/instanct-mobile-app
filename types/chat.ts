@@ -89,3 +89,12 @@ export type MessageFlatListItem =
   | { type: "media"; message: ResponseMessageDto }
   | { type: "static"; message: ResponseMessageDto }
   | { type: "pending-media"; key: string; pending: PendingMediaUpload };
+
+export type MediaKind = "image" | "video";
+
+export interface StagedMedia {
+  id: string;
+  file: File;
+  kind: MediaKind;
+  uri: string;
+}

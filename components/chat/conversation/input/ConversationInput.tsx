@@ -65,79 +65,77 @@ export const ConversationInput = ({
     );
 
   return (
-    <>
+    <View
+      className={cn(
+        "bg-background/95 border-t border-border py-2",
+        isKeyboardVisible ? "pb-4" : "pb-8",
+        className,
+      )}
+      style={{
+        zIndex: 20,
+      }}
+    >
       <ConversationInputActionsSheet
         ref={actionSheetRef}
         onPoke={sendPoke}
         onPickImage={onPickImage}
         onPickVideo={onPickVideo}
       />
-      <View
-        className={cn(
-          "bg-background/95 border-t border-border py-2",
-          isKeyboardVisible ? "pb-4" : "pb-8",
-          className,
-        )}
-        style={{
-          zIndex: 20,
-        }}
-      >
-        <View className="flex flex-row items-center justify-between gap-2 px-6 py-0.5">
-          {/* Add Button */}
+      <View className="flex flex-row items-center justify-between gap-2 px-6 py-0.5">
+        {/* Add Button */}
 
-          <TouchableOpacity onPress={() => actionSheetRef.current?.show()}>
-            <Icon as={Plus} size={24} />
-          </TouchableOpacity>
+        <TouchableOpacity onPress={() => actionSheetRef.current?.show()}>
+          <Icon as={Plus} size={24} />
+        </TouchableOpacity>
 
-          {/* Text Input */}
-          <Textarea
-            value={input}
-            onChangeText={setInput}
-            placeholder={"Aa"}
-            multiline
-            style={{ minHeight: 40, maxHeight: 120, height: "auto" }}
-            className="flex-1 px-4 py-2 rounded-2xl bg-input text-base"
-          />
+        {/* Text Input */}
+        <Textarea
+          value={input}
+          onChangeText={setInput}
+          placeholder={"Aa"}
+          multiline
+          style={{ minHeight: 40, maxHeight: 120, height: "auto" }}
+          className="flex-1 px-4 py-2 rounded-2xl bg-input text-base"
+        />
 
-          {/* Send Button */}
-          <View
-            style={{
-              width: 32,
-              height: 32,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            {input.trim().length > 0 ? (
-              <Animated.View
-                key="send"
-                entering={FadeIn.duration(180).springify()}
-                exiting={FadeOut.duration(120)}
-              >
-                <TouchableOpacity onPress={handleSend}>
-                  <Icon
-                    as={SendHorizonal}
-                    size={24}
-                    strokeWidth={1.5}
-                    fill="white"
-                    color="white"
-                  />
-                </TouchableOpacity>
-              </Animated.View>
-            ) : (
-              <Animated.View
-                key="hand"
-                entering={ZoomIn.duration(180)}
-                exiting={ZoomOut.duration(120)}
-              >
-                <TouchableOpacity onPress={sendPoke}>
-                  <Icon as={Hand} size={24} strokeWidth={1.5} />
-                </TouchableOpacity>
-              </Animated.View>
-            )}
-          </View>
+        {/* Send Button */}
+        <View
+          style={{
+            width: 32,
+            height: 32,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {input.trim().length > 0 ? (
+            <Animated.View
+              key="send"
+              entering={FadeIn.duration(180).springify()}
+              exiting={FadeOut.duration(120)}
+            >
+              <TouchableOpacity onPress={handleSend}>
+                <Icon
+                  as={SendHorizonal}
+                  size={24}
+                  strokeWidth={1.5}
+                  fill="white"
+                  color="white"
+                />
+              </TouchableOpacity>
+            </Animated.View>
+          ) : (
+            <Animated.View
+              key="hand"
+              entering={ZoomIn.duration(180)}
+              exiting={ZoomOut.duration(120)}
+            >
+              <TouchableOpacity onPress={sendPoke}>
+                <Icon as={Hand} size={24} strokeWidth={1.5} />
+              </TouchableOpacity>
+            </Animated.View>
+          )}
         </View>
       </View>
-    </>
+    </View>
   );
 };

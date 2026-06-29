@@ -4,6 +4,32 @@ import axios from "./axios";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
+export const uploadFile = async (
+  file: File,
+  onProgress?: (percent: number) => void,
+  temporary: boolean = true,
+) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  const response = await axios.post<Upload>(
+    temporary ? "/storage/temporary" : "/storage",
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Accept: "application/json",
+      },
+      onUploadProgress: (event) => {
+        if (onProgress && event.total) {
+          const percent = Math.round((event.loaded * 100) / event.total);
+          onProgress(percent);
+        }
+      },
+    },
+  );
+  return response.data;
+};
+
 export const uploadFiles = async (
   files: File[],
   onProgress?: (percent: number) => void,
@@ -61,6 +87,7 @@ export const getUploadBySlug = (slug: string) => {
 };
 
 export const upload = {
+  uploadFile,
   uploadFiles,
   getUploadBySlug,
   getUploadById,

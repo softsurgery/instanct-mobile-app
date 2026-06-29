@@ -1,47 +1,20 @@
 import * as ImagePicker from "expo-image-picker";
 import { api } from "@/api";
-import { MessageVariant, PendingMediaUpload, ResponseMessageDto } from "@/types";
+import {
+  MediaKind,
+  MessageVariant,
+  PendingMediaUpload,
+  ResponseMessageDto,
+  StagedMedia,
+} from "@/types";
 import React from "react";
-import { Alert, InteractionManager, Platform } from "react-native";
-
-type MediaKind = "image" | "video";
+import { Alert, Platform } from "react-native";
+import { waitForUiReady } from "@/lib/device";
+import { toast } from "sonner-native";
 
 const MAX_SELECTION = 10;
 
-export interface StagedMedia {
-  id: string;
-  file: File;
-  kind: MediaKind;
-  uri: string;
-}
-
-const toUploadFile = (asset: ImagePicker.ImagePickerAsset) =>
-  ({
-    uri: asset.uri,
-    name: asset.fileName || asset.uri.split("/").pop() || "media",
-    type:
-      asset.mimeType ||
-      (asset.type === "video" ? "video/mp4" : "image/jpeg"),
-  }) as unknown as File;
-
-const assetKind = (asset: ImagePicker.ImagePickerAsset): MediaKind =>
-  asset.type === "video" ? "video" : "image";
-
-const toStagedMedia = (asset: ImagePicker.ImagePickerAsset): StagedMedia => ({
-  id: `${asset.assetId ?? asset.uri}-${Date.now()}-${Math.random()}`,
-  file: toUploadFile(asset),
-  kind: assetKind(asset),
-  uri: asset.uri,
-});
-
-const waitForUiReady = () =>
-  new Promise<void>((resolve) => {
-    InteractionManager.runAfterInteractions(() => {
-      requestAnimationFrame(() => resolve());
-    });
-  });
-
-interface UseSendChatMediaProps {
+interface useSendChatMediaProps {
   messages: ResponseMessageDto[];
   onSend: (payload: {
     uploadIds: number[];
@@ -53,8 +26,9 @@ interface UseSendChatMediaProps {
 export const useSendChatMedia = ({
   messages,
   onSend,
-}: UseSendChatMediaProps) => {
+}: useSendChatMediaProps) => {
   const [stagedMedia, setStagedMedia] = React.useState<StagedMedia[]>([]);
+
   const [pendingUploads, setPendingUploads] = React.useState<
     PendingMediaUpload[]
   >([]);
@@ -231,24 +205,18 @@ export const useSendChatMedia = ({
     [stagedMedia, uploadStagedItem],
   );
 
-  const cancelStagedMedia = React.useCallback(() => {
-    setStagedMedia([]);
-  }, []);
-
-  const removeStagedMedia = React.useCallback((id: string) => {
-    setStagedMedia((current) => current.filter((item) => item.id !== id));
-  }, []);
-
+  // This function is used to pick and stage the media.
   const pickAndStage = React.useCallback(
     async (kind?: MediaKind, append = false) => {
       await waitForUiReady();
 
-      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const permission =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (!permission.granted) {
-        Alert.alert(
-          "Permission required",
-          "Please allow access to your photo library to send media.",
-        );
+        toast.error("Permission required", {
+          description:
+            "Please allow access to your photo library to send media.",
+        });
         return;
       }
 
@@ -279,6 +247,14 @@ export const useSendChatMedia = ({
     [buildPickerOptions, mergeStagedMedia, stagedMedia],
   );
 
+  const cancelStagedMedia = React.useCallback(() => {
+    setStagedMedia([]);
+  }, []);
+
+  const removeStagedMedia = React.useCallback((id: string) => {
+    setStagedMedia((current) => current.filter((item) => item.id !== id));
+  }, []);
+
   const addMoreStagedMedia = React.useCallback(() => {
     pickAndStage(undefined, true);
   }, [pickAndStage]);
@@ -303,3 +279,26 @@ export const useSendChatMedia = ({
     addMoreStagedMedia,
   };
 };
+
+// explaination:
+// This function is used to get the kind of the asset.
+const assetKind = (asset: ImagePicker.ImagePickerAsset): MediaKind =>
+  asset.type === "video" ? "video" : "image";
+
+// explaination:
+// This function is used to convert the asset to a file.
+const toUploadFile = (asset: ImagePicker.ImagePickerAsset) =>
+  ({
+    uri: asset.uri,
+    name: asset.fileName || asset.uri.split("/").pop() || "media",
+    type:
+      asset.mimeType || (asset.type === "video" ? "video/mp4" : "image/jpeg"),
+  }) as unknown as File;
+
+// This function is used to convert the asset to a staged media.
+const toStagedMedia = (asset: ImagePicker.ImagePickerAsset): StagedMedia => ({
+  id: `${asset.assetId ?? asset.uri}-${Date.now()}-${Math.random()}`,
+  file: toUploadFile(asset),
+  kind: assetKind(asset),
+  uri: asset.uri,
+});

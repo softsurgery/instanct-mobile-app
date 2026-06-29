@@ -1,5 +1,4 @@
 import React from "react";
-import { hslToHex } from "@/lib/theme";
 import { useColorPalette } from "@/hooks/useColorPalette";
 import { File, Hand, Image as ImageIcon, Video } from "lucide-react-native";
 import { View } from "react-native";
@@ -80,15 +79,15 @@ export const ConversationInputActionsSheet = React.forwardRef<
       onClose={handleClose}
       containerStyle={{
         backgroundColor: palette.background,
-        borderTopLeftRadius: 28,
-        borderTopRightRadius: 28,
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
         paddingHorizontal: 16,
-        paddingTop: 0,
-        paddingBottom: 36,
+        paddingTop: 12,
+        paddingBottom: 32,
       }}
     >
       {/* Action grid */}
-      <View className="flex-row flex-wrap pt-4 my-4 gap-y-5">
+      <View className="flex-row flex-wrap my-5 gap-y-5">
         {actions.map((item) => (
           <ChatActionGridItem
             key={item.label}
