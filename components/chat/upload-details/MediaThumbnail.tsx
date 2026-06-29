@@ -10,10 +10,14 @@ import { api } from "~/api";
 import { VideoPreview } from "~/components/shared/VideoPreview";
 import { VideoThumbnailPreview } from "~/components/shared/VideoThumbnailPreview";
 
-export const getMessageUploadId = (message: ResponseMessageDto) => {
-  const upload = message.uploads?.[0]?.upload;
-  return message.uploads?.[0]?.uploadId ?? upload?.id;
-};
+export const getMessageUploadIds = (message: ResponseMessageDto) =>
+  [...(message.uploads ?? [])]
+    .sort((a, b) => a.order - b.order)
+    .map((upload) => upload.uploadId ?? upload.upload?.id)
+    .filter((id): id is number => typeof id === "number");
+
+export const getMessageUploadId = (message: ResponseMessageDto) =>
+  getMessageUploadIds(message)[0];
 
 export const MediaThumbnail = React.memo(function MediaThumbnail({
   message,

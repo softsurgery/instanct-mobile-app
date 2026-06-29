@@ -16,9 +16,15 @@ import {
 import { GestureViewer } from "react-native-gesture-image-viewer";
 import { Image } from "expo-image";
 import { useServerImages } from "@/hooks/content/useServerImages";
-import { getMessageUploadId, MediaThumbnail } from "./MediaThumbnail";
+import { getMessageUploadIds, MediaThumbnail } from "./MediaThumbnail";
 
 const NUM_COLUMNS = 3;
+
+type MediaGridItem = {
+  key: string;
+  message: ResponseMessageDto;
+  uploadId?: number;
+};
 
 interface ConversationMediaDetailsProps {
   id: number;
@@ -48,29 +54,57 @@ export const ConversationMediaDetails = ({
     variants: [MessageVariant.IMAGE, MessageVariant.VIDEO],
   });
 
-  const imageMessages = React.useMemo(
+  const mediaItems = React.useMemo(() => {
+    const items: MediaGridItem[] = [];
+
+    for (const message of mediaMessages) {
+      const uploadIds = getMessageUploadIds(message);
+
+      if (uploadIds.length === 0) {
+        items.push({
+          key: `${message.id}`,
+          message,
+        });
+        continue;
+      }
+
+      uploadIds.forEach((uploadId, index) => {
+        items.push({
+          key: `${message.id}-${uploadId}-${index}`,
+          message,
+          uploadId,
+        });
+      });
+    }
+
+    return items;
+  }, [mediaMessages]);
+
+  const imageItems = React.useMemo(
     () =>
-      mediaMessages.filter(
-        (message) => message.variant !== MessageVariant.VIDEO,
+      mediaItems.filter(
+        (item) =>
+          item.message.variant !== MessageVariant.VIDEO &&
+          typeof item.uploadId === "number",
       ),
-    [mediaMessages],
+    [mediaItems],
   );
 
-  const imageIndexByMessageId = React.useMemo(() => {
-    const map = new Map<number, number>();
+  const imageIndexByKey = React.useMemo(() => {
+    const map = new Map<string, number>();
 
-    imageMessages.forEach((message, index) => {
-      map.set(message.id, index);
+    imageItems.forEach((item, index) => {
+      map.set(item.key, index);
     });
 
     return map;
-  }, [imageMessages]);
+  }, [imageItems]);
 
   const imageUploadIds = React.useMemo(() => {
-    return imageMessages
-      .map(getMessageUploadId)
-      .filter((id) => typeof id === "number") as number[];
-  }, [imageMessages]);
+    return imageItems
+      .map((item) => item.uploadId)
+      .filter((id): id is number => typeof id === "number");
+  }, [imageItems]);
 
   const { uploads } = useServerImages({
     ids: imageUploadIds,
@@ -81,8 +115,8 @@ export const ConversationMediaDetails = ({
   }, [uploads]);
 
   const openViewer = React.useCallback(
-    (messageId: number) => {
-      const index = imageIndexByMessageId.get(messageId);
+    (itemKey: string) => {
+      const index = imageIndexByKey.get(itemKey);
 
       if (index === undefined || viewerImages[index] === undefined) {
         return;
@@ -91,18 +125,18 @@ export const ConversationMediaDetails = ({
       setViewerIndex(index);
       setViewerVisible(true);
     },
-    [imageIndexByMessageId, viewerImages],
+    [imageIndexByKey, viewerImages],
   );
 
   const mediaRows = React.useMemo(() => {
-    const rows: ResponseMessageDto[][] = [];
+    const rows: MediaGridItem[][] = [];
 
-    for (let index = 0; index < mediaMessages.length; index += NUM_COLUMNS) {
-      rows.push(mediaMessages.slice(index, index + NUM_COLUMNS));
+    for (let index = 0; index < mediaItems.length; index += NUM_COLUMNS) {
+      rows.push(mediaItems.slice(index, index + NUM_COLUMNS));
     }
 
     return rows;
-  }, [mediaMessages]);
+  }, [mediaItems]);
 
   const screenWidth = Dimensions.get("window").width;
   const imageSize = screenWidth / NUM_COLUMNS;
@@ -118,23 +152,20 @@ export const ConversationMediaDetails = ({
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   const renderMediaRow = React.useCallback(
-    ({ item: row }: { item: ResponseMessageDto[] }) => (
+    ({ item: row }: { item: MediaGridItem[] }) => (
       <View className="flex-row">
-        {row.map((message) => {
-          const uploadId = getMessageUploadId(message);
-          const resolvedUploadId =
-            typeof uploadId === "number" ? uploadId : undefined;
-          const isImage = message.variant !== MessageVariant.VIDEO;
+        {row.map((item) => {
+          const isImage = item.message.variant !== MessageVariant.VIDEO;
 
           return (
             <MediaThumbnail
-              key={message.id}
-              message={message}
+              key={item.key}
+              message={item.message}
               size={imageSize}
-              uploadId={resolvedUploadId}
+              uploadId={item.uploadId}
               onPress={
-                isImage && resolvedUploadId
-                  ? () => openViewer(message.id)
+                isImage && item.uploadId
+                  ? () => openViewer(item.key)
                   : undefined
               }
             />
