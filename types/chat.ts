@@ -101,4 +101,5 @@ export interface StagedMedia {
   file: File;
   kind: MediaKind;
   uri: string;
+  fileSize?: number;
 }

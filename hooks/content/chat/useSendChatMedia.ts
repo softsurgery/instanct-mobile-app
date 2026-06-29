@@ -132,10 +132,16 @@ export const useSendChatMedia = ({
       setPendingUploads((current) => [pending, ...current]);
 
       try {
+        const totalBytes = items.reduce(
+          (sum, item) => sum + (item.fileSize ?? 0),
+          0,
+        );
+
         const uploads = await api.upload.uploadFiles(
           items.map((item) => item.file),
           (percent) => updatePending(clientId, { progress: percent }),
           true,
+          totalBytes > 0 ? totalBytes : undefined,
         );
 
         const uploadIds = uploads
@@ -284,6 +290,7 @@ const toStagedMedia = (asset: ImagePicker.ImagePickerAsset): StagedMedia => ({
   file: toUploadFile(asset),
   kind: assetKind(asset),
   uri: asset.uri,
+  fileSize: asset.fileSize,
 });
 
 // This function builds and returns a configuration object for the ImagePicker
