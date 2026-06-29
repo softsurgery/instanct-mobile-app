@@ -1,7 +1,8 @@
 import React from "react";
 import type { ImageSource } from "expo-image";
+import { useEvent } from "expo";
 import { useVideoPlayer, VideoView } from "expo-video";
-import { X } from "lucide-react-native";
+import { Pause, Play, X } from "lucide-react-native";
 import {
   Modal,
   Pressable,
@@ -11,6 +12,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "~/components/ui/icon";
+import { Text } from "~/components/ui/text";
 import { cn } from "~/lib/utils";
 
 export type AppVideoSource = {
@@ -58,6 +60,22 @@ interface VideoPlayerModalProps {
   onClose: () => void;
 }
 
+const formatVideoTime = (seconds: number) => {
+  if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+
+  const total = Math.floor(seconds);
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const secs = total % 60;
+  const paddedSeconds = secs.toString().padStart(2, "0");
+
+  if (hours > 0) {
+    return `${hours}:${minutes.toString().padStart(2, "0")}:${paddedSeconds}`;
+  }
+
+  return `${minutes}:${paddedSeconds}`;
+};
+
 const VideoPlayerModal = ({ source, onClose }: VideoPlayerModalProps) => {
   const insets = useSafeAreaInsets();
 
@@ -65,9 +83,26 @@ const VideoPlayerModal = ({ source, onClose }: VideoPlayerModalProps) => {
     { uri: source.uri, headers: source.headers },
     (nextPlayer) => {
       nextPlayer.loop = false;
+      nextPlayer.timeUpdateEventInterval = 0.25;
       nextPlayer.play();
     },
   );
+
+  const { isPlaying } = useEvent(player, "playingChange", {
+    isPlaying: player.playing,
+  });
+  useEvent(player, "statusChange", { status: player.status });
+  const { currentTime } = useEvent(player, "timeUpdate", {
+    currentTime: player.currentTime,
+  });
+
+  const togglePlayback = React.useCallback(() => {
+    if (player.playing) {
+      player.pause();
+    } else {
+      player.play();
+    }
+  }, [player]);
 
   return (
     <Modal
@@ -81,7 +116,7 @@ const VideoPlayerModal = ({ source, onClose }: VideoPlayerModalProps) => {
         <VideoView
           style={{ flex: 1 }}
           player={player}
-          nativeControls
+          nativeControls={false}
           contentFit="contain"
           fullscreenOptions={{ enable: false }}
           allowsPictureInPicture={false}
@@ -95,6 +130,27 @@ const VideoPlayerModal = ({ source, onClose }: VideoPlayerModalProps) => {
         >
           <Icon as={X} size={22} color="white" />
         </Pressable>
+        <View
+          className="absolute left-0 right-0 flex-row items-center gap-4 px-4 py-3 bg-black/60"
+          style={{ bottom: insets.bottom + 8 }}
+        >
+          <Pressable
+            onPress={togglePlayback}
+            accessibilityRole="button"
+            accessibilityLabel={isPlaying ? "Pause video" : "Play video"}
+            className="w-10 h-10 items-center justify-center"
+          >
+            <Icon
+              as={isPlaying ? Pause : Play}
+              size={22}
+              color="white"
+              fill={isPlaying ? undefined : "white"}
+            />
+          </Pressable>
+          <Text className="text-sm font-medium text-white">
+            {formatVideoTime(currentTime)} / {formatVideoTime(player.duration)}
+          </Text>
+        </View>
       </View>
     </Modal>
   );

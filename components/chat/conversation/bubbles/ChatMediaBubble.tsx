@@ -13,6 +13,7 @@ import {
 } from "@/types";
 import { PhotoPreview } from "~/components/shared/PhotoPreview";
 import { VideoPreview } from "~/components/shared/VideoPreview";
+import { VideoThumbnailPreview } from "~/components/shared/VideoThumbnailPreview";
 import { useServerImages } from "~/hooks/content/useServerImages";
 import { MediaUploadProgress } from "../staging/MediaUploadProgress";
 import { MediaImageGrid } from "./ChatMediaImageGrid";
@@ -90,15 +91,9 @@ export const ChatMediaBubble = ({
           />
         ) : (
           <View className="w-full h-full items-center justify-center">
-            <Image
-              source={{ uri: pendingItems[0]?.uri }}
-              style={{
-                width: "100%",
-                height: "100%",
-                position: "absolute",
-              }}
-              contentFit="cover"
-            />
+            {pendingItems[0]?.uri ? (
+              <VideoThumbnailPreview source={{ uri: pendingItems[0].uri }} />
+            ) : null}
             <View className="w-10 h-10 rounded-full items-center justify-center bg-black/50 z-10">
               <Icon as={Play} size={14} color="white" fill="white" />
             </View>
@@ -118,6 +113,20 @@ export const ChatMediaBubble = ({
       totalCount={mediaCount}
       frameSize={CHAT_MEDIA_WIDTH}
     />
+  ) : isVideo ? (
+    <View
+      className="relative overflow-hidden rounded-xl bg-muted"
+      style={mediaFrameStyle}
+    >
+      {singleMediaSource ? (
+        <VideoThumbnailPreview source={singleMediaSource} />
+      ) : null}
+      <View className="absolute inset-0 items-center justify-center">
+        <View className="w-10 h-10 rounded-full items-center justify-center bg-black/50">
+          <Icon as={Play} size={14} color="white" fill="white" />
+        </View>
+      </View>
+    </View>
   ) : (
     <Image
       className="rounded-xl"

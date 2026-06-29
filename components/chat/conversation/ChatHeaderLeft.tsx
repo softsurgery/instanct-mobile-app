@@ -2,7 +2,7 @@ import { Pressable, View } from "react-native";
 import { cn } from "~/lib/utils";
 import { Text } from "../../ui/text";
 import { router } from "expo-router";
-import {  ChevronLeft } from "lucide-react-native";
+import { ChevronLeft } from "lucide-react-native";
 import { Icon } from "~/components/ui/icon";
 
 interface ChatHeaderLeftProps {
