@@ -28,6 +28,11 @@ export const useSendChatMedia = ({
   onSend,
 }: useSendChatMediaProps) => {
   const [stagedMedia, setStagedMedia] = React.useState<StagedMedia[]>([]);
+  const stagedMediaRef = React.useRef(stagedMedia);
+
+  React.useEffect(() => {
+    stagedMediaRef.current = stagedMedia;
+  }, [stagedMedia]);
 
   const [pendingUploads, setPendingUploads] = React.useState<
     PendingMediaUpload[]
@@ -44,48 +49,27 @@ export const useSendChatMedia = ({
     [],
   );
 
-  React.useEffect(() => {
-    if (pendingUploads.length === 0) return;
-
-    const serverUploadIds = new Set(
-      messages.flatMap((message) =>
-        (message.uploads ?? []).map((upload) => upload.uploadId),
+  const serverUploadIds = React.useMemo(
+    () =>
+      new Set(
+        messages.flatMap((message) =>
+          (message.uploads ?? []).map((upload) => upload.uploadId),
+        ),
       ),
-    );
+    [messages],
+  );
 
-    setPendingUploads((current) =>
-      current.filter(
-        (pending) =>
-          !pending.uploadId || !serverUploadIds.has(pending.uploadId),
-      ),
-    );
-  }, [messages, pendingUploads.length]);
+  const activePendingUploads = React.useMemo(
+    () =>
+      pendingUploads.filter((pending) => {
+        if (!pending.uploadIds?.length) return true;
+        return !pending.uploadIds.every((id) => serverUploadIds.has(id));
+      }),
+    [pendingUploads, serverUploadIds],
+  );
 
-  const buildPickerOptions = React.useCallback(
-    (kind?: MediaKind): ImagePicker.ImagePickerOptions => {
-      const options: ImagePicker.ImagePickerOptions = {
-        mediaTypes:
-          kind === "image"
-            ? ["images"]
-            : kind === "video"
-              ? ["videos"]
-              : ["images", "videos"],
-        allowsEditing: false,
-        allowsMultipleSelection: true,
-        selectionLimit: MAX_SELECTION,
-        quality: 0.85,
-      };
-
-      if (kind !== "image") {
-        options.videoMaxDuration = 120;
-      }
-
-      if (Platform.OS === "ios") {
-        options.shouldDownloadFromNetwork = true;
-      }
-
-      return options;
-    },
+  const buildPickerOptionsCallback = React.useCallback(
+    (kind?: MediaKind) => buildPickerOptions(kind),
     [],
   );
 
@@ -127,16 +111,17 @@ export const useSendChatMedia = ({
     [],
   );
 
-  const uploadStagedItem = React.useCallback(
-    async (item: StagedMedia, content?: string) => {
-      const variant =
-        item.kind === "video" ? MessageVariant.VIDEO : MessageVariant.IMAGE;
-      const clientId = item.id;
+  const uploadMediaBatch = React.useCallback(
+    async (
+      items: StagedMedia[],
+      variant: MessageVariant.IMAGE | MessageVariant.VIDEO,
+      content?: string,
+    ) => {
+      const clientId = `batch-${Date.now()}-${Math.random()}`;
 
       const pending: PendingMediaUpload = {
         clientId,
-        uri: item.uri,
-        kind: item.kind,
+        items: items.map((item) => ({ uri: item.uri, kind: item.kind })),
         variant,
         progress: 0,
         status: "uploading",
@@ -148,18 +133,21 @@ export const useSendChatMedia = ({
 
       try {
         const uploads = await api.upload.uploadFiles(
-          [item.file],
+          items.map((item) => item.file),
           (percent) => updatePending(clientId, { progress: percent }),
           true,
         );
 
-        const uploadId = uploads[0]?.id;
-        if (!uploadId) {
+        const uploadIds = uploads
+          .map((upload) => upload.id)
+          .filter((id): id is number => typeof id === "number");
+
+        if (uploadIds.length !== items.length) {
           throw new Error("Upload failed");
         }
 
-        updatePending(clientId, { progress: 100, uploadId });
-        onSend({ uploadIds: [uploadId], variant, content });
+        updatePending(clientId, { progress: 100, uploadIds });
+        onSend({ uploadIds, variant, content });
       } catch (error) {
         console.error("Failed to send media:", error);
         updatePending(clientId, { status: "failed" });
@@ -180,29 +168,17 @@ export const useSendChatMedia = ({
 
       setStagedMedia([]);
 
-      let captionRemaining = trimmedCaption;
-
-      for (const item of itemsToSend) {
-        let content: string | undefined;
-
-        if (captionRemaining) {
-          if (item.kind === "image" && images[0]?.id === item.id) {
-            content = captionRemaining;
-            captionRemaining = undefined;
-          } else if (
-            item.kind === "video" &&
-            images.length === 0 &&
-            videos[0]?.id === item.id
-          ) {
-            content = captionRemaining;
-            captionRemaining = undefined;
-          }
-        }
-
-        void uploadStagedItem(item, content);
+      if (images.length > 0) {
+        void uploadMediaBatch(images, MessageVariant.IMAGE, trimmedCaption);
       }
+
+      videos.forEach((video, index) => {
+        const content =
+          images.length === 0 && index === 0 ? trimmedCaption : undefined;
+        void uploadMediaBatch([video], MessageVariant.VIDEO, content);
+      });
     },
-    [stagedMedia, uploadStagedItem],
+    [stagedMedia, uploadMediaBatch],
   );
 
   // This function is used to pick and stage the media.
@@ -221,16 +197,23 @@ export const useSendChatMedia = ({
       }
 
       const effectiveKind =
-        kind ?? (append && stagedMedia[0] ? stagedMedia[0].kind : undefined);
+        kind ??
+        (append && stagedMediaRef.current[0]
+          ? stagedMediaRef.current[0].kind
+          : undefined);
 
       try {
         const result = await ImagePicker.launchImageLibraryAsync(
-          buildPickerOptions(effectiveKind),
+          buildPickerOptionsCallback(effectiveKind),
         );
 
         if (result.canceled || result.assets.length === 0) return;
 
         const incoming = result.assets.map(toStagedMedia);
+
+        // Wait for the native picker to fully dismiss before showing staging.
+        await waitForUiReady();
+
         setStagedMedia((current) =>
           append
             ? mergeStagedMedia(current, incoming)
@@ -244,7 +227,7 @@ export const useSendChatMedia = ({
         );
       }
     },
-    [buildPickerOptions, mergeStagedMedia, stagedMedia],
+    [buildPickerOptionsCallback, mergeStagedMedia],
   );
 
   const cancelStagedMedia = React.useCallback(() => {
@@ -260,19 +243,19 @@ export const useSendChatMedia = ({
   }, [pickAndStage]);
 
   const pickImage = React.useCallback(
-    () => pickAndStage("image", stagedMedia.length > 0),
-    [pickAndStage, stagedMedia.length],
+    () => pickAndStage("image", stagedMediaRef.current.length > 0),
+    [pickAndStage],
   );
   const pickVideo = React.useCallback(
-    () => pickAndStage("video", stagedMedia.length > 0),
-    [pickAndStage, stagedMedia.length],
+    () => pickAndStage("video", stagedMediaRef.current.length > 0),
+    [pickAndStage],
   );
 
   return {
     pickImage,
     pickVideo,
     stagedMedia,
-    pendingUploads,
+    pendingUploads: activePendingUploads,
     confirmSendStagedMedia,
     cancelStagedMedia,
     removeStagedMedia,
@@ -302,3 +285,32 @@ const toStagedMedia = (asset: ImagePicker.ImagePickerAsset): StagedMedia => ({
   kind: assetKind(asset),
   uri: asset.uri,
 });
+
+// This function builds and returns a configuration object for the ImagePicker
+// based on the type of media the user wants to select.
+const buildPickerOptions = (
+  kind?: MediaKind,
+): ImagePicker.ImagePickerOptions => {
+  const options: ImagePicker.ImagePickerOptions = {
+    mediaTypes:
+      kind === "image"
+        ? ["images"]
+        : kind === "video"
+          ? ["videos"]
+          : ["images", "videos"],
+    allowsEditing: false,
+    allowsMultipleSelection: true,
+    selectionLimit: MAX_SELECTION,
+    quality: 0.85,
+  };
+
+  if (kind !== "image") {
+    options.videoMaxDuration = 120;
+  }
+
+  if (Platform.OS === "ios") {
+    options.shouldDownloadFromNetwork = true;
+  }
+
+  return options;
+};

@@ -8,6 +8,7 @@ interface PhotoPreviewProps {
   className?: string;
   children: React.ReactNode;
   source?: ImageSource;
+  sources?: ImageSource[];
   index?: number;
   color?: string;
   presentationStyle?:
@@ -26,6 +27,7 @@ export function PhotoPreview({
   className,
   children,
   source,
+  sources,
   index = 0,
   color = "rgba(0,0,0,0.8)",
   presentationStyle = "overFullScreen",
@@ -34,14 +36,18 @@ export function PhotoPreview({
 }: PhotoPreviewProps) {
   const [visible, setVisible] = React.useState(false);
 
+  const images = sources?.length ? sources : source ? [source] : [];
+  const initialIndex = images.length
+    ? Math.min(Math.max(index, 0), images.length - 1)
+    : 0;
+
   const open = async () => {
+    if (!images.length) return;
     onPress?.();
     setVisible(true);
   };
 
   const close = () => setVisible(false);
-
-  const images = source ? [source] : [];
 
   const renderImage = useCallback((item: ImageSource) => {
     return (
@@ -67,7 +73,7 @@ export function PhotoPreview({
       >
         <GestureViewer
           data={images}
-          initialIndex={0}
+          initialIndex={initialIndex}
           renderItem={renderImage}
           ListComponent={ScrollView}
           onDismiss={close}

@@ -1,20 +1,21 @@
 import { format } from "date-fns";
 import { Play } from "lucide-react-native";
-import { Dimensions, View } from "react-native";
+import { Dimensions, ImageSourcePropType, View } from "react-native";
 import { Image } from "expo-image";
 import { Text } from "~/components/ui/text";
 import { Icon } from "~/components/ui/icon";
 import { cn } from "~/lib/utils";
 import {
   MessageVariant,
+  PendingMediaItem,
   ResponseMessageDto,
   PendingMediaUpload,
 } from "@/types";
 import { PhotoPreview } from "~/components/shared/PhotoPreview";
 import { VideoPreview } from "~/components/shared/VideoPreview";
-import { VideoThumbnailPreview } from "~/components/shared/VideoThumbnailPreview";
 import { useServerImages } from "~/hooks/content/useServerImages";
 import { MediaUploadProgress } from "../staging/MediaUploadProgress";
+import { MediaImageGrid } from "./ChatMediaImageGrid";
 
 interface ChatMediaBubbleProps {
   className?: string;
@@ -34,19 +35,19 @@ export const ChatMediaBubble = ({
   const CHAT_MEDIA_WIDTH = Math.round(screenWidth * 0.75);
   const CHAT_MEDIA_HEIGHT = Math.round(CHAT_MEDIA_WIDTH * 0.75);
 
-  const mediaFrameStyle = {
-    width: CHAT_MEDIA_WIDTH,
-    height: CHAT_MEDIA_HEIGHT,
-  };
-
-  const upload = message?.uploads?.[0]?.upload;
-  const uploadId = message?.uploads?.[0]?.uploadId ?? upload?.id;
+  const getMessageUploadIds = (message?: ResponseMessageDto) =>
+    [...(message?.uploads ?? [])]
+      .sort((a, b) => a.order - b.order)
+      .map((upload) => upload.uploadId ?? upload.upload?.id)
+      .filter((id): id is number => typeof id === "number");
+  const uploadIds = getMessageUploadIds(message);
 
   const { uploads } = useServerImages({
-    ids: [uploadId as number],
+    ids: uploadIds,
   });
 
-  const mediaSource = uploads[0];
+  const pendingItems: PendingMediaItem[] = pending?.items ?? [];
+  const mediaCount = pending ? pendingItems.length : uploadIds.length;
 
   const isVideo =
     pending?.variant === MessageVariant.VIDEO ||
@@ -56,45 +57,72 @@ export const ChatMediaBubble = ({
   const isUploading = pending?.status === "uploading";
   const uploadFailed = pending?.status === "failed";
 
+  const isSingleImage = !isVideo && mediaCount === 1;
+  const isGroupedImages = !isVideo && mediaCount > 1;
+
+  const mediaFrameStyle = {
+    width: CHAT_MEDIA_WIDTH,
+    height: isGroupedImages ? CHAT_MEDIA_WIDTH : CHAT_MEDIA_HEIGHT,
+  };
+
+  const singleMediaSource = uploads[0];
+
   const mediaContent = pending ? (
-    <View
-      className="relative overflow-hidden rounded-xl bg-muted"
-      style={mediaFrameStyle}
-    >
-      {pending.kind === "image" ? (
-        <Image
-          source={{ uri: pending.uri }}
-          style={{ width: "100%", height: "100%" }}
-          contentFit="cover"
-        />
-      ) : (
-        <View className="w-full h-full items-center justify-center">
+    isGroupedImages ? (
+      <MediaImageGrid
+        uris={pendingItems.map((item) => item.uri)}
+        totalCount={mediaCount}
+        isUploading={isUploading}
+        uploadFailed={uploadFailed}
+        progress={pending.progress}
+        frameSize={CHAT_MEDIA_WIDTH}
+      />
+    ) : (
+      <View
+        className="relative overflow-hidden rounded-xl bg-muted"
+        style={mediaFrameStyle}
+      >
+        {pendingItems[0]?.kind === "image" ? (
           <Image
-            source={{ uri: pending.uri }}
-            style={{
-              width: "100%",
-              height: "100%",
-              position: "absolute",
-            }}
+            source={{ uri: pendingItems[0].uri }}
+            style={{ width: "100%", height: "100%" }}
             contentFit="cover"
           />
-          <View className="w-10 h-10 rounded-full items-center justify-center bg-black/50 z-10">
-            <Icon as={Play} size={14} color="white" fill="white" />
+        ) : (
+          <View className="w-full h-full items-center justify-center">
+            <Image
+              source={{ uri: pendingItems[0]?.uri }}
+              style={{
+                width: "100%",
+                height: "100%",
+                position: "absolute",
+              }}
+              contentFit="cover"
+            />
+            <View className="w-10 h-10 rounded-full items-center justify-center bg-black/50 z-10">
+              <Icon as={Play} size={14} color="white" fill="white" />
+            </View>
           </View>
-        </View>
-      )}
-      {(isUploading || uploadFailed) && (
-        <MediaUploadProgress
-          progress={pending.progress}
-          failed={uploadFailed}
-        />
-      )}
-    </View>
+        )}
+        {(isUploading || uploadFailed) && (
+          <MediaUploadProgress
+            progress={pending.progress}
+            failed={uploadFailed}
+          />
+        )}
+      </View>
+    )
+  ) : isGroupedImages ? (
+    <MediaImageGrid
+      sources={uploads}
+      totalCount={mediaCount}
+      frameSize={CHAT_MEDIA_WIDTH}
+    />
   ) : (
     <Image
       className="rounded-xl"
       style={mediaFrameStyle}
-      source={mediaSource}
+      source={singleMediaSource as ImageSourcePropType}
       contentFit="cover"
     />
   );
@@ -142,22 +170,22 @@ export const ChatMediaBubble = ({
     return bubble;
   }
 
-  if (isVideo && mediaSource) {
+  if (isVideo && singleMediaSource) {
     return (
       <VideoPreview
         className={cn(right ? "ml-auto" : "mr-auto")}
-        source={mediaSource}
+        source={singleMediaSource}
       >
         {bubble}
       </VideoPreview>
     );
   }
 
-  if (!isVideo && mediaSource) {
+  if (isSingleImage && singleMediaSource) {
     return (
       <PhotoPreview
         className={cn(right ? "ml-auto" : "mr-auto")}
-        source={mediaSource}
+        source={singleMediaSource}
       >
         {bubble}
       </PhotoPreview>
