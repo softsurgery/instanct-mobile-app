@@ -16,6 +16,7 @@ import { Separator } from "../ui/separator";
 import { NotFound } from "../shared/NotFound";
 import { useChat } from "@/hooks/content/chat/useChat";
 import { UserEntrySkeleton } from "./UserEntrySkeleton";
+import { identifyUser, identifyUserAvatar } from "@/lib/user";
 
 import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface ChatPortalProps {
@@ -46,7 +47,10 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
 
   const renderItem = React.useCallback(
     ({ item }: { item: ResponseConversationDto }) => {
-      const user = item.participants.find((p) => p.userId !== currentUser?.id);
+      const participant = item.participants.find(
+        (p) => p.userId !== currentUser?.id,
+      );
+      const user = participant?.user;
 
       if (!user) return null;
       return (
@@ -55,7 +59,13 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
           onPress={() => {
             router.push({
               pathname: "/main/chat/conversation",
-              params: { id: item.id },
+              params: {
+                id: String(item.id),
+                userId: user.id,
+                identifier: identifyUser(user),
+                pictureId: user.pictureId ? String(user.pictureId) : "",
+                avatarFallback: identifyUserAvatar(user),
+              },
             });
             seeConversation(item.id);
           }}

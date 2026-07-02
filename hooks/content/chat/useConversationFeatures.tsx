@@ -129,8 +129,8 @@ export const useConversationFeatures = ({
 
   // ----- Loading states (still local, UI-only) -----
   const [isInitialPending, setIsInitialPending] = React.useState(() => {
-    // If cache already exists, we're not pending
-    return !getCachedMessages();
+    const cached = getCachedMessages();
+    return !cached?.messages?.length;
   });
   const [isMoreMessagesLoading, setIsMoreMessagesLoading] =
     React.useState(false);
@@ -212,12 +212,11 @@ export const useConversationFeatures = ({
     const joinAndFetch = () => {
       s.emit("join-conversation", { conversationId: id });
 
-      // Only fetch messages if we have NO cached data
-      if (!existingCache) {
+      // Fetch messages when cache is empty
+      if (!existingCache?.messages?.length) {
         setIsMoreMessagesLoading(true);
         setIsInitialPending(true);
       } else {
-        // Cache exists — skip fetching, just mark ready
         setIsInitialPending(false);
         setIsMoreMessagesLoading(false);
       }

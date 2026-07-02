@@ -3,6 +3,22 @@ import { useLocalSearchParams } from "expo-router";
 import React from "react";
 
 export default function Screen() {
-  const { id } = useLocalSearchParams();
-  return <Conversation id={Number(id)} />;
+  const { id, userId, identifier, pictureId, avatarFallback } =
+    useLocalSearchParams<{
+      id: string;
+      userId?: string;
+      identifier?: string;
+      pictureId?: string;
+      avatarFallback?: string;
+    }>();
+
+  return (
+    <Conversation
+      id={Number(id)}
+      userId={userId}
+      identifier={identifier}
+      pictureId={pictureId}
+      avatarFallback={avatarFallback}
+    />
+  );
 }

@@ -28,8 +28,8 @@ import { useConversationFeatures } from "@/hooks/content/chat/useConversationFea
 import { useSendChatMedia } from "@/hooks/content/chat/useSendChatMedia";
 import { useUserPresence } from "@/hooks/content/chat/useUserPresence";
 import { ImageBackground } from "expo-image";
-import { Loader } from "../shared/Loader";
 import { ChatStaticBubble } from "./conversation/bubbles/ChatStaticBubble";
+import { ConversationMessagesSkeleton } from "./conversation/ConversationMessagesSkeleton";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -42,9 +42,19 @@ import { useColorPalette } from "@/hooks/useColorPalette";
 
 interface ConversationProps {
   id: number;
+  userId?: string;
+  identifier?: string;
+  pictureId?: string;
+  avatarFallback?: string;
 }
 
-export const Conversation = ({ id }: ConversationProps) => {
+export const Conversation = ({
+  id,
+  userId,
+  identifier,
+  pictureId,
+  avatarFallback,
+}: ConversationProps) => {
   const { colorScheme, palette } = useColorPalette();
   const { height } = useGradualAnimation();
   const insets = useSafeAreaInsets();
@@ -60,7 +70,6 @@ export const Conversation = ({ id }: ConversationProps) => {
 
   const {
     conversation,
-    isConversationPending,
     flattenedMessages,
     messages,
     isInitialPending,
@@ -135,15 +144,26 @@ export const Conversation = ({ id }: ConversationProps) => {
     )?.user;
   }, [conversation, currentUser]);
 
+  const headerUserId = user?.id ?? userId;
+  const headerIdentifier = user
+    ? identifyUser(user)
+    : (identifier ?? "");
+  const headerPictureId =
+    user?.pictureId ??
+    (pictureId ? Number(pictureId) : undefined);
+  const headerAvatarFallback = user
+    ? identifyUserAvatar(user)
+    : (avatarFallback ?? "?");
+
   const { jsxArray: profilePictures } = useServerImages({
-    ids: [user?.pictureId],
-    fallbacks: [identifyUserAvatar(user)],
+    ids: [headerPictureId],
+    fallbacks: [headerAvatarFallback],
     className: "rounded-full",
     wrapperClassName: "rounded-full border border-border",
     size: { width: 40, height: 40 },
   });
 
-  const { isOnline, lastSeen } = useUserPresence({ userId: user?.id });
+  const { isOnline, lastSeen } = useUserPresence({ userId: headerUserId });
 
   const presenceText = React.useMemo(() => {
     if (isOnline) return "Online";
@@ -169,16 +189,16 @@ export const Conversation = ({ id }: ConversationProps) => {
     return [...pendingTextItems, ...pendingMediaItems, ...flattenedMessages];
   }, [pendingTextMessages, pendingUploads, flattenedMessages]);
 
-  const isLoading = isConversationPending || isInitialPending;
+  const isMessagesLoading = isInitialPending;
 
   return (
     <StableSafeAreaView className="flex-1 bg-card">
       {/* HEADER */}
       <View className="flex flex-row justify-between items-center px-2 py-1 bg-card border-b border-border">
         <ChatHeaderLeft
-          id={user?.id as string}
+          id={headerUserId as string}
           profilePicture={profilePictures[0]}
-          identifier={identifyUser(user)}
+          identifier={headerIdentifier}
           lastSeen={presenceText}
           isOnline={isOnline}
         />
@@ -198,17 +218,10 @@ export const Conversation = ({ id }: ConversationProps) => {
         }}
         imageStyle={{ opacity: colorScheme === "dark" ? 0.3 : 1 }}
       >
-        <View className="flex-1">
+        <View style={{ flex: 1 }}>
           {/* MESSAGES */}
-          {isLoading ? (
-            <View className="flex-1 justify-center items-center gap-2">
-              <Loader size="large" />
-              <Text className="text-sm text-muted-foreground">
-                Loading conversation...
-              </Text>
-            </View>
-          ) : (
-            <View className="flex-1">
+          {!isMessagesLoading ? (
+            <View style={{ flex: 1 }}>
               <FlatList
                 ref={flatListRef}
                 data={listData}
@@ -306,6 +319,8 @@ export const Conversation = ({ id }: ConversationProps) => {
                 </Pressable>
               </Animated.View>
             </View>
+          ) : (
+            <ConversationMessagesSkeleton />
           )}
 
           {/* INPUT */}
