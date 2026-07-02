@@ -60,20 +60,21 @@ export const ChatMediaBubble = ({
   const uploadFailed = pending?.status === "failed";
 
   const isSingleImage = !isVideo && mediaCount === 1;
-  const isGroupedImages = !isVideo && mediaCount > 1;
+  const isGroupedMedia = mediaCount > 1;
 
   const mediaFrameStyle = {
     width: CHAT_MEDIA_WIDTH,
-    height: isGroupedImages ? CHAT_MEDIA_WIDTH : CHAT_MEDIA_HEIGHT,
+    height: isGroupedMedia ? CHAT_MEDIA_WIDTH : CHAT_MEDIA_HEIGHT,
   };
 
   const singleMediaSource = uploads[0];
 
   const mediaContent = pending ? (
-    isGroupedImages ? (
+    isGroupedMedia ? (
       <MediaImageGrid
         uris={pendingItems.map((item) => item.uri)}
         totalCount={mediaCount}
+        isVideo={isVideo}
         isUploading={isUploading}
         uploadFailed={uploadFailed}
         progress={pending.progress}
@@ -108,10 +109,11 @@ export const ChatMediaBubble = ({
         )}
       </View>
     )
-  ) : isGroupedImages ? (
+  ) : isGroupedMedia ? (
     <MediaImageGrid
       sources={uploads}
       totalCount={mediaCount}
+      isVideo={isVideo}
       frameSize={CHAT_MEDIA_WIDTH}
     />
   ) : isVideo ? (

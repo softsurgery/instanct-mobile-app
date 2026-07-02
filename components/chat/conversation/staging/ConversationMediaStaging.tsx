@@ -17,6 +17,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "~/components/ui/icon";
 import { Text } from "~/components/ui/text";
 import { cn } from "~/lib/utils";
+import { VideoThumbnailPreview } from "~/components/shared/VideoThumbnailPreview";
 import { StagedMedia } from "@/types";
 
 interface ConversationMediaStagingProps {
@@ -72,16 +73,7 @@ const StagedThumbnail = ({
       />
     ) : (
       <View className="w-full h-full bg-muted items-center justify-center">
-        <Image
-          source={{ uri: item.uri }}
-          style={{
-            width: "100%",
-            height: "100%",
-            position: "absolute",
-            opacity: 0.7,
-          }}
-          contentFit="cover"
-        />
+        <VideoThumbnailPreview source={{ uri: item.uri }} />
         <View className="w-7 h-7 rounded-full bg-background/55 items-center justify-center">
           <Icon as={Play} size={12} color="white" fill="white" />
         </View>

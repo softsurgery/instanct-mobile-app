@@ -1,6 +1,11 @@
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { PhotoPreview } from "@/components/shared/PhotoPreview";
+import {
+  toVideoSource,
+  VideoPreview,
+} from "@/components/shared/VideoPreview";
+import { VideoThumbnailPreview } from "@/components/shared/VideoThumbnailPreview";
 import { Image, ImageSource } from "expo-image";
 import { Play } from "lucide-react-native";
 import React from "react";
@@ -42,11 +47,25 @@ export const MediaImageGrid = ({
     return [];
   }, [sources, uris]);
 
+  const allVideoSources = React.useMemo(
+    () =>
+      allSources
+        .map((item) => toVideoSource(item))
+        .filter((item): item is NonNullable<ReturnType<typeof toVideoSource>> =>
+          !!item,
+        ),
+    [allSources],
+  );
+
   const renderCellContent = (cellIndex: number) => {
     const uri = uris?.[cellIndex];
     const source = sources?.[cellIndex];
 
     if (source) {
+      if (isVideo) {
+        return <VideoThumbnailPreview source={source} />;
+      }
+
       return (
         <Image
           source={source}
@@ -57,6 +76,10 @@ export const MediaImageGrid = ({
     }
 
     if (uri) {
+      if (isVideo) {
+        return <VideoThumbnailPreview source={{ uri }} />;
+      }
+
       return (
         <Image
           source={{ uri }}
@@ -74,16 +97,12 @@ export const MediaImageGrid = ({
       className="relative overflow-hidden rounded-xl bg-muted"
       style={{ width: frameSize, height: frameSize }}
     >
-      {cells.map(({ index, style, overflowCount }) => (
-        <View key={index} className="absolute overflow-hidden" style={style}>
-          <PhotoPreview
-            sources={allSources}
-            index={index}
-            className="w-full h-full"
-          >
+      {cells.map(({ index, style, overflowCount }) => {
+        const cellContent = (
+          <>
             {renderCellContent(index)}
-            {isVideo && index === 0 && !overflowCount && (
-              <View className="absolute inset-0 items-center justify-center">
+            {isVideo && !overflowCount && (
+              <View className="absolute inset-0 items-center justify-center pointer-events-none">
                 <View className="w-10 h-10 rounded-full items-center justify-center bg-black/50">
                   <Icon as={Play} size={14} color="white" fill="white" />
                 </View>
@@ -96,9 +115,31 @@ export const MediaImageGrid = ({
                 </Text>
               </View>
             )}
-          </PhotoPreview>
-        </View>
-      ))}
+          </>
+        );
+
+        return (
+          <View key={index} className="absolute overflow-hidden" style={style}>
+            {isVideo ? (
+              <VideoPreview
+                sources={allVideoSources}
+                index={index}
+                className="w-full h-full"
+              >
+                {cellContent}
+              </VideoPreview>
+            ) : (
+              <PhotoPreview
+                sources={allSources}
+                index={index}
+                className="w-full h-full"
+              >
+                {cellContent}
+              </PhotoPreview>
+            )}
+          </View>
+        );
+      })}
 
       {(isUploading || uploadFailed) && (
         <MediaUploadProgress progress={progress ?? 0} failed={uploadFailed} />

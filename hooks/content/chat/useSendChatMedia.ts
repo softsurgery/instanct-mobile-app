@@ -191,11 +191,13 @@ export const useSendChatMedia = ({
         void uploadMediaBatch(images, MessageVariant.IMAGE, trimmedCaption);
       }
 
-      videos.forEach((video, index) => {
-        const content =
-          images.length === 0 && index === 0 ? trimmedCaption : undefined;
-        void uploadMediaBatch([video], MessageVariant.VIDEO, content);
-      });
+      if (videos.length > 0) {
+        void uploadMediaBatch(
+          videos,
+          MessageVariant.VIDEO,
+          images.length === 0 ? trimmedCaption : undefined,
+        );
+      }
     },
     [stagedMedia, uploadMediaBatch],
   );
