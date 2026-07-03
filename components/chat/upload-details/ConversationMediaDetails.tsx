@@ -219,7 +219,12 @@ export const ConversationMediaDetails = ({
         }
       />
       {viewerVisible && viewerImages.length > 0 ? (
-        <Modal transparent visible={viewerVisible} presentationStyle="overFullScreen" onRequestClose={() => setViewerVisible(false)}>
+        <Modal
+          transparent
+          visible={viewerVisible}
+          presentationStyle="overFullScreen"
+          onRequestClose={() => setViewerVisible(false)}
+        >
           <GestureViewer
             data={viewerImages}
             initialIndex={viewerIndex}

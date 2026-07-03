@@ -6,6 +6,7 @@ import { ImageSource } from "expo-image";
 import { Play } from "lucide-react-native";
 import React from "react";
 import { Pressable, View } from "react-native";
+import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
 import { api } from "~/api";
 import { VideoPreview } from "~/components/shared/VideoPreview";
 import { VideoThumbnailPreview } from "~/components/shared/VideoThumbnailPreview";
@@ -33,16 +34,21 @@ export const MediaThumbnail = React.memo(function MediaThumbnail({
   onPress?: () => void;
 }) {
   const isVideo = message.variant === MessageVariant.VIDEO;
+  const accessToken = useAuthPersistStore((state) => state.accessToken);
 
   const mediaSource = React.useMemo(() => {
     if (mediaSourceOverride) return mediaSourceOverride;
-    if (typeof uploadId === "number")
+    if (typeof uploadId === "number" && accessToken) {
       return api.upload.getUploadById(uploadId);
+    }
     return undefined;
-  }, [mediaSourceOverride, uploadId]);
+  }, [accessToken, mediaSourceOverride, uploadId]);
 
   const content = (
-    <View style={{ width: size, height: size, padding: 1 }}>
+    <View
+      className="border border-border"
+      style={{ width: size, height: size, padding: 1 }}
+    >
       {isVideo ? (
         <View className="flex-1 bg-muted items-center justify-center relative">
           <View className="w-10 h-10 rounded-full items-center justify-center bg-black/50 absolute z-10">
@@ -54,6 +60,9 @@ export const MediaThumbnail = React.memo(function MediaThumbnail({
         <Image
           className="w-full h-full"
           source={mediaSource}
+          recyclingKey={
+            typeof uploadId === "number" ? `upload-${uploadId}` : undefined
+          }
           contentFit="cover"
           cachePolicy="memory-disk"
         />

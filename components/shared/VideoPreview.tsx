@@ -24,7 +24,7 @@ export type AppVideoSource = {
   headers?: Record<string, string>;
 };
 
-type VideoSourceInput = ImageSource | ImageURISource | AppVideoSource;
+export type VideoSourceInput = ImageSource | ImageURISource | AppVideoSource;
 
 export const toVideoSource = (
   source: VideoSourceInput | undefined | null,

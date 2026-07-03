@@ -17,6 +17,7 @@ import { Toaster } from "sonner-native";
 import { useColorPalette } from "@/hooks/useColorPalette";
 import { asyncStoragePersister, queryClient } from "@/lib/queryClient";
 import { KeyboardProvider } from "react-native-keyboard-controller";
+import { VideoThumbnailGeneratorHost } from "@/components/shared/VideoThumbnailGeneratorHost";
 
 function RootLayoutContent() {
   const { colorScheme, palette } = useColorPalette();
@@ -55,6 +56,7 @@ function RootLayoutContent() {
             }}
           />
           <PortalHost />
+          <VideoThumbnailGeneratorHost />
         </View>
       </GestureHandlerRootView>
     </KeyboardProvider>
