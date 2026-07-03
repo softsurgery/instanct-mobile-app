@@ -1,9 +1,8 @@
-import React from "react";
 import { cn } from "@/lib/utils";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { identifyUser } from "@/lib/user";
 import { router } from "expo-router";
-import { ArrowLeft, ChevronRight, LogOut, Trash2 } from "lucide-react-native";
+import { ChevronRight, LogOut, Trash2 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { Alert, View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
@@ -18,6 +17,8 @@ import { createSettingRow, SettingRow } from "./SettingsRow";
 import type { SettingRowConfig } from "./SettingsRow";
 import { useLogout } from "@/hooks/useLogout";
 import { AppHeaderBack } from "../shared/AppHeaderBack";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner-native";
 
 interface SettingsPortalProps {
   className?: string;
@@ -32,6 +33,7 @@ interface SettingsSection {
 }
 
 export const SettingsPortal = ({ className }: SettingsPortalProps) => {
+  const queryClient = useQueryClient();
   const { t: tSettings } = useTranslation("settings");
   const settingsRows: SettingsSection[] = [
     {
@@ -168,6 +170,18 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
           rightIcon: ChevronRight,
           className: "p-1 px-4",
           onPress: () => router.push("/main/test/deep-link-test"),
+        }),
+        createSettingRow({
+          title: "Invalidate Queries",
+          description: "Invalidate all queries",
+          rightIcon: ChevronRight,
+          className: "p-1 px-4",
+          onPress: () => {
+            queryClient.invalidateQueries();
+            toast.success("Queries invalidated successfully", {
+              description: "All queries have been invalidated",
+            });
+          },
         }),
       ],
       showOnDevelopment: true,

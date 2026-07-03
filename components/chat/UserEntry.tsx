@@ -112,18 +112,24 @@ export const UserEntry = ({
       }
     }
 
+    const mediaCount = lastMessage.uploads?.length || 1;
+
     if (lastMessage?.variant === MessageVariant.IMAGE) {
+      const label = mediaCount === 1 ? "📷 Image" : `📷 ${mediaCount} photos`;
       return (
         <Text className={defaultStyle} numberOfLines={1} ellipsizeMode="tail">
-          {prefix}📷 Image
+          {prefix}
+          {label}
         </Text>
       );
     }
 
     if (lastMessage?.variant === MessageVariant.VIDEO) {
+      const label = mediaCount === 1 ? "🎥 Video" : `🎥 ${mediaCount} videos`;
       return (
         <Text className={defaultStyle} numberOfLines={1} ellipsizeMode="tail">
-          {prefix}🎥 Video
+          {prefix}
+          {label}
         </Text>
       );
     }

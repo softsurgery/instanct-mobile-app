@@ -15,6 +15,7 @@ import { MarkedInput } from "../shared/MarkedInput";
 import { Separator } from "../ui/separator";
 import { NotFound } from "../shared/NotFound";
 import { useChat } from "@/hooks/content/chat/useChat";
+import { CONVERSATION_LIST_JOIN } from "@/lib/chat";
 import { UserEntrySkeleton } from "./UserEntrySkeleton";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
 
@@ -41,7 +42,7 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
     seeConversation,
   } = useChat({
     search: debouncedSearchQuery,
-    join: ["participants", "participants.user", "lastMessage"].join(","),
+    join: CONVERSATION_LIST_JOIN,
     enabled: !!currentUser,
   });
 

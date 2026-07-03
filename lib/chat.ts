@@ -1,5 +1,13 @@
 import { PageMeta, ResponseConversationDto } from "@/types";
 
+export const CONVERSATION_LIST_JOIN = [
+  "participants",
+  "participants.user",
+  "lastMessage",
+  "lastMessage.uploads",
+  "lastMessage.uploads.upload",
+].join(",");
+
 export type InfiniteConversationData = {
   pages: {
     data: ResponseConversationDto[];

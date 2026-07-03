@@ -31,6 +31,7 @@ import { ApplicationHeader } from "../../shared/AppHeader";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
+import { CONVERSATION_LIST_JOIN } from "@/lib/chat";
 import { ScrollView } from "react-native-gesture-handler";
 import { ConversationDetailsRow } from "./ConversationDetailsRow";
 import { useColorPalette } from "@/hooks/useColorPalette";
@@ -117,10 +118,7 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
   const { data: conversation } = useQuery({
     queryKey: ["conversation", conversationId],
     queryFn: () =>
-      api.chat.conversation.findById(
-        conversationId,
-        ["participants", "participants.user", "lastMessage"].join(","),
-      ),
+      api.chat.conversation.findById(conversationId, CONVERSATION_LIST_JOIN),
     enabled: Number.isFinite(conversationId) && conversationId > 0,
   });
 

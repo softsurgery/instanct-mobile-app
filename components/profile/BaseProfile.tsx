@@ -128,7 +128,6 @@ export const InspectBaseProfile = ({
       size: { width: 100, height: 100 },
     });
   const profilePictureSource = profilePictureUploads?.[0];
-  console.log(profilePictureSource);
 
   // cover picture side-effect
   const { uploads: coverUploads } = useServerImages({

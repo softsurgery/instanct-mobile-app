@@ -17,6 +17,7 @@ import {
   isYesterday,
 } from "date-fns";
 import { getSocket } from "@/lib/socket";
+import { CONVERSATION_LIST_JOIN } from "@/lib/chat";
 import { useCurrentUser } from "../users/useCurrentUser";
 import { useChatPendingStore } from "@/stores/useChatPendingStore";
 import { useShallow } from "zustand/react/shallow";
@@ -138,10 +139,7 @@ export const useConversationFeatures = ({
   const { data: conversation, isPending: isConversationPending } = useQuery({
     queryKey: ["conversation", id],
     queryFn: () =>
-      api.chat.conversation.findById(
-        id,
-        ["participants", "participants.user", "lastMessage"].join(","),
-      ),
+      api.chat.conversation.findById(id, CONVERSATION_LIST_JOIN),
     enabled: !!id && enabled,
   });
 

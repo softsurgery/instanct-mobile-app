@@ -17,6 +17,7 @@ import * as Notifications from "expo-notifications";
 import { useCurrentUser } from "../users/useCurrentUser";
 import { identifyUser } from "@/lib/user";
 import {
+  CONVERSATION_LIST_JOIN,
   InfiniteConversationData,
   moveConversationToTop,
   replaceConversationInPages,
@@ -32,20 +33,16 @@ interface useChatProps {
 
 let listenersInitialized = false;
 
-const defaultJoin = ["participants", "participants.user", "lastMessage"].join(
-  ",",
-);
-
 export const useChat = (
   {
     search = "",
     limit = 20,
-    join = defaultJoin,
+    join = CONVERSATION_LIST_JOIN,
     enabled = true,
   }: useChatProps = {
     search: "",
     limit: 20,
-    join: defaultJoin,
+    join: CONVERSATION_LIST_JOIN,
     enabled: true,
   },
 ) => {
