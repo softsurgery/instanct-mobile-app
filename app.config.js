@@ -11,7 +11,7 @@ export default ({ config }) => ({
   newArchEnabled: true,
   ios: {
     supportsTablet: true,
-    bundleIdentifier: "com.softsurgery.instanctmobileapp",
+    bundleIdentifier: "instanctmobileapp",
     infoPlist: {
       UIDesignRequiresCompatibility: true,
       NSAppTransportSecurity: {
