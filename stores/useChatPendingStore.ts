@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import {
   MessageVariant,
+  PendingFileUpload,
   PendingMediaUpload,
   PendingTextMessage,
   ResponseMessageDto,
@@ -9,6 +10,7 @@ import {
 interface ChatPendingStore {
   pendingTextMessages: PendingTextMessage[];
   pendingMediaUploads: PendingMediaUpload[];
+  pendingFileUploads: PendingFileUpload[];
   sentTextQueues: Record<number, string[]>;
 
   addPendingText: (message: PendingTextMessage) => void;
@@ -23,6 +25,13 @@ interface ChatPendingStore {
   ) => void;
   removePendingMedia: (clientId: string) => void;
 
+  addPendingFile: (upload: PendingFileUpload) => void;
+  updatePendingFile: (
+    clientId: string,
+    patch: Partial<PendingFileUpload>,
+  ) => void;
+  removePendingFile: (clientId: string) => void;
+
   reconcileTextPending: (
     conversationId: number,
     messages: ResponseMessageDto[],
@@ -35,6 +44,7 @@ interface ChatPendingStore {
 const initialState = {
   pendingTextMessages: [] as PendingTextMessage[],
   pendingMediaUploads: [] as PendingMediaUpload[],
+  pendingFileUploads: [] as PendingFileUpload[],
   sentTextQueues: {} as Record<number, string[]>,
 };
 
@@ -96,6 +106,28 @@ export const useChatPendingStore = create<ChatPendingStore>((set, get) => ({
   removePendingMedia: (clientId) => {
     set((state) => ({
       pendingMediaUploads: state.pendingMediaUploads.filter(
+        (pending) => pending.clientId !== clientId,
+      ),
+    }));
+  },
+
+  addPendingFile: (upload) => {
+    set((state) => ({
+      pendingFileUploads: [upload, ...state.pendingFileUploads],
+    }));
+  },
+
+  updatePendingFile: (clientId, patch) => {
+    set((state) => ({
+      pendingFileUploads: state.pendingFileUploads.map((item) =>
+        item.clientId === clientId ? { ...item, ...patch } : item,
+      ),
+    }));
+  },
+
+  removePendingFile: (clientId) => {
+    set((state) => ({
+      pendingFileUploads: state.pendingFileUploads.filter(
         (pending) => pending.clientId !== clientId,
       ),
     }));

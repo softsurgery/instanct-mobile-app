@@ -15,6 +15,7 @@ import { useFocusEffect } from "expo-router";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { ChatBubble } from "./conversation/bubbles/ChatBubble";
 import { ChatMediaBubble } from "./conversation/bubbles/ChatMediaBubble";
+import { ChatFileBubble } from "./conversation/bubbles/ChatFileBubble";
 import { ChatHeaderLeft } from "./conversation/ChatHeaderLeft";
 import { ChatHeaderRight } from "./conversation/ChatHeaderRight";
 import { SeenMessageWrapper } from "./conversation/SeenMessageWrapper";
@@ -29,6 +30,7 @@ import { Text } from "~/components/ui/text";
 import { useConversationFeatures } from "@/hooks/content/chat/useConversationFeatures";
 import { useLastSeenMessageId } from "@/hooks/content/chat/useLastSeenMessageId";
 import { useSendChatMedia } from "@/hooks/content/chat/useSendChatMedia";
+import { useSendChatFile } from "@/hooks/content/chat/useSendChatFile";
 import { useUserPresence } from "@/hooks/content/chat/useUserPresence";
 import { ImageBackground } from "expo-image";
 import { ChatStaticBubble } from "./conversation/bubbles/ChatStaticBubble";
@@ -83,6 +85,7 @@ export const Conversation = ({
     sendMessage,
     sendPoke,
     sendMediaMessage,
+    sendFileMessage,
     pendingTextMessages,
     loadMore,
     markConversationAsSeen,
@@ -101,6 +104,12 @@ export const Conversation = ({
     conversationId: id,
     messages,
     onSend: sendMediaMessage,
+  });
+
+  const { pickFile, pendingUploads: pendingFileUploads } = useSendChatFile({
+    conversationId: id,
+    messages,
+    onSend: sendFileMessage,
   });
 
   const { currentUser } = useCurrentUser();
@@ -202,8 +211,25 @@ export const Conversation = ({
         pending,
       }),
     );
-    return [...pendingTextItems, ...pendingMediaItems, ...flattenedMessages];
-  }, [pendingTextMessages, pendingUploads, flattenedMessages]);
+    const pendingFileItems = pendingFileUploads.map(
+      (pending): MessageFlatListItem => ({
+        type: "pending-file",
+        key: pending.clientId,
+        pending,
+      }),
+    );
+    return [
+      ...pendingTextItems,
+      ...pendingFileItems,
+      ...pendingMediaItems,
+      ...flattenedMessages,
+    ];
+  }, [
+    pendingTextMessages,
+    pendingUploads,
+    pendingFileUploads,
+    flattenedMessages,
+  ]);
 
   const isMessagesLoading = isInitialPending;
 
@@ -249,6 +275,7 @@ export const Conversation = ({
                   item.type === "header"
                     ? item.key
                     : item.type === "pending-media" ||
+                        item.type === "pending-file" ||
                         item.type === "pending-text"
                       ? item.key
                       : `m-${item.message.id}`
@@ -268,6 +295,9 @@ export const Conversation = ({
 
                   if (item.type === "pending-media")
                     return <ChatMediaBubble pending={item.pending} right />;
+
+                  if (item.type === "pending-file")
+                    return <ChatFileBubble pending={item.pending} right />;
 
                   if (item.type === "pending-text")
                     return (
@@ -311,6 +341,25 @@ export const Conversation = ({
                         avatarFallback={headerAvatarFallback}
                       >
                         <ChatMediaBubble
+                          message={item.message}
+                          right={isOwnMessage}
+                        />
+                      </SeenMessageWrapper>
+                    );
+                  }
+
+                  if (item.type === "file") {
+                    const isOwnMessage = item.message.userId === currentUser?.id;
+                    const showSeen =
+                      isOwnMessage && item.message.id === lastSeenMessageId;
+
+                    return (
+                      <SeenMessageWrapper
+                        showSeen={showSeen}
+                        pictureId={headerPictureId}
+                        avatarFallback={headerAvatarFallback}
+                      >
+                        <ChatFileBubble
                           message={item.message}
                           right={isOwnMessage}
                         />
@@ -370,6 +419,7 @@ export const Conversation = ({
             sendPoke={sendPoke}
             onPickImage={pickImage}
             onPickVideo={pickVideo}
+            onPickFile={pickFile}
             isConversationLocked={!!conversation?.locked}
           />
           <Animated.View style={fakeView} />

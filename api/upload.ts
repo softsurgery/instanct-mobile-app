@@ -255,6 +255,16 @@ export const getUploadBySlug = (slug: string) => {
   };
 };
 
+export const getUploadDownloadById = (id: number) => {
+  const authStore = useAuthPersistStore.getState();
+  return {
+    uri: `${BASE_URL}/storage/download/id/${id}`,
+    headers: {
+      Authorization: `Bearer ${authStore.accessToken}`,
+    },
+  };
+};
+
 export const upload = {
   uploadFile,
   uploadFiles,

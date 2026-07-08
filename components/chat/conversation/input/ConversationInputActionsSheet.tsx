@@ -9,13 +9,14 @@ interface ConversationInputActionsSheetProps {
   onPoke: () => void;
   onPickImage: () => void;
   onPickVideo: () => void;
+  onPickFile: () => void;
   disabled?: boolean;
 }
 
 export const ConversationInputActionsSheet = React.forwardRef<
   ActionSheetRef,
   ConversationInputActionsSheetProps
->(({ onPoke, onPickImage, onPickVideo, disabled }, ref) => {
+>(({ onPoke, onPickImage, onPickVideo, onPickFile, disabled }, ref) => {
   const { palette } = useColorPalette();
   const innerRef = React.useRef<ActionSheetRef>(null);
   const pendingActionRef = React.useRef<(() => void) | null>(null);
@@ -57,7 +58,7 @@ export const ConversationInputActionsSheet = React.forwardRef<
       icon: File,
       iconColor: "#eab308",
 
-      onPress: () => runAction(onPickVideo),
+      onPress: () => runAction(onPickFile),
       disabled,
     },
     {

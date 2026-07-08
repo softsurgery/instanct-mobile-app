@@ -3,6 +3,7 @@ import { StableSafeAreaView } from "@/components/shared/StableSafeAreaView";
 import { ApplicationHeader } from "@/components/shared/AppHeader";
 import { createMaterialTopTabNavigator } from "expo-router/js-top-tabs";
 import { ConversationMediaDetails } from "./ConversationMediaDetails";
+import { ConversationFilesDetails } from "./ConversationFilesDetails";
 
 import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 const Tab = createMaterialTopTabNavigator();
@@ -51,11 +52,7 @@ export const ConversationResourceDetails = ({
           {() => <ConversationMediaDetails id={conversationId} />}
         </Tab.Screen>
         <Tab.Screen name="Files">
-          {() => (
-            <View className="flex-1 items-center justify-center mt-10">
-              <Text className="text-muted-foreground">No files found</Text>
-            </View>
-          )}
+          {() => <ConversationFilesDetails id={conversationId} />}
         </Tab.Screen>
         <Tab.Screen name="Links">
           {() => (

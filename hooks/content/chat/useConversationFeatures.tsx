@@ -193,6 +193,9 @@ export const useConversationFeatures = ({
             ) {
               return { type: "media", message: msg };
             }
+            if (msg.variant === MessageVariant.FILE) {
+              return { type: "file", message: msg };
+            }
             return { type: "static", message: msg };
           }),
           { type: "header" as const, date: label, key: `header-${date}` },
@@ -282,6 +285,29 @@ export const useConversationFeatures = ({
               [MessageVariant.IMAGE, MessageVariant.VIDEO],
               id,
             ],
+          },
+          (oldData: any) => {
+            if (!oldData || !oldData.pages) return oldData;
+            return {
+              ...oldData,
+              pages: oldData.pages.map((page: any, index: number) => {
+                if (index === 0) {
+                  return {
+                    ...page,
+                    data: [message, ...page.data],
+                  };
+                }
+                return page;
+              }),
+            };
+          },
+        );
+      }
+
+      if (message.variant === MessageVariant.FILE) {
+        queryClient.setQueriesData(
+          {
+            queryKey: ["messages", [MessageVariant.FILE], id],
           },
           (oldData: any) => {
             if (!oldData || !oldData.pages) return oldData;
@@ -414,6 +440,24 @@ export const useConversationFeatures = ({
     [id],
   );
 
+  const sendFileMessage = React.useCallback(
+    (payload: {
+      uploadIds: number[];
+      variant: MessageVariant.FILE;
+      content?: string;
+    }) => {
+      const s = socketRef.current;
+      if (!s || payload.uploadIds.length === 0) return;
+      s.emit("message", {
+        conversationId: id,
+        uploadIds: payload.uploadIds,
+        variant: payload.variant,
+        content: payload.content,
+      });
+    },
+    [id],
+  );
+
   // Load More Messages *************************************************************************************************************
   const loadMore = React.useCallback(() => {
     const s = socketRef.current;
@@ -468,6 +512,7 @@ export const useConversationFeatures = ({
     sendMessage,
     sendPoke,
     sendMediaMessage,
+    sendFileMessage,
     pendingTextMessages,
     markConversationAsSeen,
   };

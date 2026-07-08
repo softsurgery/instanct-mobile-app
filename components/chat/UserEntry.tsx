@@ -134,6 +134,16 @@ export const UserEntry = ({
       );
     }
 
+    if (lastMessage?.variant === MessageVariant.FILE) {
+      const label = mediaCount === 1 ? "📎 File" : `📎 ${mediaCount} files`;
+      return (
+        <Text className={defaultStyle} numberOfLines={1} ellipsizeMode="tail">
+          {prefix}
+          {label}
+        </Text>
+      );
+    }
+
     if (lastMessage?.variant === MessageVariant.EMOJI) {
       return (
         <Text className={defaultStyle} numberOfLines={1} ellipsizeMode="tail">

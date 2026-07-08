@@ -7,6 +7,7 @@ export enum MessageVariant {
   EMOJI = "emoji",
   IMAGE = "image",
   VIDEO = "video",
+  FILE = "file",
 }
 
 export interface ResponseConversationDto extends DatabaseEntity {
@@ -96,12 +97,25 @@ export type PendingTextMessage = {
   status: "pending" | "failed";
 };
 
+export type PendingFileUpload = {
+  clientId: string;
+  conversationId: number;
+  filename: string;
+  progress: number;
+  status: "uploading" | "sending" | "failed";
+  createdAt: Date;
+  uploadId?: number;
+  content?: string;
+};
+
 export type MessageFlatListItem =
   | { type: "header"; date: string; key: string }
   | { type: "message"; message: ResponseMessageDto }
   | { type: "media"; message: ResponseMessageDto }
+  | { type: "file"; message: ResponseMessageDto }
   | { type: "static"; message: ResponseMessageDto }
   | { type: "pending-media"; key: string; pending: PendingMediaUpload }
+  | { type: "pending-file"; key: string; pending: PendingFileUpload }
   | { type: "pending-text"; key: string; pending: PendingTextMessage };
 
 export type MediaKind = "image" | "video";

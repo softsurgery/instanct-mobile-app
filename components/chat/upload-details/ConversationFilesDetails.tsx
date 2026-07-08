@@ -1,0 +1,113 @@
+import { Text } from "@/components/ui/text";
+import { useConversationMessages } from "@/hooks/content/chat/useConversationMessages";
+import { useColorPalette } from "@/hooks/useColorPalette";
+import { hslToHex } from "@/lib/theme";
+import { MessageVariant } from "@/types";
+import { LegendList } from "@legendapp/list";
+import React from "react";
+import { ActivityIndicator, View } from "react-native";
+import { FileListItem, getMessageFileItems } from "./FileListItem";
+
+type ConversationFileItem = {
+  key: string;
+  messageId: number;
+  uploadId: number;
+  message: ReturnType<typeof useConversationMessages>["messages"][number];
+  upload: NonNullable<
+    ReturnType<typeof getMessageFileItems>[number]["upload"]
+  >;
+};
+
+interface ConversationFilesDetailsProps {
+  id: number;
+}
+
+export const ConversationFilesDetails = ({
+  id,
+}: ConversationFilesDetailsProps) => {
+  const { palette } = useColorPalette();
+  const endReachedDuringMomentum = React.useRef(false);
+
+  const {
+    messages: fileMessages,
+    isMessagesPending: isLoadingFiles,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useConversationMessages({
+    id,
+    query: {
+      limit: "20",
+      sort: "createdAt,DESC",
+    },
+    variants: [MessageVariant.FILE],
+  });
+
+  const fileItems = React.useMemo(() => {
+    const items: ConversationFileItem[] = [];
+
+    for (const message of fileMessages) {
+      getMessageFileItems(message).forEach(({ uploadId, upload }, index) => {
+        items.push({
+          key: `${message.id}-${uploadId}-${index}`,
+          messageId: message.id,
+          uploadId,
+          message,
+          upload,
+        });
+      });
+    }
+
+    return items;
+  }, [fileMessages]);
+
+  const handleEndReached = React.useCallback(() => {
+    if (endReachedDuringMomentum.current) {
+      return;
+    }
+
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+
+  const renderFileItem = React.useCallback(
+    ({ item }: { item: ConversationFileItem }) => (
+      <FileListItem
+        message={item.message}
+        upload={item.upload}
+        uploadId={item.uploadId}
+      />
+    ),
+    [],
+  );
+
+  return (
+    <LegendList
+      data={fileItems}
+      keyExtractor={(item) => item.key}
+      renderItem={renderFileItem}
+      onEndReached={handleEndReached}
+      onMomentumScrollBegin={() => {
+        endReachedDuringMomentum.current = false;
+      }}
+      onEndReachedThreshold={0.4}
+      ListEmptyComponent={() => (
+        <View className="flex-1 items-center justify-center py-10 mt-10">
+          {isLoadingFiles ? (
+            <ActivityIndicator size="small" color={hslToHex(palette.primary)} />
+          ) : (
+            <Text className="text-muted-foreground">No files found</Text>
+          )}
+        </View>
+      )}
+      ListFooterComponent={() =>
+        isFetchingNextPage ? (
+          <View className="py-4 items-center">
+            <ActivityIndicator size="small" color={hslToHex(palette.primary)} />
+          </View>
+        ) : null
+      }
+    />
+  );
+};

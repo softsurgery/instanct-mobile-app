@@ -24,6 +24,7 @@ interface ConversationInputProps {
   sendPoke: () => void;
   onPickImage: () => void;
   onPickVideo: () => void;
+  onPickFile: () => void;
   isConversationLocked?: boolean;
 }
 
@@ -36,6 +37,7 @@ export const ConversationInput = ({
   sendPoke,
   onPickImage,
   onPickVideo,
+  onPickFile,
   isConversationLocked = false,
 }: ConversationInputProps) => {
   const isKeyboardVisible = useKeyboardVisible();
@@ -67,8 +69,8 @@ export const ConversationInput = ({
   return (
     <View
       className={cn(
-        "bg-background/95 border-t border-border py-2",
-        isKeyboardVisible ? "pb-4" : "pb-8",
+        "bg-background/95 border-t border-border py-4",
+        isKeyboardVisible ? "pb-4" : "pb-0",
         className,
       )}
       style={{
@@ -80,8 +82,9 @@ export const ConversationInput = ({
         onPoke={sendPoke}
         onPickImage={onPickImage}
         onPickVideo={onPickVideo}
+        onPickFile={onPickFile}
       />
-      <View className="flex flex-row items-center justify-between gap-2 px-6 py-0.5">
+      <View className="flex flex-row items-center justify-between gap-2 px-4 py-0.5">
         {/* Add Button */}
 
         <TouchableOpacity onPress={() => actionSheetRef.current?.show()}>
