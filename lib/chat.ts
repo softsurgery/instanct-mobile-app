@@ -4,13 +4,23 @@ import {
   QueryParams,
   ResponseConversationDto,
   ResponseMessageDto,
+  ResponseUserDto,
 } from "@/types";
+import { router } from "expo-router";
+import { identifyUser, identifyUserAvatar } from "@/lib/user";
 
 export const CONVERSATION_LINKS_MESSAGES_QUERY: QueryParams = {
   limit: "20",
   sort: "createdAt,DESC",
   join: "links",
 };
+
+export const MESSAGE_SEARCH_JOIN = [
+  "user",
+  "uploads",
+  "uploads.upload",
+  "links",
+].join(",");
 
 export const conversationLinksMessagesQueryKey = (conversationId: number) =>
   ["messages", [], conversationId, CONVERSATION_LINKS_MESSAGES_QUERY] as const;
@@ -102,4 +112,36 @@ export const moveConversationToTop = (
     ...oldData,
     pages: rebuiltPages,
   };
+};
+
+interface NavigateToConversationMessageParams {
+  conversationId: number;
+  messageId: number;
+  user?: ResponseUserDto | null;
+}
+
+export const buildConversationRouteParams = ({
+  conversationId,
+  messageId,
+  user,
+}: NavigateToConversationMessageParams) => ({
+  id: String(conversationId),
+  userId: user?.id ?? "",
+  identifier: identifyUser(user),
+  pictureId: user?.pictureId ? String(user.pictureId) : "",
+  avatarFallback: identifyUserAvatar(user),
+  messageId: String(messageId),
+});
+
+export const navigateToConversationMessage = (
+  params: NavigateToConversationMessageParams,
+) => {
+  router.dismissTo({
+    pathname: "/main/chat/conversation",
+    params: buildConversationRouteParams(params),
+  });
+};
+
+export const setConversationMessageParam = (messageId: number) => {
+  router.setParams({ messageId: String(messageId) });
 };

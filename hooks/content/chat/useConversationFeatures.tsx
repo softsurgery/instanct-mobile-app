@@ -145,8 +145,7 @@ export const useConversationFeatures = ({
 
   const { data: conversation, isPending: isConversationPending } = useQuery({
     queryKey: ["conversation", id],
-    queryFn: () =>
-      api.chat.conversation.findById(id, CONVERSATION_LIST_JOIN),
+    queryFn: () => api.chat.conversation.findById(id, CONVERSATION_LIST_JOIN),
     enabled: !!id && enabled,
   });
 
@@ -266,11 +265,13 @@ export const useConversationFeatures = ({
       setCachedMessages((prev) => {
         const existing = prev?.messages ?? [];
         if (existing.some((item) => item.id === message.id)) {
-          return prev ?? {
-            messages: existing,
-            hasMore: true,
-            currentPage: 1,
-          };
+          return (
+            prev ?? {
+              messages: existing,
+              hasMore: true,
+              currentPage: 1,
+            }
+          );
         }
 
         return {
@@ -388,10 +389,7 @@ export const useConversationFeatures = ({
       s.off("conversation-messages", onConversationMessages);
       s.off("message", onMessage);
       s.off("error", onError);
-      s.off(
-        "conversation-updated-last-check",
-        onConversationUpdatedLastCheck,
-      );
+      s.off("conversation-updated-last-check", onConversationUpdatedLastCheck);
       // Do NOT clear the cache on unmount — that's the whole point
     };
   }, [
@@ -511,6 +509,62 @@ export const useConversationFeatures = ({
     [messages, groupMessagesByDay],
   );
 
+  const [isEnsuringMessage, setIsEnsuringMessage] = React.useState(false);
+
+  const ensureMessageLoaded = React.useCallback(
+    async (messageId: number): Promise<boolean> => {
+      const cached = getCachedMessages();
+      if (cached?.messages.some((message) => message.id === messageId)) {
+        return true;
+      }
+
+      setIsEnsuringMessage(true);
+
+      try {
+        let page = cached?.messages.length ? cached.currentPage + 1 : 1;
+        let hasMorePages = cached?.hasMore ?? true;
+
+        while (hasMorePages) {
+          const response =
+            await api.chat.message.findPaginatedConversationMessages(id, {
+              page: String(page),
+              limit: String(limit),
+              sort: "createdAt,DESC",
+            });
+
+          const batch = response.data ?? [];
+
+          setCachedMessages((prev) => {
+            const existing = prev?.messages ?? [];
+            const existingIds = new Set(existing.map((message) => message.id));
+            const unique = batch.filter(
+              (message) => !existingIds.has(message.id),
+            );
+
+            return {
+              messages: [...existing, ...unique],
+              hasMore: response.meta.hasNextPage,
+              currentPage: page,
+            };
+          });
+
+          if (batch.some((message) => message.id === messageId)) {
+            return true;
+          }
+
+          hasMorePages = response.meta.hasNextPage;
+          if (!hasMorePages) break;
+          page += 1;
+        }
+
+        return false;
+      } finally {
+        setIsEnsuringMessage(false);
+      }
+    },
+    [getCachedMessages, id, limit, setCachedMessages],
+  );
+
   const markConversationAsSeen = React.useCallback(() => {
     const s = socketRef.current;
     if (!s) return;
@@ -522,6 +576,8 @@ export const useConversationFeatures = ({
     flattenedMessages,
     messages,
     loadMore,
+    ensureMessageLoaded,
+    isEnsuringMessage,
     isConversationPending,
     isInitialPending,
     isMoreMessagesLoading,

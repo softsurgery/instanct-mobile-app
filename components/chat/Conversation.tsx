@@ -2,6 +2,7 @@ import { formatDistanceToNow } from "date-fns";
 import React from "react";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Platform,
   View,
@@ -11,6 +12,7 @@ import {
 } from "react-native";
 import { ChevronDown } from "lucide-react-native";
 import { useFocusEffect } from "expo-router";
+import { setConversationMessageParam } from "@/lib/chat";
 
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { ChatBubble } from "./conversation/bubbles/ChatBubble";
@@ -42,8 +44,10 @@ import Animated, {
 } from "react-native-reanimated";
 import { useGradualAnimation } from "@/hooks/useGradualAnimation";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { MessageFlatListItem } from "@/types";
+import { MessageFlatListItem, ResponseMessageDto } from "@/types";
 import { useColorPalette } from "@/hooks/useColorPalette";
+import { cn } from "@/lib/utils";
+import { ConversationSearchOverlay } from "./conversation/search/ConversationSearchOverlay";
 
 interface ConversationProps {
   id: number;
@@ -51,6 +55,7 @@ interface ConversationProps {
   identifier?: string;
   pictureId?: string;
   avatarFallback?: string;
+  scrollToMessageId?: number;
 }
 
 export const Conversation = ({
@@ -59,6 +64,7 @@ export const Conversation = ({
   identifier,
   pictureId,
   avatarFallback,
+  scrollToMessageId,
 }: ConversationProps) => {
   const { colorScheme, palette } = useColorPalette();
   const { height } = useGradualAnimation();
@@ -88,6 +94,8 @@ export const Conversation = ({
     sendFileMessage,
     pendingTextMessages,
     loadMore,
+    ensureMessageLoaded,
+    isEnsuringMessage,
     markConversationAsSeen,
   } = useConversationFeatures({ id });
 
@@ -128,6 +136,14 @@ export const Conversation = ({
 
   const flatListRef = React.useRef<FlatList>(null);
   const [showScrollDown, setShowScrollDown] = React.useState(false);
+  const [isSearching, setIsSearching] = React.useState(false);
+  const [highlightedMessageId, setHighlightedMessageId] = React.useState<
+    number | null
+  >(null);
+  const pendingScrollMessageIdRef = React.useRef<number | null>(
+    scrollToMessageId ?? null,
+  );
+  const routeMessageHandledRef = React.useRef(false);
   const scrollDownOpacity = useSharedValue(0);
 
   React.useEffect(() => {
@@ -162,6 +178,70 @@ export const Conversation = ({
     flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
   }, []);
 
+  const findMessageIndex = React.useCallback(
+    (messageId: number, data: MessageFlatListItem[]) =>
+      data.findIndex(
+        (item) =>
+          (item.type === "message" ||
+            item.type === "media" ||
+            item.type === "file" ||
+            item.type === "static") &&
+          item.message.id === messageId,
+      ),
+    [],
+  );
+
+  const scrollToMessage = React.useCallback(
+    (messageId: number, data: MessageFlatListItem[]) => {
+      const index = findMessageIndex(messageId, data);
+      if (index === -1) return false;
+
+      flatListRef.current?.scrollToIndex({
+        index,
+        animated: true,
+        viewPosition: 0.5,
+      });
+      setHighlightedMessageId(messageId);
+      return true;
+    },
+    [findMessageIndex],
+  );
+
+  const navigateToMessage = React.useCallback(
+    async (messageId: number, data: MessageFlatListItem[]) => {
+      if (scrollToMessage(messageId, data)) {
+        return;
+      }
+
+      const loaded = await ensureMessageLoaded(messageId);
+      if (loaded) {
+        pendingScrollMessageIdRef.current = messageId;
+        return;
+      }
+
+      Alert.alert(
+        "Message unavailable",
+        "This message could not be found in the conversation history.",
+      );
+    },
+    [ensureMessageLoaded, scrollToMessage],
+  );
+
+  React.useEffect(() => {
+    routeMessageHandledRef.current = false;
+    pendingScrollMessageIdRef.current = scrollToMessageId ?? null;
+  }, [scrollToMessageId]);
+
+  React.useEffect(() => {
+    if (highlightedMessageId === null) return;
+
+    const highlightTimeout = setTimeout(() => {
+      setHighlightedMessageId(null);
+    }, 2500);
+
+    return () => clearTimeout(highlightTimeout);
+  }, [highlightedMessageId]);
+
   const user = React.useMemo(() => {
     if (!conversation || !currentUser) return null;
     return conversation.participants?.find(
@@ -170,12 +250,9 @@ export const Conversation = ({
   }, [conversation, currentUser]);
 
   const headerUserId = user?.id ?? userId;
-  const headerIdentifier = user
-    ? identifyUser(user)
-    : (identifier ?? "");
+  const headerIdentifier = user ? identifyUser(user) : (identifier ?? "");
   const headerPictureId =
-    user?.pictureId ??
-    (pictureId ? Number(pictureId) : undefined);
+    user?.pictureId ?? (pictureId ? Number(pictureId) : undefined);
   const headerAvatarFallback = user
     ? identifyUserAvatar(user)
     : (avatarFallback ?? "?");
@@ -233,10 +310,41 @@ export const Conversation = ({
 
   const isMessagesLoading = isInitialPending;
 
+  const handleSearchResultPress = React.useCallback(
+    (message: ResponseMessageDto) => {
+      setIsSearching(false);
+      setConversationMessageParam(message.id);
+      void navigateToMessage(message.id, listData);
+    },
+    [navigateToMessage, listData],
+  );
+
+  React.useEffect(() => {
+    const messageId = pendingScrollMessageIdRef.current;
+    if (!messageId || isMessagesLoading || isEnsuringMessage) return;
+
+    if (scrollToMessage(messageId, listData)) {
+      pendingScrollMessageIdRef.current = null;
+    }
+  }, [isEnsuringMessage, isMessagesLoading, listData, scrollToMessage]);
+
+  React.useEffect(() => {
+    if (
+      !scrollToMessageId ||
+      isMessagesLoading ||
+      routeMessageHandledRef.current
+    ) {
+      return;
+    }
+
+    routeMessageHandledRef.current = true;
+    void navigateToMessage(scrollToMessageId, listData);
+  }, [scrollToMessageId, isMessagesLoading, listData, navigateToMessage]);
+
   return (
     <StableSafeAreaView className="flex-1 bg-card">
       {/* HEADER */}
-      <View className="flex flex-row justify-between items-center px-2 py-1 bg-card border-b border-border">
+      <View className="flex flex-row justify-between items-center px-2 py-2 bg-card border-b border-border">
         <ChatHeaderLeft
           id={headerUserId as string}
           profilePicture={profilePictures[0]}
@@ -244,7 +352,10 @@ export const Conversation = ({
           lastSeen={presenceText}
           isOnline={isOnline}
         />
-        <ChatHeaderRight conversationId={id} />
+        <ChatHeaderRight
+          conversationId={id}
+          onSearchPress={() => setIsSearching(true)}
+        />
       </View>
 
       <ImageBackground
@@ -310,28 +421,38 @@ export const Conversation = ({
                     );
 
                   if (item.type === "message") {
-                    const isOwnMessage = item.message.userId === currentUser?.id;
+                    const isOwnMessage =
+                      item.message.userId === currentUser?.id;
                     const showSeen =
                       isOwnMessage && item.message.id === lastSeenMessageId;
+                    const isHighlighted =
+                      item.message.id === highlightedMessageId;
 
                     return (
-                      <SeenMessageWrapper
-                        showSeen={showSeen}
-                        pictureId={headerPictureId}
-                        avatarFallback={headerAvatarFallback}
+                      <View
+                        className={cn(
+                          isHighlighted && "bg-accent/20 rounded-2xl mx-1",
+                        )}
                       >
-                        <ChatBubble
-                          message={item.message.content}
-                          links={item.message.links}
-                          timestamp={item.message.createdAt}
-                          right={isOwnMessage}
-                        />
-                      </SeenMessageWrapper>
+                        <SeenMessageWrapper
+                          showSeen={showSeen}
+                          pictureId={headerPictureId}
+                          avatarFallback={headerAvatarFallback}
+                        >
+                          <ChatBubble
+                            message={item.message.content}
+                            links={item.message.links}
+                            timestamp={item.message.createdAt}
+                            right={isOwnMessage}
+                          />
+                        </SeenMessageWrapper>
+                      </View>
                     );
                   }
 
                   if (item.type === "media") {
-                    const isOwnMessage = item.message.userId === currentUser?.id;
+                    const isOwnMessage =
+                      item.message.userId === currentUser?.id;
                     const showSeen =
                       isOwnMessage && item.message.id === lastSeenMessageId;
 
@@ -350,7 +471,8 @@ export const Conversation = ({
                   }
 
                   if (item.type === "file") {
-                    const isOwnMessage = item.message.userId === currentUser?.id;
+                    const isOwnMessage =
+                      item.message.userId === currentUser?.id;
                     const showSeen =
                       isOwnMessage && item.message.id === lastSeenMessageId;
 
@@ -372,6 +494,19 @@ export const Conversation = ({
                 }}
                 onEndReached={loadMore}
                 onEndReachedThreshold={0.3}
+                onScrollToIndexFailed={(info) => {
+                  flatListRef.current?.scrollToOffset({
+                    offset: info.averageItemLength * info.index,
+                    animated: false,
+                  });
+                  setTimeout(() => {
+                    flatListRef.current?.scrollToIndex({
+                      index: info.index,
+                      animated: true,
+                      viewPosition: 0.5,
+                    });
+                  }, 100);
+                }}
                 ListFooterComponent={
                   isMoreMessagesLoading ? (
                     <View className="py-4 items-center">
@@ -434,6 +569,23 @@ export const Conversation = ({
         onRemove={removeStagedMedia}
         onAddMore={addMoreStagedMedia}
       />
+
+      {isSearching && (
+        <ConversationSearchOverlay
+          conversationId={id}
+          onClose={() => setIsSearching(false)}
+          onResultPress={handleSearchResultPress}
+        />
+      )}
+
+      {isEnsuringMessage && (
+        <View className="absolute inset-0 z-40 items-center justify-center bg-background/70">
+          <ActivityIndicator size="large" />
+          <Text className="text-muted-foreground mt-3">
+            Loading conversation...
+          </Text>
+        </View>
+      )}
     </StableSafeAreaView>
   );
 };

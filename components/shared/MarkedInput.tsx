@@ -6,11 +6,13 @@ import { Input } from "../ui/input";
 import { cn } from "@/lib/utils";
 
 interface MarkedInputProps extends TextInputProps {
+  classNames?: { input?: string; container?: string };
   icon: LucideIcon;
   position?: "left" | "right";
 }
 
 export const MarkedInput = ({
+  classNames,
   className,
   value,
   onChangeText,
@@ -19,7 +21,13 @@ export const MarkedInput = ({
   ...rest
 }: MarkedInputProps) => {
   return (
-    <View className={cn("relative justify-center", className)}>
+    <View
+      className={cn(
+        "relative justify-center",
+        classNames?.container,
+        className,
+      )}
+    >
       <View
         className={cn(
           "absolute h-full justify-center z-10",
@@ -33,7 +41,11 @@ export const MarkedInput = ({
         {...rest}
         value={value}
         onChangeText={onChangeText}
-        className={cn("rounded-full", position === "left" ? "pl-10" : "pr-10")}
+        className={cn(
+          "rounded-full",
+          position === "left" ? "pl-10" : "pr-10",
+          classNames?.input,
+        )}
       />
     </View>
   );

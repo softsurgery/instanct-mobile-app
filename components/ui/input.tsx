@@ -3,10 +3,12 @@ import { Platform, TextInput, type TextInputProps } from "react-native";
 
 function Input({
   className,
+  ref,
   ...props
 }: TextInputProps & React.RefAttributes<TextInput>) {
   return (
     <TextInput
+      ref={ref}
       {...props}
       multiline={false}
       className={cn(
