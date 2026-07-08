@@ -12,6 +12,7 @@ import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { SSOButtons } from "./SSOButtons";
 import { Rocket, Zap, ShieldCheck } from "lucide-react-native";
 import { useColorPalette } from "@/hooks/useColorPalette";
+import { ThemeToggle } from "../shared/ThemeToggle";
 
 const width = Dimensions.get("window").width;
 
@@ -57,15 +58,18 @@ export default function OnBoarding({ className }: OnBoardingProps) {
       className={cn("flex-1 justify-between bg-background", className)}
     >
       <View className="flex-1 flex flex-col justify-between py-4">
-        <View className="flex flex-row gap-3 px-6 items-center">
-          <Image
-            source={require("~/assets/images/icon.png")}
-            style={{ width: 60, height: 60, borderRadius: 12 }}
-            contentFit="cover"
-          />
-          <Text className="text-3xl font-extrabold tracking-tight mt-2">
-            Instanct
-          </Text>
+        <View className="flex flex-row items-center justify-between">
+          <View className="flex flex-row gap-3 px-6 items-center">
+            <Image
+              source={require("~/assets/images/icon.png")}
+              style={{ width: 60, height: 60, borderRadius: 12 }}
+              contentFit="cover"
+            />
+            <Text className="text-3xl font-extrabold tracking-tight mt-2">
+              Instanct
+            </Text>
+          </View>
+          <ThemeToggle className="mx-6" />
         </View>
 
         <View className="flex-1 justify-center mt-8">
