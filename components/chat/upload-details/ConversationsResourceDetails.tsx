@@ -1,9 +1,9 @@
-import { View, Text } from "react-native";
 import { StableSafeAreaView } from "@/components/shared/StableSafeAreaView";
 import { ApplicationHeader } from "@/components/shared/AppHeader";
 import { createMaterialTopTabNavigator } from "expo-router/js-top-tabs";
 import { ConversationMediaDetails } from "./ConversationMediaDetails";
 import { ConversationFilesDetails } from "./ConversationFilesDetails";
+import { ConversationLinksDetails } from "./ConversationLinksDetails";
 
 import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 const Tab = createMaterialTopTabNavigator();
@@ -55,11 +55,7 @@ export const ConversationResourceDetails = ({
           {() => <ConversationFilesDetails id={conversationId} />}
         </Tab.Screen>
         <Tab.Screen name="Links">
-          {() => (
-            <View className="flex-1 items-center justify-center mt-10">
-              <Text className="text-muted-foreground">No links found</Text>
-            </View>
-          )}
+          {() => <ConversationLinksDetails id={conversationId} />}
         </Tab.Screen>
       </Tab.Navigator>
     </StableSafeAreaView>

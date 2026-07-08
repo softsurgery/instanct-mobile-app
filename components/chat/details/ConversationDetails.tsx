@@ -12,7 +12,6 @@ import { useQuery } from "@tanstack/react-query";
 import {
   Image as ImageIcon,
   Search,
-  Slash,
   Ban,
   AlertTriangle,
   Trash2,
@@ -37,6 +36,7 @@ import { ConversationDetailsRow } from "./ConversationDetailsRow";
 import { useColorPalette } from "@/hooks/useColorPalette";
 import { hslToHex } from "@/lib/theme";
 import { useUserPresence } from "@/hooks/content/chat/useUserPresence";
+import { MessageTextContent } from "../conversation/bubbles/MessageTextContent";
 
 import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface MessageResultItemProps {
@@ -49,27 +49,6 @@ const MessageResultItem = ({
   searchQuery,
   onPress,
 }: MessageResultItemProps) => {
-  const highlightText = (text: string, query: string) => {
-    if (!text || !query.trim())
-      return <Text className="text-foreground">{text || ""}</Text>;
-
-    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const parts = text.split(new RegExp(`(${escapedQuery})`, "gi"));
-    return (
-      <Text className="text-foreground">
-        {parts.map((part, index) =>
-          part.toLowerCase() === query.toLowerCase() ? (
-            <Text key={index} className="bg-accent font-semibold">
-              {part}
-            </Text>
-          ) : (
-            <Text key={index}>{part}</Text>
-          ),
-        )}
-      </Text>
-    );
-  };
-
   const senderName = identifyUser(message.user);
   const content = message.content || "";
 
@@ -96,7 +75,14 @@ const MessageResultItem = ({
               })}
             </Text>
           </View>
-          {highlightText(content, searchQuery)}
+          <MessageTextContent
+            content={content}
+            links={message.links}
+            highlightQuery={searchQuery}
+            className="text-foreground"
+            linkClassName="text-primary font-medium"
+            highlightClassName="bg-accent font-semibold"
+          />
           <Text className="text-muted-foreground text-xs mt-2">
             {new Date(message.createdAt).toLocaleDateString()}
           </Text>
@@ -465,7 +451,6 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
         </View>
 
         <View className="bg-card mx-4 rounded-2xl mb-12">
-          <ConversationDetailsRow icon={Slash} label="Restrict" />
           <ConversationDetailsRow icon={Ban} label="Block" />
           <ConversationDetailsRow icon={AlertTriangle} label="Report" />
           <ConversationDetailsRow

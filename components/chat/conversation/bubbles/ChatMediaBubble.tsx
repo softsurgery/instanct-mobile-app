@@ -15,7 +15,7 @@ import { PhotoPreview } from "~/components/shared/PhotoPreview";
 import { VideoPreview } from "~/components/shared/VideoPreview";
 import { VideoThumbnailPreview } from "~/components/shared/VideoThumbnailPreview";
 import { useServerImages } from "~/hooks/content/useServerImages";
-import { MediaUploadProgress } from "../staging/MediaUploadProgress";
+import { MessageTextContent } from "./MessageTextContent";
 import { MediaImageGrid } from "./ChatMediaImageGrid";
 
 interface ChatMediaBubbleProps {
@@ -155,14 +155,18 @@ export const ChatMediaBubble = ({
 
       {!!(message?.content || pending?.content) && (
         <View className="px-3 py-2">
-          <Text
+          <MessageTextContent
+            content={message?.content ?? pending?.content}
+            links={message?.links}
             className={cn(
               "text-[15px] leading-5",
               right ? "text-primary-foreground" : "text-secondary-foreground",
             )}
-          >
-            {message?.content ?? pending?.content}
-          </Text>
+            linkClassName={cn(
+              right ? "text-primary-foreground" : "text-primary",
+              "font-medium",
+            )}
+          />
         </View>
       )}
 

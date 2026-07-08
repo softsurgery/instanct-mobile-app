@@ -322,6 +322,7 @@ export const Conversation = ({
                       >
                         <ChatBubble
                           message={item.message.content}
+                          links={item.message.links}
                           timestamp={item.message.createdAt}
                           right={isOwnMessage}
                         />

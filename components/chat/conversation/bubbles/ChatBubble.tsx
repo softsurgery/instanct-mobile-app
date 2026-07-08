@@ -1,6 +1,5 @@
-import { StaticMessageEnum } from "@/types";
+import { ResponseMessageLinkDto, StaticMessageEnum } from "@/types";
 import { format } from "date-fns";
-import React from "react";
 import { Alert, Pressable } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -12,9 +11,11 @@ import Animated, {
 
 import { Text } from "~/components/ui/text";
 import { cn } from "~/lib/utils";
+import { MessageTextContent } from "./MessageTextContent";
 
 interface ChatBubbleProps {
   message?: string;
+  links?: ResponseMessageLinkDto[];
   timestamp: Date;
   right?: boolean;
   isPending?: boolean;
@@ -24,6 +25,7 @@ interface ChatBubbleProps {
 
 export const ChatBubble = ({
   message,
+  links,
   timestamp,
   right,
   isPending,
@@ -56,6 +58,16 @@ export const ChatBubble = ({
       }
     });
 
+  const textClassName = cn(
+    "text-[15px] leading-5",
+    right ? "text-primary-foreground" : "text-secondary-foreground",
+  );
+
+  const linkClassName = cn(
+    right ? "text-primary-foreground" : "text-primary",
+    "font-medium",
+  );
+
   return (
     <GestureDetector gesture={longPressGesture}>
       <Animated.View
@@ -68,14 +80,12 @@ export const ChatBubble = ({
         )}
       >
         <Pressable className="px-3 py-2 active:opacity-80">
-          <Text
-            className={cn(
-              "text-[15px] leading-5",
-              right ? "text-primary-foreground" : "text-secondary-foreground",
-            )}
-          >
-            {message}
-          </Text>
+          <MessageTextContent
+            content={message}
+            links={links}
+            className={textClassName}
+            linkClassName={linkClassName}
+          />
           <Text
             className={cn(
               "text-[10px] text-right mt-1",

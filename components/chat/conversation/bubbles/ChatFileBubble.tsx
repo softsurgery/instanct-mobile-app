@@ -12,6 +12,7 @@ import {
   resolveUploadDisplayName,
 } from "../../upload-details/FileListItem";
 import { ChatFileList, ChatFileListItem } from "./ChatFileList";
+import { MessageTextContent } from "./MessageTextContent";
 
 interface ChatFileBubbleProps {
   className?: string;
@@ -109,9 +110,12 @@ export const ChatFileBubble = ({
 
       {!!(message?.content || pending?.content) && (
         <View className="px-1 py-2">
-          <Text className="text-[15px] leading-5 text-secondary-foreground">
-            {message?.content ?? pending?.content}
-          </Text>
+          <MessageTextContent
+            content={message?.content ?? pending?.content}
+            links={message?.links}
+            className="text-[15px] leading-5 text-secondary-foreground"
+            linkClassName="text-primary font-medium"
+          />
         </View>
       )}
 

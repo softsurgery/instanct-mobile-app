@@ -30,6 +30,16 @@ export interface ResponseMessageDto extends DatabaseEntity {
   variant?: MessageVariant;
   static?: StaticMessageEnum;
   uploads?: ResponseMessageUploadDto[];
+  links?: ResponseMessageLinkDto[];
+}
+
+export interface ResponseMessageLinkDto extends DatabaseEntity {
+  id: number;
+  messageId: number;
+  url: string;
+  startOffset: number;
+  endOffset: number;
+  order: number;
 }
 
 export interface ResponseMessageUploadDto extends DatabaseEntity {
