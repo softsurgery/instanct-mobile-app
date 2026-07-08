@@ -1,4 +1,45 @@
-import { PageMeta, ResponseConversationDto } from "@/types";
+import {
+  PageMeta,
+  Paginated,
+  QueryParams,
+  ResponseConversationDto,
+  ResponseMessageDto,
+} from "@/types";
+
+export const CONVERSATION_LINKS_MESSAGES_QUERY: QueryParams = {
+  limit: "20",
+  sort: "createdAt,DESC",
+  join: "links",
+};
+
+export const conversationLinksMessagesQueryKey = (conversationId: number) =>
+  ["messages", [], conversationId, CONVERSATION_LINKS_MESSAGES_QUERY] as const;
+
+type MessagesInfiniteData = {
+  pages: Paginated<ResponseMessageDto>[];
+  pageParams: unknown[];
+};
+
+export const prependMessageToConversationLinksCache = (
+  oldData: MessagesInfiniteData | undefined,
+  message: ResponseMessageDto,
+): MessagesInfiniteData | undefined => {
+  if (!oldData?.pages?.length) {
+    return oldData;
+  }
+
+  const firstPage = oldData.pages[0];
+  if (firstPage.data.some((item) => item.id === message.id)) {
+    return oldData;
+  }
+
+  return {
+    ...oldData,
+    pages: oldData.pages.map((page, index) =>
+      index === 0 ? { ...page, data: [message, ...page.data] } : page,
+    ),
+  };
+};
 
 export const CONVERSATION_LIST_JOIN = [
   "participants",

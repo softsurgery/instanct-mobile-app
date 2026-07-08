@@ -4,6 +4,11 @@ import { getSocket } from "@/lib/socket";
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
 import { useCurrentUser } from "../users/useCurrentUser";
 import { useChatPendingStore } from "@/stores/useChatPendingStore";
+import {
+  conversationLinksMessagesQueryKey,
+  prependMessageToConversationLinksCache,
+} from "@/lib/chat";
+import { messageHasLinks } from "@/lib/messageLinks";
 import { MessageVariant, ResponseMessageDto } from "@/types";
 
 interface CachedConversationMessages {
@@ -37,6 +42,19 @@ export const useChatPendingSync = () => {
           };
         },
       );
+
+      if (messageHasLinks(message)) {
+        queryClient.setQueryData(
+          conversationLinksMessagesQueryKey(message.conversationId),
+          (oldData) =>
+            prependMessageToConversationLinksCache(
+              oldData as Parameters<
+                typeof prependMessageToConversationLinksCache
+              >[0],
+              message,
+            ),
+        );
+      }
 
       if (
         userId &&

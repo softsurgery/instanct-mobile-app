@@ -18,7 +18,13 @@ import {
   isYesterday,
 } from "date-fns";
 import { getSocket } from "@/lib/socket";
-import { CONVERSATION_LIST_JOIN, replaceConversationInPages } from "@/lib/chat";
+import {
+  CONVERSATION_LIST_JOIN,
+  conversationLinksMessagesQueryKey,
+  prependMessageToConversationLinksCache,
+  replaceConversationInPages,
+} from "@/lib/chat";
+import { messageHasLinks } from "@/lib/messageLinks";
 import { useCurrentUser } from "../users/useCurrentUser";
 import { useChatPendingStore } from "@/stores/useChatPendingStore";
 import { useShallow } from "zustand/react/shallow";
@@ -324,6 +330,19 @@ export const useConversationFeatures = ({
               }),
             };
           },
+        );
+      }
+
+      if (messageHasLinks(message)) {
+        queryClient.setQueryData(
+          conversationLinksMessagesQueryKey(id),
+          (oldData) =>
+            prependMessageToConversationLinksCache(
+              oldData as Parameters<
+                typeof prependMessageToConversationLinksCache
+              >[0],
+              message,
+            ),
         );
       }
 

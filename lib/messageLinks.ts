@@ -61,3 +61,17 @@ export const resolveMessageLinks = (
 
   return extractMessageLinks(content);
 };
+
+export const messageHasLinks = (message: {
+  content?: string | null;
+  links?: ResponseMessageLinkDto[];
+}) =>
+  (message.links?.length ?? 0) > 0 ||
+  extractMessageLinks(message.content).length > 0;
+
+export const getMessageLinksForDisplay = (
+  message: {
+    content?: string | null;
+    links?: ResponseMessageLinkDto[];
+  },
+) => resolveMessageLinks(message.content, message.links);

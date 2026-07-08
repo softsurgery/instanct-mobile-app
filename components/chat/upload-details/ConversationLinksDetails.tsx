@@ -2,8 +2,11 @@ import { Text } from "@/components/ui/text";
 import { useConversationMessages } from "@/hooks/content/chat/useConversationMessages";
 import { useColorPalette } from "@/hooks/useColorPalette";
 import { hslToHex } from "@/lib/theme";
+import { CONVERSATION_LINKS_MESSAGES_QUERY } from "@/lib/chat";
+import { getMessageLinksForDisplay } from "@/lib/messageLinks";
 import { ResponseMessageDto, ResponseMessageLinkDto } from "@/types";
 import { LegendList } from "@legendapp/list";
+import { useFocusEffect } from "expo-router";
 import React from "react";
 import { ActivityIndicator, View } from "react-native";
 import { LinkListItem } from "./LinkListItem";
@@ -31,29 +34,30 @@ export const ConversationLinksDetails = ({
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    refecthMessages,
   } = useConversationMessages({
     id,
-    query: {
-      limit: "20",
-      sort: "createdAt,DESC",
-      join: "links",
-    },
+    query: CONVERSATION_LINKS_MESSAGES_QUERY,
   });
+
+  useFocusEffect(
+    React.useCallback(() => {
+      void refecthMessages();
+    }, [refecthMessages]),
+  );
 
   const linkItems = React.useMemo(() => {
     const items: ConversationLinkItem[] = [];
 
     for (const message of messages) {
-      const sortedLinks = [...(message.links ?? [])].sort(
-        (a, b) => a.order - b.order,
-      );
+      getMessageLinksForDisplay(message).forEach((link) => {
+        const linkId = "id" in link && link.id ? link.id : "local";
 
-      sortedLinks.forEach((link) => {
         items.push({
-          key: `${message.id}-${link.id}-${link.order}`,
+          key: `${message.id}-${linkId}-${link.order}-${link.startOffset}`,
           messageId: message.id,
           message,
-          link,
+          link: link as ResponseMessageLinkDto,
         });
       });
     }
