@@ -6,6 +6,7 @@ import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
 import {
   MessageFlatListItem,
   MessageVariant,
+  ResponseConversationDto,
   ResponseMessageDto,
   StaticMessageEnum,
 } from "@/types";
@@ -17,7 +18,7 @@ import {
   isYesterday,
 } from "date-fns";
 import { getSocket } from "@/lib/socket";
-import { CONVERSATION_LIST_JOIN } from "@/lib/chat";
+import { CONVERSATION_LIST_JOIN, replaceConversationInPages } from "@/lib/chat";
 import { useCurrentUser } from "../users/useCurrentUser";
 import { useChatPendingStore } from "@/stores/useChatPendingStore";
 import { useShallow } from "zustand/react/shallow";
@@ -220,8 +221,13 @@ export const useConversationFeatures = ({
       }
     };
 
+    const markConversationAsSeen = () => {
+      s.emit("see-conversation", { conversationId: id });
+    };
+
     const onConnect = () => {
       joinAndFetch();
+      markConversationAsSeen();
     };
 
     const onConversationMessages = (newMessages: ResponseMessageDto[]) => {
@@ -296,6 +302,10 @@ export const useConversationFeatures = ({
       }
 
       playSound();
+
+      if (message.userId !== currentUserIdRef.current) {
+        markConversationAsSeen();
+      }
     };
 
     const onError = (err: any) => {
@@ -304,21 +314,39 @@ export const useConversationFeatures = ({
       setIsInitialPending(false);
     };
 
+    const onConversationUpdatedLastCheck = (
+      updated: ResponseConversationDto,
+    ) => {
+      if (updated.id !== id) return;
+
+      queryClient.setQueryData(["conversation", id], updated);
+      queryClient.setQueriesData({ queryKey: ["conversations"] }, (oldData) =>
+        replaceConversationInPages(oldData as any, updated),
+      );
+    };
+
     s.on("connect", onConnect);
     s.on("conversation-messages", onConversationMessages);
     s.on("message", onMessage);
     s.on("error", onError);
+    s.on("conversation-updated-last-check", onConversationUpdatedLastCheck);
 
     // If already connected, join immediately instead of waiting for "connect"
     if (s.connected) {
       joinAndFetch();
     }
 
+    markConversationAsSeen();
+
     return () => {
       s.off("connect", onConnect);
       s.off("conversation-messages", onConversationMessages);
       s.off("message", onMessage);
       s.off("error", onError);
+      s.off(
+        "conversation-updated-last-check",
+        onConversationUpdatedLastCheck,
+      );
       // Do NOT clear the cache on unmount — that's the whole point
     };
   }, [
@@ -420,6 +448,12 @@ export const useConversationFeatures = ({
     [messages, groupMessagesByDay],
   );
 
+  const markConversationAsSeen = React.useCallback(() => {
+    const s = socketRef.current;
+    if (!s) return;
+    s.emit("see-conversation", { conversationId: id });
+  }, [id]);
+
   return {
     conversation,
     flattenedMessages,
@@ -435,5 +469,6 @@ export const useConversationFeatures = ({
     sendPoke,
     sendMediaMessage,
     pendingTextMessages,
+    markConversationAsSeen,
   };
 };

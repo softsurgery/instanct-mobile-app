@@ -1,8 +1,16 @@
+// This module is a thumbnail generation and caching manager for videos in an Expo app. It solves a few problems:
+
+// Avoid generating the same thumbnail multiple times.
+// Cache thumbnails in memory and on disk.
+// Generate only one thumbnail at a time because a single VideoPlayer instance is shared.
+// Queue thumbnail requests until the player is available.
+
 import { Image } from "expo-image";
 import type { AppVideoSource } from "@/components/shared/VideoPreview";
 import type { ImageSource } from "expo-image";
 import type { VideoPlayer } from "expo-video";
 
+// This stores thumbnails only while the app is running.
 const memoryCache = new Map<string, ImageSource>();
 
 export const getThumbnailCacheKey = (source: AppVideoSource): string => {

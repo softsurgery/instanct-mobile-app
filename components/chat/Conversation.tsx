@@ -10,12 +10,14 @@ import {
   type NativeSyntheticEvent,
 } from "react-native";
 import { ChevronDown } from "lucide-react-native";
+import { useFocusEffect } from "expo-router";
 
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { ChatBubble } from "./conversation/bubbles/ChatBubble";
 import { ChatMediaBubble } from "./conversation/bubbles/ChatMediaBubble";
 import { ChatHeaderLeft } from "./conversation/ChatHeaderLeft";
 import { ChatHeaderRight } from "./conversation/ChatHeaderRight";
+import { SeenMessageWrapper } from "./conversation/SeenMessageWrapper";
 
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
@@ -25,6 +27,7 @@ import { useServerImages } from "@/hooks/content/useServerImages";
 import { Text } from "~/components/ui/text";
 
 import { useConversationFeatures } from "@/hooks/content/chat/useConversationFeatures";
+import { useLastSeenMessageId } from "@/hooks/content/chat/useLastSeenMessageId";
 import { useSendChatMedia } from "@/hooks/content/chat/useSendChatMedia";
 import { useUserPresence } from "@/hooks/content/chat/useUserPresence";
 import { ImageBackground } from "expo-image";
@@ -82,6 +85,7 @@ export const Conversation = ({
     sendMediaMessage,
     pendingTextMessages,
     loadMore,
+    markConversationAsSeen,
   } = useConversationFeatures({ id });
 
   const {
@@ -100,6 +104,18 @@ export const Conversation = ({
   });
 
   const { currentUser } = useCurrentUser();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      markConversationAsSeen();
+    }, [markConversationAsSeen]),
+  );
+
+  const lastSeenMessageId = useLastSeenMessageId({
+    conversation,
+    messages,
+    currentUserId: currentUser?.id,
+  });
 
   const flatListRef = React.useRef<FlatList>(null);
   const [showScrollDown, setShowScrollDown] = React.useState(false);
@@ -263,22 +279,44 @@ export const Conversation = ({
                       />
                     );
 
-                  if (item.type === "message")
-                    return (
-                      <ChatBubble
-                        message={item.message.content}
-                        timestamp={item.message.createdAt}
-                        right={item.message.userId === currentUser?.id}
-                      />
-                    );
+                  if (item.type === "message") {
+                    const isOwnMessage = item.message.userId === currentUser?.id;
+                    const showSeen =
+                      isOwnMessage && item.message.id === lastSeenMessageId;
 
-                  if (item.type === "media")
                     return (
-                      <ChatMediaBubble
-                        message={item.message}
-                        right={item.message.userId === currentUser?.id}
-                      />
+                      <SeenMessageWrapper
+                        showSeen={showSeen}
+                        pictureId={headerPictureId}
+                        avatarFallback={headerAvatarFallback}
+                      >
+                        <ChatBubble
+                          message={item.message.content}
+                          timestamp={item.message.createdAt}
+                          right={isOwnMessage}
+                        />
+                      </SeenMessageWrapper>
                     );
+                  }
+
+                  if (item.type === "media") {
+                    const isOwnMessage = item.message.userId === currentUser?.id;
+                    const showSeen =
+                      isOwnMessage && item.message.id === lastSeenMessageId;
+
+                    return (
+                      <SeenMessageWrapper
+                        showSeen={showSeen}
+                        pictureId={headerPictureId}
+                        avatarFallback={headerAvatarFallback}
+                      >
+                        <ChatMediaBubble
+                          message={item.message}
+                          right={isOwnMessage}
+                        />
+                      </SeenMessageWrapper>
+                    );
+                  }
 
                   return <ChatStaticBubble message={item.message} />;
                 }}
