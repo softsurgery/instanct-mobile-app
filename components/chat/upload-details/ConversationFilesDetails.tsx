@@ -6,16 +6,14 @@ import { MessageVariant } from "@/types";
 import { LegendList } from "@legendapp/list";
 import React from "react";
 import { ActivityIndicator, View } from "react-native";
-import { FileListItem, getMessageFileItems } from "./FileListItem";
+import { FileListItem, getMessageUploadEntries } from "./FileListItem";
 
 type ConversationFileItem = {
   key: string;
   messageId: number;
   uploadId: number;
   message: ReturnType<typeof useConversationMessages>["messages"][number];
-  upload: NonNullable<
-    ReturnType<typeof getMessageFileItems>[number]["upload"]
-  >;
+  upload?: ReturnType<typeof getMessageUploadEntries>[number]["upload"];
 };
 
 interface ConversationFilesDetailsProps {
@@ -47,7 +45,7 @@ export const ConversationFilesDetails = ({
     const items: ConversationFileItem[] = [];
 
     for (const message of fileMessages) {
-      getMessageFileItems(message).forEach(({ uploadId, upload }, index) => {
+      getMessageUploadEntries(message).forEach(({ uploadId, upload }, index) => {
         items.push({
           key: `${message.id}-${uploadId}-${index}`,
           messageId: message.id,
@@ -75,8 +73,8 @@ export const ConversationFilesDetails = ({
     ({ item }: { item: ConversationFileItem }) => (
       <FileListItem
         message={item.message}
-        upload={item.upload}
         uploadId={item.uploadId}
+        upload={item.upload}
       />
     ),
     [],

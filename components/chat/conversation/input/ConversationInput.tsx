@@ -1,6 +1,6 @@
 import { Hand, Plus, SendHorizonal } from "lucide-react-native";
 import React from "react";
-import { View, ViewStyle, TouchableOpacity } from "react-native";
+import { View, ViewStyle, TouchableOpacity, Platform } from "react-native";
 import { type ActionSheetRef } from "react-native-actions-sheet";
 import { Icon } from "~/components/ui/icon";
 import { Textarea } from "~/components/ui/textarea";
@@ -69,13 +69,10 @@ export const ConversationInput = ({
   return (
     <View
       className={cn(
-        "bg-background/95 border-t border-border py-4",
-        isKeyboardVisible ? "pb-4" : "pb-0",
+        "bg-background/95 border-t border-border py-4 z-20",
+        isKeyboardVisible ? "pb-4" : Platform.OS === "ios" ? "pb-8" : "pb-4",
         className,
       )}
-      style={{
-        zIndex: 20,
-      }}
     >
       <ConversationInputActionsSheet
         ref={actionSheetRef}

@@ -97,14 +97,20 @@ export type PendingTextMessage = {
   status: "pending" | "failed";
 };
 
+export type PendingFileItem = {
+  filename: string;
+  mimetype?: string;
+  fileSize?: number;
+};
+
 export type PendingFileUpload = {
   clientId: string;
   conversationId: number;
-  filename: string;
+  items: PendingFileItem[];
   progress: number;
   status: "uploading" | "sending" | "failed";
   createdAt: Date;
-  uploadId?: number;
+  uploadIds?: number[];
   content?: string;
 };
 

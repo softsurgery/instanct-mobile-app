@@ -2,12 +2,12 @@ import React from "react";
 import { Alert } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import { api } from "@/api";
+import { ReactNativeUploadFile } from "@/api/upload";
 import { MessageVariant, PendingFileUpload, ResponseMessageDto } from "@/types";
 import { waitForUiReady } from "@/lib/device";
 import { toast } from "sonner-native";
 import { useChatPendingStore } from "@/stores/useChatPendingStore";
 import { useShallow } from "zustand/react/shallow";
-import { ReactNativeUploadFile } from "@/api/upload";
 
 const MAX_FILE_SELECTION = 10;
 
@@ -51,8 +51,8 @@ export const useSendChatFile = ({
   const activePendingUploads = React.useMemo(
     () =>
       pendingUploads.filter((pending) => {
-        if (!pending.uploadId) return true;
-        return !serverUploadIds.has(pending.uploadId);
+        if (!pending.uploadIds?.length) return true;
+        return !pending.uploadIds.every((id) => serverUploadIds.has(id));
       }),
     [pendingUploads, serverUploadIds],
   );
@@ -62,32 +62,44 @@ export const useSendChatFile = ({
       files: DocumentPicker.DocumentPickerAsset[],
       content?: string,
     ) => {
-      for (const file of files) {
-        const clientId = `file-${Date.now()}-${Math.random()}`;
-        const filename = file.name || "file";
+      const clientId = `file-batch-${Date.now()}-${Math.random()}`;
 
-        const pending: PendingFileUpload = {
-          clientId,
-          conversationId,
-          filename,
-          progress: 0,
-          status: "uploading",
-          createdAt: new Date(),
-          content,
-        };
+      const pending: PendingFileUpload = {
+        clientId,
+        conversationId,
+        items: files.map((file) => ({
+          filename: file.name || "File",
+          mimetype: file.mimeType || undefined,
+          fileSize: file.size,
+        })),
+        progress: 0,
+        status: "uploading",
+        createdAt: new Date(),
+        content,
+      };
 
-        addPendingFile(pending);
+      addPendingFile(pending);
 
-        try {
-          const uploadPayload: ReactNativeUploadFile = {
-            uri: file.uri,
-            name: filename,
-            type: file.mimeType || "application/octet-stream",
-          };
+      try {
+        const uploadPayloads: ReactNativeUploadFile[] = files.map((file) => ({
+          uri: file.uri,
+          name: file.name || "File",
+          type: file.mimeType || "application/octet-stream",
+        }));
 
+        const uploadIds: number[] = [];
+
+        for (let index = 0; index < uploadPayloads.length; index++) {
           const upload = await api.upload.uploadFile(
-            uploadPayload,
-            (percent) => updatePendingFile(clientId, { progress: percent }),
+            uploadPayloads[index],
+            (filePercent) => {
+              const overall = Math.round(
+                (index * 100 + filePercent) / uploadPayloads.length,
+              );
+              updatePendingFile(clientId, {
+                progress: Math.min(99, overall),
+              });
+            },
             true,
           );
 
@@ -95,25 +107,28 @@ export const useSendChatFile = ({
             throw new Error("Upload failed");
           }
 
-          updatePendingFile(clientId, {
-            progress: 100,
-            uploadId: upload.id,
-            status: "sending",
-          });
-
-          onSend({
-            uploadIds: [upload.id],
-            variant: MessageVariant.FILE,
-            content,
-          });
-        } catch (error) {
-          console.error("Failed to send file:", error);
-          updatePendingFile(clientId, { status: "failed" });
-          Alert.alert(
-            "Upload failed",
-            `Could not send ${filename}. Try again.`,
-          );
+          uploadIds.push(upload.id);
         }
+
+        if (uploadIds.length !== files.length) {
+          throw new Error("Upload failed");
+        }
+
+        updatePendingFile(clientId, {
+          progress: 100,
+          uploadIds,
+          status: "sending",
+        });
+
+        onSend({
+          uploadIds,
+          variant: MessageVariant.FILE,
+          content,
+        });
+      } catch (error) {
+        console.error("Failed to send files:", error);
+        updatePendingFile(clientId, { status: "failed" });
+        Alert.alert("Upload failed", "Could not send your files. Try again.");
       }
     },
     [conversationId, onSend, addPendingFile, updatePendingFile],

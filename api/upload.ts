@@ -93,6 +93,9 @@ const uploadNativeFile = async (
     uploadType: UploadType.MULTIPART,
     fieldName: "file",
     mimeType: file.type,
+    parameters: {
+      filename: file.name,
+    },
     headers: getUploadHeaders(),
     onProgress: ({ bytesSent, totalBytes }) => {
       reportUploadProgress(onProgress, bytesSent, totalBytes);
@@ -156,6 +159,9 @@ export const uploadFile = async (
 
   const formData = new FormData();
   formData.append("file", file as File);
+  if (isReactNativeUploadFile(file)) {
+    formData.append("filename", file.name);
+  }
 
   onProgress?.(0);
 
@@ -227,6 +233,11 @@ export const uploadFiles = async (
   return response.data;
 };
 
+export const fetchUploadById = async (id: number): Promise<Upload> => {
+  const response = await axios.get<Upload>(`/storage/${id}`);
+  return response.data;
+};
+
 /**
  * Returns an expo-image source for a stored upload, including auth headers.
  * expo-image handles streaming, caching, and progressive loading natively.
@@ -268,6 +279,8 @@ export const getUploadDownloadById = (id: number) => {
 export const upload = {
   uploadFile,
   uploadFiles,
+  fetchUploadById,
   getUploadBySlug,
   getUploadById,
+  getUploadDownloadById,
 };
