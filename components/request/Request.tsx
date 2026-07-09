@@ -7,9 +7,7 @@ import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { router } from "expo-router";
 import {
-  ArrowLeft,
   Calendar,
   CheckCheck,
   Clock3,
@@ -129,15 +127,13 @@ export const Request = ({ id, className, isIncoming }: RequestProps) => {
   });
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
 
-  const { jsxArray: profilePictures, isPending: isProfilePicturesPending } =
-    useServerImages({
-      ids: [user?.pictureId],
-      fallbacks: [fallback],
-      wrapperClassName:
-        "border border-border bg-background rounded-full shadow-md",
-      size: { width: 80, height: 80 },
-      enabled: !!user,
-    });
+  const { jsxArray: profilePictures } = useServerImages({
+    ids: [user?.pictureId],
+    fallbacks: [fallback],
+    wrapperClassName:
+      "border border-border bg-background rounded-full shadow-md",
+    size: { width: 80, height: 80 },
+  });
 
   const editable =
     request?.status === RequestStatus.Accepted ||
@@ -145,8 +141,7 @@ export const Request = ({ id, className, isIncoming }: RequestProps) => {
       ? false
       : true;
 
-  const isPending =
-    isRequestPending || isUserPending || isProfilePicturesPending;
+  const isPending = isRequestPending || isUserPending;
 
   return (
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>

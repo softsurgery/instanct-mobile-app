@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
 import { useUserStore } from "@/stores/useUserStore";
 import { router } from "expo-router";
-import { ArrowLeft } from "lucide-react-native";
 import { ApplicationHeader } from "../../shared/AppHeader";
 import { FormBuilder } from "../../shared/form-builder/FormBuilder";
 import { StableKeyboardAwareScrollView } from "../../shared/StableKeyboardAwareScrollView";
@@ -118,13 +117,11 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
     };
   }, [currentUser]);
 
-  const { uploads: profileUploads, isPending: isProfileUploadsPending } =
-    useServerImages({
-      ids: [currentUser?.pictureId],
-      fallbacks: [fallback],
-      size: { width: 100, height: 100 },
-      enabled: !!currentUser,
-    });
+  const { uploads: profileUploads } = useServerImages({
+    ids: [currentUser?.pictureId],
+    fallbacks: [fallback],
+    size: { width: 100, height: 100 },
+  });
 
   React.useEffect(() => {
     if (
@@ -147,7 +144,7 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
         shortcuts={[
           {
             key: "back",
-           render: <AppHeaderBack />
+            render: <AppHeaderBack />,
           },
         ]}
       />

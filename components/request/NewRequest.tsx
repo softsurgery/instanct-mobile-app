@@ -63,15 +63,13 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
   const identity = React.useMemo(() => identifyUser(user), [user]);
   const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
 
-  const { jsxArray: profilePictures, isPending: isProfilePicturesPending } =
-    useServerImages({
-      ids: [user?.pictureId],
-      fallbacks: [fallback],
-      wrapperClassName:
-        "border border-border bg-background rounded-full shadow-md",
-      size: { width: 70, height: 70 },
-      enabled: !!user,
-    });
+  const { jsxArray: profilePictures } = useServerImages({
+    ids: [user?.pictureId],
+    fallbacks: [fallback],
+    wrapperClassName:
+      "border border-border bg-background rounded-full shadow-md",
+    size: { width: 70, height: 70 },
+  });
 
   const { mutate: sendRequest, isPending: isSendingRequestPending } =
     useMutation({
@@ -130,7 +128,7 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
         ]}
       />
 
-      {isUserPending || isProfilePicturesPending ? (
+      {isUserPending ? (
         <Loader className="flex flex-1 h-full items-center justify-center" />
       ) : (
         <React.Fragment>
