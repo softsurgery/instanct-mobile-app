@@ -10,36 +10,45 @@ interface UseScrollableElementProps {
   duration?: number; // Duration for the animation in milliseconds
   deltaThreshold?: number; // Minimum scroll delta to trigger header visibility change
   checkScrollable?: boolean; // Flag to only activate event if content is scrollable
+  collapseHeight?: boolean; // Collapse layout height when header is hidden
 }
 
 export const useScrollableElement = ({
   duration = 250,
   deltaThreshold = 10,
   checkScrollable = false,
+  collapseHeight = true,
 }: UseScrollableElementProps) => {
   const showHeader = useSharedValue(true);
 
-  // Memoized header visibility handler
-  const handleHeaderVisibility = React.useCallback(
-    (visible: boolean) => {
-      showHeader.value = visible;
-    },
-    [showHeader],
-  );
+  const handleHeaderVisibility = (visible: boolean) => {
+    showHeader.value = visible;
+  };
 
-  const animatedHeaderStyle = useAnimatedStyle(() => ({
-    transform: [
-      {
-        translateY: withTiming(showHeader.value ? 0 : -deltaThreshold, {
-          duration,
-        }),
-      },
-    ],
-    opacity: withTiming(showHeader.value ? 1 : 0, { duration }),
-    height: withTiming(showHeader.value ? deltaThreshold : 0, {
-      duration,
-    }),
-  }));
+  const animatedHeaderStyle = useAnimatedStyle(() => {
+    const style: {
+      transform: { translateY: number }[];
+      opacity: number;
+      height?: number;
+    } = {
+      transform: [
+        {
+          translateY: withTiming(showHeader.value ? 0 : -deltaThreshold, {
+            duration,
+          }),
+        },
+      ],
+      opacity: withTiming(showHeader.value ? 1 : 0, { duration }),
+    };
+
+    if (collapseHeight) {
+      style.height = withTiming(showHeader.value ? deltaThreshold : 0, {
+        duration,
+      });
+    }
+
+    return style;
+  });
 
   // Track scroll direction
   const lastOffsetY = React.useRef(0);

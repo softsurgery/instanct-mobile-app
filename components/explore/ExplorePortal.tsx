@@ -7,7 +7,13 @@ import { IconMessageChatbot } from "@tabler/icons-react-native";
 import { router } from "expo-router";
 import { ArrowDownNarrowWide, Bell, CalendarCog } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
-import { Dimensions, View } from "react-native";
+import {
+  Dimensions,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  View,
+} from "react-native";
+import Animated from "react-native-reanimated";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { UserCard } from "./UserCard";
@@ -26,6 +32,8 @@ import { useObjectives } from "@/hooks/content/reference-types/useObjectives";
 import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
 import { useActiveMapSessionContext } from "@/contexts/ActiveMapSessionContext";
 import { useMapStore } from "@/stores/useMapStore";
+import { useScrollableElement } from "@/hooks/useScrollableElement";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface ExplorePortalProps {
   className?: string;
@@ -34,6 +42,7 @@ interface ExplorePortalProps {
 const height = Dimensions.get("window").height;
 
 export const ExplorePortal = ({ className }: ExplorePortalProps) => {
+  const insets = useSafeAreaInsets();
   const { palette } = useColorPalette();
   const { t } = useTranslation("common");
   const { currentUser } = useCurrentUser();
@@ -43,6 +52,13 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   const { count: chatCount } = useChatContext();
   const { activeSession, initialized } = useActiveMapSessionContext();
   const [currentIndex, setCurrentIndex] = React.useState(0);
+  const { animatedHeaderStyle, handleScroll: handleHeaderScroll } =
+    useScrollableElement({
+      deltaThreshold: 100,
+      duration: 250,
+      checkScrollable: true,
+      collapseHeight: false,
+    });
   const { users: liveUsers } = useLiveGeolocation({
     enabled: true,
     join: ["user", "user.industries", "user.sessions"],
@@ -101,18 +117,32 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
     router.push("/main/chat");
   }, []);
 
-  const handleScroll = React.useCallback((event: any) => {
+  const handleHorizontalScroll = React.useCallback((event: any) => {
     const contentOffsetX = event.nativeEvent.contentOffset.x;
     const screenWidth = event.nativeEvent.layoutMeasurement.width;
     const newIndex = Math.round(contentOffsetX / screenWidth);
     setCurrentIndex(newIndex);
   }, []);
 
+  React.useEffect(() => {
+    handleHeaderScroll({
+      nativeEvent: {
+        contentOffset: { y: 0, x: 0 },
+        contentSize: { height: 1, width: 1 },
+        layoutMeasurement: { height: 1, width: 1 },
+      },
+    } as NativeSyntheticEvent<NativeScrollEvent>);
+  }, [currentIndex, handleHeaderScroll]);
+
   const renderItem = React.useCallback(
     ({ item }: { item: ResponseUserDto }) => (
-      <UserCard user={item} objectives={objectives} />
+      <UserCard
+        user={item}
+        objectives={objectives}
+        onScroll={handleHeaderScroll}
+      />
     ),
-    [objectives, industries],
+    [objectives, handleHeaderScroll],
   );
 
   // useFocusEffect(
@@ -132,58 +162,76 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
 
   return (
     <StableSafeAreaView className={cn("flex-1", className)}>
-      <ApplicationHeader
-        title={
-          <View key="session-countdown" className="flex flex-col items-center">
-            <Text variant={"h1"} style={{ color }}>
-              {t("screens.explore")}
-            </Text>
-            {activeSession && (
-              <SessionCountdown
-                session={activeSession}
-                styles={{
-                  text: {
-                    color,
-                  },
-                }}
-              />
-            )}
-          </View>
-        }
-        classNames={{ wrapper: cn("z-10", activeSession ? "items-start" : "") }}
-        shortcuts={[
+      <Animated.View
+        style={[
+          animatedHeaderStyle,
           {
-            key: "end-session",
-            hidden: !activeSession,
-            icon: CalendarCog,
-            color,
-            onPress: () => router.push("/main/sessions/manage"),
+            position: "absolute",
+            top: insets.top,
+            left: 0,
+            right: 0,
+            zIndex: 10,
           },
-          {
-            key: "filter",
-            hidden: !activeSession,
-            color,
-            icon: ArrowDownNarrowWide,
-            badgeText: filterCount > 0 ? String(filterCount) : undefined,
-            onPress: () => router.push("/main/explore/users-filter"),
-          },
-          {
-            key: "notifications",
-            color,
-            icon: Bell,
-            badgeText:
-              notificationCount > 0 ? String(notificationCount) : undefined,
-            onPress: handleNotificationsPress,
-          },
-          {
-            key: "chat",
-            color,
-            icon: IconMessageChatbot,
-            badgeText: chatCount > 0 ? String(chatCount) : undefined,
-            onPress: handleChatPress,
-          },
-        ].filter(Boolean)}
-      />
+        ]}
+      >
+        <ApplicationHeader
+          title={
+            <View
+              key="session-countdown"
+              className="flex flex-col items-center"
+            >
+              <Text variant={"h1"} style={{ color }}>
+                {t("screens.explore")}
+              </Text>
+              {activeSession && (
+                <SessionCountdown
+                  session={activeSession}
+                  styles={{
+                    text: {
+                      color,
+                    },
+                  }}
+                />
+              )}
+            </View>
+          }
+          classNames={{
+            wrapper: cn("z-10", activeSession ? "items-start" : ""),
+          }}
+          shortcuts={[
+            {
+              key: "end-session",
+              hidden: !activeSession,
+              icon: CalendarCog,
+              color,
+              onPress: () => router.push("/main/sessions/manage"),
+            },
+            {
+              key: "filter",
+              hidden: !activeSession,
+              color,
+              icon: ArrowDownNarrowWide,
+              badgeText: filterCount > 0 ? String(filterCount) : undefined,
+              onPress: () => router.push("/main/explore/users-filter"),
+            },
+            {
+              key: "notifications",
+              color,
+              icon: Bell,
+              badgeText:
+                notificationCount > 0 ? String(notificationCount) : undefined,
+              onPress: handleNotificationsPress,
+            },
+            {
+              key: "chat",
+              color,
+              icon: IconMessageChatbot,
+              badgeText: chatCount > 0 ? String(chatCount) : undefined,
+              onPress: handleChatPress,
+            },
+          ].filter(Boolean)}
+        />
+      </Animated.View>
       {activeSession ? (
         (users.length === 0 && filterCount === 0) ||
         !initialized ||
@@ -226,7 +274,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
               alwaysBounceHorizontal={false}
               keyExtractor={(item) => item.id.toString()}
               renderItem={renderItem}
-              onScroll={handleScroll}
+              onScroll={handleHorizontalScroll}
             />
             <View className="absolute bottom-4 right-1/2 translate-x-1/2 px-4 py-2 bg-background bg-opacity-70 rounded-full border border-border">
               <View className="flex flex-row justify-between items-center">

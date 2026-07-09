@@ -16,7 +16,14 @@ import {
   Quote,
   Goal,
 } from "lucide-react-native";
-import { Dimensions, Pressable, StyleSheet, View } from "react-native";
+import {
+  Dimensions,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  Pressable,
+  StyleSheet,
+  View,
+} from "react-native";
 import { Icon } from "../ui/icon";
 import { Text } from "../ui/text";
 import { useStartConversation } from "@/hooks/content/chat/useStartConversation";
@@ -42,12 +49,14 @@ interface UserCardProps {
   className?: string;
   user: ResponseUserDto;
   objectives: ResponseRefParamDto[];
+  onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
   // industries: ResponseRefParamDto[];
 }
 
 export const UserCard = ({
   user,
   objectives,
+  onScroll,
   // industries,
   className,
 }: UserCardProps) => {
@@ -149,6 +158,8 @@ export const UserCard = ({
       className={cn("flex-1 bg-background", className)}
       style={{ width, height: CARD_HEIGHT }}
       showsVerticalScrollIndicator={false}
+      onScroll={onScroll}
+      scrollEventThrottle={16}
     >
       {/* Hero — the person */}
       <View style={{ height: HERO_HEIGHT, width: "100%" }}>
