@@ -67,7 +67,10 @@ export const Conversation = ({
   scrollToMessageId,
 }: ConversationProps) => {
   const { colorScheme, palette } = useColorPalette();
+
   const { height } = useGradualAnimation();
+
+  //fakeView is a component used to push the content up when the keyboard is open
   const insets = useSafeAreaInsets();
 
   const fakeView = useAnimatedStyle(() => {
@@ -79,6 +82,7 @@ export const Conversation = ({
     };
   }, [insets.bottom]);
 
+  //conversation callbacks
   const {
     conversation,
     flattenedMessages,
@@ -99,6 +103,7 @@ export const Conversation = ({
     markConversationAsSeen,
   } = useConversationFeatures({ id });
 
+  //conversation media callbacks
   const {
     pickImage,
     pickVideo,
@@ -114,6 +119,7 @@ export const Conversation = ({
     onSend: sendMediaMessage,
   });
 
+  //conversation file callbacks
   const { pickFile, pendingUploads: pendingFileUploads } = useSendChatFile({
     conversationId: id,
     messages,

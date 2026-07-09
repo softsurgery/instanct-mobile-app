@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  View,
-  Text,
-  Alert,
-  Pressable,
-} from "react-native";
+import { View, Text, Alert, Pressable } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import {
   Image as ImageIcon,
@@ -23,7 +18,10 @@ import { ApplicationHeader } from "../../shared/AppHeader";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
-import { CONVERSATION_LIST_JOIN, navigateToConversationMessage } from "@/lib/chat";
+import {
+  CONVERSATION_LIST_JOIN,
+  navigateToConversationMessage,
+} from "@/lib/chat";
 import { ScrollView } from "react-native-gesture-handler";
 import { ConversationDetailsRow } from "./ConversationDetailsRow";
 import { useUserPresence } from "@/hooks/content/chat/useUserPresence";

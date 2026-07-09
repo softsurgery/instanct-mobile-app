@@ -543,7 +543,7 @@ export const useConversationFeatures = ({
 
             return {
               messages: [...existing, ...unique],
-              hasMore: response.meta.hasNextPage,
+              hasMore: response.meta.hasNextPage ?? false,
               currentPage: page,
             };
           });
@@ -552,7 +552,7 @@ export const useConversationFeatures = ({
             return true;
           }
 
-          hasMorePages = response.meta.hasNextPage;
+          hasMorePages = response.meta.hasNextPage ?? false;
           if (!hasMorePages) break;
           page += 1;
         }
