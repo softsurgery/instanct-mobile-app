@@ -63,7 +63,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
     enabled: true,
     join: ["user", "user.industries", "user.sessions"],
   });
-  const { industries, isIndustriesSubTypePending } = useIndustries();
+  const { isIndustriesSubTypePending } = useIndustries();
   const { objectives, isObjectivesSubTypePending } = useObjectives();
 
   const { latitude, longitude } = mapStore?.location?.coords || {
@@ -80,7 +80,6 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
 
   const users = React.useMemo(() => {
     const targetedIndustries = userFilerStore.dto.industry;
-    setCurrentIndex(0);
 
     const industryFiltered = liveUsers.filter(
       (user) =>
@@ -108,6 +107,12 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
 
     return objectiveFiltered;
   }, [liveUsers, currentUser, userFilerStore.dto]);
+
+  const [prevUsers, setPrevUsers] = React.useState(users);
+  if (users !== prevUsers) {
+    setPrevUsers(users);
+    setCurrentIndex(0);
+  }
 
   const handleNotificationsPress = React.useCallback(() => {
     router.push("/main/notifications");
