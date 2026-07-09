@@ -5,7 +5,7 @@ import { StableSafeAreaView } from "@/components/shared/StableSafeAreaView";
 import { cn } from "@/lib/utils";
 import { MapSessionPayload, ResponseSessionDto } from "@/types/session";
 import { router, useLocalSearchParams } from "expo-router";
-import { Bell, Clock } from "lucide-react-native";
+import { Bell } from "lucide-react-native";
 import Animated from "react-native-reanimated";
 import { ActivitiesDetailContent } from "./ActivitiesDetailContent";
 import { useTranslation } from "react-i18next";
@@ -13,7 +13,6 @@ import { useNotificationContext } from "@/contexts/NotificationsContext";
 import { IconMessageChatbot } from "@tabler/icons-react-native";
 import { useScrollableElement } from "@/hooks/useScrollableElement";
 import { useChatContext } from "@/contexts/ChatContext";
-import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 
 interface ActivitiesPortalProps {
   className?: string;
@@ -21,7 +20,6 @@ interface ActivitiesPortalProps {
 
 export const ActivitiesPortal = ({ className }: ActivitiesPortalProps) => {
   const { t } = useTranslation("common");
-  const { currentUser } = useCurrentUser();
   const { count } = useNotificationContext();
   const { count: chatCount } = useChatContext();
 
@@ -61,18 +59,6 @@ export const ActivitiesPortal = ({ className }: ActivitiesPortalProps) => {
         <ApplicationHeader
           title={t("screens.activities", "Activities")}
           shortcuts={[
-            // {
-            //   key: "sessions",
-            //   icon: Clock,
-            //   color: "white",
-            //   onPress: () =>
-            //     router.push({
-            //       pathname: "/main/sessions",
-            //       params: {
-            //         session: currentUser?.id,
-            //       },
-            //     }),
-            // },
             {
               key: "bell",
               icon: Bell,
