@@ -51,12 +51,18 @@ const initialState = {
 export const useChatPendingStore = create<ChatPendingStore>((set, get) => ({
   ...initialState,
 
+  /**
+   * Adds an optimistic pending text message to the start of the list.
+   */
   addPendingText: (message) => {
     set((state) => ({
       pendingTextMessages: [message, ...state.pendingTextMessages],
     }));
   },
 
+  /**
+   * Removes a pending text message by its client-generated ID.
+   */
   removePendingText: (clientId) => {
     set((state) => ({
       pendingTextMessages: state.pendingTextMessages.filter(
@@ -65,6 +71,9 @@ export const useChatPendingStore = create<ChatPendingStore>((set, get) => ({
     }));
   },
 
+  /**
+   * Enqueues a sent text message's client ID into the conversation's FIFO tracking queue.
+   */
   enqueueSentText: (conversationId, clientId) => {
     set((state) => {
       const queue = [...(state.sentTextQueues[conversationId] ?? []), clientId];
@@ -77,6 +86,9 @@ export const useChatPendingStore = create<ChatPendingStore>((set, get) => ({
     });
   },
 
+  /**
+   * Dequeues and returns the oldest sent client ID for a given conversation.
+   */
   dequeueSentText: (conversationId) => {
     const queue = [...(get().sentTextQueues[conversationId] ?? [])];
     const clientId = queue.shift();
@@ -89,12 +101,18 @@ export const useChatPendingStore = create<ChatPendingStore>((set, get) => ({
     return clientId;
   },
 
+  /**
+   * Registers a new pending media upload (image/video).
+   */
   addPendingMedia: (upload) => {
     set((state) => ({
       pendingMediaUploads: [upload, ...state.pendingMediaUploads],
     }));
   },
 
+  /**
+   * Updates progress or status attributes of an existing pending media upload.
+   */
   updatePendingMedia: (clientId, patch) => {
     set((state) => ({
       pendingMediaUploads: state.pendingMediaUploads.map((item) =>
@@ -103,6 +121,9 @@ export const useChatPendingStore = create<ChatPendingStore>((set, get) => ({
     }));
   },
 
+  /**
+   * Removes a pending media upload entry once sent or cancelled.
+   */
   removePendingMedia: (clientId) => {
     set((state) => ({
       pendingMediaUploads: state.pendingMediaUploads.filter(
@@ -111,12 +132,18 @@ export const useChatPendingStore = create<ChatPendingStore>((set, get) => ({
     }));
   },
 
+  /**
+   * Registers a new pending file upload (document/attachment).
+   */
   addPendingFile: (upload) => {
     set((state) => ({
       pendingFileUploads: [upload, ...state.pendingFileUploads],
     }));
   },
 
+  /**
+   * Updates progress or status attributes of an existing pending file upload.
+   */
   updatePendingFile: (clientId, patch) => {
     set((state) => ({
       pendingFileUploads: state.pendingFileUploads.map((item) =>
@@ -125,6 +152,9 @@ export const useChatPendingStore = create<ChatPendingStore>((set, get) => ({
     }));
   },
 
+  /**
+   * Removes a pending file upload entry once sent or cancelled.
+   */
   removePendingFile: (clientId) => {
     set((state) => ({
       pendingFileUploads: state.pendingFileUploads.filter(
@@ -133,6 +163,10 @@ export const useChatPendingStore = create<ChatPendingStore>((set, get) => ({
     }));
   },
 
+  /**
+   * Reconciles pending text messages against confirmed server messages in FIFO order.
+   * Removes pending entries whose content and timestamp match confirmed messages.
+   */
   reconcileTextPending: (conversationId, messages, userId) => {
     const state = get();
     const queue = [...(state.sentTextQueues[conversationId] ?? [])];
@@ -190,5 +224,8 @@ export const useChatPendingStore = create<ChatPendingStore>((set, get) => ({
     });
   },
 
+  /**
+   * Resets all pending text, media, and file state back to initial empty arrays.
+   */
   reset: () => set(initialState),
 }));

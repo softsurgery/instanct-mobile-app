@@ -11,15 +11,24 @@ import { api } from "~/api";
 import { VideoPreview } from "~/components/shared/VideoPreview";
 import { VideoThumbnailPreview } from "~/components/shared/VideoThumbnailPreview";
 
+/**
+ * Extracts all server upload IDs from a message's attachments sorted by order.
+ */
 export const getMessageUploadIds = (message: ResponseMessageDto) =>
   [...(message.uploads ?? [])]
     .sort((a, b) => a.order - b.order)
     .map((upload) => upload.uploadId ?? upload.upload?.id)
     .filter((id): id is number => typeof id === "number");
 
+/**
+ * Retrieves the primary (first) upload ID attached to a message.
+ */
 export const getMessageUploadId = (message: ResponseMessageDto) =>
   getMessageUploadIds(message)[0];
 
+/**
+ * Memoized square thumbnail cell rendering an image or video preview inside the media gallery grid.
+ */
 export const MediaThumbnail = React.memo(function MediaThumbnail({
   message,
   size,

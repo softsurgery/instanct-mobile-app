@@ -10,6 +10,9 @@ interface ChatHeaderRightProps {
   onSearchPress?: () => void;
 }
 
+/**
+ * Navigation bar right header displaying in-conversation search icon and details menu trigger.
+ */
 export const ChatHeaderRight = ({
   className,
   conversationId,

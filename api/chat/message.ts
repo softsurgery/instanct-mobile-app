@@ -1,6 +1,10 @@
 import { Paginated, QueryParams, ResponseMessageDto } from "~/types";
 import axios from "../axios";
 
+/**
+ * Fetches a paginated list of messages for a specific conversation ID.
+ * Supports pagination controls (page/limit), sorting, searching, and joins.
+ */
 const findPaginatedConversationMessages = async (
   id: number,
   {

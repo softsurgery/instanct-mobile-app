@@ -6,6 +6,9 @@ interface useStartConversationProps {
   onSuccess: (...args: any[]) => void;
 }
 
+/**
+ * Hook providing a mutation to start or create a new conversation with a list of user IDs.
+ */
 export const useStartConversation = (
   { onSuccess }: useStartConversationProps = {
     onSuccess: () => {},

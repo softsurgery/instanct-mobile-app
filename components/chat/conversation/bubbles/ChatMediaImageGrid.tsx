@@ -23,6 +23,9 @@ interface MediaImageGridProps {
   frameSize: number;
 }
 
+/**
+ * Mosaic collage layout for grouped images or videos (up to 4 visible cells with +N overflow badge).
+ */
 export const MediaImageGrid = ({
   uris,
   sources,
@@ -156,6 +159,9 @@ type GridCell = {
   overflowCount?: number;
 };
 
+/**
+ * Computes absolute cell coordinates and dimensions for 1, 2, 3, or 4+ media grid layouts.
+ */
 const buildGridCells = (count: number, size: number): GridCell[] => {
   const half = (size - GRID_GAP) / 2;
 

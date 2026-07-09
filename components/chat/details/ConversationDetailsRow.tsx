@@ -20,6 +20,9 @@ interface ConversationDetailsRowProps {
   onToggle?: (value: boolean) => void;
 }
 
+/**
+ * Reusable settings list row item supporting press actions, switch toggles, icons, and destructive styling.
+ */
 export const ConversationDetailsRow = ({
   icon,
   label,

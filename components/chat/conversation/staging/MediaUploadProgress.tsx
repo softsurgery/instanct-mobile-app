@@ -13,6 +13,9 @@ const STROKE = 3;
 const RADIUS = (SIZE - STROKE) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
+/**
+ * Circular SVG progress overlay displaying upload percentage or failure badge over pending media/files.
+ */
 export const MediaUploadProgress = ({
   progress,
   failed,

@@ -1,7 +1,7 @@
 import React from "react";
 import { Platform, TouchableOpacity, View } from "react-native";
 import { LegendList } from "@legendapp/list";
-import { ChevronLeft, Search, X } from "lucide-react-native";
+import { ChevronLeft, Search } from "lucide-react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "~/components/ui/icon";
@@ -21,6 +21,9 @@ interface ConversationSearchOverlayProps {
   onResultPress: (message: ResponseMessageDto) => void;
 }
 
+/**
+ * Full-screen overlay allowing debounced text searching across all messages in the active conversation.
+ */
 export const ConversationSearchOverlay = ({
   conversationId,
   onClose,
@@ -47,11 +50,17 @@ export const ConversationSearchOverlay = ({
     resultCount,
   } = useConversationMessageSearch({ conversationId });
 
+  /**
+   * Resets search query state and triggers the parent onClose callback.
+   */
   const handleClose = React.useCallback(() => {
     clearSearch();
     onClose();
   }, [clearSearch, onClose]);
 
+  /**
+   * Resets search query and invokes parent navigation callback to scroll to the chosen message.
+   */
   const handleResultPress = React.useCallback(
     (message: ResponseMessageDto) => {
       clearSearch();

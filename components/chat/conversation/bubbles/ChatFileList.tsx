@@ -23,6 +23,9 @@ interface ChatFileListProps {
   progress?: number;
 }
 
+/**
+ * Renders an individual file row item with file type icon, name, size/status subtitle, and press action.
+ */
 const ChatFileRow = ({
   item,
   isOpening,
@@ -67,6 +70,9 @@ const ChatFileRow = ({
   return content;
 };
 
+/**
+ * Stacked card layout rendering a list of file attachments inside a ChatFileBubble.
+ */
 export const ChatFileList = ({
   items,
   width,

@@ -13,6 +13,9 @@ interface LinkListItemProps {
   link: ResponseMessageLinkDto;
 }
 
+/**
+ * Memoized row item representing a shared URL link with native browser launcher.
+ */
 export const LinkListItem = React.memo(function LinkListItem({
   message,
   link,

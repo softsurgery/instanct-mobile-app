@@ -33,6 +33,10 @@ interface useChatProps {
 
 let listenersInitialized = false;
 
+/**
+ * Custom hook to manage paginated conversation lists, real-time socket events,
+ * push notification triggers for incoming messages/pokes, and read-receipt emission.
+ */
 export const useChat = (
   {
     search = "",
@@ -102,6 +106,10 @@ export const useChat = (
 
     socketRef.current = s;
 
+    /**
+     * Handler triggered via Socket.io when a conversation receives a new message.
+     * Triggers local push notifications if user is not viewing the active room and moves conversation to top.
+     */
     const onConversationUpdatedMessage = async (
       updated: ResponseConversationDto,
     ) => {
@@ -168,6 +176,9 @@ export const useChat = (
       );
     };
 
+    /**
+     * Handler triggered via Socket.io when participant last-check timestamps are updated.
+     */
     const onConversationUpdatedLastCheck = (
       updated: ResponseConversationDto,
     ) => {
@@ -198,12 +209,18 @@ export const useChat = (
     currentUser?.id,
   ]);
 
+  /**
+   * Emits a socket event to mark a specific conversation as seen by the current user.
+   */
   const seeConversation = React.useCallback((id: number) => {
     const s = socketRef.current;
     if (!s) return;
     s.emit("see-conversation", { conversationId: id });
   }, []);
 
+  /**
+   * Resets the local unread badge counter.
+   */
   const resetCount = React.useCallback(() => setCount(0), []);
 
   return {

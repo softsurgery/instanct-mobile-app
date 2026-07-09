@@ -4,6 +4,7 @@ import { Text } from "~/components/ui/text";
 import { cn } from "~/lib/utils";
 import { ResponseMessageLinkDto } from "@/types";
 import {
+  ExtractedMessageLink,
   normalizeMessageLinkUrl,
   resolveMessageLinks,
 } from "@/lib/messageLinks";
@@ -27,6 +28,9 @@ interface MessageTextContentProps {
   highlightClassName?: string;
 }
 
+/**
+ * Splits a text string into highlighted search query segments.
+ */
 const splitByHighlight = (
   value: string,
   query: string,
@@ -42,9 +46,12 @@ const splitByHighlight = (
   }));
 };
 
+/**
+ * Partitions raw message text into interleaved text and clickable link segments based on offsets.
+ */
 const buildTextSegments = (
   content: string,
-  links: ResponseMessageLinkDto[],
+  links: ExtractedMessageLink[],
 ): TextSegment[] => {
   const segments: TextSegment[] = [];
   let cursor = 0;
@@ -79,6 +86,9 @@ const buildTextSegments = (
   return segments;
 };
 
+/**
+ * Component rendering rich message text with clickable URL links and optional search query highlights.
+ */
 export const MessageTextContent = ({
   content,
   links,
@@ -99,6 +109,9 @@ export const MessageTextContent = ({
       ? buildTextSegments(content, resolvedLinks)
       : [{ type: "text" as const, value: content, key: "text-all" }];
 
+  /**
+   * Opens the tapped URL in the device's native browser after normalizing scheme protocols.
+   */
   const handleOpenLink = async (url: string) => {
     const normalizedUrl = normalizeMessageLinkUrl(url);
 
@@ -141,7 +154,8 @@ export const MessageTextContent = ({
               key={part.key}
               className={cn(
                 className,
-                part.highlighted && (highlightClassName ?? "bg-accent font-semibold"),
+                part.highlighted &&
+                  (highlightClassName ?? "bg-accent font-semibold"),
               )}
             >
               {part.value}

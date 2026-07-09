@@ -10,6 +10,9 @@ interface SearchResultAvatarProps {
   user?: ResponseUserDto | null;
 }
 
+/**
+ * Small avatar component rendered alongside each search hit result item.
+ */
 const SearchResultAvatar = ({ user }: SearchResultAvatarProps) => {
   const { jsxArray: profilePictures } = useServerImages({
     ids: [user?.pictureId],
@@ -28,6 +31,9 @@ interface ConversationSearchResultItemProps {
   onPress: () => void;
 }
 
+/**
+ * Individual row item inside the search overlay list displaying highlighted query hits.
+ */
 export const ConversationSearchResultItem = ({
   message,
   searchQuery,

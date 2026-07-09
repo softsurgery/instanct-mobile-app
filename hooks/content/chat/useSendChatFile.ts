@@ -21,6 +21,9 @@ interface UseSendChatFileProps {
   }) => void;
 }
 
+/**
+ * Hook managing document picker selection, file batch uploading, and optimistic pending file state.
+ */
 export const useSendChatFile = ({
   conversationId,
   messages,
@@ -57,6 +60,9 @@ export const useSendChatFile = ({
     [pendingUploads, serverUploadIds],
   );
 
+  /**
+   * Uploads selected files sequentially, tracking progress in pending state before dispatching the final message.
+   */
   const uploadFileBatch = React.useCallback(
     async (
       files: DocumentPicker.DocumentPickerAsset[],
@@ -134,6 +140,9 @@ export const useSendChatFile = ({
     [conversationId, onSend, addPendingFile, updatePendingFile],
   );
 
+  /**
+   * Opens the system document picker to select up to MAX_FILE_SELECTION attachments.
+   */
   const pickFile = React.useCallback(async () => {
     await waitForUiReady();
 

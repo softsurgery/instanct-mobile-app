@@ -26,6 +26,9 @@ interface useSendChatMediaProps {
   }) => void;
 }
 
+/**
+ * Hook managing media selection (photo/video), preview staging, batch uploading, and optimistic pending state.
+ */
 export const useSendChatMedia = ({
   conversationId,
   messages,
@@ -251,22 +254,38 @@ export const useSendChatMedia = ({
     [buildPickerOptionsCallback, mergeStagedMedia],
   );
 
+  /**
+   * Clears all currently staged media items from state.
+   */
   const cancelStagedMedia = React.useCallback(() => {
     setStagedMedia([]);
   }, []);
 
+  /**
+   * Removes a single staged media item by its unique ID.
+   */
   const removeStagedMedia = React.useCallback((id: string) => {
     setStagedMedia((current) => current.filter((item) => item.id !== id));
   }, []);
 
+  /**
+   * Opens the picker to append additional media items to the staged list.
+   */
   const addMoreStagedMedia = React.useCallback(() => {
     pickAndStage(undefined, true);
   }, [pickAndStage]);
 
+  /**
+   * Triggers image selection via ImagePicker and stages selected items.
+   */
   const pickImage = React.useCallback(
     () => pickAndStage("image", stagedMediaRef.current.length > 0),
     [pickAndStage],
   );
+
+  /**
+   * Triggers video selection via ImagePicker and stages selected items.
+   */
   const pickVideo = React.useCallback(
     () => pickAndStage("video", stagedMediaRef.current.length > 0),
     [pickAndStage],
@@ -284,13 +303,15 @@ export const useSendChatMedia = ({
   };
 };
 
-// explaination:
-// This function is used to get the kind of the asset.
+/**
+ * Determines whether the picked asset is a video or image.
+ */
 const assetKind = (asset: ImagePicker.ImagePickerAsset): MediaKind =>
   asset.type === "video" ? "video" : "image";
 
-// explaination:
-// This function is used to convert the asset to a file.
+/**
+ * Converts a React Native ImagePickerAsset into a File-like structure for uploading.
+ */
 const toUploadFile = (asset: ImagePicker.ImagePickerAsset) =>
   ({
     uri: asset.uri,
@@ -299,7 +320,9 @@ const toUploadFile = (asset: ImagePicker.ImagePickerAsset) =>
       asset.mimeType || (asset.type === "video" ? "video/mp4" : "image/jpeg"),
   }) as unknown as File;
 
-// This function is used to convert the asset to a staged media.
+/**
+ * Converts a raw ImagePickerAsset into a StagedMedia domain model.
+ */
 const toStagedMedia = (asset: ImagePicker.ImagePickerAsset): StagedMedia => ({
   id: `${asset.assetId ?? asset.uri}-${Date.now()}-${Math.random()}`,
   file: toUploadFile(asset),
@@ -308,8 +331,9 @@ const toStagedMedia = (asset: ImagePicker.ImagePickerAsset): StagedMedia => ({
   fileSize: asset.fileSize,
 });
 
-// This function builds and returns a configuration object for the ImagePicker
-// based on the type of media the user wants to select.
+/**
+ * Builds configuration options for ImagePicker depending on the requested media kind.
+ */
 const buildPickerOptions = (
   kind?: MediaKind,
 ): ImagePicker.ImagePickerOptions => {

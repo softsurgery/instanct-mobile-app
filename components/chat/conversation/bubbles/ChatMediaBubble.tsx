@@ -17,6 +17,7 @@ import { VideoThumbnailPreview } from "~/components/shared/VideoThumbnailPreview
 import { useServerImages } from "~/hooks/content/useServerImages";
 import { MessageTextContent } from "./MessageTextContent";
 import { MediaImageGrid } from "./ChatMediaImageGrid";
+import { MediaUploadProgress } from "../staging/MediaUploadProgress";
 
 interface ChatMediaBubbleProps {
   className?: string;
@@ -25,6 +26,9 @@ interface ChatMediaBubbleProps {
   right?: boolean;
 }
 
+/**
+ * Bubble component rendering single or grouped media (images/videos) with upload status overlays.
+ */
 export const ChatMediaBubble = ({
   className,
   message,
@@ -36,6 +40,9 @@ export const ChatMediaBubble = ({
   const CHAT_MEDIA_WIDTH = Math.round(screenWidth * 0.75);
   const CHAT_MEDIA_HEIGHT = Math.round(CHAT_MEDIA_WIDTH * 0.75);
 
+  /**
+   * Extracts and sorts server upload IDs from message attachment DTOs.
+   */
   const getMessageUploadIds = (message?: ResponseMessageDto) =>
     [...(message?.uploads ?? [])]
       .sort((a, b) => a.order - b.order)

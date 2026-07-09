@@ -11,6 +11,10 @@ interface UseLastSeenMessageIdProps {
   currentUserId?: string;
 }
 
+/**
+ * Hook that computes the ID of the most recent outgoing message seen by the other participant
+ * based on their lastCheck timestamp.
+ */
 export const useLastSeenMessageId = ({
   conversation,
   messages,

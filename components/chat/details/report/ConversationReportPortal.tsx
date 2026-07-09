@@ -29,6 +29,9 @@ interface ConversationReportPortalProps {
   className?: string;
 }
 
+/**
+ * Form portal screen allowing users to submit moderation reports against a conversation or participant.
+ */
 export const ConversationReportPortal = ({
   conversationId,
   reportedUserName,
@@ -71,6 +74,9 @@ export const ConversationReportPortal = ({
     },
   );
 
+  /**
+   * Validates form store values with Zod schema before triggering report API mutation.
+   */
   const handleSubmit = () => {
     const result = createConversationReportSchema.safeParse(reportStore.createDto);
     if (!result.success) {

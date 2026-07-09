@@ -22,6 +22,9 @@ interface ConversationLinksDetailsProps {
   id: number;
 }
 
+/**
+ * Tab/screen listing all URL links shared across messages in a conversation.
+ */
 export const ConversationLinksDetails = ({
   id,
 }: ConversationLinksDetailsProps) => {

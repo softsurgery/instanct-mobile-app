@@ -6,6 +6,9 @@ interface UserEntrySkeletonProps {
   className?: string;
 }
 
+/**
+ * Skeleton loading card shown for individual conversation rows in the chat portal list.
+ */
 export const UserEntrySkeleton = ({ className }: UserEntrySkeletonProps) => {
   return (
     <View

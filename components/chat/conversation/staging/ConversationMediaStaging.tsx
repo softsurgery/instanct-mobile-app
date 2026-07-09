@@ -29,6 +29,9 @@ interface ConversationMediaStagingProps {
   onAddMore: () => void;
 }
 
+/**
+ * Fullscreen video preview player for a staged video asset.
+ */
 const StagedVideoPreview = ({ uri }: { uri: string }) => {
   const player = useVideoPlayer({ uri }, (instance) => {
     instance.loop = true;
@@ -45,6 +48,9 @@ const StagedVideoPreview = ({ uri }: { uri: string }) => {
   );
 };
 
+/**
+ * Thumbnail strip card representing an individual staged photo or video item.
+ */
 const StagedThumbnail = ({
   item,
   selected,
@@ -90,6 +96,9 @@ const StagedThumbnail = ({
   </Pressable>
 );
 
+/**
+ * Fullscreen modal overlay for previewing, adding, removing, and confirming staged media prior to sending.
+ */
 export const ConversationMediaStaging = ({
   className,
   stagedMedia,

@@ -12,6 +12,9 @@ interface UseUserPresenceProps {
   userId?: string;
 }
 
+/**
+ * Hook subscribing to real-time online/offline presence status and last-seen timestamps for a specific user.
+ */
 export const useUserPresence = ({ userId }: UseUserPresenceProps) => {
   const [isOnline, setIsOnline] = React.useState(false);
   const [lastSeen, setLastSeen] = React.useState<Date | null>(null);
@@ -22,6 +25,9 @@ export const useUserPresence = ({ userId }: UseUserPresenceProps) => {
 
     const s = getSocket("chat", { token: authPersistStore.accessToken });
 
+    /**
+     * Updates online/lastSeen state when explicit status response is received.
+     */
     const onUserStatus = (status: UserStatus) => {
       if (status.userId === userId) {
         setIsOnline(status.isOnline);
@@ -29,6 +35,9 @@ export const useUserPresence = ({ userId }: UseUserPresenceProps) => {
       }
     };
 
+    /**
+     * Updates online/lastSeen state when real-time presence broadcast occurs.
+     */
     const onUserPresence = (status: UserStatus) => {
       if (status.userId === userId) {
         setIsOnline(status.isOnline);

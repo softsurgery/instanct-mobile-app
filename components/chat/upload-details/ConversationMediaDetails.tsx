@@ -30,6 +30,9 @@ interface ConversationMediaDetailsProps {
   id: number;
 }
 
+/**
+ * Grid gallery view displaying all images and videos shared in the conversation with fullscreen gesture viewer.
+ */
 export const ConversationMediaDetails = ({
   id,
 }: ConversationMediaDetailsProps) => {

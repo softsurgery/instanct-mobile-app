@@ -9,6 +9,10 @@ interface useConversationMessagesProps {
   variants?: MessageVariant[];
 }
 
+/**
+ * Hook providing infinite-scrolling paginated message query capabilities for a conversation,
+ * optionally filtered by message variants.
+ */
 export const useConversationMessages = ({
   id,
   query,

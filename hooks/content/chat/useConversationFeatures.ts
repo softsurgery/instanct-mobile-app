@@ -45,6 +45,10 @@ interface CachedConversationMessages {
   currentPage: number;
 }
 
+/**
+ * Core conversation hook orchestrating messages, pending items, socket subscriptions,
+ * pagination, message sending, and date grouping for UI rendering.
+ */
 export const useConversationFeatures = ({
   id,
   limit = 20,
@@ -149,7 +153,9 @@ export const useConversationFeatures = ({
     enabled: !!id && enabled,
   });
 
-  // Play sound function
+  /**
+   * Plays the incoming message notification sound effect.
+   */
   const playSound = React.useCallback(async () => {
     try {
       soundPlayer.seekTo(0);
@@ -159,6 +165,9 @@ export const useConversationFeatures = ({
     }
   }, [soundPlayer]);
 
+  /**
+   * Groups messages chronologically by calendar date and inserts header items into the flat list.
+   */
   const groupMessagesByDay = React.useCallback(
     (msgs: ResponseMessageDto[]): MessageFlatListItem[] => {
       if (msgs.length === 0) return [];
@@ -511,6 +520,9 @@ export const useConversationFeatures = ({
 
   const [isEnsuringMessage, setIsEnsuringMessage] = React.useState(false);
 
+  /**
+   * Fetches older message pages until a specific target message ID is loaded into the cache.
+   */
   const ensureMessageLoaded = React.useCallback(
     async (messageId: number): Promise<boolean> => {
       const cached = getCachedMessages();
@@ -565,6 +577,9 @@ export const useConversationFeatures = ({
     [getCachedMessages, id, limit, setCachedMessages],
   );
 
+  /**
+   * Emits a socket event to mark the current conversation as seen.
+   */
   const markConversationAsSeen = React.useCallback(() => {
     const s = socketRef.current;
     if (!s) return;

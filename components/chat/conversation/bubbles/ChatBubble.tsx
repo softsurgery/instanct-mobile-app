@@ -23,6 +23,10 @@ interface ChatBubbleProps {
   staticVariant?: StaticMessageEnum;
 }
 
+/**
+ * Message bubble container handling directional layout (right/outgoing vs left/incoming),
+ * gesture animations, timestamp display, and text/link parsing.
+ */
 export const ChatBubble = ({
   message,
   links,
@@ -36,6 +40,9 @@ export const ChatBubble = ({
     transform: [{ scale: scale.value }],
   }));
 
+  /**
+   * Invoked on long press gesture to open message interaction options dialog.
+   */
   const handleLongPress = () => {
     Alert.alert("Message Options", message || "", [
       { text: "Copy", onPress: () => console.log("Copy") },

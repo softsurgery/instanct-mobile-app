@@ -10,6 +10,9 @@ interface SeenMessageWrapperProps {
   children: React.ReactNode;
 }
 
+/**
+ * Layout wrapper that conditionally renders a MessageSeenIndicator below its child message bubble.
+ */
 export const SeenMessageWrapper = ({
   showSeen,
   pictureId,

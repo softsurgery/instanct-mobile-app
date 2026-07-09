@@ -21,6 +21,9 @@ interface FileListItemProps {
   size?: number;
 }
 
+/**
+ * Resolves user-friendly filename from inline or server-fetched upload metadata.
+ */
 export const resolveUploadDisplayName = (
   inlineUpload?: ResponseMessageUploadFileDto | Upload,
   fetchedUpload?: Upload,
@@ -35,6 +38,9 @@ export const resolveUploadDisplayName = (
   return fallback;
 };
 
+/**
+ * Extracts and orders valid upload attachment entries from a message DTO.
+ */
 export const getMessageUploadEntries = (message: ResponseMessageDto) =>
   [...(message.uploads ?? [])]
     .sort((a, b) => a.order - b.order)
@@ -48,6 +54,9 @@ export const getMessageUploadEntries = (message: ResponseMessageDto) =>
       return [{ uploadId, upload: entry.upload }];
     });
 
+/**
+ * Memoized list item row representing a shared file with open/download touch handler.
+ */
 export const FileListItem = React.memo(function FileListItem({
   message,
   uploadId,

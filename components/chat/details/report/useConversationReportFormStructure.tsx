@@ -12,6 +12,9 @@ interface UseConversationReportFormStructureProps {
   store: ConversationReportStore;
 }
 
+/**
+ * Hook providing FormBuilder configuration fields (reason and description) for conversation reports.
+ */
 export const useConversationReportFormStructure = ({
   store,
 }: UseConversationReportFormStructureProps) => {

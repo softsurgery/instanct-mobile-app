@@ -12,6 +12,9 @@ const MESSAGE_SKELETONS = [
   { right: true, width: CONTENT_WIDTH * 0.4, height: 56 },
 ] as const;
 
+/**
+ * Skeleton loading placeholder rendered while initial conversation messages are being fetched.
+ */
 export const ConversationMessagesSkeleton = ({
   className,
 }: ConversationMessagesSkeletonProps) => {

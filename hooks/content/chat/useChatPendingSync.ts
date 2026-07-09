@@ -17,6 +17,10 @@ interface CachedConversationMessages {
   currentPage: number;
 }
 
+/**
+ * Effect hook that synchronizes real-time incoming messages with React Query cache
+ * and reconciles outgoing pending text messages in useChatPendingStore.
+ */
 export const useChatPendingSync = () => {
   const queryClient = useQueryClient();
   const authPersistStore = useAuthPersistStore();
@@ -26,6 +30,10 @@ export const useChatPendingSync = () => {
     const s = getSocket("chat", { token: authPersistStore.accessToken });
     const userId = currentUser?.id;
 
+    /**
+     * Handler invoked when Socket.io receives a new message.
+     * Updates React Query message caches and dequeues matching pending text items.
+     */
     const onMessage = (message: ResponseMessageDto) => {
       queryClient.setQueryData<CachedConversationMessages>(
         ["conversation-messages", message.conversationId],

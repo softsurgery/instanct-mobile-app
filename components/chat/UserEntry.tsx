@@ -20,6 +20,10 @@ interface UserCardProps {
   isPending?: boolean;
 }
 
+/**
+ * Component displaying an individual conversation row item in the conversation list,
+ * including participant avatar, online badge, unread count, and last message snippet.
+ */
 export const UserEntry = ({
   className,
   conversation,

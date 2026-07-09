@@ -9,6 +9,9 @@ interface ChatStaticBubbleProps {
   message: ResponseMessageDto;
   className?: string;
 }
+/**
+ * Centered notification pill rendering system/static events (e.g., start of conversation or poke notifications).
+ */
 export const ChatStaticBubble = ({
   className,
   message,

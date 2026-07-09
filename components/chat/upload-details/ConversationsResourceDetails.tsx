@@ -12,6 +12,9 @@ interface ConversationResourceDetailsProps {
   id: string;
 }
 
+/**
+ * Top-tabbed portal screen switching between Media, Files, and Links shared in a conversation.
+ */
 export const ConversationResourceDetails = ({
   id,
 }: ConversationResourceDetailsProps) => {

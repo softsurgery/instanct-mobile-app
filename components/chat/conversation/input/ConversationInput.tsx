@@ -28,6 +28,9 @@ interface ConversationInputProps {
   isConversationLocked?: boolean;
 }
 
+/**
+ * Text input bar at the bottom of the conversation screen with attachment sheet launcher and send/poke buttons.
+ */
 export const ConversationInput = ({
   className,
   style,
@@ -43,6 +46,9 @@ export const ConversationInput = ({
   const isKeyboardVisible = useKeyboardVisible();
   const actionSheetRef = React.useRef<ActionSheetRef>(null);
 
+  /**
+   * Validates non-empty text input, triggers message sending, and clears the input field.
+   */
   const handleSend = () => {
     if (!input.trim()) return;
     sendMessage();

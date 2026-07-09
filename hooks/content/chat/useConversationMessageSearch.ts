@@ -10,6 +10,9 @@ interface UseConversationMessageSearchProps {
   enabled?: boolean;
 }
 
+/**
+ * Hook providing debounced full-text search across messages within a conversation.
+ */
 export const useConversationMessageSearch = ({
   conversationId,
   enabled = true,
@@ -48,6 +51,9 @@ export const useConversationMessageSearch = ({
   const isSearching =
     isDebouncing || (isQueryActive && (isFetching || isPending));
 
+  /**
+   * Resets the current search input query string.
+   */
   const clearSearch = React.useCallback(() => {
     setSearchQuery("");
   }, []);

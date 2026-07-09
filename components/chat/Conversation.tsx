@@ -58,6 +58,9 @@ interface ConversationProps {
   scrollToMessageId?: number;
 }
 
+/**
+ * Primary chat room screen rendering message bubbles, input bar, header, and search overlay.
+ */
 export const Conversation = ({
   id,
   userId,
@@ -197,6 +200,9 @@ export const Conversation = ({
     [],
   );
 
+  /**
+   * Smoothly scrolls the inverted FlatList to a specific target message ID and briefly highlights it.
+   */
   const scrollToMessage = React.useCallback(
     (messageId: number, data: MessageFlatListItem[]) => {
       const index = findMessageIndex(messageId, data);
@@ -213,6 +219,9 @@ export const Conversation = ({
     [findMessageIndex],
   );
 
+  /**
+   * Navigates to a message by ID, fetching older message pages if not already present in local cache.
+   */
   const navigateToMessage = React.useCallback(
     async (messageId: number, data: MessageFlatListItem[]) => {
       if (scrollToMessage(messageId, data)) {
@@ -316,6 +325,9 @@ export const Conversation = ({
 
   const isMessagesLoading = isInitialPending;
 
+  /**
+   * Handler invoked when a user taps a search result in the ConversationSearchOverlay.
+   */
   const handleSearchResultPress = React.useCallback(
     (message: ResponseMessageDto) => {
       setIsSearching(false);

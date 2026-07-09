@@ -24,6 +24,9 @@ interface ChatPortalProps {
   className?: string;
 }
 
+/**
+ * Main chat portal component rendering the search input and virtualized list of active conversations.
+ */
 export const ChatPortal = ({ className }: ChatPortalProps) => {
   const { t } = useTranslation("common");
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -46,6 +49,9 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
     enabled: !!currentUser,
   });
 
+  /**
+   * Renders a single conversation list row item with navigation onPress callback.
+   */
   const renderItem = React.useCallback(
     ({ item }: { item: ResponseConversationDto }) => {
       const participant = item.participants.find(

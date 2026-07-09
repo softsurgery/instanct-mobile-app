@@ -21,6 +21,9 @@ interface ChatFileBubbleProps {
   right?: boolean;
 }
 
+/**
+ * Message bubble container for file attachments (single or multiple) with download/preview triggers.
+ */
 export const ChatFileBubble = ({
   className,
   message,
@@ -71,6 +74,9 @@ export const ChatFileBubble = ({
     });
   }, [pending, pendingItems, uploadEntries, uploads]);
 
+  /**
+   * Downloading/opening handler for a specific file attachment inside the bubble.
+   */
   const handleOpen = React.useCallback(
     async (uploadId: number, filename: string) => {
       if (openingUploadId !== null) return;

@@ -7,6 +7,9 @@ interface MessageSeenIndicatorProps {
   fallback: string;
 }
 
+/**
+ * Small read-receipt indicator displaying the participant's avatar below the last seen outgoing message.
+ */
 export const MessageSeenIndicator = ({
   pictureId,
   fallback,

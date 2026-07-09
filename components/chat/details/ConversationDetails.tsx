@@ -33,6 +33,9 @@ interface ConversationDetailsProps {
   id: string;
 }
 
+/**
+ * Screen displaying settings, participant info, media/file galleries, and block/report/delete actions for a conversation.
+ */
 export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
   const conversationId = Number(id);
   const queryClient = useQueryClient();
@@ -122,6 +125,9 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
     [conversationId, user],
   );
 
+  /**
+   * Prompts user with a destructive confirmation alert before deleting the conversation history.
+   */
   const handleDeleteConversation = () => {
     if (isDeletePending) return;
 
@@ -139,6 +145,9 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
     );
   };
 
+  /**
+   * Prompts confirmation dialog to block the other conversation participant.
+   */
   const handleBlockUser = () => {
     if (!user || isBlockPending) return;
 
@@ -156,6 +165,9 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
     );
   };
 
+  /**
+   * Navigates to the conversation reporting form screen.
+   */
   const handleReportConversation = () => {
     router.push({
       pathname: "/main/chat/report-conversation",

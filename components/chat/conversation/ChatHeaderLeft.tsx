@@ -14,6 +14,9 @@ interface ChatHeaderLeftProps {
   lastSeen?: string;
 }
 
+/**
+ * Navigation bar left header displaying back button, participant avatar, presence badge, and name.
+ */
 export const ChatHeaderLeft = ({
   className,
   id,

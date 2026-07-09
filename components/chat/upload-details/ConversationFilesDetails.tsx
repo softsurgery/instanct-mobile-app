@@ -20,6 +20,9 @@ interface ConversationFilesDetailsProps {
   id: number;
 }
 
+/**
+ * Tab/screen listing all document and file attachments shared within a conversation.
+ */
 export const ConversationFilesDetails = ({
   id,
 }: ConversationFilesDetailsProps) => {
