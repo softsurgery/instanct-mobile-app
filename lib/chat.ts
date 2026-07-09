@@ -81,6 +81,9 @@ export const replaceConversationInPages = (
   };
 };
 
+export const CONVERSATION_ACCESS_DENIED_ERROR =
+  "You are not part of this conversation";
+
 export const removeConversationFromPages = (
   oldData: InfiniteConversationData | undefined,
   conversationId: number,
@@ -91,8 +94,32 @@ export const removeConversationFromPages = (
     ...oldData,
     pages: oldData.pages.map((page) => ({
       ...page,
-      data: page.data.filter((conversation) => conversation.id !== conversationId),
+      data: page.data.filter(
+        (conversation) => conversation.id !== conversationId,
+      ),
     })),
+  };
+};
+
+export const prependConversationToPages = (
+  oldData: InfiniteConversationData | undefined,
+  updated: ResponseConversationDto,
+): InfiniteConversationData | undefined => {
+  if (!oldData?.pages?.length) return oldData;
+
+  const existsInCache = oldData.pages.some((page) =>
+    page.data.some((conv) => conv.id === updated.id),
+  );
+
+  if (existsInCache) {
+    return moveConversationToTop(oldData, updated);
+  }
+
+  return {
+    ...oldData,
+    pages: oldData.pages.map((page, index) =>
+      index === 0 ? { ...page, data: [updated, ...page.data] } : page,
+    ),
   };
 };
 
@@ -100,21 +127,17 @@ export const moveConversationToTop = (
   oldData: InfiniteConversationData | undefined,
   updated: ResponseConversationDto,
 ): InfiniteConversationData | undefined => {
-  if (!oldData) return oldData;
+  if (!oldData?.pages?.length) return oldData;
 
   const allConversations = oldData.pages.flatMap((p) => p.data);
-
   const filtered = allConversations.filter((conv) => conv.id !== updated.id);
-
   const reordered = [updated, ...filtered];
 
   let cursor = 0;
 
   const rebuiltPages = oldData.pages.map((page) => {
     const pageSize = page.data.length;
-
     const data = reordered.slice(cursor, cursor + pageSize);
-
     cursor += pageSize;
 
     return {

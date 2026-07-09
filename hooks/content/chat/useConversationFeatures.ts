@@ -19,6 +19,7 @@ import {
 } from "date-fns";
 import { getSocket } from "@/lib/socket";
 import {
+  CONVERSATION_ACCESS_DENIED_ERROR,
   CONVERSATION_LIST_JOIN,
   conversationLinksMessagesQueryKey,
   prependMessageToConversationLinksCache,
@@ -76,6 +77,7 @@ export const useConversationFeatures = ({
   );
 
   const socketRef = React.useRef<Socket | null>(null);
+  const accessDeniedRef = React.useRef(false);
   const currentUserIdRef = React.useRef<string | undefined>(undefined);
   const authPersistStore = useAuthPersistStore();
   const { currentUser } = useCurrentUser();
@@ -221,12 +223,15 @@ export const useConversationFeatures = ({
   );
 
   React.useEffect(() => {
+    accessDeniedRef.current = false;
+
     const s = getSocket("chat", { token: authPersistStore.accessToken });
     socketRef.current = s;
 
     const existingCache = getCachedMessages();
 
     const joinAndFetch = () => {
+      if (accessDeniedRef.current) return;
       s.emit("join-conversation", { conversationId: id });
 
       // Fetch messages when cache is empty
@@ -240,6 +245,7 @@ export const useConversationFeatures = ({
     };
 
     const markConversationAsSeen = () => {
+      if (accessDeniedRef.current) return;
       s.emit("see-conversation", { conversationId: id });
       queryClient.invalidateQueries({
         queryKey: CONVERSATIONS_UNREAD_COUNT_QUERY_KEY,
@@ -367,7 +373,16 @@ export const useConversationFeatures = ({
       }
     };
 
-    const onError = (err: any) => {
+    const onError = (err: unknown) => {
+      const message = typeof err === "string" ? err : (err as Error)?.message;
+
+      if (message === CONVERSATION_ACCESS_DENIED_ERROR) {
+        accessDeniedRef.current = true;
+        setIsMoreMessagesLoading(false);
+        setIsInitialPending(false);
+        return;
+      }
+
       console.error("Socket error:", err);
       setIsMoreMessagesLoading(false);
       setIsInitialPending(false);
@@ -586,7 +601,7 @@ export const useConversationFeatures = ({
    */
   const markConversationAsSeen = React.useCallback(() => {
     const s = socketRef.current;
-    if (!s) return;
+    if (!s || accessDeniedRef.current) return;
     s.emit("see-conversation", { conversationId: id });
     queryClient.invalidateQueries({
       queryKey: CONVERSATIONS_UNREAD_COUNT_QUERY_KEY,

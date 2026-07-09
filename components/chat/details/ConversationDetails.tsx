@@ -27,6 +27,7 @@ import { ConversationDetailsRow } from "./ConversationDetailsRow";
 import { useUserPresence } from "@/hooks/content/chat/useUserPresence";
 import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 import { ConversationSearchOverlay } from "../conversation/search/ConversationSearchOverlay";
+import { useChatContext } from "@/contexts/ChatContext";
 
 interface ConversationDetailsProps {
   id: string;
@@ -38,6 +39,7 @@ interface ConversationDetailsProps {
 export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
   const conversationId = Number(id);
   const queryClient = useQueryClient();
+  const { resetCount } = useChatContext();
   const { currentUser } = useCurrentUser();
 
   const { data: conversation } = useQuery({
@@ -71,6 +73,9 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
 
   const removeConversationFromCache = React.useCallback(() => {
     queryClient.removeQueries({ queryKey: ["conversation", conversationId] });
+    queryClient.removeQueries({
+      queryKey: ["conversation-messages", conversationId],
+    });
     queryClient.setQueriesData({ queryKey: ["conversations"] }, (oldData) =>
       removeConversationFromPages(oldData as never, conversationId),
     );
@@ -79,10 +84,11 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
   const handleConversationActionSuccess = React.useCallback(
     (message: string) => {
       removeConversationFromCache();
+      resetCount();
       toast.success(message);
-      router.back();
+      router.dismissTo({ pathname: "/main/chat" });
     },
-    [removeConversationFromCache],
+    [removeConversationFromCache, resetCount],
   );
 
   const handleConversationActionError = React.useCallback(
