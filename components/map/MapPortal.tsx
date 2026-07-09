@@ -42,13 +42,12 @@ export const MapPortal = ({ className }: MapPortalProps) => {
   }, [colorScheme, mapStore.settings.mode]);
 
   const { t } = useTranslation("common");
-  const { count: chatCount, resetCount: resetChatCount } = useChatContext();
-  const { count, resetCount } = useNotificationContext();
+  const { count: chatCount } = useChatContext();
+  const { count } = useNotificationContext();
 
   const handleChatPress = React.useCallback(() => {
-    resetChatCount();
     router.push("/main/chat");
-  }, [resetChatCount]);
+  }, []);
 
   const { latitude, longitude } = mapStore?.location?.coords || {
     latitude: 0,
@@ -98,7 +97,6 @@ export const MapPortal = ({ className }: MapPortalProps) => {
               color: mapHeaderIconColors,
               onPress: () => {
                 router.push("/main/notifications");
-                resetCount();
               },
               badgeText: count > 0 ? `${count}` : undefined,
             },

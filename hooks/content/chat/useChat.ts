@@ -1,5 +1,5 @@
 import React from "react";
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api";
 import {
   MessageVariant,
@@ -24,6 +24,10 @@ import {
 } from "@/lib/chat";
 import { useSegments, useGlobalSearchParams } from "expo-router";
 
+export const CONVERSATIONS_UNREAD_COUNT_QUERY_KEY = [
+  "conversations-unread-count",
+] as const;
+
 interface useChatProps {
   search?: string;
   limit?: number;
@@ -31,7 +35,7 @@ interface useChatProps {
   enabled?: boolean;
 }
 
-let listenersInitialized = false;
+let chatSocketListenerCount = 0;
 
 /**
  * Custom hook to manage paginated conversation lists, real-time socket events,
@@ -54,7 +58,6 @@ export const useChat = (
   const params = useGlobalSearchParams();
 
   const { currentUser } = useCurrentUser();
-  const [count, setCount] = React.useState(0);
   const authPersistStore = useAuthPersistStore();
   const queryClient = useQueryClient();
 
@@ -71,6 +74,12 @@ export const useChat = (
       await createAndroidChannel();
     })();
   }, []);
+
+  const { data: count = 0 } = useQuery({
+    queryKey: CONVERSATIONS_UNREAD_COUNT_QUERY_KEY,
+    queryFn: () => api.chat.conversation.getUnreadCount(),
+    enabled: enabled && authPersistStore.isAuthenticated,
+  });
 
   const {
     data,
@@ -100,6 +109,12 @@ export const useChat = (
   }, [data]);
 
   const isPending = isConversationsPending || isFetchingNextPage;
+
+  const invalidateUnreadCount = React.useCallback(() => {
+    queryClient.invalidateQueries({
+      queryKey: CONVERSATIONS_UNREAD_COUNT_QUERY_KEY,
+    });
+  }, [queryClient]);
 
   React.useEffect(() => {
     const s = getSocket("chat", { token: authPersistStore.accessToken });
@@ -146,7 +161,6 @@ export const useChat = (
             trigger: null,
           });
         } else if (updated.messages?.[0]?.id === updated?.lastMessage?.id) {
-          setCount((prev) => prev + 1);
           await Notifications.scheduleNotificationAsync({
             content: {
               title: identifyUser(user),
@@ -174,6 +188,7 @@ export const useChat = (
         (oldData: InfiniteConversationData | undefined) =>
           moveConversationToTop(oldData, updated),
       );
+      invalidateUnreadCount();
     };
 
     /**
@@ -187,18 +202,24 @@ export const useChat = (
         (oldData: InfiniteConversationData | undefined) =>
           replaceConversationInPages(oldData, updated),
       );
+      invalidateUnreadCount();
     };
 
-    if (!listenersInitialized) {
-      listenersInitialized = true;
+    if (chatSocketListenerCount === 0) {
       s.on("conversation-updated-message", onConversationUpdatedMessage);
       s.on("conversation-updated-last-check", onConversationUpdatedLastCheck);
     }
+    chatSocketListenerCount += 1;
 
     return () => {
-      s.off("conversation-updated-message", onConversationUpdatedMessage);
-      s.off("conversation-updated-last-check", onConversationUpdatedLastCheck);
-      listenersInitialized = false;
+      chatSocketListenerCount -= 1;
+      if (chatSocketListenerCount === 0) {
+        s.off("conversation-updated-message", onConversationUpdatedMessage);
+        s.off(
+          "conversation-updated-last-check",
+          onConversationUpdatedLastCheck,
+        );
+      }
     };
   }, [
     limit,
@@ -207,21 +228,25 @@ export const useChat = (
     queryClient,
     authPersistStore.accessToken,
     currentUser?.id,
+    invalidateUnreadCount,
   ]);
 
   /**
    * Emits a socket event to mark a specific conversation as seen by the current user.
    */
-  const seeConversation = React.useCallback((id: number) => {
-    const s = socketRef.current;
-    if (!s) return;
-    s.emit("see-conversation", { conversationId: id });
-  }, []);
+  const seeConversation = React.useCallback(
+    (id: number) => {
+      const s = socketRef.current;
+      if (!s) return;
+      s.emit("see-conversation", { conversationId: id });
+      invalidateUnreadCount();
+    },
+    [invalidateUnreadCount],
+  );
 
-  /**
-   * Resets the local unread badge counter.
-   */
-  const resetCount = React.useCallback(() => setCount(0), []);
+  const resetCount = React.useCallback(() => {
+    invalidateUnreadCount();
+  }, [invalidateUnreadCount]);
 
   return {
     conversations,

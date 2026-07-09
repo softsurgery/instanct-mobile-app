@@ -16,11 +16,13 @@ import { router } from "expo-router";
 interface NotificationEntryProps {
   className?: string;
   notification: ResponseNotificationDto;
+  isUnread?: boolean;
 }
 
 export const NotificationEntry = ({
   className,
   notification,
+  isUnread: isUnreadProp,
 }: NotificationEntryProps) => {
   const { t } = useTranslation("notifications");
   const onPress = () => {
@@ -59,13 +61,17 @@ export const NotificationEntry = ({
     wrapperClassName:
       "border border-border bg-background rounded-full shadow-md",
     size: { width: 100, height: 100 },
-    enabled: !!notification.payload.pictureId,
   });
   const profilePictureSource = profileUploads?.[0];
+  const isUnread = isUnreadProp ?? !notification.readAt;
 
   return (
     <StablePressable
-      className={cn("flex flex-row items-center gap-2 px-2 py-1", className)}
+      className={cn(
+        "flex flex-row items-center gap-2 px-2 py-1 rounded-xl",
+        isUnread ? "bg-primary/10" : "bg-transparent",
+        className,
+      )}
       onPress={onPress}
     >
       <Image
@@ -76,11 +82,17 @@ export const NotificationEntry = ({
             : require("@/assets/images/icon.png")
         }
       />
-      <View className="flex flex-col gap-2 px-2 py-1 flex-1">
-        <HTMLText variant={"large"}>
+      <View className="relative flex flex-col gap-2 px-2 py-1 flex-1">
+        <HTMLText
+          variant="large"
+          className={isUnread ? "text-primary font-bold" : undefined}
+        >
           {t(`titles.${notification.type}`)}
         </HTMLText>
-        <HTMLText variant="muted" className="-mt-2">
+        <HTMLText
+          variant="muted"
+          className={cn("-mt-2", isUnread && "text-foreground font-medium")}
+        >
           {t(
             `descriptions.${notification.type}`,
             notification.payload,
@@ -89,6 +101,9 @@ export const NotificationEntry = ({
         <Text variant={"muted"} className="ml-auto">
           {timeAgo(notification.createdAt)}
         </Text>
+        {isUnread && (
+          <View className="absolute right-0 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-primary" />
+        )}
         {/* <Text className="text-xs">{JSON.stringify(notification.payload)}</Text> */}
       </View>
     </StablePressable>

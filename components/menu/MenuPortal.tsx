@@ -19,13 +19,12 @@ interface MenuPortalProps {
 export const MenuPortal = ({ className }: MenuPortalProps) => {
   const { t } = useTranslation("common");
   const { currentUser } = useCurrentUser();
-  const { count, resetCount } = useNotificationContext();
-  const { count: chatCount, resetCount: resetChatCount } = useChatContext();
+  const { count } = useNotificationContext();
+  const { count: chatCount } = useChatContext();
 
   const handleChatPress = React.useCallback(() => {
-    resetChatCount();
     router.push("/main/chat");
-  }, [resetChatCount]);
+  }, []);
 
   return (
     <View className={cn("flex-1", className)}>
@@ -61,7 +60,6 @@ export const MenuPortal = ({ className }: MenuPortalProps) => {
                   icon: Bell,
                   onPress: () => {
                     router.push("/main/notifications");
-                    resetCount();
                   },
                   color: "white",
                   badgeText: count > 0 ? `${count}` : undefined,

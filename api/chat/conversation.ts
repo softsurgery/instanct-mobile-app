@@ -94,6 +94,13 @@ const reportConversation = async (
   await axios.post(`/current-conversation/${id}/report`, createConversationReportDto);
 };
 
+const getUnreadCount = async (): Promise<number> => {
+  const response = await axios.get<{ count: number }>(
+    `/current-conversation/unread-count`,
+  );
+  return response.data.count;
+};
+
 export const conversation = {
   findPaginatedUserConversations,
   findById,
@@ -101,4 +108,5 @@ export const conversation = {
   deleteConversation,
   blockUser,
   reportConversation,
+  getUnreadCount,
 };

@@ -10,7 +10,6 @@ import {
 } from "lucide-react-native";
 import { router } from "expo-router";
 import { toast } from "sonner-native";
-
 import { api } from "~/api";
 import { ResponseMessageDto, ServerErrorResponse } from "~/types";
 import { StableSafeAreaView } from "../../shared/StableSafeAreaView";

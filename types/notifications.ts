@@ -15,4 +15,5 @@ export interface ResponseNotificationDto extends DatabaseEntity {
   userId?: string;
   user: ResponseUserDto;
   payload?: any;
+  readAt?: Date | null;
 }

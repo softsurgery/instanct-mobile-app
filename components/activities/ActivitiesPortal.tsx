@@ -22,22 +22,20 @@ interface ActivitiesPortalProps {
 export const ActivitiesPortal = ({ className }: ActivitiesPortalProps) => {
   const { t } = useTranslation("common");
   const { currentUser } = useCurrentUser();
-  const { count, resetCount } = useNotificationContext();
-  const { count: chatCount, resetCount: resetChatCount } = useChatContext();
+  const { count } = useNotificationContext();
+  const { count: chatCount } = useChatContext();
 
   const { session: sessionParam } = useLocalSearchParams<{
     session?: string;
   }>();
 
   const handleNotificationsPress = React.useCallback(() => {
-    resetCount();
     router.push("/main/notifications");
-  }, [resetCount]);
+  }, []);
 
   const handleChatPress = React.useCallback(() => {
-    resetChatCount();
     router.push("/main/chat");
-  }, [resetChatCount]);
+  }, []);
 
   const { animatedHeaderStyle, handleScroll } = useScrollableElement({
     deltaThreshold: 40,

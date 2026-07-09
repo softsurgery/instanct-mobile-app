@@ -24,6 +24,7 @@ import {
   prependMessageToConversationLinksCache,
   replaceConversationInPages,
 } from "@/lib/chat";
+import { CONVERSATIONS_UNREAD_COUNT_QUERY_KEY } from "./useChat";
 import { messageHasLinks } from "@/lib/messageLinks";
 import { useCurrentUser } from "../users/useCurrentUser";
 import { useChatPendingStore } from "@/stores/useChatPendingStore";
@@ -240,6 +241,9 @@ export const useConversationFeatures = ({
 
     const markConversationAsSeen = () => {
       s.emit("see-conversation", { conversationId: id });
+      queryClient.invalidateQueries({
+        queryKey: CONVERSATIONS_UNREAD_COUNT_QUERY_KEY,
+      });
     };
 
     const onConnect = () => {
@@ -584,7 +588,10 @@ export const useConversationFeatures = ({
     const s = socketRef.current;
     if (!s) return;
     s.emit("see-conversation", { conversationId: id });
-  }, [id]);
+    queryClient.invalidateQueries({
+      queryKey: CONVERSATIONS_UNREAD_COUNT_QUERY_KEY,
+    });
+  }, [id, queryClient]);
 
   return {
     conversation,

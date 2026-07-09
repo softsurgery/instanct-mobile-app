@@ -1,7 +1,5 @@
 import { LegendList } from "@legendapp/list";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
-import { router } from "expo-router";
-import { ArrowLeft } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { RefreshControl, View } from "react-native";
@@ -13,6 +11,7 @@ import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { Text } from "../ui/text";
 import { NotificationEntry } from "./NotificationEntry";
 import { NotificationEntrySkeleton } from "./NotificationEntrySkeleton";
+import { useNotificationContext } from "@/contexts/NotificationsContext";
 
 import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 interface NotificationPortalProps {
@@ -22,6 +21,13 @@ interface NotificationPortalProps {
 export const NotificationsPortal = ({ className }: NotificationPortalProps) => {
   const queryClient = useQueryClient();
   const { t } = useTranslation("common");
+  const { resetCount } = useNotificationContext();
+  const [highlightedIds, setHighlightedIds] = React.useState<Set<string>>(
+    new Set(),
+  );
+  const hasMarkedRead = React.useRef(false);
+  const snapshotTaken = React.useRef(false);
+
   const {
     data,
     fetchNextPage,
@@ -47,6 +53,28 @@ export const NotificationsPortal = ({ className }: NotificationPortalProps) => {
     return data?.pages.flatMap((page) => page.data) ?? [];
   }, [data]);
 
+  React.useEffect(() => {
+    if (snapshotTaken.current || !notifications.length) return;
+
+    snapshotTaken.current = true;
+    setHighlightedIds(
+      new Set(
+        notifications
+          .filter((notification) => !notification.readAt)
+          .map((notification) => String(notification.id)),
+      ),
+    );
+  }, [notifications]);
+
+  React.useEffect(() => {
+    if (hasMarkedRead.current) return;
+    if (isNotificationsPending) return;
+    if (!snapshotTaken.current && notifications.length > 0) return;
+
+    hasMarkedRead.current = true;
+    resetCount();
+  }, [isNotificationsPending, notifications.length, resetCount]);
+
   const isPending = isNotificationsPending || isFetchingNextPage;
 
   const renderItem = React.useCallback(
@@ -56,10 +84,11 @@ export const NotificationsPortal = ({ className }: NotificationPortalProps) => {
           className="px-4 mt-1"
           key={item.id}
           notification={item}
+          isUnread={highlightedIds.has(String(item.id))}
         />
       );
     },
-    [],
+    [highlightedIds],
   );
   return (
     <StableSafeAreaView className={cn("flex flex-1 bg-card", className)}>

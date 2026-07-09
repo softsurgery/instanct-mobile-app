@@ -39,9 +39,8 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   const { currentUser } = useCurrentUser();
   const userFilerStore = useExploreFilterStore();
   const mapStore = useMapStore();
-  const { count: notificationCount, resetCount: resetNotificationCount } =
-    useNotificationContext();
-  const { count: chatCount, resetCount: resetChatCount } = useChatContext();
+  const { count: notificationCount } = useNotificationContext();
+  const { count: chatCount } = useChatContext();
   const { activeSession, initialized } = useActiveMapSessionContext();
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const { users: liveUsers } = useLiveGeolocation({
@@ -95,14 +94,12 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   }, [liveUsers, currentUser, userFilerStore.dto]);
 
   const handleNotificationsPress = React.useCallback(() => {
-    resetNotificationCount();
     router.push("/main/notifications");
-  }, [resetNotificationCount]);
+  }, []);
 
   const handleChatPress = React.useCallback(() => {
-    resetChatCount();
     router.push("/main/chat");
-  }, [resetChatCount]);
+  }, []);
 
   const handleScroll = React.useCallback((event: any) => {
     const contentOffsetX = event.nativeEvent.contentOffset.x;
