@@ -6,7 +6,7 @@ import { useMapStore } from "@/stores/useMapStore";
 import { NearbyUser } from "@/types";
 import { Platform, View } from "react-native";
 import { Marker } from "react-native-maps";
-import ViewShot from "react-native-view-shot";
+import ViewShot, { ViewShotRef } from "react-native-view-shot";
 import { Text } from "../ui/text";
 
 interface UsersMarkerProps {
@@ -31,7 +31,7 @@ export const UsersMarker = ({
   const isAndroid = Platform.OS === "android";
 
   // Android self-capture state
-  const viewShotRef = React.useRef<ViewShot>(null);
+  const viewShotRef = React.useRef<ViewShotRef>(null);
   const [imageUri, setImageUri] = React.useState<string | null>(null);
 
   React.useEffect(() => {
