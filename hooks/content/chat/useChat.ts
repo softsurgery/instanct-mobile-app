@@ -147,13 +147,13 @@ export const useChat = (
                   ? updated.lastMessage.content
                   : updated.lastMessage.variant === MessageVariant.IMAGE
                     ? "📷 Image"
-                  : updated.lastMessage.variant === MessageVariant.VIDEO
-                    ? "🎥 Video"
-                    : updated.lastMessage.variant === MessageVariant.FILE
-                      ? "📎 File"
-                      : updated.lastMessage.variant === MessageVariant.EMOJI
-                        ? updated.lastMessage.content
-                        : "",
+                    : updated.lastMessage.variant === MessageVariant.VIDEO
+                      ? "🎥 Video"
+                      : updated.lastMessage.variant === MessageVariant.FILE
+                        ? "📎 File"
+                        : updated.lastMessage.variant === MessageVariant.EMOJI
+                          ? updated.lastMessage.content
+                          : "",
               sound: true,
             },
             trigger: null,
