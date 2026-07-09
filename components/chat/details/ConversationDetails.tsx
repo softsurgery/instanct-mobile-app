@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, Alert, Pressable } from "react-native";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Image as ImageIcon,
   Search,
@@ -8,11 +8,11 @@ import {
   AlertTriangle,
   Trash2,
 } from "lucide-react-native";
-
 import { router } from "expo-router";
-import axios from "~/api/axios";
+import { toast } from "sonner-native";
+
 import { api } from "~/api";
-import { ResponseMessageDto } from "~/types";
+import { ResponseMessageDto, ServerErrorResponse } from "~/types";
 import { StableSafeAreaView } from "../../shared/StableSafeAreaView";
 import { ApplicationHeader } from "../../shared/AppHeader";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
@@ -21,6 +21,7 @@ import { identifyUser, identifyUserAvatar } from "@/lib/user";
 import {
   CONVERSATION_LIST_JOIN,
   navigateToConversationMessage,
+  removeConversationFromPages,
 } from "@/lib/chat";
 import { ScrollView } from "react-native-gesture-handler";
 import { ConversationDetailsRow } from "./ConversationDetailsRow";
@@ -34,6 +35,7 @@ interface ConversationDetailsProps {
 
 export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
   const conversationId = Number(id);
+  const queryClient = useQueryClient();
   const { currentUser } = useCurrentUser();
 
   const { data: conversation } = useQuery({
@@ -65,6 +67,49 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
 
   const profilePicture = profilePictures[0];
 
+  const removeConversationFromCache = React.useCallback(() => {
+    queryClient.removeQueries({ queryKey: ["conversation", conversationId] });
+    queryClient.setQueriesData({ queryKey: ["conversations"] }, (oldData) =>
+      removeConversationFromPages(oldData as never, conversationId),
+    );
+  }, [conversationId, queryClient]);
+
+  const handleConversationActionSuccess = React.useCallback(
+    (message: string) => {
+      removeConversationFromCache();
+      toast.success(message);
+      router.back();
+    },
+    [removeConversationFromCache],
+  );
+
+  const handleConversationActionError = React.useCallback(
+    (title: string, error: ServerErrorResponse) => {
+      toast.error(title, {
+        description:
+          error.response?.data?.message ||
+          "Something went wrong. Please try again.",
+      });
+    },
+    [],
+  );
+
+  const { mutate: deleteConversation, isPending: isDeletePending } =
+    useMutation({
+      mutationFn: () =>
+        api.chat.conversation.deleteConversation(conversationId),
+      onSuccess: () => handleConversationActionSuccess("Conversation deleted."),
+      onError: (error: ServerErrorResponse) =>
+        handleConversationActionError("Unable to delete conversation", error),
+    });
+
+  const { mutate: blockUser, isPending: isBlockPending } = useMutation({
+    mutationFn: () => api.chat.conversation.blockUser(user!.id),
+    onSuccess: () => handleConversationActionSuccess("User blocked."),
+    onError: (error: ServerErrorResponse) =>
+      handleConversationActionError("Unable to block user", error),
+  });
+
   const handleSearchResultPress = React.useCallback(
     (message: ResponseMessageDto) => {
       setIsSearching(false);
@@ -78,27 +123,47 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
   );
 
   const handleDeleteConversation = () => {
+    if (isDeletePending) return;
+
     Alert.alert(
       "Delete conversation",
-      "Are you sure you want to delete this conversation?",
+      "Are you sure you want to delete this conversation? This cannot be undone.",
       [
         { text: "Cancel", style: "cancel" },
         {
           text: "Delete",
           style: "destructive",
-          onPress: async () => {
-            try {
-              await axios.delete(`/conversation/${conversationId}`);
-              Alert.alert("Success", "Conversation deleted.");
-              router.back();
-            } catch (error) {
-              console.error("Erreur lors de la suppression :", error);
-              Alert.alert("Error", "Unable to delete conversation.");
-            }
-          },
+          onPress: () => deleteConversation(),
         },
       ],
     );
+  };
+
+  const handleBlockUser = () => {
+    if (!user || isBlockPending) return;
+
+    Alert.alert(
+      "Block user",
+      `Block ${identification}? They will no longer be able to message you.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Block",
+          style: "destructive",
+          onPress: () => blockUser(),
+        },
+      ],
+    );
+  };
+
+  const handleReportConversation = () => {
+    router.push({
+      pathname: "/main/chat/report-conversation",
+      params: {
+        id: String(conversationId),
+        reportedUserName: identification,
+      },
+    });
   };
 
   if (isSearching) {
@@ -184,8 +249,16 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
         </View>
 
         <View className="bg-card mx-4 rounded-2xl mb-12">
-          <ConversationDetailsRow icon={Ban} label="Block" />
-          <ConversationDetailsRow icon={AlertTriangle} label="Report" />
+          <ConversationDetailsRow
+            icon={Ban}
+            label="Block"
+            onPress={handleBlockUser}
+          />
+          <ConversationDetailsRow
+            icon={AlertTriangle}
+            label="Report"
+            onPress={handleReportConversation}
+          />
           <ConversationDetailsRow
             icon={Trash2}
             label="Delete conversation"

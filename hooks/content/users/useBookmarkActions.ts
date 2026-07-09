@@ -87,6 +87,7 @@ export const useBookmarkActions = ({
   return {
     isBookmarked,
     isBookmarkPending,
+    refetchBookmark,
     toggleBookmark,
     saveBookmark,
     isSavingBookmark,

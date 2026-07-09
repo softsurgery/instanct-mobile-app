@@ -1,5 +1,6 @@
 import {
   CreateConversationDto,
+  CreateConversationReportDto,
   Paginated,
   QueryParams,
   ResponseConversationDto,
@@ -59,8 +60,26 @@ const createConversation = async (
   return response.data;
 };
 
+const deleteConversation = async (id: number): Promise<void> => {
+  await axios.delete(`/current-conversation/${id}`);
+};
+
+const blockUser = async (userId: string): Promise<void> => {
+  await axios.post(`/user-block/${userId}`);
+};
+
+const reportConversation = async (
+  id: number,
+  createConversationReportDto: CreateConversationReportDto,
+): Promise<void> => {
+  await axios.post(`/current-conversation/${id}/report`, createConversationReportDto);
+};
+
 export const conversation = {
   findPaginatedUserConversations,
   findById,
   createConversation,
+  deleteConversation,
+  blockUser,
+  reportConversation,
 };

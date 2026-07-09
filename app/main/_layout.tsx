@@ -284,6 +284,13 @@ export default function MainLayout() {
               }}
             />
             <Stack.Screen
+              name="chat/report-conversation"
+              options={{
+                title: "Report Conversation",
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
               name="chat/conversation-resource-details"
               options={{
                 title: "Media, files and links",

@@ -81,6 +81,21 @@ export const replaceConversationInPages = (
   };
 };
 
+export const removeConversationFromPages = (
+  oldData: InfiniteConversationData | undefined,
+  conversationId: number,
+): InfiniteConversationData | undefined => {
+  if (!oldData) return oldData;
+
+  return {
+    ...oldData,
+    pages: oldData.pages.map((page) => ({
+      ...page,
+      data: page.data.filter((conversation) => conversation.id !== conversationId),
+    })),
+  };
+};
+
 export const moveConversationToTop = (
   oldData: InfiniteConversationData | undefined,
   updated: ResponseConversationDto,

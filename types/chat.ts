@@ -136,6 +136,19 @@ export type MessageFlatListItem =
 
 export type MediaKind = "image" | "video";
 
+export enum ConversationReportReason {
+  SPAM = "Spam",
+  HARASSMENT = "Harassment",
+  INAPPROPRIATE_CONTENT = "Inappropriate Content",
+  SCAM = "Scam or Fraud",
+  OTHER = "Other",
+}
+
+export interface CreateConversationReportDto {
+  reason?: ConversationReportReason;
+  description: string;
+}
+
 export interface StagedMedia {
   id: string;
   file: File;
