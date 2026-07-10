@@ -21,7 +21,7 @@
     "@react-native-masked-view/masked-view": "0.3.2",
     "@react-native-ohos/react-native-keyboard-aware-scroll-view": "0.9.6-rc.1",
     "@rn-primitives/accordion": "^1.2.0",
-    "@rn-primitives/checkbox": "^1.2.0",
+    "@rn-primitives/checkbox": "^1.5.2",
     "@rn-primitives/dialog": "^1.2.0",
     "@rn-primitives/label": "^1.2.0",
     "@rn-primitives/popover": "^1.2.0",

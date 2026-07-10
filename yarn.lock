@@ -2216,15 +2216,15 @@
     "@rn-primitives/slot" "1.4.0"
     "@rn-primitives/types" "1.4.0"
 
-"@rn-primitives/checkbox@^1.2.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@rn-primitives/checkbox/-/checkbox-1.4.0.tgz#ea2f5731cc384eab27d61c34dbfd241af03675f2"
-  integrity sha512-iEzNh7mvBSt233agp5Gi4RpcTlAYhj/rRgyw8//TG6Ds/FK1sr7gQpKwDnyTGuXE9avdD7L/xC9SAaVH6Zpqeg==
+"@rn-primitives/checkbox@^1.5.2":
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/@rn-primitives/checkbox/-/checkbox-1.5.2.tgz#1e7f9d7e327085926992ccee921b4ec4268bbbb2"
+  integrity sha512-wZzxfDHms+DKCiZssbM3KUuDg2A7dmRDLTHhAyq/QPqaxSwvzp7O6ul/E6fmiSQ2s+A37UwjBTzCNoSNGYexdQ==
   dependencies:
     "@radix-ui/react-checkbox" "^1.3.3"
-    "@rn-primitives/hooks" "1.4.0"
-    "@rn-primitives/slot" "1.4.0"
-    "@rn-primitives/types" "1.4.0"
+    "@rn-primitives/hooks" "1.5.2"
+    "@rn-primitives/slot" "1.5.2"
+    "@rn-primitives/types" "1.5.2"
 
 "@rn-primitives/dialog@^1.2.0":
   version "1.4.0"
@@ -2242,6 +2242,13 @@
   integrity sha512-uzu4NrThR5BEy+MHvTwHCs+KUXTmTLZrSzPHL9L8q5uGXv/BIxYJdpvlodn+DnxgTMzdul+H8rpqPLjyYQEyKw==
   dependencies:
     "@rn-primitives/types" "1.4.0"
+
+"@rn-primitives/hooks@1.5.2":
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/@rn-primitives/hooks/-/hooks-1.5.2.tgz#72a199e2b1a379aceb42ac630f9569137eb35ab7"
+  integrity sha512-7XUVqR/nS309Fpltd19GflRTUPE/bYwZnOh/ofEDw7UMMelfI5CIgc70BXfZPHAkrjG9/tU3JAZl0KWSrWLJCQ==
+  dependencies:
+    "@rn-primitives/types" "1.5.2"
 
 "@rn-primitives/label@^1.2.0":
   version "1.4.0"
@@ -2292,6 +2299,11 @@
   resolved "https://registry.yarnpkg.com/@rn-primitives/slot/-/slot-1.4.0.tgz#2e1cdf5ec70ec1c0f23147fd2261b0ebd74f2a3e"
   integrity sha512-p8qIYH44HgXDbsxPFIbRS/IrKWOqb2/JDT8ivFAfhL8QSW0gtVZZo8I/wFip1vV9vRl8D3zMHUBB/PrzrN0Qww==
 
+"@rn-primitives/slot@1.5.2":
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/@rn-primitives/slot/-/slot-1.5.2.tgz#f74d8ab7b06fda13c76db6392367eb2f9fc03d47"
+  integrity sha512-TGSMB8hMALrcI6d5logiS8/0YzPRUQvsHghaF7FAuia+MF84WZS96Jvm959W4sDEP26AiDJtuQfCkTHOv0oxbw==
+
 "@rn-primitives/switch@^1.2.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@rn-primitives/switch/-/switch-1.4.0.tgz#28e9289b735279cd3ab77a3bf2a0ee21d4e99119"
@@ -2314,6 +2326,11 @@
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@rn-primitives/types/-/types-1.4.0.tgz#27ddb823477f6366689ef28e10107696f11f33cd"
   integrity sha512-U7El2BbYXZG8WZrOIV4y1wpxH8aJA/sKH3SL2tZTL153ENj8aOpZ9QwyUoAU2t+sKVPDejrKjo89HeNuIuwPGQ==
+
+"@rn-primitives/types@1.5.2":
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/@rn-primitives/types/-/types-1.5.2.tgz#3d27acf5abbc2f2e5ea8447fcadd6da886c20749"
+  integrity sha512-qoJOeCGBvQCTyEdKl4CL5MHwTLA2P3Lr6EzuJAxQcc/dUL0ev7IDtsAxHpoLraDD2kZdIkqnFtNsasr2iH25ZQ==
 
 "@rtsao/scc@^1.1.0":
   version "1.1.0"
