@@ -10,8 +10,6 @@ interface RequestDetailsCardProps {
   value?: string | null;
   emptyText?: string;
   children?: React.ReactNode;
-  editable?: boolean;
-  onEdit?: () => void;
 }
 
 export const RequestDetailsCard = ({
@@ -20,8 +18,6 @@ export const RequestDetailsCard = ({
   value,
   emptyText = "Non spécifié",
   children,
-  editable = true,
-  onEdit,
 }: RequestDetailsCardProps) => {
   const isEmpty = !children && !value;
   return (

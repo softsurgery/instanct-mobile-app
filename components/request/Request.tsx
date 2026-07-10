@@ -24,9 +24,10 @@ import { RequestEvent, RequestStatus } from "@/types";
 import { toast } from "sonner-native";
 import { RequestDetailsCard } from "./RequestDetailsCard";
 import { RequestLocationSection } from "./RequestLocationSection";
+import { RequestSkeleton } from "./RequestSkeleton";
 import { StatusBadge } from "./RequestStatus";
-
 import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
+
 interface RequestProps {
   id: string;
   isIncoming?: boolean;
@@ -159,7 +160,7 @@ export const Request = ({ id, className, isIncoming }: RequestProps) => {
       />
       <View className="flex-1 bg-background px-4">
         {isPending ? (
-          <Loader className="flex flex-1 items-center justify-center" />
+          <RequestSkeleton />
         ) : (
           <View className="flex flex-col gap-4">
             <View className="p-4">
@@ -189,14 +190,9 @@ export const Request = ({ id, className, isIncoming }: RequestProps) => {
                 label="Message"
                 value={request?.message}
                 emptyText="Aucune description fournie"
-                editable={false}
               />
 
-              <RequestDetailsCard
-                icon={Clock3}
-                label="Date et heure"
-                editable={editable}
-              >
+              <RequestDetailsCard icon={Clock3} label="Date et heure">
                 {request?.time ? (
                   <View className="flex-row items-baseline gap-1.5">
                     <Text className="text-sm font-medium text-foreground">
