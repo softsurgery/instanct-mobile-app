@@ -1,5 +1,4 @@
 import {
-  DateFieldProps,
   Field,
   FieldVariant,
   FormStructure,
@@ -7,6 +6,7 @@ import {
   TextFieldProps,
 } from "@/components/shared/form-builder/types";
 import { UserStore } from "@/stores/useUserStore";
+import { useTranslation } from "react-i18next";
 
 interface UseUpdateEducationFormStructureProps {
   store: UserStore;
@@ -15,14 +15,14 @@ interface UseUpdateEducationFormStructureProps {
 export const useUpdateEducationFormStructure = ({
   store,
 }: UseUpdateEducationFormStructureProps) => {
+  const { t } = useTranslation("menu");
   const educationTitle: Field<TextFieldProps> = {
     id: "title",
-    label: "Degree/Field of Study",
+    label: t("education.form.labels.title"),
     variant: FieldVariant.TEXT,
     required: true,
-    placeholder: "Enter your degree or field of study",
-    description:
-      "The degree or field of study (e.g., Bachelor of Science in Computer Science).",
+    placeholder: t("education.form.placeholders.title"),
+    description: t("education.form.descriptions.title"),
     error: store.educationErrors?.title?.[0],
     props: {
       value: store.updateEducationDto.title,
@@ -35,11 +35,11 @@ export const useUpdateEducationFormStructure = ({
 
   const institutionName: Field<TextFieldProps> = {
     id: "institution",
-    label: "Institution Name",
+    label: t("education.form.labels.institution"),
     variant: FieldVariant.TEXT,
     required: true,
-    placeholder: "Enter the institution name",
-    description: "The name of the school, college, or university you attended.",
+    placeholder: t("education.form.placeholders.institution"),
+    description: t("education.form.descriptions.institution"),
     error: store.educationErrors?.institution?.[0],
     props: {
       value: store.updateEducationDto?.institution,
@@ -52,12 +52,11 @@ export const useUpdateEducationFormStructure = ({
 
   const description: Field<TextareaFieldProps> = {
     id: "description",
-    label: "Description",
+    label: t("education.form.labels.description"),
     variant: FieldVariant.TEXTAREA,
     required: false,
-    placeholder: "Describe your studies, achievements, or activities",
-    description:
-      "A brief description of your studies, achievements, relevant coursework, or extracurricular activities.",
+    placeholder: t("education.form.placeholders.description"),
+    description: t("education.form.descriptions.description"),
     error: store.educationErrors?.description?.[0],
     props: {
       value: store.updateEducationDto?.description,
@@ -113,10 +112,10 @@ export const useUpdateEducationFormStructure = ({
   // };
 
   const structure: FormStructure = {
-    title: "Update Education",
+    title: t("education.form.updateTitle"),
     fieldsets: [
       {
-        title: "Education Details",
+        title: t("education.form.sectionTitle"),
         rows: [
           {
             id: 1,

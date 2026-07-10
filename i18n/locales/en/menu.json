@@ -1,0 +1,179 @@
+{
+    "menu": {
+        "title": "Menu",
+        "tabs": {
+            "about": {
+                "title": "About",
+                "links": {
+                    "title": "Links",
+                    "linkedin": "LinkedIn Profile"
+                },
+                "empty": "No bio added yet"
+            },
+            "career": {
+                "title": "Career",
+                "experience": {
+                    "title": "Experience"
+                },
+                "education": {
+                    "title": "Education"
+                },
+                "industries": {
+                    "title": "Industries"
+                }
+            }
+        },
+        "unverifiedEmail": "Unverified Email",
+        "actions": {
+            "editProfile": "Edit Profile",
+            "addCoverPhoto": "Add Cover Photo",
+            "verifyEmail": "Verify Email"
+        }
+    },
+    "education": {
+        "list": {
+            "title": "Educations",
+            "degreeLabel": "Degree/Field of Study",
+            "empty": {
+                "title": "No Education Yet",
+                "description": "Add your education to showcase your academic background",
+                "action": "New Education?"
+            },
+            "actions": {
+                "edit": "Edit education",
+                "delete": "Delete education"
+            }
+        },
+        "form": {
+            "description": "Add your educational background — institutions, degrees, and any notable achievements.",
+            "createTitle": "Create Education",
+            "updateTitle": "Update Education",
+            "sectionTitle": "Education Details",
+            "labels": {
+                "title": "Degree/Field of Study",
+                "institution": "Institution Name",
+                "description": "Description"
+            },
+            "placeholders": {
+                "title": "Enter your degree or field of study",
+                "institution": "Enter the institution name",
+                "description": "Describe your studies, achievements, or activities"
+            },
+            "descriptions": {
+                "title": "The degree or field of study (e.g., Bachelor of Science in Computer Science).",
+                "institution": "The name of the school, college, or university you attended.",
+                "description": "A brief description of your studies, achievements, relevant coursework, or extracurricular activities."
+            },
+            "actions": {
+                "create": "Create Education",
+                "update": "Update Education"
+            }
+        },
+        "delete": {
+            "title": "Delete Education",
+            "message": "Are you sure you want to delete this education? This action cannot be undone.",
+            "trigger": "Delete",
+            "actions": {
+                "confirm": "Confirm",
+                "cancel": "Cancel",
+                "delete": "Delete",
+                "deletePending": "Deleting..."
+            }
+        },
+        "instance": {
+            "present": "Present"
+        },
+        "toasts": {
+            "created": "Education created successfully",
+            "createdDescription": "Your education has been successfully added.",
+            "updated": "Education updated successfully",
+            "updatedDescription": "Your education has been successfully updated.",
+            "deleted": "Education deleted successfully",
+            "deletedDescription": "Your education has been successfully deleted.",
+            "noSelection": "No education selected",
+            "error": "An error occurred"
+        }
+    },
+    "experience": {
+        "list": {
+            "title": "Experiences",
+            "jobTitleLabel": "Job Title",
+            "current": "Current",
+            "yearsCount": "{{years}} years",
+            "empty": {
+                "title": "No Experiences Yet",
+                "description": "Add your work experience to showcase your professional journey",
+                "action": "New Experience ?"
+            },
+            "actions": {
+                "edit": "Edit experience",
+                "delete": "Delete experience"
+            }
+        },
+        "form": {
+            "description": "Please provide details about your experience. This information will help others understand your background and expertise.",
+            "createTitle": "Create Experience",
+            "updateTitle": "Update Experience",
+            "createHeader": "Add Experience",
+            "sectionTitle": "Experience Details",
+            "labels": {
+                "title": "Job Title",
+                "company": "Company Name",
+                "description": "Description",
+                "location": "Location",
+                "workType": "Work Type",
+                "locationType": "Location Type",
+                "startDate": "Start Date",
+                "endDate": "End Date"
+            },
+            "placeholders": {
+                "title": "Enter your job title",
+                "company": "Enter the company name",
+                "description": "Describe your role and responsibilities",
+                "location": "Enter the location of your job",
+                "locationUpdate": "Enter the location of your job (e.g., New York, NY)"
+            },
+            "descriptions": {
+                "title": "The title of your position (e.g., Software Engineer).",
+                "company": "The name of the company you worked for.",
+                "description": "A brief description of your role, responsibilities, and achievements.",
+                "location": "The location where you worked (e.g., New York).",
+                "locationUpdate": "The location where you worked for this position.",
+                "workType": "The type of work arrangement for this position.",
+                "locationType": "The location type for this position (e.g., Remote).",
+                "locationTypeUpdate": "The location arrangement for this position.",
+                "startDate": "The date you started this position.",
+                "endDate": "The date you ended this position. Leave blank if it's your current role.",
+                "stillWorkHere": "Currently work here? If checked, the end date will be set to 'Present'"
+            },
+            "actions": {
+                "create": "Create Experience",
+                "update": "Update Experience"
+            }
+        },
+        "delete": {
+            "title": "Delete Experience",
+            "message": "Are you sure you want to delete this experience? This action cannot be undone.",
+            "trigger": "Delete",
+            "actions": {
+                "confirm": "Confirm",
+                "cancel": "Cancel",
+                "delete": "Delete",
+                "deletePending": "Deleting..."
+            }
+        },
+        "instance": {
+            "present": "Present"
+        },
+        "toasts": {
+            "created": "Experience created successfully",
+            "createdDescription": "Your experience has been successfully created.",
+            "updated": "Experience updated successfully",
+            "updatedDescription": "Your experience has been successfully updated.",
+            "deleted": "Experience deleted successfully",
+            "deletedDescription": "Your experience has been successfully deleted.",
+            "noSelection": "No experience selected",
+            "error": "An error occurred"
+        }
+    }
+}

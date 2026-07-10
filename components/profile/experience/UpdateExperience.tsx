@@ -11,7 +11,6 @@ import { ServerErrorResponse, UpdateExperienceDto } from "@/types";
 import { updateExperienceSchema } from "@/types/validations/experience.validation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
-import { ArrowLeft } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { useUpdateExperienceFormStructure } from "./useUpdateExperienceFormStructure";
 import { View } from "react-native";
@@ -26,6 +25,7 @@ interface UpdateExperienceProps {
 
 export const UpdateExperience = ({ className }: UpdateExperienceProps) => {
   const { t } = useTranslation("common");
+  const { t: tMenu } = useTranslation("menu");
   const userStore = useUserStore();
   const queryClient = useQueryClient();
   const isKeyboardVisible = useKeyboardVisible();
@@ -38,8 +38,8 @@ export const UpdateExperience = ({ className }: UpdateExperienceProps) => {
     mutationFn: (data: { id: number; experience: UpdateExperienceDto }) =>
       api.experience.update(data.id, data.experience),
     onSuccess: () => {
-      toast.success("Experience updated successfully", {
-        description: "Your experience has been successfully updated.",
+      toast.success(tMenu("experience.toasts.updated"), {
+        description: tMenu("experience.toasts.updatedDescription"),
       });
       queryClient.invalidateQueries({
         queryKey: ["experiences"],
@@ -48,7 +48,10 @@ export const UpdateExperience = ({ className }: UpdateExperienceProps) => {
       router.back();
     },
     onError: (error: ServerErrorResponse) => {
-      toast.error(error.response?.data?.message || "An error occurred", {});
+      toast.error(
+        error.response?.data?.message || tMenu("experience.toasts.error"),
+        {},
+      );
     },
   });
 
@@ -90,8 +93,7 @@ export const UpdateExperience = ({ className }: UpdateExperienceProps) => {
       <StableKeyboardAwareScrollView className="flex-1 bg-background">
         <View className="p-4">
           <Text className="text-sm text-muted-foreground leading-relaxed">
-            Please provide details about your experience. This information will
-            help others understand your background and expertise.
+            {tMenu("experience.form.description")}
           </Text>
         </View>
         <FormBuilder structure={structure} className="px-2" />
@@ -104,7 +106,7 @@ export const UpdateExperience = ({ className }: UpdateExperienceProps) => {
             className="mx-6 mb-4 rounded-full"
             onPress={handleUpdateSubmit}
           >
-            <Text>Update Experience</Text>
+            <Text>{tMenu("experience.form.actions.update")}</Text>
           </Button>
         </View>
       )}

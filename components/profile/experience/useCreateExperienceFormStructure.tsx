@@ -10,6 +10,7 @@ import {
 } from "@/components/shared/form-builder/types";
 import { UserStore } from "@/stores/useUserStore";
 import { LocationTypes, WorkTypes } from "@/types";
+import { useTranslation } from "react-i18next";
 
 interface UseCreateExperienceFormStructureProps {
   store: UserStore;
@@ -18,13 +19,14 @@ interface UseCreateExperienceFormStructureProps {
 export const useCreateExperienceFormStructure = ({
   store,
 }: UseCreateExperienceFormStructureProps) => {
+  const { t } = useTranslation("menu");
   const experienceTitle: Field<TextFieldProps> = {
     id: "title",
-    label: "Job Title",
+    label: t("experience.form.labels.title"),
     variant: FieldVariant.TEXT,
     required: true,
-    placeholder: "Enter your job title",
-    description: "The title of your position (e.g., Software Engineer).",
+    placeholder: t("experience.form.placeholders.title"),
+    description: t("experience.form.descriptions.title"),
     error: store.experienceErrors?.title?.[0],
     props: {
       value: store.createExperienceDto?.title,
@@ -37,11 +39,11 @@ export const useCreateExperienceFormStructure = ({
 
   const companyName: Field<TextFieldProps> = {
     id: "company",
-    label: "Company Name",
+    label: t("experience.form.labels.company"),
     variant: FieldVariant.TEXT,
     required: true,
-    placeholder: "Enter the company name",
-    description: "The name of the company you worked for.",
+    placeholder: t("experience.form.placeholders.company"),
+    description: t("experience.form.descriptions.company"),
     error: store.experienceErrors?.company?.[0],
     props: {
       value: store.createExperienceDto?.company,
@@ -54,12 +56,11 @@ export const useCreateExperienceFormStructure = ({
 
   const description: Field<TextareaFieldProps> = {
     id: "description",
-    label: "Description",
+    label: t("experience.form.labels.description"),
     variant: FieldVariant.TEXTAREA,
     required: false,
-    placeholder: "Describe your role and responsibilities",
-    description:
-      "A brief description of your role, responsibilities, and achievements.",
+    placeholder: t("experience.form.placeholders.description"),
+    description: t("experience.form.descriptions.description"),
     error: store.experienceErrors?.description?.[0],
     props: {
       value: store.createExperienceDto?.description,
@@ -73,11 +74,11 @@ export const useCreateExperienceFormStructure = ({
 
   const location: Field<TextFieldProps> = {
     id: "location",
-    label: "Location",
+    label: t("experience.form.labels.location"),
     variant: FieldVariant.TEXT,
     required: false,
-    placeholder: "Enter the location of your job",
-    description: "The location where you worked (e.g., New York).",
+    placeholder: t("experience.form.placeholders.location"),
+    description: t("experience.form.descriptions.location"),
     hidden: store.createExperienceDto?.locationType === LocationTypes.REMOTE,
     error: store.experienceErrors?.location?.[0],
     props: {
@@ -91,10 +92,10 @@ export const useCreateExperienceFormStructure = ({
 
   const workType: Field<SelectFieldProps> = {
     id: "workType",
-    label: "Work Type",
+    label: t("experience.form.labels.workType"),
     variant: FieldVariant.SELECT,
     required: true,
-    description: "The type of work arrangement for this position.",
+    description: t("experience.form.descriptions.workType"),
     error: store.experienceErrors?.workType?.[0],
     props: {
       value: store.createExperienceDto?.workType || undefined,
@@ -111,10 +112,10 @@ export const useCreateExperienceFormStructure = ({
 
   const locationType: Field<SelectFieldProps> = {
     id: "locationType",
-    label: "Location Type",
+    label: t("experience.form.labels.locationType"),
     variant: FieldVariant.SELECT,
     required: false,
-    description: "The location type for this position (e.g., Remote).",
+    description: t("experience.form.descriptions.locationType"),
     error: store.experienceErrors?.locationType?.[0],
     props: {
       value: store.createExperienceDto?.locationType || undefined,
@@ -131,10 +132,10 @@ export const useCreateExperienceFormStructure = ({
 
   const startDate: Field<DateFieldProps> = {
     id: "startDate",
-    label: "Start Date",
+    label: t("experience.form.labels.startDate"),
     variant: FieldVariant.DATE,
     required: true,
-    description: "The date you started this position.",
+    description: t("experience.form.descriptions.startDate"),
     error: store.experienceErrors?.startDate?.[0],
     props: {
       value: store.createExperienceDto?.startDate
@@ -155,8 +156,7 @@ export const useCreateExperienceFormStructure = ({
     label: "",
     variant: FieldVariant.CHECKBOX,
     required: false,
-    description:
-      "Currently work here? If checked, the end date will be set to 'Present'",
+    description: t("experience.form.descriptions.stillWorkHere"),
     props: {
       checked: store.present,
       onCheckedChange: (value) => {
@@ -169,11 +169,10 @@ export const useCreateExperienceFormStructure = ({
 
   const endDate: Field<DateFieldProps> = {
     id: "endDate",
-    label: "End Date",
+    label: t("experience.form.labels.endDate"),
     variant: FieldVariant.DATE,
     required: false,
-    description:
-      "The date you ended this position. Leave blank if it's your current role.",
+    description: t("experience.form.descriptions.endDate"),
     error: store.experienceErrors?.endDate?.[0],
     hidden: store.present,
     props: {
@@ -191,10 +190,10 @@ export const useCreateExperienceFormStructure = ({
   };
 
   const structure: FormStructure = {
-    title: "Create Experience",
+    title: t("experience.form.createTitle"),
     fieldsets: [
       {
-        title: "Experience Details",
+        title: t("experience.form.sectionTitle"),
         rows: [
           {
             id: 1,

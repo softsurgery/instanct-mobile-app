@@ -6,6 +6,7 @@ import { Button } from "~/components/ui/button";
 import { Icon } from "~/components/ui/icon";
 import { Trash2 } from "lucide-react-native";
 import { useColorPalette } from "@/hooks/useColorPalette";
+import { useTranslation } from "react-i18next";
 
 interface DeleteEducationActionSheetProps {
   onConfirm: () => void;
@@ -17,6 +18,7 @@ export const DeleteEducationActionSheet = React.forwardRef<
   ActionSheetRef,
   DeleteEducationActionSheetProps
 >(({ onConfirm, onClose, isPending }, ref) => {
+  const { t } = useTranslation("menu");
   const { palette } = useColorPalette();
 
   return (
@@ -40,14 +42,13 @@ export const DeleteEducationActionSheet = React.forwardRef<
             <View className="flex-row items-center gap-2">
               <Icon as={Trash2} size={20} />
               <Text variant="large" className="text-foreground">
-                Delete Education
+                {t("education.delete.title")}
               </Text>
             </View>
           </View>
 
           <Text className="mt-1 mb-4 text-sm text-muted-foreground">
-            Are you sure you want to delete this education? This action cannot
-            be undone.
+            {t("education.delete.message")}
           </Text>
 
           <View className="flex-row items-center gap-2 mt-2">
@@ -58,7 +59,9 @@ export const DeleteEducationActionSheet = React.forwardRef<
               disabled={isPending}
               variant="destructive"
             >
-              <Text className="text-base font-semibold">Confirm</Text>
+              <Text className="text-base font-semibold">
+                {t("education.delete.actions.confirm")}
+              </Text>
             </Button>
             <Button
               className="w-1/2"
@@ -67,7 +70,7 @@ export const DeleteEducationActionSheet = React.forwardRef<
               onPress={onClose}
               disabled={isPending}
             >
-              <Text>Cancel</Text>
+              <Text>{t("education.delete.actions.cancel")}</Text>
             </Button>
           </View>
         </View>

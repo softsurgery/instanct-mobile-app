@@ -8,6 +8,7 @@ import { ResponseEducationDto } from "@/types";
 import { format } from "date-fns";
 import { CalendarDays, GraduationCap } from "lucide-react-native";
 import { View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 interface EducationInstanceProps {
   className?: string;
@@ -18,6 +19,7 @@ export const EducationInstance = ({
   className,
   education,
 }: EducationInstanceProps) => {
+  const { t } = useTranslation("menu");
   const { palette } = useColorPalette();
   const primary = hslToHex(palette.primary);
 
@@ -25,7 +27,7 @@ export const EducationInstance = ({
     ? `${format(new Date(education.startDate), "yyyy")} — ${
         education.endDate
           ? format(new Date(education.endDate), "yyyy")
-          : "Present"
+          : t("education.instance.present")
       }`
     : null;
 

@@ -46,6 +46,8 @@ import Animated from "react-native-reanimated";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { Image } from "@/components/ui/image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
+
 interface ProfileSection<T = unknown> {
   key: string;
   title: string;
@@ -73,6 +75,7 @@ export const InspectBaseProfile = ({
   });
   const insets = useSafeAreaInsets();
   const { palette } = useColorPalette();
+  const { t } = useTranslation("menu");
   const queryClient = useQueryClient();
   const navigation = useNavigation();
   const [draftCoverUri, setDraftCoverUri] = React.useState<string | null>(null);
@@ -270,7 +273,7 @@ export const InspectBaseProfile = ({
     () => [
       {
         key: "experience",
-        title: "Experience",
+        title: t("menu.tabs.career.experience.title"),
         data: experiences as unknown[],
         editable: currentUser?.id === user?.id,
         renderItem: (experience: ResponseExperienceDto) => (
@@ -279,7 +282,7 @@ export const InspectBaseProfile = ({
       },
       {
         key: "education",
-        title: "Education",
+        title: t("menu.tabs.career.education.title"),
         data: educations as unknown[],
         editable: currentUser?.id === user?.id,
         renderItem: (education: ResponseEducationDto) => (
@@ -288,7 +291,7 @@ export const InspectBaseProfile = ({
       },
       {
         key: "industries",
-        title: "Industries",
+        title: t("menu.tabs.career.industries.title"),
         data: industries.filter((industry) =>
           userIndustries?.some((id) => id === industry.id),
         ) as unknown[],
@@ -307,6 +310,7 @@ export const InspectBaseProfile = ({
       userIndustries,
       currentUser?.id,
       user?.id,
+      t,
     ],
   );
 
@@ -337,7 +341,9 @@ export const InspectBaseProfile = ({
                 onPress={handlePickCover}
               >
                 <Icon as={Pencil} color="white" />
-                <Text className="text-white">Change Cover</Text>
+                <Text className="text-white">
+                  {t("menu.actions.addCoverPhoto")}
+                </Text>
               </Pressable>
             );
           }}
@@ -352,7 +358,9 @@ export const InspectBaseProfile = ({
           ) : currentUser?.id === id ? (
             <View className="flex flex-row gap-2 items-center">
               <Icon as={Pencil} color="white" />
-              <Text className="font-medium text-white">Add Cover Photo</Text>
+              <Text className="font-medium text-white">
+                {t("menu.actions.addCoverPhoto")}
+              </Text>
             </View>
           ) : null}
         </PhotoPreview>
@@ -389,7 +397,7 @@ export const InspectBaseProfile = ({
                     !user?.emailVerified &&
                     currentUser?.id === id && (
                       <Text className="text-xs text-yellow-600 font-bold">
-                        (Unverified Email)
+                        ({t("menu.unverifiedEmail")})
                       </Text>
                     )}
                 </View>
@@ -403,7 +411,7 @@ export const InspectBaseProfile = ({
                     >
                       <Icon as={Mail} size={16} color={"white"} />
                       <Text className="text-md font-semibold text-white">
-                        Verify email
+                        {t("menu.actions.verifyEmail")}
                       </Text>
                     </Pressable>
                   )}
@@ -434,7 +442,7 @@ export const InspectBaseProfile = ({
           <Tab.Screen
             name="About"
             options={{
-              tabBarLabel: "About",
+              tabBarLabel: t("menu.tabs.about.title"),
             }}
           >
             {() => (
@@ -450,7 +458,7 @@ export const InspectBaseProfile = ({
           <Tab.Screen
             name="Career"
             options={{
-              tabBarLabel: "Career",
+              tabBarLabel: t("menu.tabs.career.title"),
             }}
           >
             {() => (

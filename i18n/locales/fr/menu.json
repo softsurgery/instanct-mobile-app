@@ -1,0 +1,179 @@
+{
+    "menu": {
+        "title": "Menu",
+        "tabs": {
+            "about": {
+                "title": "À propos",
+                "links": {
+                    "title": "Liens",
+                    "linkedin": "Profil LinkedIn"
+                },
+                "empty": "Aucune biographie ajoutée pour le moment"
+            },
+            "career": {
+                "title": "Carrière",
+                "experience": {
+                    "title": "Expérience"
+                },
+                "education": {
+                    "title": "Formation"
+                },
+                "industries": {
+                    "title": "Secteurs d'activité"
+                }
+            }
+        },
+        "unverifiedEmail": "E-mail non vérifié",
+        "actions": {
+            "editProfile": "Modifier le profil",
+            "addCoverPhoto": "Ajouter une photo de couverture",
+            "verifyEmail": "Vérifier l'e-mail"
+        }
+    },
+    "education": {
+        "list": {
+            "title": "Formations",
+            "degreeLabel": "Diplôme / Domaine d'études",
+            "empty": {
+                "title": "Aucune formation",
+                "description": "Ajoutez votre formation pour mettre en valeur votre parcours académique",
+                "action": "Nouvelle formation ?"
+            },
+            "actions": {
+                "edit": "Modifier la formation",
+                "delete": "Supprimer la formation"
+            }
+        },
+        "form": {
+            "description": "Ajoutez votre parcours académique : établissements, diplômes et réalisations importantes.",
+            "createTitle": "Créer une formation",
+            "updateTitle": "Modifier la formation",
+            "sectionTitle": "Détails de la formation",
+            "labels": {
+                "title": "Diplôme / Domaine d'études",
+                "institution": "Nom de l'établissement",
+                "description": "Description"
+            },
+            "placeholders": {
+                "title": "Saisissez votre diplôme ou domaine d'études",
+                "institution": "Saisissez le nom de l'établissement",
+                "description": "Décrivez vos études, réalisations ou activités"
+            },
+            "descriptions": {
+                "title": "Le diplôme ou domaine d'études (ex. : Licence en informatique).",
+                "institution": "Le nom de l'école, du collège ou de l'université fréquenté.",
+                "description": "Une brève description de vos études, réalisations, cours pertinents ou activités extrascolaires."
+            },
+            "actions": {
+                "create": "Créer une formation",
+                "update": "Modifier la formation"
+            }
+        },
+        "delete": {
+            "title": "Supprimer la formation",
+            "message": "Êtes-vous sûr de vouloir supprimer cette formation ? Cette action est irréversible.",
+            "trigger": "Supprimer",
+            "actions": {
+                "confirm": "Confirmer",
+                "cancel": "Annuler",
+                "delete": "Supprimer",
+                "deletePending": "Suppression..."
+            }
+        },
+        "instance": {
+            "present": "Présent"
+        },
+        "toasts": {
+            "created": "Formation créée avec succès",
+            "createdDescription": "Votre formation a été ajoutée avec succès.",
+            "updated": "Formation mise à jour avec succès",
+            "updatedDescription": "Votre formation a été mise à jour avec succès.",
+            "deleted": "Formation supprimée avec succès",
+            "deletedDescription": "Votre formation a été supprimée avec succès.",
+            "noSelection": "Aucune formation sélectionnée",
+            "error": "Une erreur est survenue"
+        }
+    },
+    "experience": {
+        "list": {
+            "title": "Expériences",
+            "jobTitleLabel": "Intitulé du poste",
+            "current": "Actuel",
+            "yearsCount": "{{years}} ans",
+            "empty": {
+                "title": "Aucune expérience",
+                "description": "Ajoutez votre expérience professionnelle pour mettre en valeur votre parcours",
+                "action": "Nouvelle expérience ?"
+            },
+            "actions": {
+                "edit": "Modifier l'expérience",
+                "delete": "Supprimer l'expérience"
+            }
+        },
+        "form": {
+            "description": "Veuillez fournir des informations sur votre expérience. Elles aideront les autres à mieux comprendre votre parcours et votre expertise.",
+            "createTitle": "Créer une expérience",
+            "updateTitle": "Modifier l'expérience",
+            "createHeader": "Ajouter une expérience",
+            "sectionTitle": "Détails de l'expérience",
+            "labels": {
+                "title": "Intitulé du poste",
+                "company": "Nom de l'entreprise",
+                "description": "Description",
+                "location": "Lieu",
+                "workType": "Type de travail",
+                "locationType": "Mode de travail",
+                "startDate": "Date de début",
+                "endDate": "Date de fin"
+            },
+            "placeholders": {
+                "title": "Saisissez votre intitulé de poste",
+                "company": "Saisissez le nom de l'entreprise",
+                "description": "Décrivez votre rôle et vos responsabilités",
+                "location": "Saisissez le lieu de travail",
+                "locationUpdate": "Saisissez le lieu de travail (ex. : Paris, France)"
+            },
+            "descriptions": {
+                "title": "L'intitulé de votre poste (ex. : Ingénieur logiciel).",
+                "company": "Le nom de l'entreprise où vous avez travaillé.",
+                "description": "Une brève description de votre rôle, de vos responsabilités et de vos réalisations.",
+                "location": "Le lieu où vous avez travaillé (ex. : Paris).",
+                "locationUpdate": "Le lieu associé à ce poste.",
+                "workType": "Le type d'organisation du travail pour ce poste.",
+                "locationType": "Le mode de travail pour ce poste (ex. : Télétravail).",
+                "locationTypeUpdate": "Le mode de travail associé à ce poste.",
+                "startDate": "La date de début de ce poste.",
+                "endDate": "La date de fin de ce poste. Laissez vide si vous occupez toujours ce poste.",
+                "stillWorkHere": "Travaillez-vous toujours ici ? Si cette option est cochée, la date de fin sera définie sur « Présent »."
+            },
+            "actions": {
+                "create": "Créer une expérience",
+                "update": "Modifier l'expérience"
+            }
+        },
+        "delete": {
+            "title": "Supprimer l'expérience",
+            "message": "Êtes-vous sûr de vouloir supprimer cette expérience ? Cette action est irréversible.",
+            "trigger": "Supprimer",
+            "actions": {
+                "confirm": "Confirmer",
+                "cancel": "Annuler",
+                "delete": "Supprimer",
+                "deletePending": "Suppression..."
+            }
+        },
+        "instance": {
+            "present": "Présent"
+        },
+        "toasts": {
+            "created": "Expérience créée avec succès",
+            "createdDescription": "Votre expérience a été créée avec succès.",
+            "updated": "Expérience mise à jour avec succès",
+            "updatedDescription": "Votre expérience a été mise à jour avec succès.",
+            "deleted": "Expérience supprimée avec succès",
+            "deletedDescription": "Votre expérience a été supprimée avec succès.",
+            "noSelection": "Aucune expérience sélectionnée",
+            "error": "Une erreur est survenue"
+        }
+    }
+}

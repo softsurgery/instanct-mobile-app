@@ -2,13 +2,13 @@ import { SeeMoreText } from "@/components/shared/SeeMoreText";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useColorPalette } from "@/hooks/useColorPalette";
-import { hslToHex, THEME } from "@/lib/theme";
+import { hslToHex } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import { ResponseExperienceDto } from "@/types";
 import { format } from "date-fns";
 import { Briefcase, CalendarDays, Laptop, MapPin } from "lucide-react-native";
-import { useColorScheme } from "nativewind";
 import { View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 interface ExperienceInstanceProps {
   className?: string;
@@ -36,6 +36,7 @@ export const ExperienceInstance = ({
   className,
   experience,
 }: ExperienceInstanceProps) => {
+  const { t } = useTranslation("menu");
   const { palette } = useColorPalette();
   const primary = hslToHex(palette.primary);
 
@@ -43,7 +44,7 @@ export const ExperienceInstance = ({
     ? `${format(new Date(experience.startDate), "MMM yyyy")} — ${
         experience.endDate
           ? format(new Date(experience.endDate), "MMM yyyy")
-          : "Present"
+          : t("experience.instance.present")
       }`
     : null;
 

@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { UserStore } from "@/stores/useUserStore";
 import React from "react";
 import { View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 interface DeleteEducationDialogProps {
   userStore?: UserStore;
@@ -24,27 +25,29 @@ export const DeleteEducationDialog = ({
   loading,
   handleDelete,
 }: DeleteEducationDialogProps) => {
+  const { t } = useTranslation("menu");
   const [visible, setVisible] = React.useState(false);
 
   return (
     <Dialog open={visible} onOpenChange={setVisible}>
       <DialogTrigger asChild>
         {trigger || (
-          <Text className="text-red-500 text-sm font-semibold">Delete</Text>
+          <Text className="text-red-500 text-sm font-semibold">
+            {t("education.delete.trigger")}
+          </Text>
         )}
       </DialogTrigger>
 
       <DialogContent className={cn("w-[90vw] rounded-lg")}>
         <DialogTitle>
           <Text className="text-lg font-semibold text-foreground">
-            Delete Education
+            {t("education.delete.title")}
           </Text>
         </DialogTitle>
 
         <View className="flex flex-col gap-2">
           <Text className="text-sm text-muted-foreground">
-            Are you sure you want to delete this education? This action cannot
-            be undone.
+            {t("education.delete.message")}
           </Text>
         </View>
 
@@ -58,7 +61,11 @@ export const DeleteEducationDialog = ({
             disabled={loading}
             className="flex-1"
           >
-            <Text>{loading ? "Deleting..." : "Delete"}</Text>
+            <Text>
+              {loading
+                ? t("education.delete.actions.deletePending")
+                : t("education.delete.actions.delete")}
+            </Text>
           </Button>
           <Button
             variant="outline"
@@ -66,7 +73,7 @@ export const DeleteEducationDialog = ({
             disabled={loading}
             className="flex-1"
           >
-            <Text>Cancel</Text>
+            <Text>{t("education.delete.actions.cancel")}</Text>
           </Button>
         </View>
       </DialogContent>

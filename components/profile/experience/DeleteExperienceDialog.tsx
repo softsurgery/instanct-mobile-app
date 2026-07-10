@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { UserStore } from "@/stores/useUserStore";
 import React from "react";
 import { View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 interface DeleteExperienceDialogProps {
   userStore?: UserStore;
@@ -24,27 +25,29 @@ export const DeleteExperienceDialog = ({
   loading,
   handleDelete,
 }: DeleteExperienceDialogProps) => {
+  const { t } = useTranslation("menu");
   const [visible, setVisible] = React.useState(false);
 
   return (
     <Dialog open={visible} onOpenChange={setVisible}>
       <DialogTrigger asChild>
         {trigger || (
-          <Text className="text-red-500 text-sm font-semibold">Delete</Text>
+          <Text className="text-red-500 text-sm font-semibold">
+            {t("experience.delete.trigger")}
+          </Text>
         )}
       </DialogTrigger>
 
       <DialogContent className={cn("w-[90vw] rounded-lg")}>
         <DialogTitle>
           <Text className="text-lg font-semibold text-foreground">
-            Delete Experience
+            {t("experience.delete.title")}
           </Text>
         </DialogTitle>
 
         <View className="flex flex-col gap-2">
           <Text className="text-sm text-muted-foreground">
-            Are you sure you want to delete this experience? This action cannot
-            be undone.
+            {t("experience.delete.message")}
           </Text>
         </View>
 
@@ -58,7 +61,11 @@ export const DeleteExperienceDialog = ({
             disabled={loading}
             className="flex-1"
           >
-            <Text>{loading ? "Deleting..." : "Delete"}</Text>
+            <Text>
+              {loading
+                ? t("experience.delete.actions.deletePending")
+                : t("experience.delete.actions.delete")}
+            </Text>
           </Button>
           <Button
             variant="outline"
@@ -66,7 +73,7 @@ export const DeleteExperienceDialog = ({
             disabled={loading}
             className="flex-1"
           >
-            <Text>Cancel</Text>
+            <Text>{t("experience.delete.actions.cancel")}</Text>
           </Button>
         </View>
       </DialogContent>

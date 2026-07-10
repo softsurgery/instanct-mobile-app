@@ -14,6 +14,7 @@ import {
   UserRound,
   LucideIcon,
 } from "lucide-react-native";
+import { useTranslation } from "react-i18next";
 import {
   Linking,
   NativeScrollEvent,
@@ -53,6 +54,7 @@ export const AboutTab = ({
   onRefresh,
   onScroll,
 }: AboutTabProps) => {
+  const { t } = useTranslation("menu");
   const { palette } = useColorPalette();
   const fg = hslToHex(palette.foreground);
   const primary = hslToHex(palette.primary);
@@ -69,7 +71,7 @@ export const AboutTab = ({
       <View className="flex flex-col gap-6 px-4">
         {/* Bio */}
         <View>
-          <SectionHeader icon={UserRound} title="About" />
+          <SectionHeader icon={UserRound} title={t("menu.tabs.about.title")} />
           {user?.bio ? (
             <SeeMoreText
               textClassname="text-sm leading-6 text-foreground"
@@ -80,7 +82,7 @@ export const AboutTab = ({
           ) : (
             <View className="items-center rounded-2xl border border-dashed border-border py-6">
               <Text className="text-sm italic text-muted-foreground">
-                No bio added yet
+                {t("menu.tabs.about.empty")}
               </Text>
             </View>
           )}
@@ -89,7 +91,7 @@ export const AboutTab = ({
         {/* Links */}
         {(user?.website || user?.linkedin) && (
           <View>
-            <SectionHeader icon={Link2} title="Links" color={primary} />
+            <SectionHeader icon={Link2} title={t("menu.tabs.links.title")} color={primary} />
             <View className="flex flex-col gap-2.5">
               {user?.website && (
                 <StablePressable
@@ -123,7 +125,7 @@ export const AboutTab = ({
                     <Icon as={Linkedin} size={24} color={primary} />
                   </View>
                   <Text className="flex-1 text-sm font-medium text-foreground">
-                    LinkedIn Profile
+                    {t("menu.tabs.about.links.linkedin")}
                   </Text>
                   <Icon as={ExternalLink} size={24} color={fg} />
                 </StablePressable>
