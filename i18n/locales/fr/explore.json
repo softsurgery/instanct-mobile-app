@@ -100,6 +100,18 @@
                 "title": "Sécurisé et confidentiel",
                 "description": "Votre confidentialité est notre priorité absolue. Nous utilisons une sécurité de pointe pour protéger vos informations."
             }
+        },
+        "actions": {
+            "linkedIn": "Continuer avec LinkedIn",
+            "google": "Continuer avec Google",
+            "email": "Continuer avec Email",
+            "apple": "Continuer avec Apple"
+        },
+        "terms": {
+            "iAccept": "J'accepte les",
+            "termsOfUse": "Conditions d'utilisation",
+            "and": "et",
+            "privacyPolicy": "Politique de confidentialité"
         }
     }
 }

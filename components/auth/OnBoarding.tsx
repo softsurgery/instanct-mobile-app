@@ -10,6 +10,7 @@ import { Text } from "~/components/ui/text";
 import { cn } from "~/lib/utils";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { SSOButtons } from "./SSOButtons";
+import { AcceptTerms } from "./AcceptTerms";
 import { Rocket, Zap, ShieldCheck } from "lucide-react-native";
 import { useColorPalette } from "@/hooks/useColorPalette";
 import { ThemeToggle } from "../shared/ThemeToggle";
@@ -30,6 +31,7 @@ interface OnBoardingProps {
 export default function OnBoarding({ className }: OnBoardingProps) {
   const { t } = useTranslation("explore");
   const { palette } = useColorPalette();
+  const [acceptedTerms, setAcceptedTerms] = React.useState(false);
   const ref = React.useRef<ICarouselInstance>(null);
   const progress = useSharedValue<number>(0);
 
@@ -63,21 +65,21 @@ export default function OnBoarding({ className }: OnBoardingProps) {
           <Carousel
             width={width}
             ref={ref}
-            style={{ width: width, height: 300 }}
+            style={{ width: width, height: 250 }}
             data={ONBOARDING_DATA}
             onProgressChange={progress}
             renderItem={({ item, index }) => {
               const IconComponent = item.icon;
               return (
                 <View className="flex-1 justify-center items-center px-8">
-                  <View className="bg-primary/10 p-6 rounded-full mb-8">
+                  <View className="bg-primary/10 p-6 rounded-full mb-2">
                     <IconComponent
-                      size={100}
+                      size={80}
                       color={palette.primary}
                       strokeWidth={1.5}
                     />
                   </View>
-                  <Text className="text-3xl font-bold text-center mb-4 text-foreground">
+                  <Text className="text-3xl font-bold text-center mb-2 text-foreground">
                     {t(`onBoarding.slides.${item.key}.title`)}
                   </Text>
                   <Text className="text-base text-center text-muted-foreground leading-relaxed">
@@ -110,11 +112,18 @@ export default function OnBoarding({ className }: OnBoardingProps) {
           />
         </View>
 
-        <SSOButtons
-          className="mx-6 mt-8 mb-4"
-          isSignInPending={false}
-          classic
-        />
+        <View className="mx-6 mt-8 mb-4">
+          <AcceptTerms
+            className="mt-4"
+            checked={acceptedTerms}
+            onCheckedChange={setAcceptedTerms}
+          />
+          <SSOButtons
+            isSignInPending={false}
+            acceptedTerms={acceptedTerms}
+            classic
+          />
+        </View>
       </View>
     </StableSafeAreaView>
   );

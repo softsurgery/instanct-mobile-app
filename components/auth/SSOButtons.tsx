@@ -1,16 +1,19 @@
 import { useColorScheme } from "nativewind";
 import { Image, Platform, View } from "react-native";
+import React from "react";
 import { cn } from "~/lib/utils";
 import DividedText from "../shared/DividedText";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
 import { useSSO } from "@/hooks/useSSO";
 import { router } from "expo-router";
+import { useTranslation } from "react-i18next";
 
 export interface SSOButtonsProps {
   className?: string;
   classic?: boolean;
   isSignInPending?: boolean;
+  acceptedTerms?: boolean;
 }
 
 const IconSlot = ({ children }: { children: React.ReactNode }) => (
@@ -23,7 +26,9 @@ export const SSOButtons = ({
   className,
   classic = false,
   isSignInPending = false,
+  acceptedTerms = true,
 }: SSOButtonsProps) => {
+  const { t } = useTranslation("explore");
   const { colorScheme } = useColorScheme();
   const {
     isPending: isSSOPending,
@@ -35,7 +40,7 @@ export const SSOButtons = ({
     isAppleReady,
   } = useSSO();
 
-  const isDisabled = isSignInPending || isSSOPending;
+  const isDisabled = isSignInPending || isSSOPending || !acceptedTerms;
 
   return (
     <View
@@ -61,7 +66,7 @@ export const SSOButtons = ({
           </IconSlot>
 
           <Text className="text-lg font-bold text-foreground">
-            Continue with Apple
+            {t("onBoarding.actions.apple")}
           </Text>
         </Button>
       )}
@@ -81,7 +86,7 @@ export const SSOButtons = ({
         </IconSlot>
 
         <Text className="text-lg font-bold text-foreground">
-          Continue with Google
+          {t("onBoarding.actions.google")}
         </Text>
       </Button>
 
@@ -100,7 +105,7 @@ export const SSOButtons = ({
         </IconSlot>
 
         <Text className="text-lg font-bold text-foreground">
-          Continue with LinkedIn
+          {t("onBoarding.actions.linkedIn")}
         </Text>
       </Button>
 
@@ -115,7 +120,7 @@ export const SSOButtons = ({
             onPress={() => router.push("/auth/sign-in")}
           >
             <Text className="text-lg font-bold text-primary-foreground">
-              Continue with Email
+              {t("onBoarding.actions.email")}
             </Text>
           </Button>
         </>

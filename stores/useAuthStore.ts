@@ -12,6 +12,7 @@ interface AuthData {
     confirmPassword: string;
     picture?: string;
     progress: number;
+    acceptedTerms: boolean;
   };
   signUpRequestErrors: Record<string, string[]>;
   signInRequestErrors: Record<string, string[]>;
@@ -42,6 +43,7 @@ const initialState: AuthData = {
     confirmPassword: "",
     picture: undefined,
     progress: 0,
+    acceptedTerms: false,
   },
   signInRequestErrors: {},
   signUpRequestErrors: {},

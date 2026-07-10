@@ -31,6 +31,14 @@ export default function AuthLayout() {
           animationDuration: 200,
         }}
       />
+      <Stack.Screen
+        name="legal"
+        options={{
+          headerShown: false,
+          animation: "slide_from_right",
+          animationDuration: 200,
+        }}
+      />
     </Stack>
   );
 }

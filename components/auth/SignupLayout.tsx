@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import { View } from "react-native";
 import { FormBuilder } from "../shared/form-builder/FormBuilder";
 import { useSignUpFormStructure } from "./useSignupFormStructure";
+import { AcceptTerms } from "./AcceptTerms";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { Stepper } from "../shared/Stepper";
@@ -23,7 +24,7 @@ interface SignupLayoutProps {
 
 export const SignupLayout = ({ className }: SignupLayoutProps) => {
   const authStore = useAuthStore();
-  const { industries, isIndustriesSubTypePending } = useIndustries();
+  const { industries } = useIndustries();
 
   const {
     uploadFiles: uploadProfilePicture,
@@ -88,7 +89,8 @@ export const SignupLayout = ({ className }: SignupLayoutProps) => {
     !!authStore.signUpRequest.lastName &&
     !!authStore.signUpRequest.password &&
     authStore.signUpRequest.password.length >= 8 &&
-    authStore.signUpRequest.password === authStore.utilities.confirmPassword;
+    authStore.signUpRequest.password === authStore.utilities.confirmPassword &&
+    authStore.utilities.acceptedTerms;
 
   return (
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
@@ -113,7 +115,18 @@ export const SignupLayout = ({ className }: SignupLayoutProps) => {
                 title: "Introduce Yourself",
                 description:
                   "Start by providing the basic details about yourself.",
-                component: <FormBuilder structure={signUpFormStructure} />,
+                component: (
+                  <View>
+                    <FormBuilder structure={signUpFormStructure} />
+                    <AcceptTerms
+                      className="px-2 pt-2 pb-4"
+                      checked={authStore.utilities.acceptedTerms}
+                      onCheckedChange={(checked) =>
+                        authStore.setNested("utilities.acceptedTerms", checked)
+                      }
+                    />
+                  </View>
+                ),
                 validation: step1Validation,
               },
               {

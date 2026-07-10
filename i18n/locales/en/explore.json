@@ -102,6 +102,18 @@
                 "title": "Secure & Private",
                 "description": "Your privacy is our top priority. We employ industry-leading security to keep your information safe."
             }
+        },
+        "actions": {
+            "linkedIn": "Continue with LinkedIn",
+            "google": "Continue with Google",
+            "email": "Continue with Email",
+            "apple": "Continue with Apple"
+        },
+        "terms": {
+            "iAccept": "I accept the",
+            "termsOfUse": "Terms of Use",
+            "privacyPolicy": "Privacy Policy",
+            "and": "and"
         }
     }
 }
