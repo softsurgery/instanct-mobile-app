@@ -7,6 +7,7 @@ import {
   SelectOption,
   TimeFieldProps,
 } from "../../shared/form-builder/types";
+import { useTranslation } from "react-i18next";
 
 interface useSessionManagementFormStructureProps {
   store: SessionStore;
@@ -19,12 +20,13 @@ export const useSessionManagementFormStructure = ({
   objectives,
   isPending,
 }: useSessionManagementFormStructureProps) => {
+  const { t } = useTranslation("explore");
   const endDateField: Field<TimeFieldProps> = {
     id: "end-date",
-    label: "End Time",
+    label: t("session.manage.endTime"),
     variant: FieldVariant.TIME,
     error: store.errors.plannedEnd?.[0],
-    description: "You can adjust the planned end time",
+    description: t("session.manage.descriptions.endTime"),
     props: {
       editable: !isPending,
       value: store.updateDto?.plannedEnd,
@@ -37,10 +39,10 @@ export const useSessionManagementFormStructure = ({
 
   const objectivesField: Field<MultiSelectFieldProps> = {
     id: "objectives",
-    label: "Objectives",
+    label: t("session.manage.objectives"),
     variant: FieldVariant.MULTISELECT,
-    description: "Select the objectives for this session.",
-    placeholder: "Select objectives",
+    description: t("session.manage.descriptions.objectives"),
+    placeholder: t("session.manage.placeholders.objectives"),
     error: store.errors?.payload?.objectives?.[0],
     props: {
       editable: !isPending,
@@ -55,7 +57,7 @@ export const useSessionManagementFormStructure = ({
   };
 
   const structure: FormStructure = {
-    title: "Manage Session",
+    title: t("session.manage.title"),
     fieldsets: [
       {
         title: "",

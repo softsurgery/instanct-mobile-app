@@ -8,11 +8,9 @@ import {
   TextareaFieldProps,
   TimeFieldProps,
 } from "@/components/shared/form-builder/types";
-import { Text } from "@/components/ui/text";
-import { cn } from "@/lib/utils";
+
 import { RequestStore } from "@/stores/useRequestStore";
-import React from "react";
-import { Pressable, View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 interface UseCreateRequestFormStructureProps {
   store: RequestStore;
@@ -23,13 +21,14 @@ export const useCreateNewRequestFormStructure = ({
   store,
   isPending,
 }: UseCreateRequestFormStructureProps) => {
+  const { t } = useTranslation("explore");
   const messageField: Field<TextareaFieldProps> = {
     id: "message",
-    label: "Message",
+    label: t("request.newRequest.labels.message"),
     variant: FieldVariant.TEXTAREA,
     required: true,
-    placeholder: "Écrivez un message au destinataire",
-    description: "Ce message sera envoyé au destinataire avec votre demande.",
+    placeholder: t("request.newRequest.placeholders.message"),
+    description: t("request.newRequest.descriptions.message"),
     error: store.errors?.message?.[0] || "",
     props: {
       editable: !isPending,
@@ -44,10 +43,10 @@ export const useCreateNewRequestFormStructure = ({
 
   const choiceField: Field<CustomFieldProps> = {
     id: "choicePicker",
-    label: "Lieu et horaire",
+    label: t("request.newRequest.labels.choice"),
     variant: FieldVariant.CUSTOM,
     required: true,
-    placeholder: "Choisir une option",
+    placeholder: t("request.newRequest.placeholders.choice"),
     className: "mt-4",
     props: {
       children: (
@@ -66,8 +65,11 @@ export const useCreateNewRequestFormStructure = ({
             }
           }}
           options={[
-            { label: "Je choisis", value: "choose" },
-            { label: "Laisser décider", value: "let-decide" },
+            { label: t("request.newRequest.options.choose"), value: "choose" },
+            {
+              label: t("request.newRequest.options.letDecide"),
+              value: "let-decide",
+            },
           ]}
         />
       ),
@@ -76,11 +78,11 @@ export const useCreateNewRequestFormStructure = ({
 
   const timeField: Field<TimeFieldProps> = {
     id: "time",
-    label: "Heure",
+    label: t("request.newRequest.labels.time"),
     variant: FieldVariant.TIME,
     required: true,
-    placeholder: "Sélectionner une heure",
-    description: "Choisissez l'heure de la réunion",
+    placeholder: t("request.newRequest.placeholders.time"),
+    description: t("request.newRequest.descriptions.time"),
     hidden: !store.flags.mentionTimeAndPlace,
     error: store.errors?.time?.[0] || "",
     props: {
@@ -95,11 +97,11 @@ export const useCreateNewRequestFormStructure = ({
 
   const locationField: Field<MapPinFieldProps> = {
     id: "location",
-    label: "Lieu",
+    label: t("request.newRequest.labels.location"),
     variant: FieldVariant.MAPPIN,
     required: true,
-    placeholder: "Sélectionner un lieu sur la carte",
-    description: "Indiquez où se déroulera la réunion",
+    placeholder: t("request.newRequest.placeholders.location"),
+    description: t("request.newRequest.descriptions.location"),
     hidden: !store.flags.mentionTimeAndPlace,
     error: store.errors?.location?.[0] || "",
     props: {
@@ -122,10 +124,10 @@ export const useCreateNewRequestFormStructure = ({
   };
 
   const structure: FormStructure = {
-    title: "Envoyer une demande",
+    title: t("request.newRequest.formTitle"),
     fieldsets: [
       {
-        title: "Détails de la demande",
+        title: t("request.newRequest.sectionTitle"),
         rows: [
           {
             id: 1,

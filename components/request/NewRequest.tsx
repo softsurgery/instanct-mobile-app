@@ -24,6 +24,7 @@ import { zodErrorsToNested } from "@/lib/object";
 import { useMapStore } from "@/stores/useMapStore";
 import { Loader } from "../shared/Loader";
 import { BottomButtonWrapper } from "../shared/BottomButtonBlockWrapper";
+import { useTranslation } from "react-i18next";
 
 interface NewRequestProps {
   className?: string;
@@ -31,6 +32,7 @@ interface NewRequestProps {
 }
 
 export const NewRequest = ({ className, id }: NewRequestProps) => {
+  const { t } = useTranslation("explore");
   const queryClient = useQueryClient();
   const isKeyboardVisible = useKeyboardVisible();
   const requestStore = useRequestStore();
@@ -78,11 +80,14 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
       onSuccess: async () => {
         router.back();
         queryClient.invalidateQueries({ queryKey: ["outgoing-requests"] });
-        toast.success("Demande envoyée avec succès");
+        toast.success(t("request.newRequest.toasts.success"));
         requestStore.reset();
       },
       onError: (error: ServerErrorResponse) => {
-        toast.error(error.response?.data?.message || "Une erreur est survenue");
+        toast.error(
+          error.response?.data?.message ||
+            t("request.newRequest.toasts.error"),
+        );
       },
     });
 
@@ -116,7 +121,7 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
         classNames={{ wrapper: "border-b border-border pb-2" }}
-        title={"Demande de rendez-vous"}
+        title={t("request.newRequest.title")}
         titleVariant="large"
         reverse
         shortcuts={[
@@ -134,7 +139,7 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
         <React.Fragment>
           <StableKeyboardAwareScrollView className="flex-1 bg-background">
             <Text className="text-lg font-semibold text-foreground mx-4 mt-4">
-              Partenaire de réunion
+              {t("request.newRequest.partner")}
             </Text>
             <View className="px-4 py-2">
               <View className="mt-4 flex-row items-center gap-4">
@@ -165,8 +170,8 @@ export const NewRequest = ({ className, id }: NewRequestProps) => {
               >
                 <Text className="text-md font-bold">
                   {isSendingRequestPending
-                    ? "Envoi en cours..."
-                    : "Envoyer la demande"}
+                    ? t("request.newRequest.actions.sendRequestPending")
+                    : t("request.newRequest.actions.sendRequest")}
                 </Text>
               </Button>
             </BottomButtonWrapper>

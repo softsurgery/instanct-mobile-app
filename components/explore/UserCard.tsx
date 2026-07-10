@@ -40,6 +40,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { ScrollView } from "react-native-gesture-handler";
 import { ImageBackground } from "expo-image";
+import { useTranslation } from "react-i18next";
 const { width, height: screenHeight } = Dimensions.get("window");
 
 const CARD_HEIGHT = screenHeight;
@@ -60,6 +61,7 @@ export const UserCard = ({
   // industries,
   className,
 }: UserCardProps) => {
+  const { t } = useTranslation("explore");
   const { palette } = useColorPalette();
   const primary = hslToHex(palette?.primary);
   const primaryDark = hslToHex(palette?.primary, 0.8);
@@ -332,7 +334,7 @@ export const UserCard = ({
               <View className="mb-2.5 flex-row items-center gap-2">
                 <Icon as={Briefcase} size={15} color={primary} />
                 <Text className="text-sm font-extrabold text-foreground uppercase tracking-wider">
-                  Industries
+                  {t("explore.industries")}
                 </Text>
               </View>
               <View className="flex-row flex-wrap gap-2">
@@ -358,7 +360,7 @@ export const UserCard = ({
                 <View className="mb-2.5 flex-row items-center gap-2">
                   <Icon as={Goal} size={15} color={primary} />
                   <Text className="text-sm font-extrabold text-foreground uppercase tracking-wider">
-                    Objectives
+                    {t("explore.objectives")}
                   </Text>
                 </View>
                 <View className="flex-row flex-wrap gap-2">
@@ -386,12 +388,12 @@ export const UserCard = ({
             <View className="mb-2.5 flex-row items-center gap-2">
               <Icon as={Quote} size={15} color={primary} />
               <Text className="text-sm font-extrabold text-foreground uppercase tracking-wider">
-                About
+                {t("explore.about")}
               </Text>
             </View>
             <View className="bg-card/40 rounded-2xl p-4 border border-border/30">
               <Text className="text-[14px] leading-6 text-foreground/80">
-                {user.bio?.trim() || "No bio available."}
+                {user.bio?.trim() || t("explore.noBioAvailable")}
               </Text>
             </View>
           </View>

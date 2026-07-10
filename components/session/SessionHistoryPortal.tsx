@@ -4,12 +4,7 @@ import { LegendList } from "@legendapp/list";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { cn } from "@/lib/utils";
 import { ApplicationHeader } from "../shared/AppHeader";
-import {
-  Map as MapIcon,
-  ChevronRight,
-  Calendar,
-  ArrowLeft,
-} from "lucide-react-native";
+import { Map as MapIcon, ChevronRight, Calendar } from "lucide-react-native";
 import { router } from "expo-router";
 import { Text } from "../ui/text";
 import {
@@ -46,7 +41,6 @@ export const SessionHistoryPortal = ({
   } = useInfiniteUserSessions({
     sessionType: SessionType.MAP_SESSION,
   });
-
 
   const formatSessionName = (
     startDate: Date | undefined,

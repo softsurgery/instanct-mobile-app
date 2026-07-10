@@ -34,7 +34,7 @@ export const UserFilterPortal = ({ className }: UserFilterPortalProps) => {
     };
   }, []);
 
-  const { t } = useTranslation();
+  const { t } = useTranslation("explore");
 
   const { objectives, isObjectivesSubTypePending } = useObjectives();
   const { industries, isIndustriesSubTypePending } = useIndustries();
@@ -70,7 +70,7 @@ export const UserFilterPortal = ({ className }: UserFilterPortalProps) => {
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
         classNames={{ wrapper: "border-b border-border pb-2" }}
-        title={"User Filters"}
+        title={t("explore.filter.title")}
         titleVariant="large"
         reverse
         shortcuts={[
@@ -84,9 +84,7 @@ export const UserFilterPortal = ({ className }: UserFilterPortalProps) => {
         <StableKeyboardAwareScrollView className="flex-1 bg-background">
           <View className="px-5 pt-4 pb-2">
             <Text className="text-sm text-muted-foreground leading-relaxed">
-              You can apply filters to find users that match specific criteria.
-              These filters will help you discover users based on their
-              objectives, industries, and more.
+              {t("explore.filter.filtersDescription")}
             </Text>
           </View>
           <FormBuilder structure={structure} className="mt-4 px-2" />

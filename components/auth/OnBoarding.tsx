@@ -13,28 +13,14 @@ import { SSOButtons } from "./SSOButtons";
 import { Rocket, Zap, ShieldCheck } from "lucide-react-native";
 import { useColorPalette } from "@/hooks/useColorPalette";
 import { ThemeToggle } from "../shared/ThemeToggle";
+import { useTranslation } from "react-i18next";
 
 const width = Dimensions.get("window").width;
 
 const ONBOARDING_DATA = [
-  {
-    title: "Welcome to Instanct",
-    description:
-      "Experience the next generation of connectivity with our cutting-edge platform tailored just for you.",
-    icon: Rocket,
-  },
-  {
-    title: "Seamless Integration",
-    description:
-      "Sync your data effortlessly and enjoy a flawless experience across all your devices, anywhere, anytime.",
-    icon: Zap,
-  },
-  {
-    title: "Secure & Private",
-    description:
-      "Your privacy is our top priority. We employ industry-leading security to keep your information safe.",
-    icon: ShieldCheck,
-  },
+  { key: "welcome", icon: Rocket },
+  { key: "integration", icon: Zap },
+  { key: "security", icon: ShieldCheck },
 ];
 
 interface OnBoardingProps {
@@ -42,6 +28,7 @@ interface OnBoardingProps {
 }
 
 export default function OnBoarding({ className }: OnBoardingProps) {
+  const { t } = useTranslation("explore");
   const { palette } = useColorPalette();
   const ref = React.useRef<ICarouselInstance>(null);
   const progress = useSharedValue<number>(0);
@@ -91,10 +78,10 @@ export default function OnBoarding({ className }: OnBoardingProps) {
                     />
                   </View>
                   <Text className="text-3xl font-bold text-center mb-4 text-foreground">
-                    {item.title}
+                    {t(`onBoarding.slides.${item.key}.title`)}
                   </Text>
                   <Text className="text-base text-center text-muted-foreground leading-relaxed">
-                    {item.description}
+                    {t(`onBoarding.slides.${item.key}.description`)}
                   </Text>
                 </View>
               );

@@ -16,7 +16,6 @@ import { updateSessionSchema } from "@/types/validations/session.validation";
 import { zodErrorsToNested } from "@/lib/object";
 import { StableSafeAreaView } from "../../shared/StableSafeAreaView";
 import { ApplicationHeader } from "../../shared/AppHeader";
-import { ArrowLeft } from "lucide-react-native";
 import { StableKeyboardAwareScrollView } from "../../shared/StableKeyboardAwareScrollView";
 import { FormBuilder } from "../../shared/form-builder/FormBuilder";
 import { api } from "@/api";
@@ -27,6 +26,7 @@ import { EndSessionActionSheet } from "../EndSessionActionSheet";
 import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
 
 import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
+import { useTranslation } from "react-i18next";
 interface SessionManagePortalProps {
   className?: string;
 }
@@ -34,6 +34,7 @@ interface SessionManagePortalProps {
 export const SessionManagePortal = ({
   className,
 }: SessionManagePortalProps) => {
+  const { t } = useTranslation("explore");
   const { mapSession, refetchSessions, isSessionsPending } =
     useActiveSessions();
   const endSessionSheetRef = React.useRef<ActionSheetRef>(null);
@@ -114,16 +115,16 @@ export const SessionManagePortal = ({
     isPending: isUpdatingSession || isObjectivesSubTypePending,
   });
 
-  const isEndDateNextDay = React.useMemo(() => {
-    const { plannedStart, plannedEnd } = sessionStore.createDto;
+  // const isEndDateNextDay = React.useMemo(() => {
+  //   const { plannedStart, plannedEnd } = sessionStore.createDto;
 
-    if (!plannedStart || !plannedEnd) return false;
+  //   if (!plannedStart || !plannedEnd) return false;
 
-    const start = new Date(plannedStart);
-    const end = new Date(plannedEnd);
+  //   const start = new Date(plannedStart);
+  //   const end = new Date(plannedEnd);
 
-    return end < start;
-  }, [sessionStore.createDto]);
+  //   return end < start;
+  // }, [sessionStore.createDto]);
 
   const handleSessionEdit = () => {
     const result = updateSessionSchema.safeParse(sessionStore.updateDto);
@@ -155,7 +156,7 @@ export const SessionManagePortal = ({
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
         classNames={{ wrapper: "border-b border-border pb-2" }}
-        title={"Gestion de session active"}
+        title={t("session.manage.title")}
         titleVariant="large"
         reverse
         shortcuts={[
@@ -172,10 +173,7 @@ export const SessionManagePortal = ({
           <StableKeyboardAwareScrollView className="flex-1 bg-background">
             <View className="p-4">
               <Text className="text-sm text-muted-foreground leading-relaxed">
-                Veuillez configurer les paramètres de votre session afin de
-                pouvoir modifier ou compléter les informations de votre session
-                en cours. Vous pouvez notamment ajuster l&apos;heure de fin,
-                ajouter des objectifs, et bien plus encore.
+                {t("session.manage.description")}
               </Text>
             </View>
             <FormBuilder structure={structure} className="px-2" />
@@ -200,7 +198,9 @@ export const SessionManagePortal = ({
                 disabled={isPending}
               >
                 <Text className="text-md font-bold">
-                  {isEndingSessionPending ? "Ending..." : "End Session"}
+                  {isEndingSessionPending
+                    ? t("session.manage.actions.endSessionPending")
+                    : t("session.manage.actions.endSession")}
                 </Text>
               </Button>
               <Button
@@ -210,7 +210,9 @@ export const SessionManagePortal = ({
                 disabled={isPending}
               >
                 <Text className="text-md font-bold">
-                  {isUpdatingSession ? "Updating..." : "Confirm changes"}
+                  {isUpdatingSession
+                    ? t("session.manage.actions.confirmPending")
+                    : t("session.manage.actions.confirm")}
                 </Text>
               </Button>
             </BottomButtonWrapper>

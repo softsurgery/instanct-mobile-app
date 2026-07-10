@@ -13,16 +13,21 @@ import frNotifications from "./locales/fr/notifications.json";
 import enSettions from "./locales/en/settings.json";
 import frSettions from "./locales/fr/settings.json";
 
+import enExplore from "./locales/en/explore.json";
+import frExplore from "./locales/fr/explore.json";
+
 const resources = {
   en: {
     common: enCommon,
     notifications: enNotifications,
     settings: enSettions,
+    explore: enExplore,
   },
   fr: {
     common: frCommon,
     notifications: frNotifications,
     settings: frSettions,
+    explore: frExplore,
   },
   // ar: {
   //   common: arCommon,
@@ -38,7 +43,7 @@ i18n.use(initReactI18next).init({
   resources,
   lng: languageCode,
   fallbackLng: "en",
-  ns: ["common", "notifications", "settings"],
+  ns: ["common", "notifications", "settings", "explore"],
   defaultNS: "common",
   interpolation: { escapeValue: false },
 });

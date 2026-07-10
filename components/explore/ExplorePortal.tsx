@@ -45,6 +45,7 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
   const insets = useSafeAreaInsets();
   const { palette } = useColorPalette();
   const { t } = useTranslation("common");
+  const { t: tExplore } = useTranslation("explore");
   const { currentUser } = useCurrentUser();
   const userFilerStore = useExploreFilterStore();
   const mapStore = useMapStore();
@@ -247,15 +248,14 @@ export const ExplorePortal = ({ className }: ExplorePortalProps) => {
           <View className="flex flex-col flex-1 justify-center items-center px-4">
             <Loader />
             <Text variant={"large"} className="text-center">
-              Nearby people will be available shortly, if any are around.
+              {tExplore("explore.nearbyPeopleShortly")}
             </Text>
           </View>
         ) : users.length === 0 && filterCount > 0 ? (
           <View className="flex flex-col flex-1 justify-center items-center px-4">
             <NotFound />
             <Text variant={"large"} className="text-center">
-              No one matches your filters right now. Try adjusting or removing
-              some filters to see more people around you.
+              {tExplore("explore.noMatchFilters")}
             </Text>
           </View>
         ) : (

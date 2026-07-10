@@ -5,6 +5,7 @@ import {
   SelectOption,
 } from "@/components/shared/form-builder/types";
 import { ExploreFilterStore } from "@/stores/userExploreFilterStore";
+import { useTranslation } from "react-i18next";
 
 interface UseExploreFilterFormStructureProps {
   store: ExploreFilterStore;
@@ -19,15 +20,16 @@ export const useExploreFilterFormStructure = ({
   industries,
   isPending,
 }: UseExploreFilterFormStructureProps) => {
+  const { t } = useTranslation("explore");
   const objectivesField: Field<MultiSelectFieldProps> = {
     id: "objectives",
-    label: "Objectives",
+    label: t("explore.objectives"),
     variant: FieldVariant.MULTISELECT,
     required: false,
-    placeholder: "Select objectives",
-    description: "Select the objectives you're looking for.",
-    disabled: isPending,
+    placeholder: t("explore.filter.placeholders.objectives"),
+    description: t("explore.filter.descriptions.objectives"),
     props: {
+      editable: isPending,
       value: store.dto.objectives.map(String),
       onSelect: (value) => store.setNested("dto.objectives", value.map(Number)),
       options: objectives,
@@ -36,13 +38,13 @@ export const useExploreFilterFormStructure = ({
 
   const industryField: Field<MultiSelectFieldProps> = {
     id: "industry",
-    label: "Industry",
+    label: t("explore.industries"),
     variant: FieldVariant.MULTISELECT,
     required: false,
-    placeholder: "Select industries",
-    description: "Select the industries you're interested in.",
-    disabled: isPending,
+    placeholder: t("explore.filter.placeholders.industries"),
+    description: t("explore.filter.descriptions.industries"),
     props: {
+      editable: isPending,
       value: store.dto.industry.map(String),
       onSelect: (value) => store.setNested("dto.industry", value.map(Number)),
       options: industries,
