@@ -1,0 +1,105 @@
+{
+    "explore": {
+        "nearbyPeopleShortly": "Des personnes à proximité seront bientôt disponibles, si certaines se trouvent autour de vous.",
+        "noMatchFilters": "Aucune personne ne correspond à vos filtres pour le moment. Essayez de modifier ou de supprimer certains filtres pour découvrir davantage de personnes autour de vous.",
+        "industries": "Secteurs d'activité",
+        "objectives": "Objectifs",
+        "about": "À propos",
+        "noBioAvailable": "Aucune biographie disponible.",
+        "filter": {
+            "title": "Filtres utilisateurs",
+            "filtersDescription": "Vous pouvez appliquer des filtres pour trouver des utilisateurs correspondant à des critères spécifiques. Ces filtres vous aideront à découvrir des utilisateurs en fonction de leurs objectifs, de leur secteur d'activité et bien plus encore.",
+            "placeholders": {
+                "objectives": "Sélectionnez des objectifs",
+                "industries": "Sélectionnez des secteurs d'activité"
+            },
+            "descriptions": {
+                "objectives": "Sélectionnez les objectifs que vous recherchez.",
+                "industries": "Sélectionnez les secteurs d'activité qui vous intéressent."
+            },
+            "actions": {
+                "removeFilters": "Supprimer les filtres",
+                "saveFilters": "Enregistrer les filtres"
+            }
+        }
+    },
+    "session": {
+        "manage": {
+            "title": "Gérer la session",
+            "description": "Vous pouvez gérer votre session ici. Vous pouvez y mettre fin ou modifier ses paramètres.",
+            "endTime": "Heure de fin",
+            "objectives": "Objectifs",
+            "placeholders": {
+                "endTime": "Vous pouvez modifier l'heure de fin de votre session ici.",
+                "objectives": "Vous pouvez modifier vos objectifs ici."
+            },
+            "descriptions": {
+                "endTime": "Vous pouvez modifier l'heure de fin de votre session ici.",
+                "objectives": "Vous pouvez modifier vos objectifs ici."
+            },
+            "actionSheet": {
+                "title": "Terminer la session",
+                "message": "Êtes-vous sûr de vouloir terminer cette session ? Cette action est irréversible.",
+                "cancel": "Non, annuler",
+                "confirm": "Oui, terminer la session"
+            },
+            "actions": {
+                "endSession": "Terminer la session",
+                "confirm": "Confirmer les modifications"
+            }
+        }
+    },
+    "request": {
+        "newRequest": {
+            "title": "Demande de rendez-vous",
+            "formTitle": "Envoyer une demande",
+            "sectionTitle": "Détails de la demande",
+            "partner": "Partenaire de réunion",
+            "labels": {
+                "message": "Message",
+                "choice": "Lieu et horaire",
+                "time": "Heure",
+                "location": "Lieu"
+            },
+            "placeholders": {
+                "message": "Écrivez un message au destinataire",
+                "choice": "Choisir une option",
+                "time": "Sélectionner une heure",
+                "location": "Sélectionner un lieu sur la carte"
+            },
+            "descriptions": {
+                "message": "Ce message sera envoyé au destinataire avec votre demande.",
+                "time": "Choisissez l'heure de la réunion",
+                "location": "Indiquez où se déroulera la réunion"
+            },
+            "options": {
+                "choose": "Je choisis",
+                "letDecide": "Laisser décider"
+            },
+            "actions": {
+                "sendRequest": "Envoyer la demande",
+                "sendRequestPending": "Envoi en cours..."
+            },
+            "toasts": {
+                "success": "Demande envoyée avec succès",
+                "error": "Une erreur est survenue"
+            }
+        }
+    },
+    "onBoarding": {
+        "slides": {
+            "welcome": {
+                "title": "Bienvenue sur Instanct",
+                "description": "Découvrez la nouvelle génération de connectivité grâce à notre plateforme innovante, conçue spécialement pour vous."
+            },
+            "integration": {
+                "title": "Intégration fluide",
+                "description": "Synchronisez vos données sans effort et profitez d'une expérience parfaite sur tous vos appareils, partout et à tout moment."
+            },
+            "security": {
+                "title": "Sécurisé et confidentiel",
+                "description": "Votre confidentialité est notre priorité absolue. Nous utilisons une sécurité de pointe pour protéger vos informations."
+            }
+        }
+    }
+}

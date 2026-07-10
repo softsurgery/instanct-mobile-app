@@ -1,0 +1,107 @@
+{
+    "explore": {
+        "nearbyPeopleShortly": "Nearby people will be available shortly, if any are around.",
+        "noMatchFilters": "No one matches your filters right now. Try adjusting or removing some filters to see more people around you.",
+        "industries": "Industries",
+        "objectives": "Objectives",
+        "about": "About",
+        "noBioAvailable": "No bio available.",
+        "filter": {
+            "title": "User Filters",
+            "filtersDescription": "You can apply filters to find users that match specific criteria. These filters will help you discover users based on their objectives, industries, and more.",
+            "placeholders": {
+                "objectives": "Select objectives",
+                "industries": "Select industries"
+            },
+            "descriptions": {
+                "objectives": "Select the objectives you're looking for.",
+                "industries": "Select the industries you're interested in."
+            },
+            "actions": {
+                "removeFilters": "Remove Filters",
+                "saveFilters": "Save Filters"
+            }
+        }
+    },
+    "session": {
+        "manage": {
+            "title": "Manage Session",
+            "description": "You can manage your session here. You can end the session or adjust your settings.",
+            "endTime": "End Time",
+            "objectives": "Objectives",
+            "placeholders": {
+                "endTime": "You can adjust the end time of your session here.",
+                "objectives": "You can adjust your objectives here."
+            },
+            "descriptions": {
+                "endTime": "You can adjust the end time of your session here.",
+                "objectives": "You can adjust your objectives here."
+            },
+            "actionSheet": {
+                "title": "End Session",
+                "message": "Are you sure you want to end this session? This action cannot be undone.",
+                "cancel": "No, cancel",
+                "confirm": "Yes, end Session"
+            },
+            "actions": {
+                "endSession": "End Session",
+                "endSessionPending": "Ending Session...",
+                "confirm": "Confirm changes",
+                "confirmPending": "Confirming changes..."
+            }
+        }
+    },
+    "request": {
+        "newRequest": {
+            "title": "Meeting Request",
+            "formTitle": "Send a request",
+            "sectionTitle": "Request details",
+            "partner": "Meeting partner",
+            "labels": {
+                "message": "Message",
+                "choice": "Location and time",
+                "time": "Time",
+                "location": "Location"
+            },
+            "placeholders": {
+                "message": "Write a message to the recipient",
+                "choice": "Choose an option",
+                "time": "Select a time",
+                "location": "Select a location on the map"
+            },
+            "descriptions": {
+                "message": "This message will be sent to the recipient with your request.",
+                "time": "Choose the time of the meeting",
+                "location": "Indicate where the meeting will take place"
+            },
+            "options": {
+                "choose": "I choose",
+                "letDecide": "Let them decide"
+            },
+            "actions": {
+                "sendRequest": "Send the request",
+                "sendRequestPending": "Sending..."
+            },
+            "toasts": {
+                "success": "Request sent successfully",
+                "error": "An error occurred"
+            }
+        }
+    },
+    "onBoarding": {
+        "slides": {
+            "welcome": {
+                "title": "Welcome to Instanct",
+                "description": "Experience the next generation of connectivity with our cutting-edge platform tailored just for you."
+            },
+            "integration": {
+                "title": "Seamless Integration",
+                "description": "Sync your data effortlessly and enjoy a flawless experience across all your devices, anywhere, anytime."
+            },
+            "security": {
+                "title": "Secure & Private",
+                "description": "Your privacy is our top priority. We employ industry-leading security to keep your information safe."
+            }
+        }
+    }
+}
