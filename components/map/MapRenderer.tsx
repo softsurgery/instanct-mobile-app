@@ -207,7 +207,7 @@ export const MapRenderer = ({
         onRegionChange={handleRegionChange}
         showsCompass={false}
         mapType={mapStore.settings.mode === "map" ? "standard" : "satellite"}
-        clusteringEnabled={true}
+        clusteringEnabled={mapStore.settings.clusters}
         renderCluster={(cluster) => {
           const { geometry, properties } = cluster;
           const latitude = geometry.coordinates[1];
