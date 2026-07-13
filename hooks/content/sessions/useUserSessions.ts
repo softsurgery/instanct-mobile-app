@@ -7,11 +7,12 @@ interface useUserSessionsProps {
   page: string;
   limit: string;
   sessionType?: SessionType;
+  sort?: string;
   enabled?: boolean;
 }
 
 export const useUserSessions = (
-  { page, limit, sessionType, enabled }: useUserSessionsProps = {
+  { page, limit, sessionType, sort, enabled }: useUserSessionsProps = {
     page: "1",
     limit: "5",
     sessionType: SessionType.DEFAULT,
@@ -23,11 +24,12 @@ export const useUserSessions = (
     isPending: isSessionsPending,
     refetch: refetchSessions,
   } = useQuery({
-    queryKey: ["user-sessions", sessionType, page, limit],
+    queryKey: ["user-sessions", sessionType, page, limit, sort],
     queryFn: () =>
       api.session.findAllPaginated({
         page,
         limit,
+        sort,
         filter: `sessionType||$eq||${sessionType}`,
       }),
     enabled,

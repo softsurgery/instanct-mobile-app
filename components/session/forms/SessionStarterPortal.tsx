@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { View } from "react-native";
 import { StableSafeAreaView } from "../../shared/StableSafeAreaView";
 import { ApplicationHeader } from "../../shared/AppHeader";
-import { ArrowLeft, Info } from "lucide-react-native";
+import { Info } from "lucide-react-native";
 import { router } from "expo-router";
 import { StableKeyboardAwareScrollView } from "../../shared/StableKeyboardAwareScrollView";
 import { FormBuilder } from "../../shared/form-builder/FormBuilder";
@@ -16,6 +16,8 @@ import { api } from "@/api";
 import React from "react";
 import { createSessionSchema } from "@/types/validations/session.validation";
 import { ServerErrorResponse } from "@/types";
+import { SessionType } from "@/types/session";
+import { useUserSessions } from "@/hooks/content/sessions/useUserSessions";
 import { useObjectives } from "@/hooks/content/reference-types/useObjectives";
 import { mapToSelectOptions } from "../../shared/form-builder/utils/map-select-options";
 import { zodErrorsToNested } from "@/lib/object";
@@ -58,6 +60,23 @@ export const SessionStarterPortal = ({
 
   const { objectives, isObjectivesSubTypePending } = useObjectives();
 
+  // Prefill the form with the objectives of the most recent session.
+  const { sessions: lastSessions, isSessionsPending: isLastSessionPending } =
+    useUserSessions({
+      page: "1",
+      limit: "1",
+      sessionType: SessionType.MAP_SESSION,
+      sort: "createdAt,desc",
+    });
+
+  React.useEffect(() => {
+    const lastObjectives = lastSessions[0]?.payload?.objectives as
+      | number[]
+      | undefined;
+    if (lastObjectives?.length)
+      sessionStore.setNested("createDto.payload.objectives", lastObjectives);
+  }, [lastSessions]);
+
   const { structure } = useSessionStarterFormStructure({
     store: sessionStore,
     objectives: mapToSelectOptions({
@@ -65,7 +84,10 @@ export const SessionStarterPortal = ({
       labelKey: "label",
       valueKey: "id",
     }),
-    isPending: isStartingSessionPending || isObjectivesSubTypePending,
+    isPending:
+      isStartingSessionPending ||
+      isObjectivesSubTypePending ||
+      isLastSessionPending,
   });
 
   const isEndDateNextDay = React.useMemo(() => {
@@ -75,7 +97,9 @@ export const SessionStarterPortal = ({
   }, [sessionStore.createDto]);
 
   const isSubmitDisabled =
-    isStartingSessionPending || isObjectivesSubTypePending;
+    isStartingSessionPending ||
+    isObjectivesSubTypePending ||
+    isLastSessionPending;
 
   const handleSessionStart = () => {
     const result = createSessionSchema(sessionStore.flags.startNow).safeParse(
