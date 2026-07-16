@@ -3,7 +3,13 @@
     "explore": "Explorer",
     "messages": "Messages",
     "like": "Aimer",
-    "map": "Carte",
+    "map": {
+      "title": "Carte",
+      "locked": {
+        "title": "Le partage est verrouillé",
+        "description": "Démarrez une session pour passer en direct et voir qui se trouve à proximité sur la carte"
+      }
+    },
     "menu": "Menu",
     "notifications": "Notifications",
     "profile": "Mon Profile",
@@ -12,6 +18,7 @@
     "sessions": "Sessions",
     "sessionDetails": "Détails de la session",
     "mapSettings": "Paramètres de la carte",
+    "activities": "Activités",
     "settings": {
       "title": "Paramètres",
       "reportBug": "Signaler un bug",
