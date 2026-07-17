@@ -151,7 +151,7 @@ export const InspectBaseProfile = ({
       },
       onError: (error: ServerErrorResponse) => {
         toast.error(
-          error.response?.data?.message || "Failed to upload image",
+          error.response?.data?.message || t("menu.toasts.uploadError"),
           {},
         );
       },
@@ -169,13 +169,13 @@ export const InspectBaseProfile = ({
           queryKey: ["server-image", currentUser?.coverId],
         });
         refetchCurrentUser();
-        toast.success("Cover updated successfully", {
-          description: "Your cover has been successfully updated.",
+        toast.success(t("menu.toasts.coverUpdated"), {
+          description: t("menu.toasts.coverUpdatedDescription"),
         });
       },
       onError: (error: ServerErrorResponse) => {
         toast.error(
-          error.response?.data?.message || "Failed to update cover",
+          error.response?.data?.message || t("menu.toasts.coverError"),
           {},
         );
       },
@@ -185,13 +185,13 @@ export const InspectBaseProfile = ({
     useMutation({
       mutationFn: () => api.auth.sendVerifyEmail(user?.email),
       onSuccess: () => {
-        toast.success("Email sent successfully", {
-          description: "Check your email for verification link.",
+        toast.success(t("menu.toasts.emailSent"), {
+          description: t("menu.toasts.emailSentDescription"),
         });
       },
       onError: (error: ServerErrorResponse) => {
         toast.error(
-          error.response?.data?.message || "Failed to update cover",
+          error.response?.data?.message || t("menu.toasts.emailError"),
           {},
         );
       },

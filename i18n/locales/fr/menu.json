@@ -28,6 +28,33 @@
             "editProfile": "Modifier le profil",
             "addCoverPhoto": "Ajouter une photo de couverture",
             "verifyEmail": "Vérifier l'e-mail"
+        },
+        "toasts": {
+            "coverUpdated": "Couverture mise à jour",
+            "coverUpdatedDescription": "Votre photo de couverture a bien été mise à jour.",
+            "coverError": "Échec de la mise à jour de la couverture",
+            "uploadError": "Échec du téléversement de l'image",
+            "emailSent": "E-mail envoyé",
+            "emailSentDescription": "Consultez votre boîte de réception pour le lien de vérification.",
+            "emailError": "Échec de l'envoi de l'e-mail de vérification"
+        },
+        "industries": {
+            "title": "Secteurs d'activité",
+            "description": "Sélectionnez un ou plusieurs secteurs d'activité correspondant à vos objectifs professionnels. Cela vous aide à entrer en contact avec des professionnels partageant les mêmes intérêts et à découvrir des opportunités.",
+            "labels": {
+                "industries": "Secteurs d'activité"
+            },
+            "actions": {
+                "update": "Mettre à jour les secteurs",
+                "updatePending": "Enregistrement..."
+            },
+            "toasts": {
+                "updated": "Secteurs d'activité mis à jour",
+                "updatedDescription": "Vos secteurs d'activité ont bien été mis à jour.",
+                "error": "Échec de la mise à jour des secteurs d'activité",
+                "noSelection": "Veuillez sélectionner au moins un secteur d'activité.",
+                "noSelectionDescription": "Vous devez sélectionner au moins un secteur d'activité avant d'enregistrer."
+            }
         }
     },
     "education": {

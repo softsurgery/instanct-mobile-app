@@ -44,6 +44,12 @@
                         "update-profile": "Update Profile",
                         "update-profile-pending": "Updating...",
                         "remove-picture": "Remove Picture"
+                    },
+                    "toasts": {
+                        "updated": "Profile updated successfully",
+                        "updated-description": "Your profile has been successfully updated.",
+                        "update-error": "Failed to update profile",
+                        "upload-error": "Failed to upload image"
                     }
                 },
                 "privacy-security": {
@@ -105,7 +111,7 @@
                             },
                             "two-factor-authentication": {
                                 "title": "Two-Factor Authentication",
-                                "description": "Add an extra layer of protection for sign in",
+                                "description": "Add an extra layer of protection for sign in"
                             }
                         },
                         "privacy": {
@@ -113,11 +119,11 @@
                             "description": "Manage your privacy settings.",
                             "data-visibility": {
                                 "title": "Data Visibility",
-                                "description": "Control who can see your profile and activity",
+                                "description": "Control who can see your profile and activity"
                             },
                             "download-data": {
                                 "title": "Download Your Data",
-                                "description": "Export a copy of your account information",
+                                "description": "Export a copy of your account information"
                             }
                         }
                     }
