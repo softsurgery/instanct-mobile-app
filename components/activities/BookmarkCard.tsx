@@ -22,6 +22,7 @@ import {
   type QuickAction,
 } from "./UserQuickActionsSheet";
 import { useColorPalette } from "@/hooks/useColorPalette";
+import { useTranslation } from "react-i18next";
 
 interface BookmarkCardProps {
   className?: string;
@@ -36,6 +37,7 @@ export const BookmarkCard = ({
   user,
   onRemoved,
 }: BookmarkCardProps) => {
+  const { t } = useTranslation("activities");
   const { palette } = useColorPalette();
   const ids = [user?.pictureId];
   const fallbacks = [identifyUserAvatar(user)];
@@ -78,19 +80,19 @@ export const BookmarkCard = ({
     () => [
       {
         key: "profile",
-        label: "View profile",
+        label: t("activities.bookmarks.actions.viewProfile"),
         icon: UserRound,
         onPress: openProfile,
       },
       {
         key: "message",
-        label: "Send message",
+        label: t("activities.bookmarks.actions.sendMessage"),
         icon: SendIcon,
         onPress: () => {},
       },
       {
         key: "remove",
-        label: "Remove bookmark",
+        label: t("activities.bookmarks.actions.removeBookmark"),
         icon: BookmarkX,
         destructive: true,
         onPress: () => {
@@ -98,7 +100,7 @@ export const BookmarkCard = ({
         },
       },
     ],
-    [openProfile, deleteBookmark, user?.id],
+    [openProfile, deleteBookmark, user?.id, t],
   );
 
   return (

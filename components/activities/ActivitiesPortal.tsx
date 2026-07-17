@@ -19,7 +19,7 @@ interface ActivitiesPortalProps {
 }
 
 export const ActivitiesPortal = ({ className }: ActivitiesPortalProps) => {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("activities");
   const { count } = useNotificationContext();
   const { count: chatCount } = useChatContext();
 
@@ -57,7 +57,7 @@ export const ActivitiesPortal = ({ className }: ActivitiesPortalProps) => {
     <StableSafeAreaView className={cn("flex-1", className)}>
       <Animated.View style={animatedHeaderStyle}>
         <ApplicationHeader
-          title={t("screens.activities", "Activities")}
+          title={t("activities.title")}
           shortcuts={[
             {
               key: "bell",

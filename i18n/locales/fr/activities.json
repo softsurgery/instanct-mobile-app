@@ -1,0 +1,89 @@
+{
+  "activities": {
+    "title": "Activités",
+    "tabs": {
+      "bookmarks": {
+        "title": "Signets"
+      },
+      "incomming": {
+        "title": "Entrant"
+      },
+      "outgoing": {
+        "title": "Sortant"
+      }
+    },
+    "groups": {
+      "today": "Aujourd'hui",
+      "yesterday": "Hier"
+    },
+    "bookmarks": {
+      "empty": "Aucun signet trouvé",
+      "caughtUp": "Vous avez consulté tous vos signets !",
+      "actions": {
+        "viewProfile": "Voir le profil",
+        "sendMessage": "Envoyer un message",
+        "removeBookmark": "Supprimer le signet"
+      }
+    },
+    "request": {
+      "title": "Demande de réunion",
+      "labels": {
+        "message": "Message",
+        "dateTime": "Date et heure"
+      },
+      "placeholders": {
+        "message": "Aucune description fournie",
+        "dateTime": "Non spécifié"
+      },
+      "location": {
+        "updating": "Mise à jour du lieu..."
+      },
+      "banners": {
+        "accepted": "Cette réunion a été ajoutée à votre programme.",
+        "rejected": "Cette demande de réunion a été refusée."
+      },
+      "toasts": {
+        "locationUpdated": "Lieu mis à jour",
+        "locationError": "Impossible de mettre à jour le lieu",
+        "error": "Une erreur est survenue. Veuillez réessayer."
+      }
+    },
+    "incomming": {
+      "empty": "Aucune demande entrante trouvée",
+      "caughtUp": "Vous avez consulté toutes les demandes entrantes",
+      "request": {
+        "actions": {
+          "accept": "Accepter",
+          "reject": "Refuser"
+        },
+        "toasts": {
+          "accepted": "Demande acceptée",
+          "rejected": "Demande refusée"
+        },
+        "actionSheet": {
+          "accept": {
+            "title": "Accepter la demande",
+            "message": "Êtes-vous sûr de vouloir accepter cette demande de réunion ?",
+            "confirm": "Oui, accepter",
+            "cancel": "Non, annuler"
+          },
+          "reject": {
+            "title": "Refuser la demande",
+            "message": "Êtes-vous sûr de vouloir refuser cette demande de réunion ?",
+            "confirm": "Oui, refuser",
+            "cancel": "Non, annuler"
+          }
+        }
+      }
+    },
+    "outgoing": {
+      "empty": "Aucune demande sortante trouvée",
+      "caughtUp": "Vous avez consulté toutes les demandes sortantes",
+      "request": {
+        "banners": {
+          "pending": "En attente de la réponse du destinataire."
+        }
+      }
+    }
+  }
+}
