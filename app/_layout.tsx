@@ -1,6 +1,6 @@
 import { NAV_THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
-import { ThemeProvider } from "expo-router/react-navigation";
+import { ThemeProvider } from "@react-navigation/native";
 import { PortalHost } from "@rn-primitives/portal";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { Stack } from "expo-router";

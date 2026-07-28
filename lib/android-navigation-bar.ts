@@ -1,8 +1,18 @@
-import { NavigationBar } from "expo-navigation-bar";
+import * as NavigationBar from "expo-navigation-bar";
 import { Platform } from "react-native";
+import { NAV_THEME } from "./theme";
 
-export function setAndroidNavigationBar(theme: "light" | "dark") {
+export async function setAndroidNavigationBar(theme: "light" | "dark") {
   if (Platform.OS !== "android") return;
 
-  NavigationBar.setStyle(theme === "dark" ? "light" : "dark");
+  await NavigationBar.setButtonStyleAsync(theme === "dark" ? "light" : "dark");
+
+  const behavior = await NavigationBar.getBehaviorAsync();
+  if (behavior !== "overlay-swipe") {
+    await NavigationBar.setBackgroundColorAsync(
+      theme === "dark"
+        ? NAV_THEME.dark.colors.background
+        : NAV_THEME.light.colors.background,
+    );
+  }
 }
