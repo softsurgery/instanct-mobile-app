@@ -379,8 +379,8 @@ export const Conversation = ({
       <ImageBackground
         source={
           colorScheme === "dark"
-            ? require("~/assets/images/message-background-dark.png")
-            : require("~/assets/images/message-background.png")
+            ? require("~/assets/images/message-background-dark.jpg")
+            : require("~/assets/images/message-background.jpg")
         }
         style={{
           flex: 1,
