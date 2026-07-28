@@ -266,6 +266,7 @@ export const useChat = (
     const onConversationUpdatedLastCheck = (
       updated: ResponseConversationDto,
     ) => {
+      queryClient.setQueryData(["conversation", updated.id], updated);
       queryClient.setQueryData(
         ["conversations", limit, search, join],
         (oldData: InfiniteConversationData | undefined) =>

@@ -75,8 +75,8 @@ export const ConversationInput = ({
   return (
     <View
       className={cn(
-        "bg-background/95 border-t border-border py-4 z-20",
-        isKeyboardVisible ? "pb-4" : Platform.OS === "ios" ? "pb-8" : "pb-4",
+        "bg-background/95 border-t border-border py-2 z-20",
+        isKeyboardVisible ? "pb-2" : Platform.OS === "ios" ? "pb-6" : "pb-4",
         className,
       )}
     >
@@ -101,7 +101,7 @@ export const ConversationInput = ({
           placeholder={"Aa"}
           multiline
           style={{ minHeight: 40, maxHeight: 120, height: "auto" }}
-          className="flex-1 px-4 py-2 rounded-2xl bg-input text-base"
+          className="flex-1 px-4 rounded-2xl bg-input text-base"
         />
 
         {/* Send Button */}

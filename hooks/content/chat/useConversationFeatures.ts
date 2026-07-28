@@ -244,9 +244,12 @@ export const useConversationFeatures = ({
       }
     };
 
-    const markConversationAsSeen = () => {
+    const markConversationAsSeen = (lastCheck?: string | Date) => {
       if (accessDeniedRef.current) return;
-      s.emit("see-conversation", { conversationId: id });
+      s.emit("see-conversation", {
+        conversationId: id,
+        ...(lastCheck ? { lastCheck: new Date(lastCheck).toISOString() } : {}),
+      });
       queryClient.invalidateQueries({
         queryKey: CONVERSATIONS_UNREAD_COUNT_QUERY_KEY,
       });
@@ -369,7 +372,7 @@ export const useConversationFeatures = ({
       playSound();
 
       if (message.userId !== currentUserIdRef.current) {
-        markConversationAsSeen();
+        markConversationAsSeen(message.createdAt);
       }
     };
 
@@ -599,14 +602,20 @@ export const useConversationFeatures = ({
   /**
    * Emits a socket event to mark the current conversation as seen.
    */
-  const markConversationAsSeen = React.useCallback(() => {
-    const s = socketRef.current;
-    if (!s || accessDeniedRef.current) return;
-    s.emit("see-conversation", { conversationId: id });
-    queryClient.invalidateQueries({
-      queryKey: CONVERSATIONS_UNREAD_COUNT_QUERY_KEY,
-    });
-  }, [id, queryClient]);
+  const markConversationAsSeen = React.useCallback(
+    (lastCheck?: string | Date) => {
+      const s = socketRef.current;
+      if (!s || accessDeniedRef.current) return;
+      s.emit("see-conversation", {
+        conversationId: id,
+        ...(lastCheck ? { lastCheck: new Date(lastCheck).toISOString() } : {}),
+      });
+      queryClient.invalidateQueries({
+        queryKey: CONVERSATIONS_UNREAD_COUNT_QUERY_KEY,
+      });
+    },
+    [id, queryClient],
+  );
 
   return {
     conversation,
