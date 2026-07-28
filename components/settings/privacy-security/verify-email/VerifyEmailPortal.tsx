@@ -1,8 +1,6 @@
 import { cn } from "@/lib/utils";
 import { StableSafeAreaView } from "@/components/shared/StableSafeAreaView";
 import { ApplicationHeader } from "@/components/shared/AppHeader";
-import { ArrowLeft } from "lucide-react-native";
-import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { StableKeyboardAwareScrollView } from "@/components/shared/StableKeyboardAwareScrollView";
 
