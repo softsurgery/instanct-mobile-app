@@ -3,7 +3,13 @@
     "explore": "Explore",
     "messages": "Messages",
     "like": "Like",
-    "map": "Map",
+    "map": {
+      "title": "Map",
+      "locked": {
+        "title": "Sharing is Locked",
+        "description": "Start a session to go live and see who's nearby on the map"
+      }
+    },
     "menu": "Menu",
     "notifications": "Notifications",
     "profile": "My Profile",
@@ -12,6 +18,7 @@
     "sessions": "Sessions",
     "sessionDetails": "Session Details",
     "mapSettings": "Map Settings",
+    "activities": "Activities",
     "settings": {
       "title": "Settings",
       "reportBug": "Report a Bug",

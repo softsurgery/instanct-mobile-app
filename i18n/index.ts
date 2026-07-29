@@ -19,6 +19,9 @@ import frExplore from "./locales/fr/explore.json";
 import enMenu from "./locales/en/menu.json";
 import frMenu from "./locales/fr/menu.json";
 
+import enActivities from "./locales/en/activities.json";
+import frActivities from "./locales/fr/activities.json";
+
 const resources = {
   en: {
     common: enCommon,
@@ -26,6 +29,7 @@ const resources = {
     settings: enSettings,
     explore: enExplore,
     menu: enMenu,
+    activities: enActivities,
   },
   fr: {
     common: frCommon,
@@ -33,6 +37,7 @@ const resources = {
     settings: frSettings,
     explore: frExplore,
     menu: frMenu,
+    activities: frActivities,
   },
   // ar: {
   //   common: arCommon,
@@ -48,7 +53,7 @@ i18n.use(initReactI18next).init({
   resources,
   lng: languageCode,
   fallbackLng: "en",
-  ns: ["common", "notifications", "settings", "explore", "menu"],
+  ns: ["common", "notifications", "settings", "explore", "menu", "activities"],
   defaultNS: "common",
   interpolation: { escapeValue: false },
 });

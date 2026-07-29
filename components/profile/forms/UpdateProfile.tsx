@@ -37,8 +37,10 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
     mutationFn: (user: UpdateUserDto) => api.user.updateCurrent(user),
     onSuccess: () => {
       router.back();
-      toast.success("Profile updated successfully", {
-        description: "Your profile has been successfully updated.",
+      toast.success(t("settings.account.screens.profile.toasts.updated"), {
+        description: t(
+          "settings.account.screens.profile.toasts.updated-description",
+        ),
       });
       userStore.reset();
       queryClient.invalidateQueries({ queryKey: ["user", currentUser?.id] });
@@ -50,7 +52,8 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
     },
     onError: (error: ServerErrorResponse) => {
       toast.error(
-        error.response?.data?.message || "Failed to update profile",
+        error.response?.data?.message ||
+          t("settings.account.screens.profile.toasts.update-error"),
         {},
       );
     },
@@ -77,14 +80,14 @@ export const UpdateProfile = ({ className }: UpdateProfileProps) => {
     },
     onError: (error: ServerErrorResponse) => {
       toast.error(
-        error.response?.data?.message || "Failed to upload image",
+        error.response?.data?.message ||
+          t("settings.account.screens.profile.toasts.upload-error"),
         {},
       );
     },
   });
 
-  const { currentUser, refetchCurrentUser, isCurrentUserPending } =
-    useCurrentUser();
+  const { currentUser, refetchCurrentUser } = useCurrentUser();
 
   const fallback = React.useMemo(
     () => identifyUserAvatar(currentUser),

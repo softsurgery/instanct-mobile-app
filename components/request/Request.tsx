@@ -14,7 +14,9 @@ import {
   MessageSquare,
   XCircle,
 } from "lucide-react-native";
-import { Alert, View } from "react-native";
+import { View } from "react-native";
+import { type ActionSheetRef } from "react-native-actions-sheet";
+import { useTranslation } from "react-i18next";
 import { Loader } from "@/components/shared/Loader";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { identifyUser, identifyUserAvatar } from "@/lib/user";
@@ -27,6 +29,7 @@ import { RequestLocationSection } from "./RequestLocationSection";
 import { RequestSkeleton } from "./RequestSkeleton";
 import { StatusBadge } from "./RequestStatus";
 import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
+import { RequestConfirmActionSheet } from "./RequestConfirmActionSheet";
 
 interface RequestProps {
   id: string;
@@ -35,11 +38,13 @@ interface RequestProps {
 }
 
 export const Request = ({ id, className, isIncoming }: RequestProps) => {
+  const { t } = useTranslation("activities");
   const queryClient = useQueryClient();
 
-  const [pendingEvent, setPendingEvent] = React.useState<RequestEvent | null>(
+  const [confirmEvent, setConfirmEvent] = React.useState<RequestEvent | null>(
     null,
   );
+  const confirmSheetRef = React.useRef<ActionSheetRef>(null);
 
   const { data: request, isPending: isRequestPending } = useQuery({
     queryKey: ["request", id],
@@ -65,10 +70,10 @@ export const Request = ({ id, className, isIncoming }: RequestProps) => {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["request", id] });
         queryClient.invalidateQueries({ queryKey: ["requests"] });
-        toast.success("Lieu mis à jour");
+        toast.success(t("activities.request.toasts.locationUpdated"));
       },
       onError: () => {
-        toast.error("Impossible de mettre à jour le lieu");
+        toast.error(t("activities.request.toasts.locationError"));
       },
     },
   );
@@ -80,47 +85,31 @@ export const Request = ({ id, className, isIncoming }: RequestProps) => {
       queryClient.invalidateQueries({ queryKey: ["request", id] });
       queryClient.invalidateQueries({ queryKey: ["requests"] });
       toast.success(
-        event === RequestEvent.Accept ? "Demande acceptée" : "Demande refusée",
+        event === RequestEvent.Accept
+          ? t("activities.incomming.request.toasts.accepted")
+          : t("activities.incomming.request.toasts.rejected"),
       );
     },
     onError: () => {
-      Alert.alert("Erreur", "Une erreur est survenue. Veuillez réessayer.");
+      toast.error(t("activities.request.toasts.error"));
     },
-    onSettled: () => setPendingEvent(null),
   });
 
-  const runUpdate = (event: RequestEvent) => {
-    setPendingEvent(event);
+  const handleConfirmClose = () => {
+    confirmSheetRef.current?.hide();
+    setConfirmEvent(null);
+  };
+
+  const handleConfirm = () => {
+    if (!confirmEvent) return;
+    const event = confirmEvent;
+    handleConfirmClose();
     updateStatus(event);
   };
 
-  const handleAccept = () => {
-    Alert.alert(
-      "Accepter la demande",
-      "Êtes-vous sûr de vouloir accepter cette demande de réunion ?",
-      [
-        { text: "Annuler", style: "cancel" },
-        {
-          text: "Accepter",
-          onPress: () => runUpdate(RequestEvent.Accept),
-        },
-      ],
-    );
-  };
-
-  const handleReject = () => {
-    Alert.alert(
-      "Refuser la demande",
-      "Êtes-vous sûr de vouloir refuser cette demande de réunion ?",
-      [
-        { text: "Annuler", style: "cancel" },
-        {
-          text: "Refuser",
-          style: "destructive",
-          onPress: () => runUpdate(RequestEvent.Reject),
-        },
-      ],
-    );
+  const askConfirmation = (event: RequestEvent) => {
+    setConfirmEvent(event);
+    confirmSheetRef.current?.show();
   };
 
   const { user, isUserPending } = useIdentifiedUser({
@@ -148,7 +137,7 @@ export const Request = ({ id, className, isIncoming }: RequestProps) => {
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
         classNames={{ wrapper: "border-b border-border pb-2" }}
-        title={"Demande de réunion"}
+        title={t("activities.request.title")}
         titleVariant="large"
         reverse
         shortcuts={[
@@ -187,12 +176,15 @@ export const Request = ({ id, className, isIncoming }: RequestProps) => {
             <View className="flex flex-col gap-4">
               <RequestDetailsCard
                 icon={MessageSquare}
-                label="Message"
+                label={t("activities.request.labels.message")}
                 value={request?.message}
-                emptyText="Aucune description fournie"
+                emptyText={t("activities.request.placeholders.message")}
               />
 
-              <RequestDetailsCard icon={Clock3} label="Date et heure">
+              <RequestDetailsCard
+                icon={Clock3}
+                label={t("activities.request.labels.dateTime")}
+              >
                 {request?.time ? (
                   <View className="flex-row items-baseline gap-1.5">
                     <Text className="text-sm font-medium text-foreground">
@@ -204,7 +196,7 @@ export const Request = ({ id, className, isIncoming }: RequestProps) => {
                   </View>
                 ) : (
                   <Text className="text-sm italic text-muted-foreground/70">
-                    Non spécifié
+                    {t("activities.request.placeholders.dateTime")}
                   </Text>
                 )}
               </RequestDetailsCard>
@@ -220,7 +212,7 @@ export const Request = ({ id, className, isIncoming }: RequestProps) => {
                 <View className="mt-3 flex-row items-center gap-2">
                   <Loader size="small" />
                   <Text className="text-sm text-muted-foreground">
-                    Mise à jour du lieu...
+                    {t("activities.request.location.updating")}
                   </Text>
                 </View>
               )}
@@ -230,7 +222,7 @@ export const Request = ({ id, className, isIncoming }: RequestProps) => {
               <View className="flex-row items-center gap-2.5 rounded-2xl bg-emerald-50 p-4 dark:bg-emerald-950/20">
                 <Icon as={Calendar} size={18} className="text-emerald-600" />
                 <Text className="flex-1 text-sm text-emerald-700 dark:text-emerald-400">
-                  Cette réunion a été ajoutée à votre programme.
+                  {t("activities.request.banners.accepted")}
                 </Text>
               </View>
             )}
@@ -239,7 +231,7 @@ export const Request = ({ id, className, isIncoming }: RequestProps) => {
               <View className="flex-row items-center gap-2.5 rounded-2xl bg-red-50 p-4 dark:bg-red-950/20">
                 <Icon as={XCircle} size={18} className="text-red-600" />
                 <Text className="flex-1 text-sm text-red-700 dark:text-red-400">
-                  Cette demande de réunion a été refusée.
+                  {t("activities.request.banners.rejected")}
                 </Text>
               </View>
             )}
@@ -248,7 +240,7 @@ export const Request = ({ id, className, isIncoming }: RequestProps) => {
               <View className="flex-row items-center gap-2.5 rounded-2xl bg-amber-50 p-4 dark:bg-amber-950/20">
                 <Icon as={Clock3} size={18} className="text-amber-600" />
                 <Text className="flex-1 text-sm text-amber-700 dark:text-amber-400">
-                  En attente de la réponse du destinataire.
+                  {t("activities.outgoing.request.banners.pending")}
                 </Text>
               </View>
             )}
@@ -261,24 +253,36 @@ export const Request = ({ id, className, isIncoming }: RequestProps) => {
           <Button
             size="lg"
             className="flex-row items-center justify-center gap-2 rounded-xl bg-emerald-600 active:bg-emerald-500"
-            onPress={handleAccept}
+            onPress={() => askConfirmation(RequestEvent.Accept)}
             disabled={isUpdating}
           >
             <Icon as={CheckCheck} size={24} />
-            <Text className="text-md font-bold">Accepter</Text>
+            <Text className="text-md font-bold">
+              {t("activities.incomming.request.actions.accept")}
+            </Text>
           </Button>
           <Button
             size="lg"
             variant="destructive"
             className="flex-row items-center justify-center gap-2 rounded-xl active:bg-red-500"
-            onPress={handleReject}
+            onPress={() => askConfirmation(RequestEvent.Reject)}
             disabled={isUpdating}
           >
             <Icon as={XCircle} size={24} />
-            <Text className="text-md font-bold">Refuser</Text>
+            <Text className="text-md font-bold">
+              {t("activities.incomming.request.actions.reject")}
+            </Text>
           </Button>
         </View>
       )}
+
+      <RequestConfirmActionSheet
+        ref={confirmSheetRef}
+        event={confirmEvent}
+        onConfirm={handleConfirm}
+        onClose={handleConfirmClose}
+        isPending={isUpdating}
+      />
     </StableSafeAreaView>
   );
 };

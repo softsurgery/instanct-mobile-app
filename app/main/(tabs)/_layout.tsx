@@ -33,12 +33,12 @@ export default function TabLayout() {
       },
       {
         name: "activities",
-        title: t("screens.activities", "Activities"),
+        title: t("screens.activities"),
         icon: IconChecklist,
       },
       {
         name: "map",
-        title: t("screens.map"),
+        title: t("screens.map.title"),
         icon: IconMapPinHeart,
       },
       {

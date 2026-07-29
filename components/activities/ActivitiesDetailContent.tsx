@@ -15,6 +15,7 @@ import { format, isToday, isYesterday, parseISO } from "date-fns";
 import { NotFound } from "../shared/NotFound";
 import { BookmarkSkeleton } from "./skeletons/BookmarkSkeleton";
 import { createMaterialTopTabNavigator } from "expo-router/js-top-tabs";
+import { useTranslation } from "react-i18next";
 
 interface ActivitiesDetailContentProps {
   className?: string;
@@ -33,6 +34,7 @@ export const ActivitiesDetailContent = ({
   session,
   handleScroll,
 }: ActivitiesDetailContentProps) => {
+  const { t } = useTranslation("activities");
   const {
     bookmarks,
     fetchNextPage,
@@ -82,9 +84,9 @@ export const ActivitiesDetailContent = ({
         let title = format(date, "MMMM d, yyyy");
 
         if (isToday(date)) {
-          title = "Today";
+          title = t("activities.groups.today");
         } else if (isYesterday(date)) {
-          title = "Yesterday";
+          title = t("activities.groups.yesterday");
         }
 
         if (!grouped[title]) {
@@ -107,7 +109,7 @@ export const ActivitiesDetailContent = ({
     });
 
     return flattened;
-  }, [bookmarks, removedUserIds]);
+  }, [bookmarks, removedUserIds, t]);
 
   return (
     <View className={cn("flex flex-1 flex-col", className)}>
@@ -127,7 +129,12 @@ export const ActivitiesDetailContent = ({
           },
         }}
       >
-        <Tab.Screen name="Bookmarks">
+        <Tab.Screen
+          name="Bookmarks"
+          options={{
+            tabBarLabel: t("activities.tabs.bookmarks.title"),
+          }}
+        >
           {() =>
             isBookmarksPending ? (
               <BookmarkSkeleton count={3} />
@@ -153,7 +160,7 @@ export const ActivitiesDetailContent = ({
                 renderItem={renderItem}
                 ListEmptyComponent={() => (
                   <View className="flex flex-col flex-1 justify-center items-center h-full">
-                    <NotFound message="No bookmarks were found" />
+                    <NotFound message={t("activities.bookmarks.empty")} />
                   </View>
                 )}
                 ListFooterComponent={
@@ -167,7 +174,7 @@ export const ActivitiesDetailContent = ({
                       ) : !hasNextPage ? (
                         <View className="flex flex-row items-center justify-center gap-2 px-4">
                           <Text variant="p" className="text-muted-foreground">
-                            You have caught up with all bookmarks!
+                            {t("activities.bookmarks.caughtUp")}
                           </Text>
                         </View>
                       ) : null}
@@ -179,11 +186,21 @@ export const ActivitiesDetailContent = ({
           }
         </Tab.Screen>
 
-        <Tab.Screen name="Incoming">
+        <Tab.Screen
+          name="Incoming"
+          options={{
+            tabBarLabel: t("activities.tabs.incomming.title"),
+          }}
+        >
           {() => <SessionIncomingRequests handleScroll={handleScroll} />}
         </Tab.Screen>
 
-        <Tab.Screen name="Outgoing">
+        <Tab.Screen
+          name="Outgoing"
+          options={{
+            tabBarLabel: t("activities.tabs.outgoing.title"),
+          }}
+        >
           {() => <SessionOutgoingRequests handleScroll={handleScroll} />}
         </Tab.Screen>
       </Tab.Navigator>

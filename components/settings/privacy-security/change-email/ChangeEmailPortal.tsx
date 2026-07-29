@@ -21,8 +21,8 @@ import { toast } from "sonner-native";
 import { ServerErrorResponse } from "@/types";
 import { Icon } from "@/components/ui/icon";
 import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
-
 import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
+
 interface ChangeEmailPortalProps {
   className?: string;
 }
@@ -31,7 +31,7 @@ export const ChangeEmailPortal = ({ className }: ChangeEmailPortalProps) => {
   const isKeyboardVisible = useKeyboardVisible();
   const { t } = useTranslation("settings");
   const userStore = useUserStore();
-  const { currentUser, refetchCurrentUser } = useCurrentUser();
+  const { currentUser } = useCurrentUser();
 
   React.useEffect(() => {
     if (currentUser) {

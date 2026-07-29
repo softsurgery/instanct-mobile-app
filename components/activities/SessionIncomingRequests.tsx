@@ -10,6 +10,7 @@ import { NotFound } from "../shared/NotFound";
 import { Text } from "../ui/text";
 import { format, isToday, isYesterday, parseISO } from "date-fns";
 import { SessionRequestCardSkeleton } from "./skeletons/SessionRequestCardSkeleton";
+import { useTranslation } from "react-i18next";
 
 interface SessionIncomingRequestsProps {
   className?: string;
@@ -24,6 +25,7 @@ export const SessionIncomingRequests = ({
   className,
   handleScroll,
 }: SessionIncomingRequestsProps) => {
+  const { t } = useTranslation("activities");
   const {
     incomingRequests: requests,
     fetchNextPage,
@@ -62,9 +64,9 @@ export const SessionIncomingRequests = ({
       let title = format(date, "MMMM d, yyyy");
 
       if (isToday(date)) {
-        title = "Today";
+        title = t("activities.groups.today");
       } else if (isYesterday(date)) {
-        title = "Yesterday";
+        title = t("activities.groups.yesterday");
       }
 
       if (!grouped[title]) {
@@ -87,7 +89,7 @@ export const SessionIncomingRequests = ({
     });
 
     return flattened;
-  }, [requests]);
+  }, [requests, t]);
 
   return (
     <View className={cn("flex-1 bg-background", className)}>
@@ -123,7 +125,7 @@ export const SessionIncomingRequests = ({
               }}
               ListEmptyComponent={() => (
                 <View className="flex flex-col flex-1 justify-center items-center">
-                  <NotFound message="No incoming requests were found" />
+                  <NotFound message={t("activities.incomming.empty")} />
                 </View>
               )}
               ListFooterComponent={
@@ -133,7 +135,7 @@ export const SessionIncomingRequests = ({
                   ) : !hasNextPage && flattenedData.length > 0 ? (
                     <View className="flex flex-row items-center justify-center gap-2 p-6">
                       <Text variant="p" className="text-muted-foreground">
-                        You have caught up with all incoming requests
+                        {t("activities.incomming.caughtUp")}
                       </Text>
                     </View>
                   ) : null}

@@ -11,6 +11,7 @@ import { NotFound } from "../shared/NotFound";
 import { Text } from "../ui/text";
 import { format, isToday, isYesterday, parseISO } from "date-fns";
 import { SessionRequestCardSkeleton } from "./skeletons/SessionRequestCardSkeleton";
+import { useTranslation } from "react-i18next";
 
 interface SessionOutgoingRequestsProps {
   className?: string;
@@ -25,6 +26,7 @@ export const SessionOutgoingRequests = ({
   className,
   handleScroll,
 }: SessionOutgoingRequestsProps) => {
+  const { t } = useTranslation("activities");
   const {
     outgoingRequests: requests,
     fetchNextPage,
@@ -63,9 +65,9 @@ export const SessionOutgoingRequests = ({
       let title = format(date, "MMMM d, yyyy");
 
       if (isToday(date)) {
-        title = "Today";
+        title = t("activities.groups.today");
       } else if (isYesterday(date)) {
-        title = "Yesterday";
+        title = t("activities.groups.yesterday");
       }
 
       if (!grouped[title]) {
@@ -88,7 +90,7 @@ export const SessionOutgoingRequests = ({
     });
 
     return flattened;
-  }, [requests]);
+  }, [requests, t]);
 
   if (isRequestsPending) {
     return <SessionRequestCardSkeleton count={3} />;
@@ -120,7 +122,7 @@ export const SessionOutgoingRequests = ({
         }}
         ListEmptyComponent={() => (
           <View className="flex flex-col flex-1 justify-center items-center">
-            <NotFound message="No outgoing requests were found" />
+            <NotFound message={t("activities.outgoing.empty")} />
           </View>
         )}
         ListFooterComponent={
@@ -131,7 +133,7 @@ export const SessionOutgoingRequests = ({
               ) : !hasNextPage ? (
                 <View className="flex flex-row items-center justify-center p-4">
                   <Text variant={"p"} className="text-muted-foreground">
-                    You have caught up with all outgoing requests
+                    {t("activities.outgoing.caughtUp")}
                   </Text>
                 </View>
               ) : null}
