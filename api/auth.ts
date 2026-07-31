@@ -1,4 +1,5 @@
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
+import * as AuthSession from "expo-auth-session";
 import {
   RequestClientSignInDto,
   RequestSpecializedClientSignUpDto,
@@ -41,8 +42,12 @@ const signUp = async (request: RequestSpecializedClientSignUpDto) => {
 };
 
 const sendVerifyEmail = async (email?: string) => {
+  const deepLinkUri = AuthSession.makeRedirectUri({
+    path: "main/profile/email-success",
+  });
   const response = await axios.post("/client-auth/send-verify-email", {
     email,
+    callbackUrl: deepLinkUri,
   });
   return response.data;
 };
@@ -53,7 +58,13 @@ const verifyEmail = async (token: string) => {
 };
 
 const updateEmail = async (request: RequestClientUpdateMailDto) => {
-  const response = await axios.post("/client-auth/update-email", request);
+  const deepLinkUri = AuthSession.makeRedirectUri({
+    path: "main/profile/email-success",
+  });
+  const response = await axios.post("/client-auth/update-email", {
+    ...request,
+    callbackUrl: deepLinkUri,
+  });
   return response.data;
 };
 

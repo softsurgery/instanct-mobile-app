@@ -121,7 +121,16 @@ export function useSSO() {
       discovery: AuthSession.DiscoveryDocument,
     ) => {
       if (!request) return null;
-      const authUrl = await request.makeAuthUrlAsync(discovery);
+      let authUrl = await request.makeAuthUrlAsync(discovery);
+
+      // Inject the deepLinkUri into the state parameter so the backend knows where to redirect
+      const stateMatch = authUrl.match(/[\?&]state=([^&]+)/);
+      if (stateMatch) {
+        const originalState = decodeURIComponent(stateMatch[1]);
+        const newState = encodeURIComponent(`${originalState}|${deepLinkUri}`);
+        authUrl = authUrl.replace(`state=${stateMatch[1]}`, `state=${newState}`);
+      }
+
       // We pass the backend URL to the provider so it redirects to our backend,
       // but AuthSession expects the deepLinkUri to close the browser.
       return authUrl.replace(
