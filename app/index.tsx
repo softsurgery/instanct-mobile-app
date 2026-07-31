@@ -6,8 +6,6 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Platform } from "react-native";
 
-SplashScreen.preventAutoHideAsync();
-
 export default function Page() {
   const { i18n } = useTranslation();
   const { setColorScheme } = useColorScheme();
@@ -17,7 +15,7 @@ export default function Page() {
     if (preferencePersistStore.isReady) {
       // Set Android navigation bar
 
-      SplashScreen.hideAsync();
+      SplashScreen.hideAsync().catch(() => {});
 
       setTimeout(() => {
         // Set system color scheme

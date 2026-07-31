@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from "expo-router/react-navigation";
 import { PortalHost } from "@rn-primitives/portal";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
-import { Stack } from "expo-router";
+import { Stack, SplashScreen } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Platform, View } from "react-native";
 import {
@@ -18,6 +18,8 @@ import { useColorPalette } from "@/hooks/useColorPalette";
 import { asyncStoragePersister, queryClient } from "@/lib/queryClient";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { VideoThumbnailGeneratorHost } from "@/components/shared/VideoThumbnailGeneratorHost";
+
+SplashScreen.preventAutoHideAsync();
 
 function RootLayoutContent() {
   const { colorScheme, palette } = useColorPalette();
