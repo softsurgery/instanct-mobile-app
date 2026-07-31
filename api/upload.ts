@@ -1,6 +1,6 @@
 import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
 import { Upload } from "~/types/upload";
-import { File as ExpoFile, UploadType } from "expo-file-system";
+import { FileSystemUploadType, createUploadTask } from "expo-file-system/legacy";
 import { Platform } from "react-native";
 import axios from "./axios";
 
@@ -86,24 +86,29 @@ const uploadNativeFile = async (
   temporary: boolean,
   finalizeProgress = true,
 ): Promise<Upload> => {
-  const expoFile = new ExpoFile(file.uri);
   const endpoint = temporary ? "/storage/upload/temporary" : "/storage/upload";
 
-  const result = await expoFile.upload(`${BASE_URL}${endpoint}`, {
-    uploadType: UploadType.MULTIPART,
-    fieldName: "file",
-    mimeType: file.type,
-    parameters: {
-      filename: file.name,
+  const uploadTask = createUploadTask(
+    `${BASE_URL}${endpoint}`,
+    file.uri,
+    {
+      uploadType: FileSystemUploadType.MULTIPART,
+      fieldName: "file",
+      mimeType: file.type,
+      parameters: {
+        filename: file.name,
+      },
+      headers: getUploadHeaders(),
     },
-    headers: getUploadHeaders(),
-    onProgress: ({ bytesSent, totalBytes }) => {
-      reportUploadProgress(onProgress, bytesSent, totalBytes);
-    },
-  });
+    ({ totalBytesSent, totalBytesExpectedToSend }) => {
+      reportUploadProgress(onProgress, totalBytesSent, totalBytesExpectedToSend);
+    }
+  );
 
-  if (result.status < 200 || result.status >= 300) {
-    throw new Error(`Upload failed with status ${result.status}`);
+  const result = await uploadTask.uploadAsync();
+
+  if (!result || result.status < 200 || result.status >= 300) {
+    throw new Error(`Upload failed with status ${result?.status}`);
   }
 
   if (finalizeProgress) {
