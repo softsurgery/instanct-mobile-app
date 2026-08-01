@@ -91,7 +91,11 @@ export const AboutTab = ({
         {/* Links */}
         {(user?.website || user?.linkedin) && (
           <View>
-            <SectionHeader icon={Link2} title={t("menu.tabs.links.title")} color={primary} />
+            <SectionHeader
+              icon={Link2}
+              title={t("menu.tabs.about.links.title")}
+              color={primary}
+            />
             <View className="flex flex-col gap-2.5">
               {user?.website && (
                 <StablePressable
