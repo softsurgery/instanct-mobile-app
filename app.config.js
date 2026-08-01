@@ -46,6 +46,7 @@ export default ({ config }) => ({
     "@react-native-community/datetimepicker",
     "expo-image",
     "expo-status-bar",
+    "expo-sharing",
     [
       "expo-splash-screen",
       {
