@@ -29,7 +29,7 @@ export const useExploreFilterFormStructure = ({
     placeholder: t("explore.filter.placeholders.objectives"),
     description: t("explore.filter.descriptions.objectives"),
     props: {
-      editable: isPending,
+      editable: !isPending,
       value: store.dto.objectives.map(String),
       onSelect: (value) => store.setNested("dto.objectives", value.map(Number)),
       options: objectives,
@@ -44,7 +44,7 @@ export const useExploreFilterFormStructure = ({
     placeholder: t("explore.filter.placeholders.industries"),
     description: t("explore.filter.descriptions.industries"),
     props: {
-      editable: isPending,
+      editable: !isPending,
       value: store.dto.industry.map(String),
       onSelect: (value) => store.setNested("dto.industry", value.map(Number)),
       options: industries,
