@@ -1,5 +1,5 @@
 import React from "react";
-import { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
+import { NativeScrollEvent, NativeSyntheticEvent, LayoutChangeEvent } from "react-native";
 import {
   useAnimatedStyle,
   useSharedValue,
@@ -20,6 +20,7 @@ export const useScrollableElement = ({
   collapseHeight = true,
 }: UseScrollableElementProps) => {
   const showHeader = useSharedValue(true);
+  const headerHeight = useSharedValue(-1);
 
   const handleHeaderVisibility = (visible: boolean) => {
     showHeader.value = visible;
@@ -33,22 +34,33 @@ export const useScrollableElement = ({
     } = {
       transform: [
         {
-          translateY: withTiming(showHeader.value ? 0 : -deltaThreshold, {
-            duration,
-          }),
+          translateY: withTiming(
+            showHeader.value ? 0 : -(headerHeight.value > 0 ? headerHeight.value : deltaThreshold),
+            { duration }
+          ),
         },
       ],
       opacity: withTiming(showHeader.value ? 1 : 0, { duration }),
     };
 
-    if (collapseHeight) {
-      style.height = withTiming(showHeader.value ? deltaThreshold : 0, {
+    if (collapseHeight && headerHeight.value > 0) {
+      style.height = withTiming(showHeader.value ? headerHeight.value : 0, {
         duration,
       });
     }
 
     return style;
   });
+
+  const onLayout = React.useCallback(
+    (e: LayoutChangeEvent) => {
+      const h = e.nativeEvent.layout.height;
+      if (h > 0 && Math.abs(headerHeight.value - h) > 1) {
+        headerHeight.value = h;
+      }
+    },
+    [headerHeight]
+  );
 
   // Track scroll direction
   const lastOffsetY = React.useRef(0);
@@ -82,5 +94,6 @@ export const useScrollableElement = ({
   return {
     animatedHeaderStyle,
     handleScroll,
+    onLayout,
   };
 };
