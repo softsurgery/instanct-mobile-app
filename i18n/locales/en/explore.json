@@ -17,6 +17,10 @@
                 "objectives": "Select the objectives you're looking for.",
                 "industries": "Select the industries you're interested in."
             },
+            "toasts": {
+                "filtersApplied": "Filters applied successfully",
+                "filtersRemoved": "Filters removed successfully"
+            },
             "actions": {
                 "removeFilters": "Remove Filters",
                 "saveFilters": "Save Filters"

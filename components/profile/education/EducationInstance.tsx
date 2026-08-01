@@ -19,17 +19,17 @@ export const EducationInstance = ({
   className,
   education,
 }: EducationInstanceProps) => {
-  const { t } = useTranslation("menu");
-  const { palette } = useColorPalette();
-  const primary = hslToHex(palette.primary);
+  // const { t } = useTranslation("menu");
+  // const { palette } = useColorPalette();
+  // const primary = hslToHex(palette.primary);
 
-  const range = education.startDate
-    ? `${format(new Date(education.startDate), "yyyy")} — ${
-        education.endDate
-          ? format(new Date(education.endDate), "yyyy")
-          : t("education.instance.present")
-      }`
-    : null;
+  // const range = education.startDate
+  //   ? `${format(new Date(education.startDate), "yyyy")} — ${
+  //       education.endDate
+  //         ? format(new Date(education.endDate), "yyyy")
+  //         : t("education.instance.present")
+  //     }`
+  //   : null;
 
   return (
     <View className={cn("flex-row gap-3", className)}>
@@ -48,7 +48,7 @@ export const EducationInstance = ({
           </Text>
         )}
 
-        {range && (
+        {/* {range && (
           <View className="mt-2 flex-row">
             <View className="flex-row items-center gap-1 rounded-full bg-muted px-2.5 py-1">
               <Icon as={CalendarDays} size={12} color={primary} />
@@ -57,7 +57,7 @@ export const EducationInstance = ({
               </Text>
             </View>
           </View>
-        )}
+        )} */}
 
         {!!education.description && (
           <SeeMoreText

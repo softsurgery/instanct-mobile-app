@@ -41,13 +41,13 @@ export const UserFilterPortal = ({ className }: UserFilterPortalProps) => {
 
   const handleApplyFilters = () => {
     exploreFilterStore.apply();
-    toast.success("Filters saved successfully");
+    toast.success(t("explore.filter.toasts.filtersApplied"));
     router.back();
   };
 
   const handleResetFilters = () => {
     exploreFilterStore.reset();
-    toast.success("Filters reset successfully");
+    toast.success(t("explore.filter.toasts.filtersRemoved"));
     router.back();
   };
 
@@ -98,10 +98,14 @@ export const UserFilterPortal = ({ className }: UserFilterPortalProps) => {
             className="rounded-xl"
             onPress={handleResetFilters}
           >
-            <Text className="text-md font-bold">Remove Filters</Text>
+            <Text className="text-md font-bold">
+              {t("explore.filter.actions.removeFilters")}
+            </Text>
           </Button>
           <Button size="lg" className="rounded-xl" onPress={handleApplyFilters}>
-            <Text className="text-md font-bold">Save Filters</Text>
+            <Text className="text-md font-bold">
+              {t("explore.filter.actions.saveFilters")}
+            </Text>
           </Button>
         </BottomButtonWrapper>
       )}

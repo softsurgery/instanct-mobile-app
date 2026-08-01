@@ -17,6 +17,10 @@
                 "objectives": "Sélectionnez les objectifs que vous recherchez.",
                 "industries": "Sélectionnez les secteurs d'activité qui vous intéressent."
             },
+            "toasts": {
+                "filtersApplied": "Filtres appliqués avec succès",
+                "filtersRemoved": "Filtres supprimés avec succès"
+            },
             "actions": {
                 "removeFilters": "Supprimer les filtres",
                 "saveFilters": "Enregistrer les filtres"
