@@ -43,7 +43,6 @@ import { hslToHex } from "@/lib/theme";
 import { useColorPalette } from "@/hooks/useColorPalette";
 import { useScrollableElement } from "@/hooks/useScrollableElement";
 import Animated from "react-native-reanimated";
-import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { Image } from "@/components/ui/image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
@@ -68,7 +67,7 @@ export const InspectBaseProfile = ({
   id,
   coverExtra,
 }: InspectBaseProfileProps) => {
-  const { animatedHeaderStyle, handleScroll } = useScrollableElement({
+  const { animatedHeaderStyle, handleScroll, onLayout } = useScrollableElement({
     deltaThreshold: 250,
     duration: 400,
     checkScrollable: true,
@@ -323,105 +322,107 @@ export const InspectBaseProfile = ({
   return (
     <View className={cn("bg-background flex-1", className)}>
       <Animated.View style={animatedHeaderStyle}>
-        {/* Cover */}
-        {coverExtra}
-        <PhotoPreview
-          className="active:opacity-70 relative w-full h-48 overflow-hidden bg-muted items-center justify-center"
-          source={coverPreviewSource}
-          onPress={handlePickCover}
-          footer={() => {
-            if (currentUser?.id !== id) return null;
+        <View onLayout={onLayout}>
+          {/* Cover */}
+          {coverExtra}
+          <PhotoPreview
+            className="active:opacity-70 relative w-full h-48 overflow-hidden bg-muted items-center justify-center"
+            source={coverPreviewSource}
+            onPress={handlePickCover}
+            footer={() => {
+              if (currentUser?.id !== id) return null;
 
-            return (
-              <Pressable
-                className="flex flex-row gap-2 items-center px-4 py-2 m-4 mx-auto border border-border rounded-full active:bg-muted"
-                style={{
-                  marginBottom: insets.bottom * 2,
-                }}
-                onPress={handlePickCover}
-              >
+              return (
+                <Pressable
+                  className="flex flex-row gap-2 items-center px-4 py-2 m-4 mx-auto border border-border rounded-full active:bg-muted"
+                  style={{
+                    marginBottom: insets.bottom * 2,
+                  }}
+                  onPress={handlePickCover}
+                >
+                  <Icon as={Pencil} color="white" />
+                  <Text className="text-white">
+                    {t("menu.actions.addCoverPhoto")}
+                  </Text>
+                </Pressable>
+              );
+            }}
+          >
+            {/* Branded backdrop so empty covers feel intentional */}
+            {coverPreviewSource ? (
+              <Image
+                source={coverPreviewSource}
+                style={{ width: "100%", height: "100%" }}
+                resizeMode="cover"
+              />
+            ) : currentUser?.id === id ? (
+              <View className="flex flex-row gap-2 items-center">
                 <Icon as={Pencil} color="white" />
-                <Text className="text-white">
+                <Text className="font-medium text-white">
                   {t("menu.actions.addCoverPhoto")}
                 </Text>
-              </Pressable>
-            );
-          }}
-        >
-          {/* Branded backdrop so empty covers feel intentional */}
-          {coverPreviewSource ? (
-            <Image
-              source={coverPreviewSource}
-              style={{ width: "100%", height: "100%" }}
-              resizeMode="cover"
-            />
-          ) : currentUser?.id === id ? (
-            <View className="flex flex-row gap-2 items-center">
-              <Icon as={Pencil} color="white" />
-              <Text className="font-medium text-white">
-                {t("menu.actions.addCoverPhoto")}
-              </Text>
+              </View>
+            ) : null}
+          </PhotoPreview>
+          {(isCoverUploadPending || isUpdateCoverPending) && (
+            <View className="absolute inset-0 bg-black/40 flex items-center justify-center z-50">
+              <Loader isPending={true} size="large" />
             </View>
-          ) : null}
-        </PhotoPreview>
-        {(isCoverUploadPending || isUpdateCoverPending) && (
-          <View className="absolute inset-0 bg-black/40 flex items-center justify-center z-50">
-            <Loader isPending={true} size="large" />
-          </View>
-        )}
-        {/* Header */}
-        <View className="-mt-12 px-5 z-50">
-          <View className="flex-row items-end justify-between">
-            {!profilePictureSource ? (
-              <Skeleton className="h-[100px] w-[100px] rounded-full" />
-            ) : (
-              <PhotoPreview source={profilePictureSource}>
-                {profilePictures[0]}
-              </PhotoPreview>
-            )}
-            {currentUser?.id === id && <ProfileStat />}
-          </View>
+          )}
+          {/* Header */}
+          <View className="-mt-12 px-5 z-50">
+            <View className="flex-row items-end justify-between">
+              {!profilePictureSource ? (
+                <Skeleton className="h-[100px] w-[100px] rounded-full" />
+              ) : (
+                <PhotoPreview source={profilePictureSource}>
+                  {profilePictures[0]}
+                </PhotoPreview>
+              )}
+              {currentUser?.id === id && <ProfileStat />}
+            </View>
 
-          {/* Identity */}
-          <View className="mt-3">
-            <Text className="text-2xl font-bold text-foreground">
-              {identity}
-            </Text>
-            {id && (
-              <View className="flex-col items-start justify-between gap-2">
-                <View className="flex flex-row items-center gap-2">
-                  <Text className="text-sm text-muted-foreground">
-                    @{user?.username}
-                  </Text>
-                  {!!user?.email &&
-                    !user?.emailVerified &&
-                    currentUser?.id === id && (
-                      <Text className="text-xs text-yellow-600 font-bold">
-                        ({t("menu.unverifiedEmail")})
-                      </Text>
+            {/* Identity */}
+            <View className="mt-3">
+              <Text className="text-2xl font-bold text-foreground">
+                {identity}
+              </Text>
+              {id && (
+                <View className="flex-col items-start justify-between gap-2">
+                  <View className="flex flex-row items-center gap-2">
+                    <Text className="text-sm text-muted-foreground">
+                      @{user?.username}
+                    </Text>
+                    {!!user?.email &&
+                      !user?.emailVerified &&
+                      currentUser?.id === id && (
+                        <Text className="text-xs text-yellow-600 font-bold">
+                          ({t("menu.unverifiedEmail")})
+                        </Text>
+                      )}
+                  </View>
+                  {currentUser?.id === id &&
+                    user?.email &&
+                    !user.emailVerified && (
+                      <Pressable
+                        onPress={() => sendVerifyEmail()}
+                        disabled={isSendVerifyEmailPending}
+                        className="flex-row items-center gap-1.5 rounded-xl border border-border px-3.5 py-2 active:opacity-80 bg-yellow-700"
+                      >
+                        <Icon as={Mail} size={16} color={"white"} />
+                        <Text className="text-md font-semibold text-white">
+                          {t("menu.actions.verifyEmail")}
+                        </Text>
+                      </Pressable>
                     )}
                 </View>
-                {currentUser?.id === id &&
-                  user?.email &&
-                  !user.emailVerified && (
-                    <Pressable
-                      onPress={() => sendVerifyEmail()}
-                      disabled={isSendVerifyEmailPending}
-                      className="flex-row items-center gap-1.5 rounded-xl border border-border px-3.5 py-2 active:opacity-80 bg-yellow-700"
-                    >
-                      <Icon as={Mail} size={16} color={"white"} />
-                      <Text className="text-md font-semibold text-white">
-                        {t("menu.actions.verifyEmail")}
-                      </Text>
-                    </Pressable>
-                  )}
-              </View>
-            )}
+              )}
+            </View>
           </View>
         </View>
       </Animated.View>
       {/* Tabs */}
-      <StableSafeAreaView style={{ flex: 1 }}>
+      <View className="flex-1 mt-2">
         <Tab.Navigator
           screenOptions={{
             tabBarScrollEnabled: false,
@@ -490,7 +491,7 @@ export const InspectBaseProfile = ({
             )}
           </Tab.Screen> */}
         </Tab.Navigator>
-      </StableSafeAreaView>
+      </View>
     </View>
   );
 };
