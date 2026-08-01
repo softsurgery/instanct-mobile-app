@@ -19,6 +19,7 @@ import { toast } from "sonner-native";
 import React from "react";
 
 import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
+import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
 interface CreateExperienceProps {
   className?: string;
 }
@@ -101,15 +102,11 @@ export const CreateExperience = ({ className }: CreateExperienceProps) => {
 
       {/* Sticky bottom button */}
       {!isKeyboardVisible && (
-        <View className="py-6 border-t border-border">
-          <Button
-            size="sm"
-            className="mx-6 mb-4 rounded-full"
-            onPress={handleCreateSubmit}
-          >
+        <BottomButtonWrapper>
+          <Button size="lg" className="rounded-xl" onPress={handleCreateSubmit}>
             <Text>{t("experience.form.actions.create")}</Text>
           </Button>
-        </View>
+        </BottomButtonWrapper>
       )}
     </StableSafeAreaView>
   );

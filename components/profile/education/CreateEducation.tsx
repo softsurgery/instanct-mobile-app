@@ -18,6 +18,7 @@ import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 import { toast } from "sonner-native";
 
 import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
+import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
 interface CreateEducationProps {
   className?: string;
 }
@@ -91,15 +92,11 @@ export const CreateEducation = ({ className }: CreateEducationProps) => {
         <FormBuilder structure={structure} className="px-2" />
       </StableKeyboardAwareScrollView>
       {!isKeyboardVisible && (
-        <View className="py-6 border-t border-border">
-          <Button
-            size="sm"
-            className="mx-6 mb-4 rounded-full"
-            onPress={handleCreateSubmit}
-          >
+        <BottomButtonWrapper>
+          <Button size="lg" className="rounded-xl" onPress={handleCreateSubmit}>
             <Text>{tMenu("education.form.actions.create")}</Text>
           </Button>
-        </View>
+        </BottomButtonWrapper>
       )}
     </StableSafeAreaView>
   );
