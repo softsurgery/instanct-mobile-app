@@ -94,7 +94,9 @@ export const UpdateEducation = ({ className }: UpdateEducationProps) => {
       {!isKeyboardVisible && (
         <BottomButtonWrapper>
           <Button size="lg" className="rounded-xl" onPress={handleUpdateSubmit}>
-            <Text>{tMenu("education.form.actions.update")}</Text>
+            <Text className="text-md font-bold">
+              {tMenu("education.form.actions.update")}
+            </Text>
           </Button>
         </BottomButtonWrapper>
       )}

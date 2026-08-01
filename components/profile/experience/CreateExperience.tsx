@@ -104,7 +104,9 @@ export const CreateExperience = ({ className }: CreateExperienceProps) => {
       {!isKeyboardVisible && (
         <BottomButtonWrapper>
           <Button size="lg" className="rounded-xl" onPress={handleCreateSubmit}>
-            <Text>{t("experience.form.actions.create")}</Text>
+            <Text className="text-md font-bold">
+              {t("experience.form.actions.create")}
+            </Text>
           </Button>
         </BottomButtonWrapper>
       )}

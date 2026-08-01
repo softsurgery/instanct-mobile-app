@@ -115,7 +115,7 @@ export const ChangeEmailPortal = ({ className }: ChangeEmailPortalProps) => {
                   size={18}
                   className="text-primary-foreground animate-spin"
                 />
-                <Text className="text-primary-foreground font-semibold">
+                <Text className="text-primary-foreground text-md font-bold">
                   {t(
                     "settings.account.screens.privacy-security.screens.account-security.change-email.forms.actions.update-email-pending",
                   )}

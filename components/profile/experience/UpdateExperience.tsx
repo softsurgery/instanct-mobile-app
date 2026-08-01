@@ -103,7 +103,9 @@ export const UpdateExperience = ({ className }: UpdateExperienceProps) => {
       {!isKeyboardVisible && (
         <BottomButtonWrapper>
           <Button size="lg" className="rounded-xl" onPress={handleUpdateSubmit}>
-            <Text>{tMenu("experience.form.actions.update")}</Text>
+            <Text className="text-md font-bold">
+              {tMenu("experience.form.actions.update")}
+            </Text>
           </Button>
         </BottomButtonWrapper>
       )}
