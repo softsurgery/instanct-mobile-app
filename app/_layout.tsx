@@ -19,7 +19,7 @@ import { asyncStoragePersister, queryClient } from "@/lib/queryClient";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { VideoThumbnailGeneratorHost } from "@/components/shared/VideoThumbnailGeneratorHost";
 
-SplashScreen.preventAutoHideAsync();
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 function RootLayoutContent() {
   const { colorScheme, palette } = useColorPalette();
