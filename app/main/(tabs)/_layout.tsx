@@ -38,7 +38,7 @@ export default function TabLayout() {
       },
       {
         name: "map",
-        title: t("screens.map"),
+        title: t("screens.map.title"),
         icon: IconMapPinHeart,
       },
       {
