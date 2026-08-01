@@ -94,7 +94,9 @@ export const CreateEducation = ({ className }: CreateEducationProps) => {
       {!isKeyboardVisible && (
         <BottomButtonWrapper>
           <Button size="lg" className="rounded-xl" onPress={handleCreateSubmit}>
-            <Text>{tMenu("education.form.actions.create")}</Text>
+            <Text className="text-md font-bold">
+              {tMenu("education.form.actions.create")}
+            </Text>
           </Button>
         </BottomButtonWrapper>
       )}
