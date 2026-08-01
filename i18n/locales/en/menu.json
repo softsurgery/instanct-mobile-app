@@ -28,6 +28,33 @@
             "editProfile": "Edit Profile",
             "addCoverPhoto": "Add Cover Photo",
             "verifyEmail": "Verify Email"
+        },
+        "toasts": {
+            "coverUpdated": "Cover updated successfully",
+            "coverUpdatedDescription": "Your cover has been successfully updated.",
+            "coverError": "Failed to update cover",
+            "uploadError": "Failed to upload image",
+            "emailSent": "Email sent successfully",
+            "emailSentDescription": "Check your email for verification link.",
+            "emailError": "Failed to send verification email"
+        },
+        "industries": {
+            "title": "Industries",
+            "description": "Select one or more industries that align with your professional goals and aspirations. This helps you connect with like-minded professionals and opportunities.",
+            "labels": {
+                "industries": "Industries"
+            },
+            "actions": {
+                "update": "Update Industries",
+                "updatePending": "Saving..."
+            },
+            "toasts": {
+                "updated": "Industries updated successfully",
+                "updatedDescription": "Your industries have been successfully updated.",
+                "error": "Failed to update industries",
+                "noSelection": "Please select at least one industry.",
+                "noSelectionDescription": "You need to select at least one industry before saving."
+            }
         }
     },
     "education": {
