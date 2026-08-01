@@ -19,6 +19,7 @@ import { toast } from "sonner-native";
 import React from "react";
 
 import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
+import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
 interface UpdateExperienceProps {
   className?: string;
 }
@@ -100,15 +101,11 @@ export const UpdateExperience = ({ className }: UpdateExperienceProps) => {
       </StableKeyboardAwareScrollView>
 
       {!isKeyboardVisible && (
-        <View className="py-6 border-t border-border">
-          <Button
-            size="sm"
-            className="mx-6 mb-4 rounded-full"
-            onPress={handleUpdateSubmit}
-          >
+        <BottomButtonWrapper>
+          <Button size="lg" className="rounded-xl" onPress={handleUpdateSubmit}>
             <Text>{tMenu("experience.form.actions.update")}</Text>
           </Button>
-        </View>
+        </BottomButtonWrapper>
       )}
     </StableSafeAreaView>
   );
