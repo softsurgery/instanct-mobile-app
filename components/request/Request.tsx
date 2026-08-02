@@ -154,7 +154,7 @@ export const Request = ({
         ]}
       />
       <View className="flex-1 bg-background p-4">
-        {!isPending ? (
+        {isPending ? (
           <RequestSkeleton hasLocation={hasLocation} />
         ) : (
           <View className="flex flex-col gap-4">
