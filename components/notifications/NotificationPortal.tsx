@@ -137,7 +137,7 @@ export const NotificationsPortal = ({ className }: NotificationPortalProps) => {
             ) : null
           }
           ListFooterComponent={
-            <View className="items-center mb-8">
+            <View className="items-center mb-8 px-4">
               {isPending ? (
                 <>
                   <NotificationEntrySkeleton />
@@ -145,7 +145,7 @@ export const NotificationsPortal = ({ className }: NotificationPortalProps) => {
                   <NotificationEntrySkeleton />
                 </>
               ) : hasNextPage ? null : (
-                <View className="flex flex-row items-center justify-center gap-2 p-6">
+                <View className="flex flex-row items-center justify-center gap-2 py-6">
                   <Text variant={"p"} className="text-muted-foreground">
                     You have caught up with all notifications
                   </Text>
