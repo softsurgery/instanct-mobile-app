@@ -14,13 +14,11 @@ interface MapData {
   settings: {
     radius: number;
     showUsernames: boolean;
-    clusters: boolean;
     mode: "sattelite" | "map";
   };
   draftSettings: {
     radius: number;
     showUsernames: boolean;
-    clusters: boolean;
     mode: "sattelite" | "map";
   };
   hasInitializedParameters: boolean;
@@ -68,13 +66,11 @@ const initialState: MapData = {
   settings: {
     radius: 50,
     showUsernames: true,
-    clusters: true,
     mode: "map",
   },
   draftSettings: {
     radius: 50,
     showUsernames: true,
-    clusters: true,
     mode: "map",
   },
   hasInitializedParameters: false,
@@ -82,7 +78,6 @@ const initialState: MapData = {
   location: null,
   users: [],
   nearbyUsers: [],
-  clusters: [],
   reconnection: {
     reconnecting: false,
     reconnectAttempt: 0,
@@ -264,7 +259,6 @@ export const useMapStore = create<MapStore>((set, get) => ({
     set({
       nearbyUsers: [],
       users: [],
-      clusters: [],
       connected: false,
     });
   },

@@ -249,10 +249,7 @@
         "display-preferences": {
             "title": "Display Preferences",
             "description": "Customize how the map is displayed.",
-            "show-clusters": {
-                "title": "Show User Clusters",
-                "description": "Group nearby users into clusters for better visibility on the map."
-            },
+           
             "show-usernames": {
                 "title": "Show Usernames",
                 "description": "Toggle the display of usernames on the map."

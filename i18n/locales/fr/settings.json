@@ -244,10 +244,7 @@
     "display-preferences": {
       "title": "Préférences d'affichage",
       "description": "Personnalisez l'affichage de la carte.",
-      "show-clusters": {
-        "title": "Afficher les groupes d'utilisateurs",
-        "description": "Regroupez les utilisateurs proches pour une meilleure visibilité sur la carte."
-      },
+     
       "show-usernames": {
         "title": "Afficher les noms d'utilisateur",
         "description": "Afficher ou masquer les noms d'utilisateur sur la carte."
