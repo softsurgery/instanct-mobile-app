@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { StableSafeAreaView } from "@/components/shared/StableSafeAreaView";
 import { ApplicationHeader } from "@/components/shared/AppHeader";
 import { Text } from "@/components/ui/text";
-import { ArrowLeft, Loader2 } from "lucide-react-native";
+import { Loader2 } from "lucide-react-native";
 import { Icon } from "@/components/ui/icon";
 import * as Haptics from "expo-haptics";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,7 @@ import { StableKeyboardAwareScrollView } from "@/components/shared/StableKeyboar
 import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
 
 import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
+import { useTranslation } from "react-i18next";
 interface IndustriesManagementProps {
   className?: string;
 }
@@ -32,6 +33,7 @@ interface IndustriesManagementProps {
 export const IndustriesManagement = ({
   className,
 }: IndustriesManagementProps) => {
+  const { t } = useTranslation("menu");
   const isKeyboardVisible = useKeyboardVisible();
   const router = useRouter();
   const { userId } = useLocalSearchParams<{ userId: string }>();
@@ -165,13 +167,13 @@ export const IndustriesManagement = ({
                   size={18}
                   className="text-primary-foreground animate-spin"
                 />
-                <Text className="text-primary-foreground font-semibold">
-                  Saving...
+                <Text className="text-primary-foreground text-md font-bold">
+                  {t("menu.industries.actions.updatePending")}
                 </Text>
               </React.Fragment>
             ) : (
-              <Text className="text-primary-foreground font-semibold">
-                Update Industries
+              <Text className="text-primary-foreground text-md font-bold">
+                {t("menu.industries.actions.update")}
               </Text>
             )}
           </Button>
