@@ -53,7 +53,13 @@ export const ExperienceInstance = ({
     .join(" · ");
 
   return (
-    <View className={cn("flex-row gap-3", className)}>
+    <View
+      className={cn(
+        "flex-row gap-3",
+        experience.description ? "items-start" : "items-center",
+        className,
+      )}
+    >
       {/* Role tile */}
       <View className="h-11 w-11 items-center justify-center rounded-xl bg-primary/50">
         <Icon as={Briefcase} size={20} color={"white"} />
