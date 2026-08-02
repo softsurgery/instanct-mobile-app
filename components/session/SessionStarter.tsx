@@ -9,12 +9,14 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 
 interface SessionStarterProps {
   className?: string;
 }
 
 export const SessionStarter = ({ className }: SessionStarterProps) => {
+  const { t } = useTranslation("explore");
   const height = useSharedValue(1);
   const opacity = useSharedValue(1);
 
@@ -50,10 +52,10 @@ export const SessionStarter = ({ className }: SessionStarterProps) => {
         </Animated.View>
       </TouchableOpacity>
       <Text variant={"h1"} className="text-center">
-        Prêt à connecter ?
+        {t("session.starter.title")}
       </Text>
       <Text className="text-center text-base px-2">
-        Commencez votre première session !
+        {t("session.starter.description")}
       </Text>
     </View>
   );

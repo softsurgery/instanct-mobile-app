@@ -249,7 +249,6 @@
         "display-preferences": {
             "title": "Display Preferences",
             "description": "Customize how the map is displayed.",
-           
             "show-usernames": {
                 "title": "Show Usernames",
                 "description": "Toggle the display of usernames on the map."
@@ -258,6 +257,10 @@
         "actions": {
             "update-map-config": "Update Map Settings",
             "update-map-config-pending": "Updating..."
+        },
+        "toasts": {
+            "updated": "Map configuration updated",
+            "updated-description": "Your map configuration has been successfully updated."
         }
     }
 }

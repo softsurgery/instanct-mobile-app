@@ -159,8 +159,8 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
         mapStore.draftSettings.showUsernames,
       );
       mapStore.set("nearbyUsers", []);
-      toast.success("Map configuration updated", {
-        description: "Your map configuration has been successfully updated.",
+      toast.success(t("map-settings.toasts.updated"), {
+        description: t("map-settings.toasts.updated-description"),
       });
       router.push("/main/(tabs)/map");
     },
@@ -186,8 +186,6 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
       />
       <ScrollView className="bg-background">
         <View className="flex flex-col">
-          {/* Header Card */}
-
           {/* Settings Sections */}
           {settingsRows.map((section) => (
             <View
@@ -230,8 +228,8 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
         >
           <Text className="text-md font-bold">
             {isUpdateMapConfigurationPending
-              ? "Updating..."
-              : "Update Configuration"}
+              ? t("map-settings.actions.update-map-config-pending")
+              : t("map-settings.actions.update-map-config")}
           </Text>
         </Button>
       </BottomButtonWrapper>

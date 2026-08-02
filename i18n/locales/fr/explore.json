@@ -28,6 +28,29 @@
         }
     },
     "session": {
+        "starter": {
+            "title": "Prêt à connecter ?",
+            "description": "Commencez votre première session !"
+        },
+        "start": {
+            "title": "Démarrer une session",
+            "description": "Veuillez fournir les détails de votre session. Ces informations aideront les autres à comprendre quand vous êtes disponible et intéressé par la connexion.",
+            "nextDayWarning": "Votre session se terminera le jour suivant car l'heure de fin est antérieure à l'heure de début.",
+            "actions": {
+                "startSession": "Démarrer la session",
+                "startSessionPending": "Démarrage..."
+            },
+            "toasts": {
+                "success": {
+                    "title": "Session démarrée",
+                    "description": "Votre session a bien été démarrée."
+                },
+                "error": {
+                    "title": "Échec du démarrage de la session",
+                    "description": "Une erreur est survenue lors du démarrage de la session."
+                }
+            }
+        },
         "manage": {
             "title": "Gérer la session",
             "description": "Vous pouvez gérer votre session ici. Vous pouvez y mettre fin ou modifier ses paramètres.",

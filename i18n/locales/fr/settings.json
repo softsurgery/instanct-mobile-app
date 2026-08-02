@@ -253,6 +253,10 @@
     "actions": {
       "update-map-config": "Mettre à jour les paramètres de la carte",
       "update-map-config-pending": "Mise à jour..."
+    },
+    "toasts": {
+      "updated": "Paramètres de la carte mis à jour",
+      "updated-description": "Vos paramètres de la carte ont bien été mis à jour."
     }
   }
 }

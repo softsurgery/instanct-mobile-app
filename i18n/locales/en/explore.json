@@ -28,6 +28,29 @@
         }
     },
     "session": {
+        "starter": {
+            "title": "Ready to connect?",
+            "description": "Start your first session!"
+        },
+        "start": {
+            "title": "Start a session",
+            "description": "Please provide the details of your session. This information will help others understand when you are available and interested in connecting.",
+            "nextDayWarning": "Your session will end the next day because the end time is earlier than the start time.",
+            "actions": {
+                "startSession": "Start the session",
+                "startSessionPending": "Starting..."
+            },
+            "toasts": {
+                "success": {
+                    "title": "Session started",
+                    "description": "Your session has been started successfully."
+                },
+                "error": {
+                    "title": "Failed to start the session",
+                    "description": "An error occurred while starting the session."
+                }
+            }
+        },
         "manage": {
             "title": "Manage Session",
             "description": "You can manage your session here. You can end the session or adjust your settings.",
