@@ -137,7 +137,7 @@ export const Stepper = ({
                   size="sm"
                   variant={closingAction.variant}
                   onPress={closingAction.onPress}
-                  disabled={closingAction.disabled || pending}
+                  disabled={closingAction.disabled || pending || runValidation(currentStep) === false}
                   className={cn(
                     "px-4 py-2 rounded-xl",
                     closingAction.className,
@@ -152,7 +152,7 @@ export const Stepper = ({
               size="sm"
               onPress={nextStep}
               className={cn("px-4 py-2 rounded-xl")}
-              disabled={pending}
+              disabled={pending || runValidation(currentStep) === false}
             >
               <Text className="font-semibold">Next</Text>
               <Icon as={ArrowRight} size={20} />

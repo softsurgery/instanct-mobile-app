@@ -22,8 +22,9 @@ import { useObjectives } from "@/hooks/content/reference-types/useObjectives";
 import { mapToSelectOptions } from "../../shared/form-builder/utils/map-select-options";
 import { zodErrorsToNested } from "@/lib/object";
 import { toast } from "sonner-native";
-
 import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
+import { useTranslation } from "react-i18next";
+import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
 interface SessionStarterPortalProps {
   className?: string;
 }
@@ -31,6 +32,7 @@ interface SessionStarterPortalProps {
 export const SessionStarterPortal = ({
   className,
 }: SessionStarterPortalProps) => {
+  const { t } = useTranslation("explore");
   const queryClient = useQueryClient();
   const isKeyboardVisible = useKeyboardVisible();
   const sessionStore = useSessionStore();
@@ -43,17 +45,16 @@ export const SessionStarterPortal = ({
           queryKey: ["active-sessions"],
         });
         queryClient.invalidateQueries({ queryKey: ["sessions"] });
-        toast.success("Session démarrée", {
-          description: "Votre session a bien été démarrée.",
+        toast.success(t("session.start.toasts.success.title"), {
+          description: t("session.start.toasts.success.description"),
         });
         router.replace(`/main/(tabs)`);
         sessionStore.reset();
       },
       onError: (error: ServerErrorResponse) => {
-        toast.error("Échec du démarrage de la session", {
+        toast.error(t("session.start.toasts.error.title"), {
           description:
-            error.message ||
-            "Une erreur est survenue lors du démarrage de la session.",
+            error.message || t("session.start.toasts.error.description"),
         });
       },
     });
@@ -122,7 +123,7 @@ export const SessionStarterPortal = ({
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
         classNames={{ wrapper: "border-b border-border pb-2" }}
-        title={"Démarrer une session"}
+        title={t("session.start.title")}
         titleVariant="large"
         reverse
         shortcuts={[
@@ -135,9 +136,7 @@ export const SessionStarterPortal = ({
       <StableKeyboardAwareScrollView className="flex-1 bg-background">
         <View className="p-4">
           <Text className="text-sm text-muted-foreground leading-relaxed">
-            Veuillez fournir les détails de votre session. Ces informations
-            aideront les autres à comprendre quand vous êtes disponible et
-            intéressé par la connexion.
+            {t("session.start.description")}
           </Text>
         </View>
         <FormBuilder structure={structure} className="px-2" />
@@ -145,27 +144,27 @@ export const SessionStarterPortal = ({
           <View className="mx-4 mt-4 flex-row items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
             <Info size={18} className="mt-0.5 text-amber-600" />
             <Text className="flex-1 text-sm leading-relaxed text-foreground">
-              Votre session se terminera le jour suivant car l&apos;heure de fin
-              est antérieure à l&apos;heure de début.
+              {t("session.start.nextDayWarning")}
             </Text>
           </View>
         )}
       </StableKeyboardAwareScrollView>
       {!isKeyboardVisible && (
-        <View className="border-t border-border bg-card p-8 pt-4">
+        <BottomButtonWrapper>
           <Button
             size="lg"
-            className="flex-row items-center justify-center gap-2 rounded-xl"
+            variant="default"
+            className="rounded-xl"
             onPress={handleSessionStart}
             disabled={isSubmitDisabled}
           >
             <Text className="text-md font-bold">
               {isStartingSessionPending
-                ? "Démarrage..."
-                : "Démarrer la session"}
+                ? t("session.start.actions.startSessionPending")
+                : t("session.start.actions.startSession")}
             </Text>
           </Button>
-        </View>
+        </BottomButtonWrapper>
       )}
     </StableSafeAreaView>
   );
