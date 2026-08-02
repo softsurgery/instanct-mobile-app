@@ -22,28 +22,32 @@ export default function TabLayout() {
   const isMapScreen = currentRoute === "map";
 
   const isRTL = useRTL();
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("screens");
 
   const tabsConfig = React.useMemo(
     () => [
       {
         name: "index",
-        title: t("screens.explore"),
+        title: "explore",
+        label: t("explore"),
         icon: Telescope,
       },
       {
         name: "activities",
-        title: t("screens.activities", "Activities"),
+        title: "activities",
+        label: t("activities"),
         icon: IconChecklist,
       },
       {
         name: "map",
-        title: t("screens.map.title"),
+        title: "map",
+        label: t("map"),
         icon: IconMapPinHeart,
       },
       {
         name: "menu",
-        title: t("screens.menu"),
+        title: "menu",
+        label: t("menu"),
         icon: User,
       },
     ],
@@ -144,6 +148,7 @@ export default function TabLayout() {
           name={tab.name}
           options={{
             title: tab.title,
+            tabBarLabel: tab.label,
             tabBarButton: (props) => <VibratingTabButton {...props} />,
             tabBarIcon: ({ color, focused }) => (
               <Icon as={tab.icon} size={focused ? 28 : 24} color={color} />

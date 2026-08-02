@@ -106,7 +106,7 @@ export default function MainLayout() {
             <Stack.Screen
               name="(tabs)"
               options={{
-                title: "Explore",
+                title: "explore",
                 headerShown: false,
                 animation: "fade_from_bottom",
                 animationDuration: 200,
@@ -115,7 +115,7 @@ export default function MainLayout() {
             <Stack.Screen
               name="explore/session-starter"
               options={{
-                title: "Session Starter",
+                title: "sessionStarter",
                 headerShown: false,
                 animation: "simple_push",
                 animationDuration: 200,
@@ -124,7 +124,7 @@ export default function MainLayout() {
             <Stack.Screen
               name="sessions/index"
               options={{
-                title: "Session History",
+                title: "sessions",
                 headerShown: false,
                 animation: "simple_push",
                 animationDuration: 200,
@@ -133,7 +133,7 @@ export default function MainLayout() {
             <Stack.Screen
               name="sessions/details"
               options={{
-                title: "Session Details",
+                title: "sessionDetails",
                 headerShown: false,
                 animation: "simple_push",
                 animationDuration: 200,
@@ -142,7 +142,7 @@ export default function MainLayout() {
             <Stack.Screen
               name="sessions/manage"
               options={{
-                title: "Manage Session",
+                title: "manageSession",
                 headerShown: false,
                 animation: "simple_push",
                 animationDuration: 200,
@@ -151,7 +151,7 @@ export default function MainLayout() {
             <Stack.Screen
               name="explore/users-filter"
               options={{
-                title: "User Filters",
+                title: "userFilters",
                 headerShown: false,
                 animation: "simple_push",
                 animationDuration: 200,
@@ -163,7 +163,7 @@ export default function MainLayout() {
             <Stack.Screen
               name="notifications"
               options={{
-                title: "Notification",
+                title: "notifications",
                 headerShown: false,
               }}
             />
@@ -179,70 +179,70 @@ export default function MainLayout() {
             <Stack.Screen
               name="profile/update-profile"
               options={{
-                title: "My Profile",
+                title: "profile",
                 headerShown: false,
               }}
             />
             <Stack.Screen
               name="profile/create-experience"
               options={{
-                title: "Experiences",
+                title: "experience",
                 headerShown: false,
               }}
             />
             <Stack.Screen
               name="profile/update-experiences"
               options={{
-                title: "Experiences",
+                title: "experience",
                 headerShown: false,
               }}
             />
             <Stack.Screen
               name="profile/update-experience"
               options={{
-                title: "Edit Experiences",
+                title: "editExperience",
                 headerShown: false,
               }}
             />
             <Stack.Screen
               name="profile/delete-experience"
               options={{
-                title: "Delete Experiences",
+                title: "deleteExperience",
                 headerShown: false,
               }}
             />
             <Stack.Screen
               name="profile/create-education"
               options={{
-                title: "Create Education",
+                title: "createEducation",
                 headerShown: false,
               }}
             />
             <Stack.Screen
               name="profile/update-education"
               options={{
-                title: "Edit Education",
+                title: "editEducation",
                 headerShown: false,
               }}
             />
             <Stack.Screen
               name="profile/update-educations"
               options={{
-                title: "Educations",
+                title: "education",
                 headerShown: false,
               }}
             />
             <Stack.Screen
               name="profile/delete-education"
               options={{
-                title: "Delete Educations",
+                title: "deleteEducation",
                 headerShown: false,
               }}
             />
             <Stack.Screen
               name="profile/industries"
               options={{
-                title: "Industries",
+                title: "industries",
                 headerShown: false,
               }}
             />
@@ -256,7 +256,7 @@ export default function MainLayout() {
             <Stack.Screen
               name="profile/user-calendar"
               options={{
-                title: "Calendar",
+                title: "calendar",
                 headerShown: false,
               }}
             />
@@ -265,7 +265,7 @@ export default function MainLayout() {
             <Stack.Screen
               name="chat"
               options={{
-                title: "Chat",
+                title: "chat",
                 headerShown: false,
               }}
             />
@@ -279,21 +279,21 @@ export default function MainLayout() {
             <Stack.Screen
               name="chat/conversation-details"
               options={{
-                title: "Conversation Details",
+                title: "conversationDetails",
                 headerShown: false,
               }}
             />
             <Stack.Screen
               name="chat/report-conversation"
               options={{
-                title: "Report Conversation",
+                title: "reportConversation",
                 headerShown: false,
               }}
             />
             <Stack.Screen
               name="chat/conversation-resource-details"
               options={{
-                title: "Media, files and links",
+                title: "mediaFilesLinks",
                 headerShown: false,
               }}
             />
@@ -302,7 +302,7 @@ export default function MainLayout() {
             <Stack.Screen
               name="profile/email-success"
               options={{
-                title: "Email Changed Successfully",
+                title: "emailChangedSuccess",
                 headerShown: false,
                 animation: "simple_push",
                 animationDuration: 200,
@@ -312,28 +312,28 @@ export default function MainLayout() {
             <Stack.Screen
               name="profile/support/report-bug"
               options={{
-                title: "Report a Bug",
+                title: "settings.reportBug",
                 headerShown: false,
               }}
             />
             <Stack.Screen
               name="profile/support/send-feedback"
               options={{
-                title: "Send Feedback",
+                title: "settings.sendFeedback",
                 headerShown: false,
               }}
             />
             <Stack.Screen
               name="profile/support/faqs"
               options={{
-                title: "FAQs",
+                title: "settings.faqs",
                 headerShown: false,
               }}
             />
             <Stack.Screen
               name="settings/index"
               options={{
-                title: "Settings",
+                title: "settings.title",
                 headerShown: false,
                 animation: "fade_from_bottom",
                 animationDuration: 200,
@@ -342,7 +342,7 @@ export default function MainLayout() {
             <Stack.Screen
               name="settings/terms"
               options={{
-                title: "Terms & Conditions",
+                title: "settings.termsOfService",
                 headerShown: false,
                 animation: "fade_from_bottom",
                 animationDuration: 200,
@@ -351,7 +351,7 @@ export default function MainLayout() {
             <Stack.Screen
               name="settings/privacy-policy"
               options={{
-                title: "Privacy Policy",
+                title: "settings.privacyPolicy",
                 headerShown: false,
                 animation: "fade_from_bottom",
                 animationDuration: 200,
@@ -360,7 +360,7 @@ export default function MainLayout() {
             <Stack.Screen
               name="settings/verify-email"
               options={{
-                title: "Verify Email",
+                title: "verifyEmail",
                 headerShown: false,
                 animation: "fade_from_bottom",
                 animationDuration: 200,
@@ -369,7 +369,7 @@ export default function MainLayout() {
             <Stack.Screen
               name="settings/about"
               options={{
-                title: "About Instanct",
+                title: "aboutInstanct",
                 headerShown: false,
                 animation: "fade_from_bottom",
                 animationDuration: 200,
@@ -378,7 +378,7 @@ export default function MainLayout() {
             <Stack.Screen
               name="settings/theme"
               options={{
-                title: "Theme",
+                title: "settings.theme",
                 headerShown: false,
                 animation: "fade_from_bottom",
                 animationDuration: 200,
@@ -387,7 +387,7 @@ export default function MainLayout() {
             <Stack.Screen
               name="settings/language"
               options={{
-                title: "Language",
+                title: "settings.language",
                 headerShown: false,
                 animation: "fade_from_bottom",
                 animationDuration: 200,
@@ -403,21 +403,21 @@ export default function MainLayout() {
             <Stack.Screen
               name="profile/privacy-security"
               options={{
-                title: "Privacy & Security",
+                title: "privacySecurity",
                 headerShown: false,
               }}
             />
             <Stack.Screen
               name="profile/change-email"
               options={{
-                title: "Change Email",
+                title: "changeEmail",
                 headerShown: false,
               }}
             />
             <Stack.Screen
               name="profile/change-password"
               options={{
-                title: "Change Password",
+                title: "changePassword",
                 headerShown: false,
               }}
             />
@@ -426,7 +426,7 @@ export default function MainLayout() {
             <Stack.Screen
               name="maps/map-settings"
               options={{
-                title: "Map Settings",
+                title: "mapSettings",
                 headerShown: false,
                 animation: "fade_from_bottom",
                 animationDuration: 200,
@@ -437,7 +437,7 @@ export default function MainLayout() {
             <Stack.Screen
               name="request/new-request"
               options={{
-                title: "Send a Request",
+                title: "sendRequest",
                 headerShown: false,
                 animation: "fade_from_bottom",
                 animationDuration: 200,
@@ -446,7 +446,7 @@ export default function MainLayout() {
             <Stack.Screen
               name="request/answer"
               options={{
-                title: "Accept",
+                title: "acceptRequest",
                 headerShown: false,
                 animation: "fade_from_bottom",
                 animationDuration: 200,

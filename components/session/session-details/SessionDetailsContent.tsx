@@ -12,6 +12,7 @@ import { ArrowRight } from "lucide-react-native";
 import { Icon } from "@/components/ui/icon";
 import { SessionIncomingRequests } from "../../activities/SessionIncomingRequests";
 import { SessionOutgoingRequests } from "../../activities/SessionOutgoingRequests";
+import { useTranslation } from "react-i18next";
 
 interface SessionDetailsContentProps {
   session: ResponseSessionDto<MapSessionPayload>;
@@ -29,6 +30,7 @@ const toValidDate = (value?: Date | string | null) => {
 export const SessionDetailsContent = ({
   session,
 }: SessionDetailsContentProps) => {
+  const { t } = useTranslation("activities");
   const { objectives, isObjectivesSubTypePending } = useObjectives();
 
   const payloadObjectiveIds = React.useMemo(
@@ -116,7 +118,7 @@ export const SessionDetailsContent = ({
             },
           }}
         >
-          <Tab.Screen name="Informations">
+          <Tab.Screen name={t("activities.tabs.informations.title", "Informations")}>
             {() => (
               <ScrollView
                 className="flex-1"
@@ -176,10 +178,10 @@ export const SessionDetailsContent = ({
               </ScrollView>
             )}
           </Tab.Screen>
-          <Tab.Screen name="Incoming">
+          <Tab.Screen name={t("activities.tabs.incomming.title")}>
             {() => <SessionIncomingRequests />}
           </Tab.Screen>
-          <Tab.Screen name="Outgoing">
+          <Tab.Screen name={t("activities.tabs.outgoing.title")}>
             {() => <SessionOutgoingRequests />}
           </Tab.Screen>
         </Tab.Navigator>

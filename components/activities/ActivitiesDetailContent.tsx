@@ -15,6 +15,7 @@ import { format, isToday, isYesterday, parseISO } from "date-fns";
 import { NotFound } from "../shared/NotFound";
 import { BookmarkSkeleton } from "./skeletons/BookmarkSkeleton";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { useTranslation } from "react-i18next";
 
 interface ActivitiesDetailContentProps {
   className?: string;
@@ -33,6 +34,7 @@ export const ActivitiesDetailContent = ({
   session,
   handleScroll,
 }: ActivitiesDetailContentProps) => {
+  const { t } = useTranslation("activities");
   const {
     bookmarks,
     fetchNextPage,
@@ -127,7 +129,7 @@ export const ActivitiesDetailContent = ({
           },
         }}
       >
-        <Tab.Screen name="Bookmarks">
+        <Tab.Screen name={t("activities.tabs.bookmarks.title")}>
           {() =>
             isBookmarksPending ? (
               <BookmarkSkeleton count={3} />
@@ -179,11 +181,11 @@ export const ActivitiesDetailContent = ({
           }
         </Tab.Screen>
 
-        <Tab.Screen name="Incoming">
+        <Tab.Screen name={t("activities.tabs.incomming.title")}>
           {() => <SessionIncomingRequests handleScroll={handleScroll} />}
         </Tab.Screen>
 
-        <Tab.Screen name="Outgoing">
+        <Tab.Screen name={t("activities.tabs.outgoing.title")}>
           {() => <SessionOutgoingRequests handleScroll={handleScroll} />}
         </Tab.Screen>
       </Tab.Navigator>

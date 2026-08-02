@@ -4,7 +4,7 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { ConversationMediaDetails } from "./ConversationMediaDetails";
 import { ConversationFilesDetails } from "./ConversationFilesDetails";
 import { ConversationLinksDetails } from "./ConversationLinksDetails";
-
+import { useTranslation } from "react-i18next";
 import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 const Tab = createMaterialTopTabNavigator();
 
@@ -18,6 +18,7 @@ interface ConversationResourceDetailsProps {
 export const ConversationResourceDetails = ({
   id,
 }: ConversationResourceDetailsProps) => {
+  const { t } = useTranslation("common");
   const conversationId = Number(id);
 
   return (
@@ -51,13 +52,13 @@ export const ConversationResourceDetails = ({
           },
         }}
       >
-        <Tab.Screen name="Media">
+        <Tab.Screen name={t("chat.tabs.media.title", "Media")}>
           {() => <ConversationMediaDetails id={conversationId} />}
         </Tab.Screen>
-        <Tab.Screen name="Files">
+        <Tab.Screen name={t("chat.tabs.files.title", "Files")}>
           {() => <ConversationFilesDetails id={conversationId} />}
         </Tab.Screen>
-        <Tab.Screen name="Links">
+        <Tab.Screen name={t("chat.tabs.links.title", "Links")}>
           {() => <ConversationLinksDetails id={conversationId} />}
         </Tab.Screen>
       </Tab.Navigator>
