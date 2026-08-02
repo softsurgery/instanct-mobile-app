@@ -46,6 +46,8 @@ import Animated from "react-native-reanimated";
 import { Image } from "@/components/ui/image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
+import { LinearGradient } from "expo-linear-gradient";
+import { useLuminance } from "@/hooks/useLuminance";
 
 interface ProfileSection<T = unknown> {
   key: string;
@@ -313,6 +315,9 @@ export const InspectBaseProfile = ({
     ],
   );
 
+  const { isLight: isLightCover } = useLuminance(coverPreviewSource);
+  const [isHovered, setIsHovered] = React.useState(false);
+
   const Tab = createMaterialTopTabNavigator();
 
   if (refreshing || !user) {
@@ -325,45 +330,69 @@ export const InspectBaseProfile = ({
         <View onLayout={onLayout}>
           {/* Cover */}
           {coverExtra}
-          <PhotoPreview
-            className="active:opacity-70 relative w-full h-48 overflow-hidden bg-muted items-center justify-center"
-            source={coverPreviewSource}
-            onPress={handlePickCover}
-            footer={() => {
-              if (currentUser?.id !== id) return null;
+          <Pressable
+            onHoverIn={() => setIsHovered(true)}
+            onHoverOut={() => setIsHovered(false)}
+            className="w-full relative overflow-hidden"
+          >
+            <PhotoPreview
+              className="relative w-full h-48 overflow-hidden bg-muted items-center justify-center"
+              source={coverPreviewSource}
+              onPress={handlePickCover}
+              footer={() => {
+                if (currentUser?.id !== id) return null;
 
-              return (
-                <Pressable
-                  className="flex flex-row gap-2 items-center px-4 py-2 m-4 mx-auto border border-border rounded-full active:bg-muted"
-                  style={{
-                    marginBottom: insets.bottom * 2,
-                  }}
-                  onPress={handlePickCover}
-                >
+                return (
+                  <Pressable
+                    className="flex flex-row gap-2 items-center px-4 py-2 m-4 mx-auto border border-border rounded-full active:bg-muted"
+                    style={{
+                      marginBottom: insets.bottom * 2,
+                    }}
+                    onPress={handlePickCover}
+                  >
+                    <Icon as={Pencil} color="white" />
+                    <Text className="text-white">
+                      {t("menu.actions.addCoverPhoto")}
+                    </Text>
+                  </Pressable>
+                );
+              }}
+            >
+              {/* Cover Image */}
+              {coverPreviewSource ? (
+                <Image
+                  source={coverPreviewSource}
+                  style={{ width: "100%", height: "100%" }}
+                  resizeMode="cover"
+                />
+              ) : currentUser?.id === id ? (
+                <View className="flex flex-row gap-2 items-center z-10">
                   <Icon as={Pencil} color="white" />
-                  <Text className="text-white">
+                  <Text className="font-medium text-white">
                     {t("menu.actions.addCoverPhoto")}
                   </Text>
-                </Pressable>
-              );
-            }}
-          >
-            {/* Branded backdrop so empty covers feel intentional */}
-            {coverPreviewSource ? (
-              <Image
-                source={coverPreviewSource}
-                style={{ width: "100%", height: "100%" }}
-                resizeMode="cover"
+                </View>
+              ) : null}
+
+              {/* Dynamic Calque Overlay */}
+              <LinearGradient
+                colors={
+                  isHovered
+                    ? ["rgba(0,0,0,0.65)", "rgba(0,0,0,0.80)"]
+                    : isLightCover
+                    ? ["rgba(0,0,0,0.35)", "rgba(0,0,0,0.55)"]
+                    : ["rgba(0,0,0,0.15)", "rgba(0,0,0,0.35)"]
+                }
+                style={{
+                  position: "absolute",
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                }}
               />
-            ) : currentUser?.id === id ? (
-              <View className="flex flex-row gap-2 items-center">
-                <Icon as={Pencil} color="white" />
-                <Text className="font-medium text-white">
-                  {t("menu.actions.addCoverPhoto")}
-                </Text>
-              </View>
-            ) : null}
-          </PhotoPreview>
+            </PhotoPreview>
+          </Pressable>
           {(isCoverUploadPending || isUpdateCoverPending) && (
             <View className="absolute inset-0 bg-black/40 flex items-center justify-center z-50">
               <Loader isPending={true} size="large" />
