@@ -1,14 +1,10 @@
 import { SeeMoreText } from "@/components/shared/SeeMoreText";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { useColorPalette } from "@/hooks/useColorPalette";
-import { hslToHex } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import { ResponseEducationDto } from "@/types";
-import { format } from "date-fns";
-import { CalendarDays, GraduationCap } from "lucide-react-native";
+import { GraduationCap } from "lucide-react-native";
 import { View } from "react-native";
-import { useTranslation } from "react-i18next";
 
 interface EducationInstanceProps {
   className?: string;
@@ -32,7 +28,13 @@ export const EducationInstance = ({
   //   : null;
 
   return (
-    <View className={cn("flex-row gap-3", className)}>
+    <View
+      className={cn(
+        "flex-row gap-3",
+        education.description ? "items-start" : "items-center",
+        className,
+      )}
+    >
       {/* School tile */}
       <View className="h-11 w-11 items-center justify-center rounded-xl bg-primary/50">
         <Icon as={GraduationCap} size={20} color={"white"} />
