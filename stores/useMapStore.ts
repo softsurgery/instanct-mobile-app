@@ -77,6 +77,7 @@ const initialState: MapData = {
   connected: false,
   location: null,
   users: [],
+  clusters: [],
   nearbyUsers: [],
   reconnection: {
     reconnecting: false,
