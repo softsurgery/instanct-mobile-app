@@ -206,7 +206,7 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
             <View
               key={section.key}
               className={
-                "border border-b-border border-t-border shadow-sm overflow-hidden"
+                "border border-b-border border-t-border overflow-hidden"
               }
             >
               <View className="px-8 py-4 bg-card mb-4">
