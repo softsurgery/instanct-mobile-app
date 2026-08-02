@@ -20,8 +20,8 @@ import { useMutation } from "@tanstack/react-query";
 import { api } from "@/api";
 import { toast } from "sonner-native";
 import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
-
 import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
+
 interface MapSettingsProps {
   className?: string;
 }
@@ -42,7 +42,6 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
     return () => {
       // Reset draft settings when unmounting the component
       mapStore.setNested("draftSettings.radius", mapStore.settings.radius);
-      mapStore.setNested("draftSettings.clusters", mapStore.settings.clusters);
       mapStore.setNested(
         "draftSettings.showUsernames",
         mapStore.settings.showUsernames,
@@ -93,20 +92,10 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
       description: t("map-settings.display-preferences.description"),
       rows: [
         createSettingRow({
-          title: t("map-settings.display-preferences.show-clusters.title"),
-          description: t("map-settings.display-preferences.show-clusters.description"),
-          rightComponent: (
-            <Switch
-              checked={mapStore.draftSettings.clusters}
-              onCheckedChange={(value) =>
-                mapStore.setNested("draftSettings.clusters", value)
-              }
-            />
-          ),
-        }),
-        createSettingRow({
           title: t("map-settings.display-preferences.show-usernames.title"),
-          description: t("map-settings.display-preferences.show-usernames.description"),
+          description: t(
+            "map-settings.display-preferences.show-usernames.description",
+          ),
           rightComponent: (
             <Switch
               checked={mapStore.draftSettings.showUsernames}
@@ -160,13 +149,11 @@ export const MapSettings = ({ className }: MapSettingsProps) => {
     mutationFn: async () => {
       await api.user.updateMapConfiguration({
         radius: mapStore.draftSettings.radius,
-        clusters: mapStore.draftSettings.clusters,
         showUsernames: mapStore.draftSettings.showUsernames,
       });
     },
     onSuccess: () => {
       mapStore.setNested("settings.radius", mapStore.draftSettings.radius);
-      mapStore.setNested("settings.clusters", mapStore.draftSettings.clusters);
       mapStore.setNested(
         "settings.showUsernames",
         mapStore.draftSettings.showUsernames,

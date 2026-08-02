@@ -31,7 +31,6 @@ export function useLiveGeolocationParameters({}: useLiveGeolocationParameters = 
       // Seed user settings from server on first load only
       if (!mapStore.hasInitializedParameters) {
         mapStore.setNested("settings.radius", userMapConfiguration.radius);
-        mapStore.setNested("settings.clusters", userMapConfiguration.clusters);
         mapStore.setNested(
           "settings.showUsernames",
           userMapConfiguration.showUsernames,

@@ -4,7 +4,7 @@ const getDistance = (
   lat1: number,
   lon1: number,
   lat2: number,
-  lon2: number
+  lon2: number,
 ) => {
   const R = 6371000;
   const toRad = (x: number) => (x * Math.PI) / 180;
@@ -35,7 +35,7 @@ export const groupUsers = (users: NearbyUser[], threshold = 50): Cluster[] => {
         user.latitude,
         user.longitude,
         cluster.latitude,
-        cluster.longitude
+        cluster.longitude,
       );
       if (distance <= threshold) {
         foundCluster = cluster;
