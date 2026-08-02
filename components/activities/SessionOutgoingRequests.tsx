@@ -15,6 +15,7 @@ import { useTranslation } from "react-i18next";
 
 interface SessionOutgoingRequestsProps {
   className?: string;
+  hasLocation?: boolean;
   handleScroll?: (event: any) => void;
 }
 
@@ -24,6 +25,7 @@ type FlattenedItem =
 
 export const SessionOutgoingRequests = ({
   className,
+  hasLocation,
   handleScroll,
 }: SessionOutgoingRequestsProps) => {
   const { t } = useTranslation("activities");
@@ -50,6 +52,7 @@ export const SessionOutgoingRequests = ({
     return (
       <SessionRequestCard
         className="mx-4 mb-3"
+        hasLocation={item.request.location ? true : false}
         request={item.request}
         isIncoming={false}
       />

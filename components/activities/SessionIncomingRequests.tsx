@@ -49,6 +49,7 @@ export const SessionIncomingRequests = ({
     return (
       <SessionRequestCard
         className="mx-4 mb-3"
+        hasLocation={item.request.location ? true : false}
         request={item.request}
         isIncoming={true}
       />

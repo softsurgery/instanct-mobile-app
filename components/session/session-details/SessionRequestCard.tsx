@@ -14,6 +14,7 @@ interface SessionRequestCardProps {
   className?: string;
   request: ResponseRequestDto;
   isIncoming?: boolean;
+  hasLocation?: boolean;
 }
 
 const statusColorMap: Record<string, string> = {
@@ -25,6 +26,7 @@ const statusColorMap: Record<string, string> = {
 export const SessionRequestCard: React.FC<SessionRequestCardProps> = ({
   className,
   request,
+  hasLocation,
   isIncoming = true,
 }) => {
   const sender = request?.session?.user;
@@ -58,7 +60,11 @@ export const SessionRequestCard: React.FC<SessionRequestCardProps> = ({
       onPress={() => {
         router.push({
           pathname: "/main/request/answer",
-          params: { id: request.id, isIncoming: isIncoming ? "1" : "0" },
+          params: {
+            id: request.id,
+            isIncoming: isIncoming ? "1" : "0",
+            hasLocation: hasLocation ? "1" : "0",
+          },
         });
       }}
     >
