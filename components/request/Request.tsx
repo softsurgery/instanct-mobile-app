@@ -27,14 +27,22 @@ import { RequestLocationSection } from "./RequestLocationSection";
 import { RequestSkeleton } from "./RequestSkeleton";
 import { StatusBadge } from "./RequestStatus";
 import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
+import { useTranslation } from "react-i18next";
 
 interface RequestProps {
   id: string;
   isIncoming?: boolean;
+  hasLocation?: boolean;
   className?: string;
 }
 
-export const Request = ({ id, className, isIncoming }: RequestProps) => {
+export const Request = ({
+  id,
+  className,
+  isIncoming,
+  hasLocation,
+}: RequestProps) => {
+  const { t } = useTranslation("activities");
   const queryClient = useQueryClient();
 
   const [pendingEvent, setPendingEvent] = React.useState<RequestEvent | null>(
@@ -158,12 +166,12 @@ export const Request = ({ id, className, isIncoming }: RequestProps) => {
           },
         ]}
       />
-      <View className="flex-1 bg-background px-4">
-        {isPending ? (
-          <RequestSkeleton />
+      <View className="flex-1 bg-background p-4">
+        {!isPending ? (
+          <RequestSkeleton hasLocation={hasLocation} />
         ) : (
           <View className="flex flex-col gap-4">
-            <View className="p-4">
+            <View className="">
               {user && (
                 <View className="flex flex-row items-center gap-3">
                   <View className="overflow-hidden rounded-full">

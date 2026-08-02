@@ -14,6 +14,7 @@ import { SessionRequestCardSkeleton } from "./skeletons/SessionRequestCardSkelet
 
 interface SessionOutgoingRequestsProps {
   className?: string;
+  hasLocation?: boolean;
   handleScroll?: (event: any) => void;
 }
 
@@ -23,6 +24,7 @@ type FlattenedItem =
 
 export const SessionOutgoingRequests = ({
   className,
+  hasLocation,
   handleScroll,
 }: SessionOutgoingRequestsProps) => {
   const {
@@ -48,6 +50,7 @@ export const SessionOutgoingRequests = ({
     return (
       <SessionRequestCard
         className="mx-4 mb-3"
+        hasLocation={item.request.location ? true : false}
         request={item.request}
         isIncoming={false}
       />
