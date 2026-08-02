@@ -10,9 +10,7 @@ export const NotificationEntrySkeleton = ({
   className,
 }: NotificationEntrySkeletonProps) => {
   return (
-    <View
-      className={cn("flex flex-row items-center gap-2 px-2 py-1", className)}
-    >
+    <View className={cn("flex flex-row items-center gap-2", className)}>
       {/* Profile Picture Skeleton */}
       <Skeleton className="w-16 h-16 rounded-full" />
 
