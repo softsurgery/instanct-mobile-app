@@ -95,5 +95,6 @@ export const useScrollableElement = ({
     animatedHeaderStyle,
     handleScroll,
     onLayout,
+    showHeader,
   };
 };

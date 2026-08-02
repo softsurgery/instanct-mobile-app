@@ -42,7 +42,10 @@ import { EducationInstance } from "./education/EducationInstance";
 import { hslToHex } from "@/lib/theme";
 import { useColorPalette } from "@/hooks/useColorPalette";
 import { useScrollableElement } from "@/hooks/useScrollableElement";
-import Animated from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  withTiming,
+} from "react-native-reanimated";
 import { Image } from "@/components/ui/image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
@@ -69,11 +72,12 @@ export const InspectBaseProfile = ({
   id,
   coverExtra,
 }: InspectBaseProfileProps) => {
-  const { animatedHeaderStyle, handleScroll, onLayout } = useScrollableElement({
-    deltaThreshold: 250,
-    duration: 400,
-    checkScrollable: true,
-  });
+  const { animatedHeaderStyle, handleScroll, onLayout, showHeader } =
+    useScrollableElement({
+      deltaThreshold: 0,
+      duration: 400,
+      checkScrollable: true,
+    });
   const insets = useSafeAreaInsets();
   const { palette } = useColorPalette();
   const { t } = useTranslation("menu");
@@ -320,6 +324,14 @@ export const InspectBaseProfile = ({
 
   const Tab = createMaterialTopTabNavigator();
 
+  const animatedTabsStyle = useAnimatedStyle(() => {
+    return {
+      paddingTop: withTiming(showHeader.value ? 0 : insets.top, {
+        duration: 400,
+      }),
+    };
+  });
+
   if (refreshing || !user) {
     return <BaseProfileSkeleton className={className} />;
   }
@@ -380,8 +392,8 @@ export const InspectBaseProfile = ({
                   isHovered
                     ? ["rgba(0,0,0,0.65)", "rgba(0,0,0,0.80)"]
                     : isLightCover
-                    ? ["rgba(0,0,0,0.35)", "rgba(0,0,0,0.55)"]
-                    : ["rgba(0,0,0,0.15)", "rgba(0,0,0,0.35)"]
+                      ? ["rgba(0,0,0,0.35)", "rgba(0,0,0,0.55)"]
+                      : ["rgba(0,0,0,0.15)", "rgba(0,0,0,0.35)"]
                 }
                 style={{
                   position: "absolute",
@@ -451,7 +463,10 @@ export const InspectBaseProfile = ({
         </View>
       </Animated.View>
       {/* Tabs */}
-      <View className="flex-1 mt-2">
+      <Animated.View
+        className={cn("flex-1", !user?.emailVerified ? "mt-2" : "")}
+        style={animatedTabsStyle}
+      >
         <Tab.Navigator
           screenOptions={{
             tabBarScrollEnabled: false,
@@ -520,7 +535,7 @@ export const InspectBaseProfile = ({
             )}
           </Tab.Screen> */}
         </Tab.Navigator>
-      </View>
+      </Animated.View>
     </View>
   );
 };
