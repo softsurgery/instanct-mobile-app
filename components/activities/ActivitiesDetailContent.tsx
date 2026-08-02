@@ -129,12 +129,7 @@ export const ActivitiesDetailContent = ({
           },
         }}
       >
-        <Tab.Screen
-          name="Bookmarks"
-          options={{
-            tabBarLabel: t("activities.tabs.bookmarks.title"),
-          }}
-        >
+        <Tab.Screen name={t("activities.tabs.bookmarks.title")}>
           {() =>
             isBookmarksPending ? (
               <BookmarkSkeleton count={3} />
@@ -186,21 +181,11 @@ export const ActivitiesDetailContent = ({
           }
         </Tab.Screen>
 
-        <Tab.Screen
-          name="Incoming"
-          options={{
-            tabBarLabel: t("activities.tabs.incomming.title"),
-          }}
-        >
+        <Tab.Screen name={t("activities.tabs.incomming.title")}>
           {() => <SessionIncomingRequests handleScroll={handleScroll} />}
         </Tab.Screen>
 
-        <Tab.Screen
-          name="Outgoing"
-          options={{
-            tabBarLabel: t("activities.tabs.outgoing.title"),
-          }}
-        >
+        <Tab.Screen name={t("activities.tabs.outgoing.title")}>
           {() => <SessionOutgoingRequests handleScroll={handleScroll} />}
         </Tab.Screen>
       </Tab.Navigator>

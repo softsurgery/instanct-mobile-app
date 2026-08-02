@@ -6,6 +6,7 @@ import { router, useNavigation } from "expo-router";
 import { Text } from "../ui/text";
 import { cn } from "@/lib/utils";
 import { useColorPalette } from "@/hooks/useColorPalette";
+import { useTranslation } from "react-i18next";
 
 interface AppHeaderBackProps {
   className?: string;
@@ -23,22 +24,29 @@ const getLeafRoute = (route: any): any => {
   return route;
 };
 
-const cleanRouteName = (routeName: string) => {
-  if (!routeName) return "Back";
-  if (routeName === "index") return "Explore";
+/** kebab-case → camelCase: "session-starter" → "sessionStarter" */
+const toCamelCase = (str: string) =>
+  str.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase());
 
-  const parts = routeName
-    .split("/")
-    .filter((p) => p !== "index" && p !== "main");
-  const lastPart = parts[parts.length - 1] || "Back";
-
-  return lastPart
-    .split(/[-_]/)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
+/**
+ * Extracts the active tab name from a nested (tabs) route state.
+ * e.g. route { name:"(tabs)", state:{ index:2, routes:[{name:"index"},{name:"activities"},{name:"map"},{name:"menu"}] } }
+ *   → "map"
+ */
+const getActiveTabName = (route: any): string | null => {
+  const tabState = route?.state;
+  if (
+    tabState &&
+    Array.isArray(tabState.routes) &&
+    typeof tabState.index === "number"
+  ) {
+    return tabState.routes[tabState.index]?.name ?? null;
+  }
+  return null;
 };
 
 export const AppHeaderBack = ({ className }: AppHeaderBackProps) => {
+  const { t, i18n } = useTranslation("screens");
   const { palette } = useColorPalette();
   const navigation = useNavigation();
   const [routes, setRoutes] = React.useState(
@@ -52,13 +60,84 @@ export const AppHeaderBack = ({ className }: AppHeaderBackProps) => {
     return unsubscribe;
   }, [navigation]);
 
-  const getPreviousRouteTitle = () => {
+  /** Try a key in the "screens" namespace; return translation or null. */
+  const tryKey = (key: string): string | null => {
+    if (key && i18n.exists(key, { ns: "screens" })) {
+      return t(key);
+    }
+    return null;
+  };
+
+  const getPreviousRouteTitle = (): string => {
     if (routes && routes.length > 1) {
       const prevRoute = routes[routes.length - 2];
       const leafRoute = getLeafRoute(prevRoute);
-      return cleanRouteName(leafRoute?.name);
+      const routeName: string = leafRoute?.name ?? "";
+
+      // 1. Explicit title passed via navigation params
+      const paramTitle = leafRoute?.params?.title;
+      if (typeof paramTitle === "string" && paramTitle) {
+        return tryKey(paramTitle) ?? paramTitle;
+      }
+
+      // 2. For (tabs) routes, detect the active tab name
+      if (routeName === "(tabs)") {
+        const tabName = getActiveTabName(prevRoute);
+        if (tabName && tabName !== "index") {
+          return tryKey(tabName) ?? t("back");
+        }
+        return tryKey("explore") ?? t("back");
+      }
+
+      // 3. Try the full route name directly (works for "chat", "notifications", etc.)
+      const directMatch = tryKey(routeName);
+      if (directMatch) return directMatch;
+
+      // 4. Split into segments and try strategies
+      const segments = routeName
+        .split("/")
+        .map((s) => s.replace(/\([^)]+\)/g, "").replace(/\[[^\]]+\]/g, ""))
+        .filter((s) => s !== "" && s !== "index");
+
+      // Try last segment as-is (e.g. "industries", "calendar")
+      const lastSegment = segments[segments.length - 1] ?? "";
+      if (lastSegment) {
+        const asIs = tryKey(lastSegment);
+        if (asIs) return asIs;
+
+        // Try camelCase of last segment (e.g. "session-starter" → "sessionStarter")
+        const camel = tryKey(toCamelCase(lastSegment));
+        if (camel) return camel;
+      }
+
+      // Try joining all segments as camelCase (e.g. "sessions/details" → try "sessionDetails")
+      if (segments.length > 1) {
+        const joined = segments
+          .map((s, i) => {
+            const camel = toCamelCase(s);
+            return i === 0
+              ? camel
+              : camel.charAt(0).toUpperCase() + camel.slice(1);
+          })
+          .join("");
+        const joinedMatch = tryKey(joined);
+        if (joinedMatch) return joinedMatch;
+      }
+
+      // Try first segment only (e.g. "profile/update-profile" → "profile", "sessions/index" → "sessions")
+      if (segments.length > 0) {
+        const firstMatch = tryKey(segments[0]);
+        if (firstMatch) return firstMatch;
+      }
+
+      // If segments is empty (e.g. route was "index", "(tabs)", or "main/(tabs)/index")
+      // it means we are at the root tab (Explore)
+      if (segments.length === 0) {
+        return tryKey("explore") ?? t("");
+      }
     }
-    return "Back";
+
+    return t("");
   };
 
   return (

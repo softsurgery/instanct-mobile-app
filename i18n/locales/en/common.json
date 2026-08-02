@@ -19,6 +19,28 @@
     "sessionDetails": "Session Details",
     "mapSettings": "Map Settings",
     "activities": "Activities",
+    "sessionStarter": "Session Starter",
+    "manageSession": "Manage Session",
+    "userFilters": "User Filters",
+    "editExperience": "Edit Experience",
+    "deleteExperience": "Delete Experience",
+    "createEducation": "Create Education",
+    "editEducation": "Edit Education",
+    "deleteEducation": "Delete Education",
+    "industries": "Industries",
+    "calendar": "Calendar",
+    "chat": "Chat",
+    "conversationDetails": "Conversation Details",
+    "reportConversation": "Report Conversation",
+    "mediaFilesLinks": "Media, Files & Links",
+    "emailChangedSuccess": "Email Changed Successfully",
+    "verifyEmail": "Verify Email",
+    "aboutInstanct": "About Instanct",
+    "privacySecurity": "Privacy & Security",
+    "changeEmail": "Change Email",
+    "changePassword": "Change Password",
+    "sendRequest": "Send a Request",
+    "acceptRequest": "Accept",
     "settings": {
       "title": "Settings",
       "reportBug": "Report a Bug",
@@ -41,5 +63,14 @@
       "fr": "French",
       "ar": "Arabic"
     }
+  },
+  "theme": {
+    "title": "Theme",
+    "description": "Choose your preferred theme",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "common": {
+    "back": "Back"
   }
 }

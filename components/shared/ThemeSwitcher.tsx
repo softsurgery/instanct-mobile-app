@@ -3,6 +3,7 @@ import Select from "./form-builder/components/Select";
 import { useColorScheme } from "nativewind";
 import { setAndroidNavigationBar } from "@/lib/android-navigation-bar";
 import { Platform } from "react-native";
+import { useTranslation } from "react-i18next";
 
 interface ThemeSwitcherProps {
   classNames?: {
@@ -14,11 +15,12 @@ interface ThemeSwitcherProps {
 export const ThemeSwitcher = ({ classNames }: ThemeSwitcherProps) => {
   const { colorScheme, setColorScheme } = useColorScheme();
   const { setTheme } = usePreferencePersistStore();
+  const { t } = useTranslation("common");
   return (
     <Select
       classNames={classNames}
-      title="Select Theme"
-      description="Choose your preferred theme"
+      title={t("theme.title")}
+      description={t("theme.description")}
       placeholder="Select a theme"
       value={colorScheme}
       onSelect={async (value) => {
@@ -29,8 +31,8 @@ export const ThemeSwitcher = ({ classNames }: ThemeSwitcherProps) => {
         setTheme(newTheme);
       }}
       options={[
-        { label: "Light", value: "light" },
-        { label: "Dark", value: "dark" },
+        { label: t("theme.light"), value: "light" },
+        { label: t("theme.dark"), value: "dark" },
       ]}
     />
   );

@@ -152,10 +152,13 @@ export const MapLockedOverlay = ({
           {/* Copy */}
           <Animated.View style={textReveal} className="items-center">
             <Text className="text-center text-2xl font-bold tracking-tight text-foreground">
-              {t("screens.map.locked.title")}
+              {t("mapLockedTitle", "Sharing is locked")}
             </Text>
             <Text className="mt-2.5 text-center text-sm leading-5 text-muted-foreground">
-              {t("screens.map.locked.description")}
+              {t(
+                "mapLockedDescription",
+                "Start a session to go live and see who's nearby on the map.",
+              )}
             </Text>
           </Animated.View>
         </View>

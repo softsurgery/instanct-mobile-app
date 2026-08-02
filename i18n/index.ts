@@ -22,6 +22,9 @@ import frMenu from "./locales/fr/menu.json";
 import enActivities from "./locales/en/activities.json";
 import frActivities from "./locales/fr/activities.json";
 
+import enScreens from "./locales/en/screens.json";
+import frScreens from "./locales/fr/screens.json";
+
 const resources = {
   en: {
     common: enCommon,
@@ -30,6 +33,7 @@ const resources = {
     explore: enExplore,
     menu: enMenu,
     activities: enActivities,
+    screens: enScreens,
   },
   fr: {
     common: frCommon,
@@ -38,6 +42,7 @@ const resources = {
     explore: frExplore,
     menu: frMenu,
     activities: frActivities,
+    screens: frScreens,
   },
   // ar: {
   //   common: arCommon,
@@ -53,8 +58,16 @@ i18n.use(initReactI18next).init({
   resources,
   lng: languageCode,
   fallbackLng: "en",
-  ns: ["common", "notifications", "settings", "explore", "menu", "activities"],
-  defaultNS: "common",
+  ns: [
+    "screens",
+    "common",
+    "notifications",
+    "settings",
+    "explore",
+    "menu",
+    "activities",
+  ],
+  defaultNS: "screens",
   interpolation: { escapeValue: false },
 });
 

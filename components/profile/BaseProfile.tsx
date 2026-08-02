@@ -485,7 +485,7 @@ export const InspectBaseProfile = ({
           }}
         >
           <Tab.Screen
-            name="About"
+            name={t("menu.tabs.about.title")}
             options={{
               tabBarLabel: t("menu.tabs.about.title"),
             }}
@@ -501,7 +501,7 @@ export const InspectBaseProfile = ({
             )}
           </Tab.Screen>
           <Tab.Screen
-            name="Career"
+            name={t("menu.tabs.career.title")}
             options={{
               tabBarLabel: t("menu.tabs.career.title"),
             }}
