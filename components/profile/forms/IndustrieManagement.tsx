@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { StableSafeAreaView } from "@/components/shared/StableSafeAreaView";
 import { ApplicationHeader } from "@/components/shared/AppHeader";
 import { Text } from "@/components/ui/text";
-import { ArrowLeft, Loader2 } from "lucide-react-native";
+import { Loader2 } from "lucide-react-native";
 import { Icon } from "@/components/ui/icon";
 import * as Haptics from "expo-haptics";
 import { Button } from "@/components/ui/button";
@@ -165,12 +165,12 @@ export const IndustriesManagement = ({
                   size={18}
                   className="text-primary-foreground animate-spin"
                 />
-                <Text className="text-primary-foreground font-semibold">
+                <Text className="text-primary-foreground text-md font-bold">
                   {t("menu.industries.actions.updatePending")}
                 </Text>
               </React.Fragment>
             ) : (
-              <Text className="text-primary-foreground font-semibold">
+              <Text className="text-primary-foreground text-md font-bold">
                 {t("menu.industries.actions.update")}
               </Text>
             )}
