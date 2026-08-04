@@ -13,6 +13,7 @@ import { differenceInMilliseconds } from "date-fns";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { formatSmartDate } from "@/lib/date";
 import { useUserPresence } from "@/hooks/content/chat/useUserPresence";
+import { useTranslation } from "react-i18next";
 
 interface UserCardProps {
   className?: string;
@@ -29,6 +30,7 @@ export const UserEntry = ({
   conversation,
   isPending,
 }: UserCardProps) => {
+  const { t } = useTranslation("chat");
   const { currentUser } = useCurrentUser();
   const user = React.useMemo(
     () =>
@@ -73,7 +75,7 @@ export const UserEntry = ({
           numberOfLines={1}
           ellipsizeMode="tail"
         >
-          Start a conversation 👋
+          {t("chat.preview.startConversation")}
         </Text>
       );
     }
@@ -81,7 +83,7 @@ export const UserEntry = ({
     const isMe = lastMessage.userId === currentUser?.id;
     const prefix =
       isMe && lastMessage.static !== StaticMessageEnum.FIRST_MESSAGE
-        ? "You: "
+        ? t("chat.preview.youPrefix")
         : "";
 
     const defaultStyle = cn(
@@ -99,7 +101,7 @@ export const UserEntry = ({
             numberOfLines={1}
             ellipsizeMode="tail"
           >
-            Start a conversation 👋
+            {t("chat.preview.startConversation")}
           </Text>
         );
       }
@@ -110,7 +112,9 @@ export const UserEntry = ({
             numberOfLines={1}
             ellipsizeMode="tail"
           >
-            {isMe ? "👉 You poked them" : "👈 Poked you"}
+            {isMe
+              ? t("chat.preview.pokeSent")
+              : t("chat.preview.pokeReceived")}
           </Text>
         );
       }
@@ -119,7 +123,7 @@ export const UserEntry = ({
     const mediaCount = lastMessage.uploads?.length || 1;
 
     if (lastMessage?.variant === MessageVariant.IMAGE) {
-      const label = mediaCount === 1 ? "📷 Image" : `📷 ${mediaCount} photos`;
+      const label = t("chat.preview.image", { count: mediaCount });
       return (
         <Text className={defaultStyle} numberOfLines={1} ellipsizeMode="tail">
           {prefix}
@@ -129,7 +133,7 @@ export const UserEntry = ({
     }
 
     if (lastMessage?.variant === MessageVariant.VIDEO) {
-      const label = mediaCount === 1 ? "🎥 Video" : `🎥 ${mediaCount} videos`;
+      const label = t("chat.preview.video", { count: mediaCount });
       return (
         <Text className={defaultStyle} numberOfLines={1} ellipsizeMode="tail">
           {prefix}
@@ -139,7 +143,7 @@ export const UserEntry = ({
     }
 
     if (lastMessage?.variant === MessageVariant.FILE) {
-      const label = mediaCount === 1 ? "📎 File" : `📎 ${mediaCount} files`;
+      const label = t("chat.preview.file", { count: mediaCount });
       return (
         <Text className={defaultStyle} numberOfLines={1} ellipsizeMode="tail">
           {prefix}
@@ -168,7 +172,7 @@ export const UserEntry = ({
         {text}
       </Text>
     );
-  }, [lastMessage, currentUser?.id, seen]);
+  }, [lastMessage, currentUser?.id, seen, t]);
 
   return (
     <View

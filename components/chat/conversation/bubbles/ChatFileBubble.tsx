@@ -13,6 +13,7 @@ import {
 } from "../../upload-details/FileListItem";
 import { ChatFileList, ChatFileListItem } from "./ChatFileList";
 import { MessageTextContent } from "./MessageTextContent";
+import { useTranslation } from "react-i18next";
 
 interface ChatFileBubbleProps {
   className?: string;
@@ -30,6 +31,7 @@ export const ChatFileBubble = ({
   pending,
   right,
 }: ChatFileBubbleProps) => {
+  const { t } = useTranslation("chat");
   const screenWidth = Dimensions.get("window").width;
   const CHAT_FILE_WIDTH = Math.round(screenWidth * 0.75);
 
@@ -66,13 +68,13 @@ export const ChatFileBubble = ({
         filename: resolveUploadDisplayName(
           inlineUpload,
           fetchedUpload,
-          `File ${index + 1}`,
+          t("chat.conversation.upload.fileFallback", { index: index + 1 }),
         ),
         mimetype: inlineUpload?.mimetype ?? fetchedUpload?.mimetype,
         size: inlineUpload?.size ?? fetchedUpload?.size,
       };
     });
-  }, [pending, pendingItems, uploadEntries, uploads]);
+  }, [pending, pendingItems, uploadEntries, uploads, t]);
 
   /**
    * Downloading/opening handler for a specific file attachment inside the bubble.

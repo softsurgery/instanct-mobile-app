@@ -19,6 +19,7 @@ import { Text } from "~/components/ui/text";
 import { cn } from "~/lib/utils";
 import { VideoThumbnailPreview } from "~/components/shared/VideoThumbnailPreview";
 import { StagedMedia } from "@/types";
+import { useTranslation } from "react-i18next";
 
 interface ConversationMediaStagingProps {
   className?: string;
@@ -107,6 +108,7 @@ export const ConversationMediaStaging = ({
   onRemove,
   onAddMore,
 }: ConversationMediaStagingProps) => {
+  const { t } = useTranslation("chat");
   const insets = useSafeAreaInsets();
   const [caption, setCaption] = React.useState("");
   const [selectedIndexRaw, setSelectedIndex] = React.useState(0);
@@ -151,9 +153,9 @@ export const ConversationMediaStaging = ({
   const mediaLabel =
     stagedMedia.length === 1
       ? selectedItem.kind === "video"
-        ? "1 video"
-        : "1 photo"
-      : `${stagedMedia.length} items`;
+        ? t("chat.conversation.staging.video", { count: 1 })
+        : t("chat.conversation.staging.photo", { count: 1 })
+      : t("chat.conversation.staging.items", { count: stagedMedia.length });
 
   return (
     <Modal

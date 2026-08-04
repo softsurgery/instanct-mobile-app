@@ -4,6 +4,7 @@ import { File, Hand, Image as ImageIcon, Video } from "lucide-react-native";
 import { View } from "react-native";
 import ActionSheet, { type ActionSheetRef } from "react-native-actions-sheet";
 import { ChatActionGridItem } from "./ChatActionGridItem";
+import { useTranslation } from "react-i18next";
 
 interface ConversationInputActionsSheetProps {
   onPoke: () => void;
@@ -17,6 +18,7 @@ export const ConversationInputActionsSheet = React.forwardRef<
   ActionSheetRef,
   ConversationInputActionsSheetProps
 >(({ onPoke, onPickImage, onPickVideo, onPickFile, disabled }, ref) => {
+  const { t } = useTranslation("chat");
   const { palette } = useColorPalette();
   const innerRef = React.useRef<ActionSheetRef>(null);
   const pendingActionRef = React.useRef<(() => void) | null>(null);
@@ -36,16 +38,16 @@ export const ConversationInputActionsSheet = React.forwardRef<
 
   const actions = [
     {
-      label: "Photo",
-      sublabel: "Send image",
+      label: t("chat.conversation.attachments.photo.label"),
+      sublabel: t("chat.conversation.attachments.photo.sublabel"),
       icon: ImageIcon,
       iconColor: "#3B82F6",
       onPress: () => runAction(onPickImage),
       disabled,
     },
     {
-      label: "Video",
-      sublabel: "Send video",
+      label: t("chat.conversation.attachments.video.label"),
+      sublabel: t("chat.conversation.attachments.video.sublabel"),
       icon: Video,
       iconColor: "#8B5CF6",
 
@@ -53,8 +55,8 @@ export const ConversationInputActionsSheet = React.forwardRef<
       disabled,
     },
     {
-      label: "File",
-      sublabel: "Send file",
+      label: t("chat.conversation.attachments.file.label"),
+      sublabel: t("chat.conversation.attachments.file.sublabel"),
       icon: File,
       iconColor: "#eab308",
 
@@ -62,8 +64,8 @@ export const ConversationInputActionsSheet = React.forwardRef<
       disabled,
     },
     {
-      label: "Poke",
-      sublabel: "Say hello",
+      label: t("chat.conversation.attachments.poke.label"),
+      sublabel: t("chat.conversation.attachments.poke.sublabel"),
       icon: Hand,
       iconColor: "#F97316",
       onPress: () => runAction(onPoke),

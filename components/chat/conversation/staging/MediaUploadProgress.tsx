@@ -2,6 +2,7 @@ import React from "react";
 import { View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 import { Text } from "~/components/ui/text";
+import { useTranslation } from "react-i18next";
 
 interface MediaUploadProgressProps {
   progress: number;
@@ -20,6 +21,7 @@ export const MediaUploadProgress = ({
   progress,
   failed,
 }: MediaUploadProgressProps) => {
+  const { t } = useTranslation("chat");
   const clamped = Math.min(Math.max(progress, 0), 100);
   const offset = CIRCUMFERENCE * (1 - clamped / 100);
 
@@ -50,7 +52,9 @@ export const MediaUploadProgress = ({
           />
         </Svg>
         <Text className="absolute text-xs font-semibold text-white">
-          {failed ? "Failed" : `${clamped}%`}
+          {failed
+            ? t("chat.conversation.upload.progressFailed")
+            : `${clamped}%`}
         </Text>
       </View>
     </View>

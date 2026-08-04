@@ -14,6 +14,7 @@ import Animated, {
   ZoomIn,
   ZoomOut,
 } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 
 interface ConversationInputProps {
   className?: string;
@@ -43,6 +44,7 @@ export const ConversationInput = ({
   onPickFile,
   isConversationLocked = false,
 }: ConversationInputProps) => {
+  const { t } = useTranslation("chat");
   const isKeyboardVisible = useKeyboardVisible();
   const actionSheetRef = React.useRef<ActionSheetRef>(null);
 
@@ -66,7 +68,7 @@ export const ConversationInput = ({
       >
         <View className="flex flex-row items-center justify-center gap-2 px-3 py-6">
           <Text className="text-sm text-muted-foreground">
-            You can&apos;t send messages in this conversation.
+            {t("chat.conversation.locked")}
           </Text>
         </View>
       </View>
@@ -98,7 +100,7 @@ export const ConversationInput = ({
         <Textarea
           value={input}
           onChangeText={setInput}
-          placeholder={"Aa"}
+          placeholder={t("chat.conversation.inputPlaceholder")}
           multiline
           style={{ minHeight: 40, maxHeight: 120, height: "auto" }}
           className="flex-1 px-4 rounded-2xl bg-input text-base"

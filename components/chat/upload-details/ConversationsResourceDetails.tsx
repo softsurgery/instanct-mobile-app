@@ -18,13 +18,13 @@ interface ConversationResourceDetailsProps {
 export const ConversationResourceDetails = ({
   id,
 }: ConversationResourceDetailsProps) => {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("chat");
   const conversationId = Number(id);
 
   return (
     <StableSafeAreaView className="flex-1 bg-card">
       <ApplicationHeader
-        title="Media, files and links"
+        title={t("chat.resources.title")}
         titleVariant="large"
         shortcuts={[
           {
@@ -52,13 +52,13 @@ export const ConversationResourceDetails = ({
           },
         }}
       >
-        <Tab.Screen name={t("chat.tabs.media.title", "Media")}>
+        <Tab.Screen name={t("chat.tabs.media.title")}>
           {() => <ConversationMediaDetails id={conversationId} />}
         </Tab.Screen>
-        <Tab.Screen name={t("chat.tabs.files.title", "Files")}>
+        <Tab.Screen name={t("chat.tabs.files.title")}>
           {() => <ConversationFilesDetails id={conversationId} />}
         </Tab.Screen>
-        <Tab.Screen name={t("chat.tabs.links.title", "Links")}>
+        <Tab.Screen name={t("chat.tabs.links.title")}>
           {() => <ConversationLinksDetails id={conversationId} />}
         </Tab.Screen>
       </Tab.Navigator>

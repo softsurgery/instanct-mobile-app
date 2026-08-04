@@ -12,6 +12,7 @@ import { Upload } from "@/types/upload";
 import { format } from "date-fns";
 import React from "react";
 import { Pressable, View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 interface FileListItemProps {
   message: ResponseMessageDto;
@@ -64,12 +65,18 @@ export const FileListItem = React.memo(function FileListItem({
   displayName,
   size,
 }: FileListItemProps) {
+  const { t } = useTranslation("chat");
   const [isOpening, setIsOpening] = React.useState(false);
   const shouldFetch = !upload?.filename || isSlugLikeFilename(upload.filename);
   const { uploads } = useServerUploads([shouldFetch ? uploadId : undefined]);
   const fetchedUpload = uploads[0];
   const resolvedName =
-    displayName ?? resolveUploadDisplayName(upload, fetchedUpload, "File");
+    displayName ??
+    resolveUploadDisplayName(
+      upload,
+      fetchedUpload,
+      t("chat.resources.fileFallback"),
+    );
   const resolvedSize = size ?? upload?.size ?? fetchedUpload?.size;
   const resolvedMimetype = upload?.mimetype ?? fetchedUpload?.mimetype;
 

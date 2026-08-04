@@ -4,6 +4,7 @@ import { formatFileSize } from "@/lib/files";
 import React from "react";
 import { Pressable, View } from "react-native";
 import { MediaUploadProgress } from "../staging/MediaUploadProgress";
+import { useTranslation } from "react-i18next";
 
 export type ChatFileListItem = {
   uploadId?: number;
@@ -83,6 +84,7 @@ export const ChatFileList = ({
   uploadFailed,
   progress,
 }: ChatFileListProps) => {
+  const { t } = useTranslation("chat");
   const showProgress = isUploading || uploadFailed;
 
   return (
@@ -95,9 +97,9 @@ export const ChatFileList = ({
           typeof item.uploadId === "number" && openingUploadId === item.uploadId;
 
         let subtitle = formatFileSize(item.size);
-        if (isUploading) subtitle = "Uploading...";
-        else if (isSending) subtitle = "Sending...";
-        else if (uploadFailed) subtitle = "Upload failed";
+        if (isUploading) subtitle = t("chat.conversation.upload.uploading");
+        else if (isSending) subtitle = t("chat.conversation.upload.sending");
+        else if (uploadFailed) subtitle = t("chat.conversation.upload.failed");
 
         return (
           <ChatFileRow

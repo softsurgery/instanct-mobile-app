@@ -1,4 +1,11 @@
-import { format, isToday, isThisWeek, isThisYear } from "date-fns";
+import {
+  format,
+  isToday,
+  isThisWeek,
+  isThisYear,
+  intervalToDuration,
+} from "date-fns";
+import type { TFunction } from "i18next";
 
 export function toDateOnly(date: Date) {
   if (isNaN(date.getTime())) {
@@ -54,3 +61,30 @@ export function formatSmartDate(dateInput: Date | string | number): string {
   if (isThisYear(date)) return format(date, "d MMM");
   return format(date, "d MMM yyyy");
 }
+
+export const formatLastSeen = (date: Date, t: TFunction) => {
+  const duration = intervalToDuration({
+    start: date,
+    end: new Date(),
+  });
+
+  const units = [
+    "years",
+    "months",
+    "weeks",
+    "days",
+    "hours",
+    "minutes",
+    "seconds",
+  ] as const;
+
+  const unit = units.find((u) => duration[u]);
+
+  if (!unit) {
+    return t("chat.conversation.presence.justNow");
+  }
+
+  return t(`chat.conversation.presence.${unit}Ago`, {
+    count: duration[unit],
+  });
+};

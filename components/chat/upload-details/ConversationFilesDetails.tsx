@@ -7,6 +7,7 @@ import { LegendList } from "@legendapp/list";
 import React from "react";
 import { ActivityIndicator, View } from "react-native";
 import { FileListItem, getMessageUploadEntries } from "./FileListItem";
+import { useTranslation } from "react-i18next";
 
 type ConversationFileItem = {
   key: string;
@@ -26,6 +27,7 @@ interface ConversationFilesDetailsProps {
 export const ConversationFilesDetails = ({
   id,
 }: ConversationFilesDetailsProps) => {
+  const { t } = useTranslation("chat");
   const { palette } = useColorPalette();
   const endReachedDuringMomentum = React.useRef(false);
 
@@ -98,7 +100,9 @@ export const ConversationFilesDetails = ({
           {isLoadingFiles ? (
             <ActivityIndicator size="small" color={hslToHex(palette.primary)} />
           ) : (
-            <Text className="text-muted-foreground">No files found</Text>
+            <Text className="text-muted-foreground">
+              {t("chat.resources.empty.files")}
+            </Text>
           )}
         </View>
       )}

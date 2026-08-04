@@ -1,0 +1,196 @@
+{
+    "chat": {
+        "title": "Messages",
+        "searchPlaceholder": "Search conversations...",
+        "empty": {
+            "noConversations": "No conversations found.",
+            "startNew": "Start a new chat by searching for a user."
+        },
+        "preview": {
+            "startConversation": "Start a conversation 👋",
+            "youPrefix": "You: ",
+            "pokeSent": "👉 You poked them",
+            "pokeReceived": "👈 Poked you",
+            "image_one": "📷 Image",
+            "image_other": "📷 {{count}} photos",
+            "video_one": "🎥 Video",
+            "video_other": "🎥 {{count}} videos",
+            "file_one": "📎 File",
+            "file_other": "📎 {{count}} files"
+        },
+        "tabs": {
+            "media": {
+                "title": "Media"
+            },
+            "files": {
+                "title": "Files"
+            },
+            "links": {
+                "title": "Links"
+            }
+        },
+        "conversation": {
+            "presence": {
+                "online": "Online",
+                "justNow": "Just now",
+                "secondsAgo_one": "{{count}} second ago",
+                "secondsAgo_other": "{{count}} seconds ago",
+                "minutesAgo_one": "{{count}} minute ago",
+                "minutesAgo_other": "{{count}} minutes ago",
+                "hoursAgo_one": "{{count}} hour ago",
+                "hoursAgo_other": "{{count}} hours ago",
+                "daysAgo_one": "{{count}} day ago",
+                "daysAgo_other": "{{count}} days ago",
+                "weeksAgo_one": "{{count}} week ago",
+                "weeksAgo_other": "{{count}} weeks ago",
+                "monthsAgo_one": "{{count}} month ago",
+                "monthsAgo_other": "{{count}} months ago",
+                "yearsAgo_one": "{{count}} year ago",
+                "yearsAgo_other": "{{count}} years ago"
+            },
+            "empty": "No messages yet. Say hello!",
+            "loading": "Loading conversation...",
+            "locked": "You can't send messages in this conversation.",
+            "inputPlaceholder": "Aa",
+            "messageUnavailable": {
+                "title": "Message unavailable",
+                "description": "This message could not be found in the conversation history."
+            },
+            "messageOptions": {
+                "title": "Message Options",
+                "copy": "Copy",
+                "delete": "Delete",
+                "cancel": "Cancel"
+            },
+            "static": {
+                "firstMessage": "This is the start of the conversation",
+                "pokeSent": "You sent a poke",
+                "pokeReceived": "You received a poke"
+            },
+            "attachments": {
+                "photo": {
+                    "label": "Photo",
+                    "sublabel": "Send image"
+                },
+                "video": {
+                    "label": "Video",
+                    "sublabel": "Send video"
+                },
+                "file": {
+                    "label": "File",
+                    "sublabel": "Send file"
+                },
+                "poke": {
+                    "label": "Poke",
+                    "sublabel": "Say hello"
+                }
+            },
+            "upload": {
+                "uploading": "Uploading...",
+                "sending": "Sending...",
+                "failed": "Upload failed",
+                "progressFailed": "Failed",
+                "fileFallback": "File {{index}}"
+            },
+            "staging": {
+                "photo_one": "{{count}} photo",
+                "photo_other": "{{count}} photos",
+                "video_one": "{{count}} video",
+                "video_other": "{{count}} videos",
+                "items": "{{count}} items"
+            }
+        },
+        "search": {
+            "placeholder": "Search in conversation",
+            "searching": "Searching...",
+            "resultCount_one": "{{count}} result",
+            "resultCount_other": "{{count}} results",
+            "noResults": "No results for \"{{query}}\"",
+            "noResultsHint": "Check spelling or try different keywords",
+            "prompt": "Enter a keyword to search in this conversation"
+        },
+        "details": {
+            "sections": {
+                "contentActions": "Content actions",
+                "privacySupport": "Privacy and support"
+            },
+            "rows": {
+                "viewResources": "View media, files, and links",
+                "search": "Search in conversation",
+                "block": "Block",
+                "report": "Report",
+                "delete": "Delete conversation"
+            },
+            "deleteAlert": {
+                "title": "Delete conversation",
+                "message": "Are you sure you want to delete this conversation? This cannot be undone.",
+                "cancel": "Cancel",
+                "confirm": "Delete"
+            },
+            "blockAlert": {
+                "title": "Block user",
+                "message": "Block {{name}}? They will no longer be able to message you.",
+                "cancel": "Cancel",
+                "confirm": "Block"
+            },
+            "toasts": {
+                "conversationDeleted": "Conversation deleted.",
+                "userBlocked": "User blocked."
+            },
+            "errors": {
+                "deleteFailed": "Unable to delete conversation",
+                "blockFailed": "Unable to block user",
+                "generic": "Something went wrong. Please try again."
+            }
+        },
+        "resources": {
+            "title": "Media, files and links",
+            "noMedia": "No Media",
+            "fileFallback": "File",
+            "empty": {
+                "media": "No media found",
+                "files": "No files found",
+                "links": "No links found"
+            }
+        },
+        "report": {
+            "title": "Report conversation",
+            "description": "Tell us what happened in this conversation. Your report is confidential.",
+            "descriptionWithName": "Tell us what happened in your conversation with {{name}}. Your report is confidential.",
+            "form": {
+                "sectionTitle": "Report Conversation",
+                "reason": {
+                    "label": "Reason",
+                    "placeholder": "Select a reason",
+                    "description": "Why are you reporting this conversation?"
+                },
+                "details": {
+                    "label": "Details",
+                    "placeholder": "Describe what happened",
+                    "description": "Provide as much detail as possible to help us review your report."
+                }
+            },
+            "reasons": {
+                "spam": "Spam",
+                "harassment": "Harassment",
+                "inappropriateContent": "Inappropriate Content",
+                "scam": "Scam or Fraud",
+                "other": "Other"
+            },
+            "actions": {
+                "submit": "Submit report",
+                "submitPending": "Submitting report..."
+            },
+            "toasts": {
+                "success": {
+                    "title": "Report submitted",
+                    "description": "Thank you. We will review your report shortly."
+                },
+                "error": {
+                    "title": "Failed to submit report",
+                    "description": "An error occurred while submitting your report."
+                }
+            }
+        }
+    }
+}

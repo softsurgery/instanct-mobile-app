@@ -14,6 +14,7 @@ import { hslToHex } from "@/lib/theme";
 import { useConversationMessageSearch } from "@/hooks/content/chat/useConversationMessageSearch";
 import { ConversationSearchResultItem } from "./ConversationSearchResultItem";
 import { MarkedInput } from "@/components/shared/MarkedInput";
+import { useTranslation } from "react-i18next";
 
 interface ConversationSearchOverlayProps {
   conversationId: number;
@@ -29,6 +30,7 @@ export const ConversationSearchOverlay = ({
   onClose,
   onResultPress,
 }: ConversationSearchOverlayProps) => {
+  const { t } = useTranslation("chat");
   const { palette } = useColorPalette();
   const insets = useSafeAreaInsets();
   const { height: keyboardHeight } = useGradualAnimation();
@@ -82,7 +84,7 @@ export const ConversationSearchOverlay = ({
         </TouchableOpacity>
         <MarkedInput
           icon={Search}
-          placeholder="Search in conversation"
+          placeholder={t("chat.search.placeholder")}
           className="flex-1 dark:border-none"
           value={searchQuery}
           onChangeText={setSearchQuery}
@@ -109,8 +111,8 @@ export const ConversationSearchOverlay = ({
               <View className="px-4 py-3 border-b border-border">
                 <Text className="text-muted-foreground text-sm">
                   {isSearching
-                    ? "Searching..."
-                    : `${resultCount} result${resultCount !== 1 ? "s" : ""}`}
+                    ? t("chat.search.searching")
+                    : t("chat.search.resultCount", { count: resultCount })}
                 </Text>
               </View>
             ) : null
@@ -118,20 +120,22 @@ export const ConversationSearchOverlay = ({
           ListEmptyComponent={() => (
             <View className="flex-1 items-center justify-center py-20">
               {isSearching ? (
-                <Text className="text-muted-foreground">Searching...</Text>
+                <Text className="text-muted-foreground">
+                  {t("chat.search.searching")}
+                </Text>
               ) : isQueryActive ? (
                 <>
                   <Icon as={Search} size={60} color={hslToHex(palette.muted)} />
                   <Text className="text-muted-foreground text-lg mt-4 font-medium">
-                    {`No results for "${searchQuery}"`}
+                    {t("chat.search.noResults", { query: searchQuery })}
                   </Text>
                   <Text className="text-muted-foreground text-center mt-2 px-10">
-                    Check spelling or try different keywords
+                    {t("chat.search.noResultsHint")}
                   </Text>
                 </>
               ) : (
                 <Text className="text-muted-foreground">
-                  Enter a keyword to search in this conversation
+                  {t("chat.search.prompt")}
                 </Text>
               )}
             </View>

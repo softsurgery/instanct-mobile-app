@@ -17,6 +17,7 @@ import { GestureViewer } from "react-native-gesture-image-viewer";
 import { Image } from "expo-image";
 import { useServerImages } from "@/hooks/content/useServerImages";
 import { getMessageUploadIds, MediaThumbnail } from "./MediaThumbnail";
+import { useTranslation } from "react-i18next";
 
 const NUM_COLUMNS = 3;
 
@@ -36,6 +37,7 @@ interface ConversationMediaDetailsProps {
 export const ConversationMediaDetails = ({
   id,
 }: ConversationMediaDetailsProps) => {
+  const { t } = useTranslation("chat");
   const { palette } = useColorPalette();
   const [viewerVisible, setViewerVisible] = React.useState(false);
   const [viewerIndex, setViewerIndex] = React.useState(0);
@@ -206,7 +208,9 @@ export const ConversationMediaDetails = ({
                 color={hslToHex(palette.primary)}
               />
             ) : (
-              <Text className="text-muted-foreground">No media found</Text>
+              <Text className="text-muted-foreground">
+                {t("chat.resources.empty.media")}
+              </Text>
             )}
           </View>
         )}
