@@ -12,6 +12,7 @@ import Animated, {
 import { Text } from "~/components/ui/text";
 import { cn } from "~/lib/utils";
 import { MessageTextContent } from "./MessageTextContent";
+import { useTranslation } from "react-i18next";
 
 interface ChatBubbleProps {
   message?: string;
@@ -34,6 +35,7 @@ export const ChatBubble = ({
   right,
   isPending,
 }: ChatBubbleProps) => {
+  const { t } = useTranslation("chat");
   const scale = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -44,10 +46,16 @@ export const ChatBubble = ({
    * Invoked on long press gesture to open message interaction options dialog.
    */
   const handleLongPress = () => {
-    Alert.alert("Message Options", message || "", [
-      { text: "Copy", onPress: () => console.log("Copy") },
-      { text: "Delete", onPress: () => console.log("Delete") },
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("chat.conversation.messageOptions.title"), message || "", [
+      {
+        text: t("chat.conversation.messageOptions.copy"),
+        onPress: () => console.log("Copy"),
+      },
+      {
+        text: t("chat.conversation.messageOptions.delete"),
+        onPress: () => console.log("Delete"),
+      },
+      { text: t("chat.conversation.messageOptions.cancel"), style: "cancel" },
     ]);
   };
 

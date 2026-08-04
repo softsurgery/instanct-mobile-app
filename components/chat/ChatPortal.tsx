@@ -28,7 +28,7 @@ interface ChatPortalProps {
  * Main chat portal component rendering the search input and virtualized list of active conversations.
  */
 export const ChatPortal = ({ className }: ChatPortalProps) => {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("chat");
   const [searchQuery, setSearchQuery] = React.useState("");
   const { value: debouncedSearchQuery } = useDebounce(searchQuery, 500);
 
@@ -98,7 +98,7 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
     >
       <ApplicationHeader
         classNames={{ wrapper: "border-b border-border pb-2" }}
-        title={t("screens.messages")}
+        title={t("chat.title")}
         titleVariant="large"
         reverse
         shortcuts={[
@@ -113,7 +113,7 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
         {/* Search Bar */}
         <MarkedInput
           icon={Search}
-          placeholder={t("Search conversations...")}
+          placeholder={t("chat.searchPlaceholder")}
           value={searchQuery}
           onChangeText={setSearchQuery}
           className="m-4"
@@ -153,8 +153,8 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
                   <NotFound
                     className="justify-center items-center"
                     message={[
-                      "No conversations found.",
-                      "Start a new chat by searching for a user.",
+                      t("chat.empty.noConversations"),
+                      t("chat.empty.startNew"),
                     ]}
                   />
                 </View>

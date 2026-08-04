@@ -10,6 +10,7 @@ import { useAuthPersistStore } from "@/hooks/useAuthPersistStore";
 import { api } from "~/api";
 import { VideoPreview } from "~/components/shared/VideoPreview";
 import { VideoThumbnailPreview } from "~/components/shared/VideoThumbnailPreview";
+import { useTranslation } from "react-i18next";
 
 /**
  * Extracts all server upload IDs from a message's attachments sorted by order.
@@ -42,6 +43,7 @@ export const MediaThumbnail = React.memo(function MediaThumbnail({
   mediaSource?: ImageSource;
   onPress?: () => void;
 }) {
+  const { t } = useTranslation("chat");
   const isVideo = message.variant === MessageVariant.VIDEO;
   const accessToken = useAuthPersistStore((state) => state.accessToken);
 
@@ -77,7 +79,9 @@ export const MediaThumbnail = React.memo(function MediaThumbnail({
         />
       ) : (
         <View className="flex-1 bg-muted items-center justify-center">
-          <Text className="text-muted-foreground text-xs">No Media</Text>
+          <Text className="text-muted-foreground text-xs">
+            {t("chat.resources.noMedia")}
+          </Text>
         </View>
       )}
     </View>

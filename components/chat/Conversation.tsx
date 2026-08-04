@@ -48,6 +48,8 @@ import { MessageFlatListItem, ResponseMessageDto } from "@/types";
 import { useColorPalette } from "@/hooks/useColorPalette";
 import { cn } from "@/lib/utils";
 import { ConversationSearchOverlay } from "./conversation/search/ConversationSearchOverlay";
+import { useTranslation } from "react-i18next";
+import { formatLastSeen } from "@/lib/date";
 
 interface ConversationProps {
   id: number;
@@ -69,6 +71,7 @@ export const Conversation = ({
   avatarFallback,
   scrollToMessageId,
 }: ConversationProps) => {
+  const { t } = useTranslation("chat");
   const { colorScheme, palette } = useColorPalette();
 
   const { height } = useGradualAnimation();
@@ -235,11 +238,11 @@ export const Conversation = ({
       }
 
       Alert.alert(
-        "Message unavailable",
-        "This message could not be found in the conversation history.",
+        t("chat.conversation.messageUnavailable.title"),
+        t("chat.conversation.messageUnavailable.description"),
       );
     },
-    [ensureMessageLoaded, scrollToMessage],
+    [ensureMessageLoaded, scrollToMessage, t],
   );
 
   React.useEffect(() => {
@@ -283,10 +286,10 @@ export const Conversation = ({
   const { isOnline, lastSeen } = useUserPresence({ userId: headerUserId });
 
   const presenceText = React.useMemo(() => {
-    if (isOnline) return "Online";
-    if (lastSeen) return formatDistanceToNow(lastSeen, { addSuffix: true });
+    if (isOnline) return t("chat.conversation.presence.online");
+    if (lastSeen) return formatLastSeen(lastSeen, t);
     return "";
-  }, [isOnline, lastSeen]);
+  }, [isOnline, lastSeen, t]);
 
   const listData = React.useMemo(() => {
     const pendingTextItems = pendingTextMessages.map(
@@ -535,7 +538,7 @@ export const Conversation = ({
                 ListEmptyComponent={
                   <View className="flex-1 justify-center items-center py-20">
                     <Text className="text-muted-foreground text-sm">
-                      No messages yet. Say hello!
+                      {t("chat.conversation.empty")}
                     </Text>
                   </View>
                 }
@@ -600,7 +603,7 @@ export const Conversation = ({
         <View className="absolute inset-0 z-40 items-center justify-center bg-background/70">
           <ActivityIndicator size="large" />
           <Text className="text-muted-foreground mt-3">
-            Loading conversation...
+            {t("chat.conversation.loading")}
           </Text>
         </View>
       )}

@@ -21,6 +21,7 @@ import { useConversationReportStore } from "@/stores/useConversationReportStore"
 import { createConversationReportSchema } from "@/types/validations/chat.validation";
 import { ServerErrorResponse } from "@/types";
 import { useConversationReportFormStructure } from "./useConversationReportFormStructure";
+import { useTranslation } from "react-i18next";
 
 interface ConversationReportPortalProps {
   conversationId: number;
@@ -36,6 +37,7 @@ export const ConversationReportPortal = ({
   reportedUserName,
   className,
 }: ConversationReportPortalProps) => {
+  const { t } = useTranslation("chat");
   const isKeyboardVisible = useKeyboardVisible();
   const reportStore = useConversationReportStore();
 
@@ -57,17 +59,17 @@ export const ConversationReportPortal = ({
           reportStore.createDto,
         ),
       onSuccess: () => {
-        toast.success("Report submitted", {
-          description: "Thank you. We will review your report shortly.",
+        toast.success(t("chat.report.toasts.success.title"), {
+          description: t("chat.report.toasts.success.description"),
         });
         router.back();
         reportStore.reset();
       },
       onError: (error: ServerErrorResponse) => {
-        toast.error("Failed to submit report", {
+        toast.error(t("chat.report.toasts.error.title"), {
           description:
             error.response?.data?.message ||
-            "An error occurred while submitting your report.",
+            t("chat.report.toasts.error.description"),
         });
       },
     },
@@ -90,7 +92,7 @@ export const ConversationReportPortal = ({
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
         classNames={{ wrapper: "border-b border-border pb-2" }}
-        title="Report conversation"
+        title={t("chat.report.title")}
         titleVariant="large"
         reverse
         shortcuts={[
@@ -104,8 +106,10 @@ export const ConversationReportPortal = ({
         <View className="px-5 pt-4 pb-2">
           <Text className="text-sm text-muted-foreground leading-relaxed">
             {reportedUserName
-              ? `Tell us what happened in your conversation with ${reportedUserName}. Your report is confidential.`
-              : "Tell us what happened in this conversation. Your report is confidential."}
+              ? t("chat.report.descriptionWithName", {
+                  name: reportedUserName,
+                })
+              : t("chat.report.description")}
           </Text>
         </View>
         <FormBuilder structure={reportFormStructure} className="px-2" />
@@ -129,11 +133,13 @@ export const ConversationReportPortal = ({
                   className="text-primary-foreground animate-spin"
                 />
                 <Text className="text-primary-foreground font-semibold">
-                  Submitting report...
+                  {t("chat.report.actions.submitPending")}
                 </Text>
               </React.Fragment>
             ) : (
-              <Text className="text-md font-bold">Submit report</Text>
+              <Text className="text-md font-bold">
+                {t("chat.report.actions.submit")}
+              </Text>
             )}
           </Button>
         </BottomButtonWrapper>

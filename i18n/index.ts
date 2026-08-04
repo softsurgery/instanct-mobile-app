@@ -25,6 +25,9 @@ import frActivities from "./locales/fr/activities.json";
 import enScreens from "./locales/en/screens.json";
 import frScreens from "./locales/fr/screens.json";
 
+import enChat from "./locales/en/chat.json";
+import frChat from "./locales/fr/chat.json";
+
 const resources = {
   en: {
     common: enCommon,
@@ -34,6 +37,7 @@ const resources = {
     menu: enMenu,
     activities: enActivities,
     screens: enScreens,
+    chat: enChat,
   },
   fr: {
     common: frCommon,
@@ -42,6 +46,7 @@ const resources = {
     explore: frExplore,
     menu: frMenu,
     activities: frActivities,
+    chat: frChat,
     screens: frScreens,
   },
   // ar: {
@@ -66,6 +71,7 @@ i18n.use(initReactI18next).init({
     "explore",
     "menu",
     "activities",
+    "chat",
   ],
   defaultNS: "screens",
   interpolation: { escapeValue: false },

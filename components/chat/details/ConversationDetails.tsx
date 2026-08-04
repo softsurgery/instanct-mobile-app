@@ -28,6 +28,7 @@ import { useUserPresence } from "@/hooks/content/chat/useUserPresence";
 import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 import { ConversationSearchOverlay } from "../conversation/search/ConversationSearchOverlay";
 import { useChatContext } from "@/contexts/ChatContext";
+import { useTranslation } from "react-i18next";
 
 interface ConversationDetailsProps {
   id: string;
@@ -37,6 +38,7 @@ interface ConversationDetailsProps {
  * Screen displaying settings, participant info, media/file galleries, and block/report/delete actions for a conversation.
  */
 export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
+  const { t } = useTranslation("chat");
   const conversationId = Number(id);
   const queryClient = useQueryClient();
   const { resetCount } = useChatContext();
@@ -95,27 +97,33 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
     (title: string, error: ServerErrorResponse) => {
       toast.error(title, {
         description:
-          error.response?.data?.message ||
-          "Something went wrong. Please try again.",
+          error.response?.data?.message || t("chat.details.errors.generic"),
       });
     },
-    [],
+    [t],
   );
 
   const { mutate: deleteConversation, isPending: isDeletePending } =
     useMutation({
       mutationFn: () =>
         api.chat.conversation.deleteConversation(conversationId),
-      onSuccess: () => handleConversationActionSuccess("Conversation deleted."),
+      onSuccess: () =>
+        handleConversationActionSuccess(
+          t("chat.details.toasts.conversationDeleted"),
+        ),
       onError: (error: ServerErrorResponse) =>
-        handleConversationActionError("Unable to delete conversation", error),
+        handleConversationActionError(
+          t("chat.details.errors.deleteFailed"),
+          error,
+        ),
     });
 
   const { mutate: blockUser, isPending: isBlockPending } = useMutation({
     mutationFn: () => api.chat.conversation.blockUser(user!.id),
-    onSuccess: () => handleConversationActionSuccess("User blocked."),
+    onSuccess: () =>
+      handleConversationActionSuccess(t("chat.details.toasts.userBlocked")),
     onError: (error: ServerErrorResponse) =>
-      handleConversationActionError("Unable to block user", error),
+      handleConversationActionError(t("chat.details.errors.blockFailed"), error),
   });
 
   const handleSearchResultPress = React.useCallback(
@@ -137,12 +145,12 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
     if (isDeletePending) return;
 
     Alert.alert(
-      "Delete conversation",
-      "Are you sure you want to delete this conversation? This cannot be undone.",
+      t("chat.details.deleteAlert.title"),
+      t("chat.details.deleteAlert.message"),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("chat.details.deleteAlert.cancel"), style: "cancel" },
         {
-          text: "Delete",
+          text: t("chat.details.deleteAlert.confirm"),
           style: "destructive",
           onPress: () => deleteConversation(),
         },
@@ -157,12 +165,12 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
     if (!user || isBlockPending) return;
 
     Alert.alert(
-      "Block user",
-      `Block ${identification}? They will no longer be able to message you.`,
+      t("chat.details.blockAlert.title"),
+      t("chat.details.blockAlert.message", { name: identification }),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("chat.details.blockAlert.cancel"), style: "cancel" },
         {
-          text: "Block",
+          text: t("chat.details.blockAlert.confirm"),
           style: "destructive",
           onPress: () => blockUser(),
         },
@@ -238,13 +246,13 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
 
         <View className="px-4 pb-2">
           <Text className="text-primary text-sm font-semibold uppercase tracking-wider">
-            Content actions
+            {t("chat.details.sections.contentActions")}
           </Text>
         </View>
         <View className="bg-card mx-4 rounded-2xl overflow-hidden">
           <ConversationDetailsRow
             icon={ImageIcon}
-            label="View media, files, and links"
+            label={t("chat.details.rows.viewResources")}
             onPress={() =>
               router.push({
                 pathname: "/main/chat/conversation-resource-details",
@@ -254,31 +262,31 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
           />
           <ConversationDetailsRow
             icon={Search}
-            label="Search in conversation"
+            label={t("chat.details.rows.search")}
             onPress={() => setIsSearching(true)}
           />
         </View>
 
         <View className="px-4 pt-6 pb-2">
           <Text className="text-primary text-sm font-semibold uppercase tracking-wider">
-            Privacy and support
+            {t("chat.details.sections.privacySupport")}
           </Text>
         </View>
 
         <View className="bg-card mx-4 rounded-2xl mb-12">
           <ConversationDetailsRow
             icon={Ban}
-            label="Block"
+            label={t("chat.details.rows.block")}
             onPress={handleBlockUser}
           />
           <ConversationDetailsRow
             icon={AlertTriangle}
-            label="Report"
+            label={t("chat.details.rows.report")}
             onPress={handleReportConversation}
           />
           <ConversationDetailsRow
             icon={Trash2}
-            label="Delete conversation"
+            label={t("chat.details.rows.delete")}
             destructive
             onPress={handleDeleteConversation}
           />

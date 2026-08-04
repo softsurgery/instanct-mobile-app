@@ -10,6 +10,7 @@ import { useFocusEffect } from "expo-router";
 import React from "react";
 import { ActivityIndicator, View } from "react-native";
 import { LinkListItem } from "./LinkListItem";
+import { useTranslation } from "react-i18next";
 
 type ConversationLinkItem = {
   key: string;
@@ -28,6 +29,7 @@ interface ConversationLinksDetailsProps {
 export const ConversationLinksDetails = ({
   id,
 }: ConversationLinksDetailsProps) => {
+  const { t } = useTranslation("chat");
   const { palette } = useColorPalette();
   const endReachedDuringMomentum = React.useRef(false);
 
@@ -117,7 +119,9 @@ export const ConversationLinksDetails = ({
           {isLoadingLinks ? (
             <ActivityIndicator size="small" color={hslToHex(palette.primary)} />
           ) : (
-            <Text className="text-muted-foreground">No links found</Text>
+            <Text className="text-muted-foreground">
+              {t("chat.resources.empty.links")}
+            </Text>
           )}
         </View>
       )}

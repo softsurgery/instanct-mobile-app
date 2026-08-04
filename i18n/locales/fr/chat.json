@@ -1,0 +1,196 @@
+{
+    "chat": {
+        "title": "Messages",
+        "searchPlaceholder": "Rechercher des conversations...",
+        "empty": {
+            "noConversations": "Aucune conversation trouvée.",
+            "startNew": "Démarrez une nouvelle discussion en recherchant un utilisateur."
+        },
+        "preview": {
+            "startConversation": "Démarrez une conversation 👋",
+            "youPrefix": "Vous : ",
+            "pokeSent": "👉 Vous avez envoyé un signe",
+            "pokeReceived": "👈 Vous avez reçu un signe",
+            "image_one": "📷 Image",
+            "image_other": "📷 {{count}} photos",
+            "video_one": "🎥 Vidéo",
+            "video_other": "🎥 {{count}} vidéos",
+            "file_one": "📎 Fichier",
+            "file_other": "📎 {{count}} fichiers"
+        },
+        "tabs": {
+            "media": {
+                "title": "Médias"
+            },
+            "files": {
+                "title": "Fichiers"
+            },
+            "links": {
+                "title": "Liens"
+            }
+        },
+        "conversation": {
+            "empty": "Aucun message pour le moment. Dites bonjour !",
+            "loading": "Chargement de la conversation...",
+            "locked": "Vous ne pouvez pas envoyer de messages dans cette conversation.",
+            "inputPlaceholder": "Aa",
+            "presence": {
+                "online": "En ligne",
+                "justNow": "À l'instant",
+                "secondsAgo_one": "il y a {{count}} seconde",
+                "secondsAgo_other": "il y a {{count}} secondes",
+                "minutesAgo_one": "il y a {{count}} minute",
+                "minutesAgo_other": "il y a {{count}} minutes",
+                "hoursAgo_one": "il y a {{count}} heure",
+                "hoursAgo_other": "il y a {{count}} heures",
+                "daysAgo_one": "il y a {{count}} jour",
+                "daysAgo_other": "il y a {{count}} jours",
+                "weeksAgo_one": "il y a {{count}} semaine",
+                "weeksAgo_other": "il y a {{count}} semaines",
+                "monthsAgo_one": "il y a {{count}} mois",
+                "monthsAgo_other": "il y a {{count}} mois",
+                "yearsAgo_one": "il y a {{count}} an",
+                "yearsAgo_other": "il y a {{count}} ans"
+            },
+            "messageUnavailable": {
+                "title": "Message indisponible",
+                "description": "Ce message n'a pas pu être trouvé dans l'historique de la conversation."
+            },
+            "messageOptions": {
+                "title": "Options du message",
+                "copy": "Copier",
+                "delete": "Supprimer",
+                "cancel": "Annuler"
+            },
+            "static": {
+                "firstMessage": "Ceci est le début de la conversation",
+                "pokeSent": "Vous avez envoyé un signe",
+                "pokeReceived": "Vous avez reçu un signe"
+            },
+            "attachments": {
+                "photo": {
+                    "label": "Photo",
+                    "sublabel": "Envoyer une image"
+                },
+                "video": {
+                    "label": "Vidéo",
+                    "sublabel": "Envoyer une vidéo"
+                },
+                "file": {
+                    "label": "Fichier",
+                    "sublabel": "Envoyer un fichier"
+                },
+                "poke": {
+                    "label": "Signe",
+                    "sublabel": "Dire bonjour"
+                }
+            },
+            "upload": {
+                "uploading": "Téléversement...",
+                "sending": "Envoi en cours...",
+                "failed": "Échec du téléversement",
+                "progressFailed": "Échec",
+                "fileFallback": "Fichier {{index}}"
+            },
+            "staging": {
+                "photo_one": "{{count}} photo",
+                "photo_other": "{{count}} photos",
+                "video_one": "{{count}} vidéo",
+                "video_other": "{{count}} vidéos",
+                "items": "{{count}} éléments"
+            }
+        },
+        "search": {
+            "placeholder": "Rechercher dans la conversation",
+            "searching": "Recherche en cours...",
+            "resultCount_one": "{{count}} résultat",
+            "resultCount_other": "{{count}} résultats",
+            "noResults": "Aucun résultat pour \"{{query}}\"",
+            "noResultsHint": "Vérifiez l'orthographe ou essayez d'autres mots-clés",
+            "prompt": "Saisissez un mot-clé pour rechercher dans cette conversation"
+        },
+        "details": {
+            "sections": {
+                "contentActions": "Actions sur le contenu",
+                "privacySupport": "Confidentialité et assistance"
+            },
+            "rows": {
+                "viewResources": "Voir les médias, fichiers et liens",
+                "search": "Rechercher dans la conversation",
+                "block": "Bloquer",
+                "report": "Signaler",
+                "delete": "Supprimer la conversation"
+            },
+            "deleteAlert": {
+                "title": "Supprimer la conversation",
+                "message": "Êtes-vous sûr de vouloir supprimer cette conversation ? Cette action est irréversible.",
+                "cancel": "Annuler",
+                "confirm": "Supprimer"
+            },
+            "blockAlert": {
+                "title": "Bloquer l'utilisateur",
+                "message": "Bloquer {{name}} ? Cette personne ne pourra plus vous envoyer de messages.",
+                "cancel": "Annuler",
+                "confirm": "Bloquer"
+            },
+            "toasts": {
+                "conversationDeleted": "Conversation supprimée.",
+                "userBlocked": "Utilisateur bloqué."
+            },
+            "errors": {
+                "deleteFailed": "Impossible de supprimer la conversation",
+                "blockFailed": "Impossible de bloquer l'utilisateur",
+                "generic": "Une erreur est survenue. Veuillez réessayer."
+            }
+        },
+        "resources": {
+            "title": "Médias, fichiers et liens",
+            "noMedia": "Aucun média",
+            "fileFallback": "Fichier",
+            "empty": {
+                "media": "Aucun média trouvé",
+                "files": "Aucun fichier trouvé",
+                "links": "Aucun lien trouvé"
+            }
+        },
+        "report": {
+            "title": "Signaler la conversation",
+            "description": "Dites-nous ce qui s'est passé dans cette conversation. Votre signalement est confidentiel.",
+            "descriptionWithName": "Dites-nous ce qui s'est passé dans votre conversation avec {{name}}. Votre signalement est confidentiel.",
+            "form": {
+                "sectionTitle": "Signaler la conversation",
+                "reason": {
+                    "label": "Motif",
+                    "placeholder": "Sélectionnez un motif",
+                    "description": "Pourquoi signalez-vous cette conversation ?"
+                },
+                "details": {
+                    "label": "Détails",
+                    "placeholder": "Décrivez ce qui s'est passé",
+                    "description": "Fournissez autant de détails que possible pour nous aider à examiner votre signalement."
+                }
+            },
+            "reasons": {
+                "spam": "Spam",
+                "harassment": "Harcèlement",
+                "inappropriateContent": "Contenu inapproprié",
+                "scam": "Arnaque ou fraude",
+                "other": "Autre"
+            },
+            "actions": {
+                "submit": "Envoyer le signalement",
+                "submitPending": "Envoi du signalement..."
+            },
+            "toasts": {
+                "success": {
+                    "title": "Signalement envoyé",
+                    "description": "Merci. Nous examinerons votre signalement sous peu."
+                },
+                "error": {
+                    "title": "Échec de l'envoi du signalement",
+                    "description": "Une erreur est survenue lors de l'envoi de votre signalement."
+                }
+            }
+        }
+    }
+}
