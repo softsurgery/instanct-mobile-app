@@ -1,4 +1,5 @@
 import { AuthStore } from "@/stores/useAuthStore";
+import { useTranslation } from "react-i18next";
 import {
   EmailFieldProps,
   Field,
@@ -15,15 +16,17 @@ export const useSignInFormStructure = ({
   store,
   isPending,
 }: useSignInFormStructureProps) => {
+  const { t } = useTranslation("auth");
+
   //email
   const emailField: Field<EmailFieldProps> = {
     id: "email",
-    label: "E-mail",
-    description: "Please enter your e-mail",
-    placeholder: "john@doe.com",
+    label: t("auth.signIn.labels.email"),
+    description: t("auth.signIn.descriptions.email"),
+    placeholder: t("auth.signIn.placeholders.email"),
     variant: FieldVariant.EMAIL,
     className: "w-full",
-    error: store.signInRequestErrors.email?.[0],
+    error: t(store.signInRequestErrors.email?.[0]),
     props: {
       value: store.signInRequest.email,
       onChangeText: (value: string) => {
@@ -37,10 +40,10 @@ export const useSignInFormStructure = ({
   //password
   const passwordField: Field = {
     id: "password",
-    label: "Password",
-    description: "Please enter your password",
+    label: t("auth.signIn.labels.password"),
+    description: t("auth.signIn.descriptions.password"),
     variant: FieldVariant.PASSWORD,
-    error: store.signInRequestErrors.password?.[0],
+    error: t(store.signInRequestErrors.password?.[0]),
     props: {
       value: store.signInRequest.password,
       onChangeText: (text: string) => {

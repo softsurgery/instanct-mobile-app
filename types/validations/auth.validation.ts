@@ -1,25 +1,29 @@
 import { z } from "zod";
 
+// Messages are translation keys, resolved by the consumer (see
+// useSigninFormStructure / useSignupFormStructure) in the "auth" namespace.
+// Keep the character bounds below in sync with the auth.validation.min/max
+// strings in i18n/locales/*/auth.json.
 export const requestSignInDtoSchema = z.object({
   email: z
     .string({
-      error: "Email is required.",
+      error: "auth.validation.required.email",
     })
     .min(3, {
-      message: "Email must be at least 3 characters long.",
+      error: "auth.validation.min.email",
     })
     .max(255, {
-      message: "Email must be at most 255 characters long.",
+      error: "auth.validation.max.email",
     }),
   password: z
     .string({
-      error: "Password is required.",
+      error: "auth.validation.required.password",
     })
     .min(8, {
-      error: "Password must be at least 8 characters long.",
+      error: "auth.validation.min.password",
     })
     .max(32, {
-      error: "Password must be at most 32 characters long.",
+      error: "auth.validation.max.password",
     }),
 });
 
@@ -27,50 +31,50 @@ export const requestSignUpDtoSchema = z
   .object({
     firstName: z
       .string({
-        error: "First name is required.",
+        error: "auth.validation.required.firstName",
       })
-      .min(3, { message: "First name must be at least 3 characters long." })
-      .max(50, { message: "First name must be at most 50 characters long." }),
+      .min(3, { error: "auth.validation.min.firstName" })
+      .max(50, { error: "auth.validation.max.firstName" }),
     lastName: z
       .string({
-        error: "Last name is required.",
+        error: "auth.validation.required.lastName",
       })
-      .min(3, { message: "Last name must be at least 3 characters long." })
-      .max(50, { message: "Last name must be at most 50 characters long." }),
+      .min(3, { error: "auth.validation.min.lastName" })
+      .max(50, { error: "auth.validation.max.lastName" }),
     email: z
       .string({
-        error: "Email is required.",
+        error: "auth.validation.required.email",
       })
-      .min(3, { message: "Email must be at least 3 characters long." })
-      .max(255, { message: "Email must be at most 255 characters long." })
-      .email({ message: "Email must be a valid email address." }),
+      .min(3, { error: "auth.validation.min.email" })
+      .max(255, { error: "auth.validation.max.email" })
+      .email({ error: "auth.validation.invalid.email" }),
 
     username: z
       .string({
-        error: "Username is required.",
+        error: "auth.validation.required.username",
       })
-      .min(3, { message: "Username must be at least 3 characters long." })
-      .max(50, { message: "Username must be at most 50 characters long." }),
+      .min(3, { error: "auth.validation.min.username" })
+      .max(50, { error: "auth.validation.max.username" }),
 
     password: z
       .string({
-        error: "Password is required.",
+        error: "auth.validation.required.password",
       })
-      .min(8, { message: "Password must be at least 8 characters long." })
-      .max(32, { message: "Password must be at most 32 characters long." }),
+      .min(8, { error: "auth.validation.min.password" })
+      .max(32, { error: "auth.validation.max.password" }),
 
     confirmPassword: z
       .string({
-        error: "Confirm password is required.",
+        error: "auth.validation.required.confirmPassword",
       })
       .min(8, {
-        message: "Confirm password must be at least 8 characters long.",
+        error: "auth.validation.min.confirmPassword",
       })
       .max(32, {
-        message: "Confirm password must be at most 32 characters long.",
+        error: "auth.validation.max.confirmPassword",
       }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ["confirmPassword"],
-    message: "Passwords must match.",
+    error: "auth.validation.passwordsMismatch",
   });

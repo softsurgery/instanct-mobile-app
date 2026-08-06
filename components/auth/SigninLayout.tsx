@@ -17,13 +17,15 @@ import { SSOButtons } from "./SSOButtons";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { toast } from "sonner-native";
-
+import { useTranslation } from "react-i18next";
 import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
+
 interface SigninProps {
   className?: string;
 }
 
 export const SigninLayout = ({ className }: SigninProps) => {
+  const { t } = useTranslation("auth");
   const authStore = useAuthStore();
 
   const { mutate: SignIn, isPending: isSignInPending } = useMutation({
@@ -32,7 +34,10 @@ export const SigninLayout = ({ className }: SigninProps) => {
       router.replace("/");
     },
     onError: (error: ServerErrorResponse) => {
-      toast.error(error.response?.data?.message || "An error occurred", {});
+      toast.error(
+        error.response?.data?.message || t("auth.signIn.toasts.error"),
+        {},
+      );
     },
   });
 
@@ -77,10 +82,10 @@ export const SigninLayout = ({ className }: SigninProps) => {
           >
             <View className="my-5">
               <Text className="text-2xl font-extrabold text-center">
-                Welecome Back
+                {t("auth.signIn.title")}
               </Text>
               <Text className="text-2xl font-thin text-center">
-                Glad to see you again
+                {t("auth.signIn.subtitle")}
               </Text>
             </View>
 
@@ -88,7 +93,7 @@ export const SigninLayout = ({ className }: SigninProps) => {
               <FormBuilder structure={signInFormStructure} />
 
               <Text className="text-base font-bold ml-auto my-1">
-                Forget Password ?
+                {t("auth.signIn.forgotPassword")}
               </Text>
 
               <Button
@@ -99,22 +104,22 @@ export const SigninLayout = ({ className }: SigninProps) => {
                 onPress={onSignInPress}
               >
                 <Text className="text-lg font-bold text-white">
-                  Continue with E-Mail
+                  {t("auth.signIn.actions.continueWithEmail")}
                 </Text>
               </Button>
 
-              <DividedText text="OR" />
+              <DividedText text={t("auth.or")} />
 
               <SSOButtons isSignInPending={isSignInPending} />
             </View>
 
             <View className="flex flex-row gap-1 items-center justify-center mb-10">
-              <Text className="text-base">Don&apos;t have an account?</Text>
+              <Text className="text-base">{t("auth.signIn.noAccount")}</Text>
               <Text
                 className="text-base font-bold"
                 onPress={() => router.push("/auth/sign-up")}
               >
-                Create an account
+                {t("auth.signIn.createAccount")}
               </Text>
             </View>
           </View>
