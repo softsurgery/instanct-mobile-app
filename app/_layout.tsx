@@ -1,10 +1,13 @@
+import { splashPrevented } from "@/lib/splash-screen";
 import { NAV_THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "expo-router/react-navigation";
 import { PortalHost } from "@rn-primitives/portal";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
-import { Stack, SplashScreen } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import React from "react";
 import { Platform, View } from "react-native";
 import {
   SafeAreaProvider,
@@ -19,8 +22,7 @@ import { asyncStoragePersister, queryClient } from "@/lib/queryClient";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { VideoThumbnailGeneratorHost } from "@/components/shared/VideoThumbnailGeneratorHost";
 import { LoaderProvider } from "@/contexts/LoaderContext";
-
-SplashScreen.preventAutoHideAsync();
+import { usePreferencePersistStore } from "@/stores/usePreferencePersistStore";
 
 function RootLayoutContent() {
   const { colorScheme, palette } = useColorPalette();
@@ -68,6 +70,20 @@ function RootLayoutContent() {
 
 export default function RootLayout() {
   const { colorScheme } = useColorPalette();
+  const isPreferenceReady = usePreferencePersistStore((state) => state.isReady);
+
+  React.useEffect(() => {
+    if (!isPreferenceReady) return;
+
+    void (async () => {
+      try {
+        await splashPrevented;
+        await SplashScreen.hideAsync();
+      } catch {
+        // Splash may already be hidden (e.g. dev fast refresh).
+      }
+    })();
+  }, [isPreferenceReady]);
 
   return (
     <ThemeProvider value={NAV_THEME[colorScheme ?? "light"]}>
