@@ -72,5 +72,9 @@
   },
   "common": {
     "back": "Retour"
+  },
+  "actions": {
+    "next": "Suivant",
+    "previous": "Précédent"
   }
 }

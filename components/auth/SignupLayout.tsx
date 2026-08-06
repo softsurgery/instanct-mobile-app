@@ -117,7 +117,7 @@ export const SignupLayout = ({ className }: SignupLayoutProps) => {
                 title: t("auth.signUp.steps.identity.title"),
                 description: t("auth.signUp.steps.identity.description"),
                 component: (
-                  <View>
+                  <View key="step-0">
                     <FormBuilder structure={signUpFormStructure} />
                     <AcceptTerms
                       className="px-2 pt-2 pb-4"
@@ -133,13 +133,23 @@ export const SignupLayout = ({ className }: SignupLayoutProps) => {
               {
                 title: t("auth.signUp.steps.industries.title"),
                 description: t("auth.signUp.steps.industries.description"),
-                component: <FormBuilder structure={industriesFormStructure} />,
+                component: (
+                  <FormBuilder
+                    key="step-1"
+                    structure={industriesFormStructure}
+                  />
+                ),
                 validation: !!authStore.signUpRequest.industries.length,
               },
               {
                 title: t("auth.signUp.steps.picture.title"),
                 description: t("auth.signUp.steps.picture.description"),
-                component: <FormBuilder structure={profilePictureFieldset} />,
+                component: (
+                  <FormBuilder
+                    key="step-2"
+                    structure={profilePictureFieldset}
+                  />
+                ),
                 validation: !!authStore.signUpRequest.pictureId,
               },
             ]}
