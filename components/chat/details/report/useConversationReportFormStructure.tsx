@@ -39,7 +39,7 @@ export const useConversationReportFormStructure = ({
     required: true,
     placeholder: t("chat.report.form.reason.placeholder"),
     description: t("chat.report.form.reason.description"),
-    error: store.errors.reason?.[0],
+    error: t(store.errors.reason?.[0]),
     props: {
       value: store.createDto.reason,
       onSelect: (value: string) => {
@@ -60,7 +60,7 @@ export const useConversationReportFormStructure = ({
     required: true,
     placeholder: t("chat.report.form.details.placeholder"),
     description: t("chat.report.form.details.description"),
-    error: store.errors.description?.[0],
+    error: t(store.errors.description?.[0]),
     props: {
       value: store.createDto.description,
       onChangeText: (value: string) => {
