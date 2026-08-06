@@ -18,6 +18,7 @@ import { useColorPalette } from "@/hooks/useColorPalette";
 import { asyncStoragePersister, queryClient } from "@/lib/queryClient";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { VideoThumbnailGeneratorHost } from "@/components/shared/VideoThumbnailGeneratorHost";
+import { LoaderProvider } from "@/contexts/LoaderContext";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -78,7 +79,9 @@ export default function RootLayout() {
         }}
       >
         <SafeAreaProvider>
-          <RootLayoutContent />
+          <LoaderProvider>
+            <RootLayoutContent />
+          </LoaderProvider>
         </SafeAreaProvider>
       </PersistQueryClientProvider>
     </ThemeProvider>
