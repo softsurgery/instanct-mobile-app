@@ -23,9 +23,9 @@ import {
 } from "@/components/shared/form-builder/types";
 import { StableKeyboardAwareScrollView } from "@/components/shared/StableKeyboardAwareScrollView";
 import { BottomButtonWrapper } from "@/components/shared/BottomButtonBlockWrapper";
-
-import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 import { useTranslation } from "react-i18next";
+import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
+
 interface IndustriesManagementProps {
   className?: string;
 }
@@ -45,7 +45,7 @@ export const IndustriesManagement = ({
   });
 
   const [selectedIndustries, setSelectedIndustries] = React.useState<number[]>(
-    [],
+    () => userIndustries ?? [],
   );
 
   React.useEffect(() => {
@@ -65,13 +65,13 @@ export const IndustriesManagement = ({
         queryClient.invalidateQueries({
           queryKey: ["user-industries", userId],
         });
-        toast.success("Industries updated successfully", {
-          description: "Your industries have been successfully updated.",
+        toast.success(t("menu.industries.toasts.updated"), {
+          description: t("menu.industries.toasts.updatedDescription"),
         });
         router.back();
       },
       onError: (error: Error) => {
-        toast.error(error.message || "Failed to update industries", {});
+        toast.error(error.message || t("menu.industries.toasts.error"), {});
       },
     });
 
@@ -79,8 +79,8 @@ export const IndustriesManagement = ({
     if (selectedIndustries.length > 0) {
       updateIndustries(selectedIndustries);
     } else {
-      toast.warning("Please select at least one industry.", {
-        description: "You need to select at least one industry before saving.",
+      toast.warning(t("menu.industries.toasts.noSelection"), {
+        description: t("menu.industries.toasts.noSelectionDescription"),
       });
     }
   };
@@ -98,7 +98,7 @@ export const IndustriesManagement = ({
   );
 
   const strurcture: FormStructure = {
-    title: "Industries",
+    title: t("menu.industries.title"),
     fieldsets: [
       {
         rows: [
@@ -108,7 +108,7 @@ export const IndustriesManagement = ({
               {
                 id: "industries",
                 variant: FieldVariant.MULTISELECT,
-                label: "Industries",
+                label: t("menu.industries.labels.industries"),
                 props: {
                   value: selectedIndustries.map(String),
                   onSelect: (ids) => setSelectedIndustries(ids.map(Number)),
@@ -127,7 +127,7 @@ export const IndustriesManagement = ({
     <StableSafeAreaView className={cn("flex-1 bg-card", className)}>
       <ApplicationHeader
         classNames={{ wrapper: "border-b border-border pb-2 bg-transparent" }}
-        title="Industries"
+        title={t("menu.industries.title")}
         titleVariant="large"
         reverse
         shortcuts={[
@@ -140,9 +140,7 @@ export const IndustriesManagement = ({
       <View className="flex-1 bg-background">
         <View className="px-5 pt-4 pb-2">
           <Text className="text-sm text-muted-foreground leading-relaxed">
-            Select one or more industries that align with your professional
-            goals and aspirations. This helps you connect with like-minded
-            professionals and opportunities.
+            {t("menu.industries.description")}
           </Text>
         </View>
         <StableKeyboardAwareScrollView className="flex-1 bg-background">
