@@ -27,7 +27,7 @@ export const useUpdateExperienceFormStructure = ({
     required: true,
     placeholder: t("experience.form.placeholders.title"),
     description: t("experience.form.descriptions.title"),
-    error: store.experienceErrors?.title?.[0],
+    error: t(store.experienceErrors?.title?.[0]),
     props: {
       value: store.updateExperienceDto.title,
       onChangeText: (value) => {
@@ -44,7 +44,7 @@ export const useUpdateExperienceFormStructure = ({
     required: true,
     placeholder: t("experience.form.placeholders.company"),
     description: t("experience.form.descriptions.company"),
-    error: store.experienceErrors?.company?.[0],
+    error: t(store.experienceErrors?.company?.[0]),
     props: {
       value: store.updateExperienceDto?.company,
       onChangeText: (value) => {
@@ -61,7 +61,7 @@ export const useUpdateExperienceFormStructure = ({
     required: false,
     placeholder: t("experience.form.placeholders.description"),
     description: t("experience.form.descriptions.description"),
-    error: store.experienceErrors?.description?.[0],
+    error: t(store.experienceErrors?.description?.[0]),
     props: {
       value: store.updateExperienceDto?.description,
       onChangeText: (value) => {
@@ -79,7 +79,7 @@ export const useUpdateExperienceFormStructure = ({
     required: false,
     placeholder: t("experience.form.placeholders.locationUpdate"),
     description: t("experience.form.descriptions.locationUpdate"),
-    error: store.experienceErrors?.location?.[0],
+    error: t(store.experienceErrors?.location?.[0]),
     hidden: store.updateExperienceDto?.locationType === LocationTypes.REMOTE,
     props: {
       value: store.updateExperienceDto?.location,
@@ -96,7 +96,7 @@ export const useUpdateExperienceFormStructure = ({
     variant: FieldVariant.SELECT,
     required: true,
     description: t("experience.form.descriptions.workType"),
-    error: store.experienceErrors?.workType?.[0],
+    error: t(store.experienceErrors?.workType?.[0]),
     props: {
       value: store.updateExperienceDto?.workType,
       onSelect: (value) => {
@@ -116,7 +116,7 @@ export const useUpdateExperienceFormStructure = ({
     variant: FieldVariant.SELECT,
     required: true,
     description: t("experience.form.descriptions.locationTypeUpdate"),
-    error: store.experienceErrors?.locationType?.[0],
+    error: t(store.experienceErrors?.locationType?.[0]),
     props: {
       value: store.updateExperienceDto?.locationType,
       onSelect: (value) => {
@@ -136,7 +136,7 @@ export const useUpdateExperienceFormStructure = ({
     variant: FieldVariant.DATE,
     required: true,
     description: t("experience.form.descriptions.startDate"),
-    error: store.experienceErrors?.startDate?.[0],
+    error: t(store.experienceErrors?.startDate?.[0]),
     props: {
       value: store.updateExperienceDto?.startDate
         ? new Date(store.updateExperienceDto.startDate)
@@ -173,7 +173,7 @@ export const useUpdateExperienceFormStructure = ({
     variant: FieldVariant.DATE,
     required: false,
     description: t("experience.form.descriptions.endDate"),
-    error: store.experienceErrors?.endDate?.[0],
+    error: t(store.experienceErrors?.endDate?.[0]),
     hidden: store.present,
     props: {
       value: store.updateExperienceDto?.endDate

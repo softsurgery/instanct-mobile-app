@@ -1,27 +1,29 @@
 import { z } from "zod";
 import { LocationTypes, WorkTypes } from "../user-management";
 
+// Messages are translation keys, resolved by the consumer in the "menu"
+// namespace (see useCreateExperienceFormStructure / useUpdateExperienceFormStructure).
 const baseExperienceSchema = z.object({
   title: z
     .string({
-      message: "Title is required.",
+      error: "experience.validation.titleRequired",
     })
     .min(1, {
-      message: "Title cannot be empty.",
+      error: "experience.validation.titleEmpty",
     })
     .max(255, {
-      message: "Title cannot exceed 255 characters.",
+      error: "experience.validation.titleTooLong",
     }),
 
   company: z
     .string({
-      message: "Company name is required.",
+      error: "experience.validation.companyRequired",
     })
     .min(1, {
-      message: "Company name cannot be empty.",
+      error: "experience.validation.companyEmpty",
     })
     .max(50, {
-      message: "Company name cannot exceed 50 characters.",
+      error: "experience.validation.companyTooLong",
     }),
 
   startDate: z
@@ -29,7 +31,7 @@ const baseExperienceSchema = z.object({
       (value) =>
         value === null || value === "" ? null : new Date(value as string),
       z.date({
-        message: "Start date is required.",
+        error: "experience.validation.startDateRequired",
       }),
     )
     .refine(
@@ -38,21 +40,21 @@ const baseExperienceSchema = z.object({
         return date <= new Date();
       },
       {
-        message: "Start date cannot be in the future.",
+        error: "experience.validation.startDateInFuture",
       },
     ),
   location: z
     .string()
     .max(50, {
-      message: "Location cannot exceed 50 characters.",
+      error: "experience.validation.locationTooLong",
     })
     .optional(),
 
   workType: z.nativeEnum(WorkTypes, {
-    error: "You must select a valid work type",
+    error: "experience.validation.invalidWorkType",
   }),
   locationType: z.nativeEnum(LocationTypes, {
-    error: "You must select a valid location type",
+    error: "experience.validation.invalidLocationType",
   }),
   endDate: z
     .preprocess(
@@ -74,7 +76,7 @@ const createExperienceSchema = baseExperienceSchema
       return true;
     },
     {
-      message: "End date must be after the start date.",
+      error: "experience.validation.endDateBeforeStart",
       path: ["endDate"],
     },
   )
@@ -86,7 +88,7 @@ const createExperienceSchema = baseExperienceSchema
       return true;
     },
     {
-      message: "End date cannot be in the future.",
+      error: "experience.validation.endDateInFuture",
       path: ["endDate"],
     },
   );
@@ -100,7 +102,7 @@ const updateExperienceSchema = baseExperienceSchema
       return true;
     },
     {
-      message: "End date must be after the start date.",
+      error: "experience.validation.endDateBeforeStart",
       path: ["endDate"],
     },
   )
@@ -112,7 +114,7 @@ const updateExperienceSchema = baseExperienceSchema
       return true;
     },
     {
-      message: "End date cannot be in the future.",
+      error: "experience.validation.endDateInFuture",
       path: ["endDate"],
     },
   );

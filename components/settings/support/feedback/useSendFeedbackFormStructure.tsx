@@ -16,6 +16,17 @@ interface useSendFeedbackFormStructureProps {
   store: SendFeedbackStore;
 }
 
+/**
+ * Maps each feedback category enum value to its translation key under
+ * settings.support.screens.send-feedback.categories. Only the option label is
+ * translated -- the enum value itself is what gets persisted.
+ */
+const FEEDBACK_CATEGORY_KEYS: Record<FeedbackCategory, string> = {
+  [FeedbackCategory.GENERAL_FEEDBACK]: "generalFeedback",
+  [FeedbackCategory.FEATURE_REQUEST]: "featureRequest",
+  [FeedbackCategory.OTHER]: "other",
+};
+
 export const useSendFeedbackFormStructure = ({
   store,
 }: useSendFeedbackFormStructureProps) => {
@@ -29,7 +40,7 @@ export const useSendFeedbackFormStructure = ({
     required: true,
     placeholder: t("settings.support.screens.send-feedback.forms.placeholders.message"),
     description: t("settings.support.screens.send-feedback.forms.descriptions.message"),
-    error: store.errors.message?.[0],
+    error: t(store.errors.message?.[0]),
     props: {
       value: store.createDto.message,
       onChangeText: (value: string) => {
@@ -47,7 +58,7 @@ export const useSendFeedbackFormStructure = ({
     required: true,
     placeholder: t("settings.support.screens.send-feedback.forms.placeholders.category"),
     description: t("settings.support.screens.send-feedback.forms.descriptions.category"),
-    error: store.errors.category?.[0],
+    error: t(store.errors.category?.[0]),
     props: {
       value: store.createDto.category,
       onSelect: (value: string) => {
@@ -55,7 +66,9 @@ export const useSendFeedbackFormStructure = ({
         store.setNested("errors.category", []);
       },
       options: Object.values(FeedbackCategory).map((feedback) => ({
-        label: feedback,
+        label: t(
+          `settings.support.screens.send-feedback.categories.${FEEDBACK_CATEGORY_KEYS[feedback]}`,
+        ),
         value: feedback,
       })),
     },
@@ -69,7 +82,7 @@ export const useSendFeedbackFormStructure = ({
     required: true,
     placeholder: t("settings.support.screens.send-feedback.forms.placeholders.rating"),
     description: t("settings.support.screens.send-feedback.forms.descriptions.rating"),
-    error: store.errors.rating?.[0],
+    error: t(store.errors.rating?.[0]),
     props: {
       color: hslToHex(palette.primary),
       starSize: 48,

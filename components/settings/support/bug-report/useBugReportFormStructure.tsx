@@ -14,6 +14,19 @@ interface useBugReportFormStructureProps {
   store: ReportBugStore;
 }
 
+/**
+ * Maps each bug variant enum value to its translation key under
+ * settings.support.screens.report-bug.variants. Only the option label is
+ * translated -- the enum value itself is what gets persisted.
+ */
+const BUG_VARIANT_KEYS: Record<BugVariant, string> = {
+  [BugVariant.CRASH]: "crash",
+  [BugVariant.UI_ISSUE]: "uiIssue",
+  [BugVariant.PERFORMANCE_ISSUE]: "performanceIssue",
+  [BugVariant.FEATURE_NOT_WORKING]: "featureNotWorking",
+  [BugVariant.OTHER]: "other",
+};
+
 export const useBugReportFormStructure = ({
   store,
 }: useBugReportFormStructureProps) => {
@@ -26,7 +39,7 @@ export const useBugReportFormStructure = ({
     required: true,
     placeholder: t("settings.support.screens.report-bug.forms.placeholders.bug-title"),
     description: t("settings.support.screens.report-bug.forms.descriptions.bug-title"),
-    error: store.errors.title?.[0],
+    error: t(store.errors.title?.[0]),
     props: {
       value: store.createDto.title,
       onChangeText: (value: string) => {
@@ -44,7 +57,7 @@ export const useBugReportFormStructure = ({
     required: true,
     placeholder: t("settings.support.screens.report-bug.forms.placeholders.bug-description"),
     description: t("settings.support.screens.report-bug.forms.descriptions.bug-description"),
-    error: store.errors.description?.[0],
+    error: t(store.errors.description?.[0]),
     props: {
       value: store.createDto.description,
       onChangeText: (value: string) => {
@@ -62,7 +75,7 @@ export const useBugReportFormStructure = ({
     required: true,
     placeholder: t("settings.support.screens.report-bug.forms.placeholders.bug-category"),
     description: t("settings.support.screens.report-bug.forms.descriptions.bug-category"),
-    error: store.errors.variant?.[0],
+    error: t(store.errors.variant?.[0]),
     props: {
       value: store.createDto.variant,
       onSelect: (value: string) => {
@@ -70,7 +83,9 @@ export const useBugReportFormStructure = ({
         store.setNested("errors.variant", []);
       },
       options: Object.values(BugVariant).map((bug) => ({
-        label: bug,
+        label: t(
+          `settings.support.screens.report-bug.variants.${BUG_VARIANT_KEYS[bug]}`,
+        ),
         value: bug,
       })),
     },

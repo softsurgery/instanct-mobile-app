@@ -40,6 +40,20 @@
               "linkedin": "L’URL de votre profil LinkedIn est utilisée pour la récupération du compte et les notifications."
             }
           },
+          "validation": {
+            "invalidFirstNameLength": "Le prénom doit contenir au moins 3 caractères.",
+            "firstNameTooLong": "Le prénom ne peut pas dépasser 25 caractères.",
+            "invalidFirstNameFormat": "Le prénom ne peut contenir que des lettres et des espaces.",
+            "invalidLastNameLength": "Le nom doit contenir au moins 3 caractères.",
+            "lastNameTooLong": "Le nom ne peut pas dépasser 25 caractères.",
+            "invalidLastNameFormat": "Le nom ne peut contenir que des lettres et des espaces.",
+            "invalidAge": "Vous devez avoir au moins 13 ans.",
+            "invalidWebsiteUrl": "Veuillez saisir une URL de site web valide.",
+            "websiteTooLong": "L'URL du site web ne peut pas dépasser 255 caractères.",
+            "invalidLinkedinUrl": "Veuillez saisir une URL LinkedIn valide.",
+            "invalidLinkedinFormat": "Veuillez saisir une URL de profil LinkedIn valide.",
+            "linkedinTooLong": "L'URL LinkedIn ne peut pas dépasser 1024 caractères."
+          },
           "actions": {
             "update-profile": "Mettre à jour le profil",
             "update-profile-pending": "Mise à jour...",
@@ -166,6 +180,22 @@
               "submit-bug": "Soumettre le rapport",
               "submit-bug-pending": "Soumission en cours..."
             }
+          },
+          "validation": {
+            "variantRequired": "Vous devez sélectionner un type de bug.",
+            "titleRequired": "Le titre est obligatoire.",
+            "titleTooShort": "Le titre doit contenir au moins 10 caractères.",
+            "titleTooLong": "Le titre ne doit pas dépasser 255 caractères.",
+            "descriptionRequired": "La description est obligatoire.",
+            "descriptionTooShort": "La description doit contenir au moins 10 caractères.",
+            "descriptionTooLong": "La description ne doit pas dépasser 1024 caractères."
+          },
+          "variants": {
+            "crash": "Plantage",
+            "uiIssue": "Problème d'interface",
+            "performanceIssue": "Problème de performance",
+            "featureNotWorking": "Fonctionnalité qui ne marche pas",
+            "other": "Autre"
           }
         },
         "send-feedback": {
@@ -191,6 +221,18 @@
               "submit-feedback": "Soumettre le commentaire",
               "submit-feedback-pending": "Soumission en cours..."
             }
+          },
+          "validation": {
+            "categoryRequired": "Vous devez sélectionner une catégorie de commentaire.",
+            "messageRequired": "Le message est obligatoire.",
+            "messageTooShort": "Le message doit contenir au moins 10 caractères.",
+            "messageTooLong": "Le message ne doit pas dépasser 1024 caractères.",
+            "ratingRequired": "La note doit être d'au moins 1."
+          },
+          "categories": {
+            "generalFeedback": "Commentaire général",
+            "featureRequest": "Demande de fonctionnalité",
+            "other": "Autre"
           }
         },
         "faqs": {
@@ -244,7 +286,6 @@
     "display-preferences": {
       "title": "Préférences d'affichage",
       "description": "Personnalisez l'affichage de la carte.",
-     
       "show-usernames": {
         "title": "Afficher les noms d'utilisateur",
         "description": "Afficher ou masquer les noms d'utilisateur sur la carte."

@@ -40,6 +40,20 @@
                             "linkedin": "Your LinkedIn profile URL is used for account recovery and notifications."
                         }
                     },
+                    "validation": {
+                        "invalidFirstNameLength": "First name must be at least 3 characters long.",
+                        "firstNameTooLong": "First name cannot exceed 25 characters.",
+                        "invalidFirstNameFormat": "First name can only contain letters and spaces.",
+                        "invalidLastNameLength": "Last name must be at least 3 characters long.",
+                        "lastNameTooLong": "Last name cannot exceed 25 characters.",
+                        "invalidLastNameFormat": "Last name can only contain letters and spaces.",
+                        "invalidAge": "You must be at least 13 years old.",
+                        "invalidWebsiteUrl": "Please enter a valid website URL.",
+                        "websiteTooLong": "Website URL cannot exceed 255 characters.",
+                        "invalidLinkedinUrl": "Please enter a valid LinkedIn URL.",
+                        "invalidLinkedinFormat": "Please enter a valid LinkedIn profile URL.",
+                        "linkedinTooLong": "LinkedIn URL cannot exceed 1024 characters."
+                    },
                     "actions": {
                         "update-profile": "Update Profile",
                         "update-profile-pending": "Updating...",
@@ -171,6 +185,22 @@
                             "submit-bug": "Submit Report",
                             "submit-bug-pending": "Submitting..."
                         }
+                    },
+                    "validation": {
+                        "variantRequired": "You must select a Bug Variant.",
+                        "titleRequired": "Title is required.",
+                        "titleTooShort": "Title must be at least 10 characters long.",
+                        "titleTooLong": "Title must be at most 255 characters long.",
+                        "descriptionRequired": "Description is required.",
+                        "descriptionTooShort": "Description must be at least 10 characters long.",
+                        "descriptionTooLong": "Description must be at most 1024 characters long."
+                    },
+                    "variants": {
+                        "crash": "Crash",
+                        "uiIssue": "UI Issue",
+                        "performanceIssue": "Performance Issue",
+                        "featureNotWorking": "Feature Not Working",
+                        "other": "Other"
                     }
                 },
                 "send-feedback": {
@@ -196,6 +226,18 @@
                             "submit-feedback": "Submit Feedback",
                             "submit-feedback-pending": "Submitting..."
                         }
+                    },
+                    "validation": {
+                        "categoryRequired": "You must select a Feedback Category.",
+                        "messageRequired": "Message is required.",
+                        "messageTooShort": "Message must be at least 10 characters long.",
+                        "messageTooLong": "Message must be at most 1024 characters long.",
+                        "ratingRequired": "Rating must be at least 1."
+                    },
+                    "categories": {
+                        "generalFeedback": "General Feedback",
+                        "featureRequest": "Feature Request",
+                        "other": "Other"
                     }
                 },
                 "faqs": {

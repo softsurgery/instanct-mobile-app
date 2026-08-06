@@ -4,22 +4,28 @@ const baseUserSchema = z.object({
   firstName: z
     .string()
     .min(3, {
-      message: "userManagement.validation.invalidFirstNameLength",
+      message:
+        "settings.account.screens.profile.validation.invalidFirstNameLength",
     })
     .max(25, {
-      message: "userManagement.validation.firstNameTooLong",
+      message: "settings.account.screens.profile.validation.firstNameTooLong",
     })
     .regex(/^[a-zA-Z\s]+$/, {
-      message: "userManagement.validation.invalidFirstNameFormat",
+      message:
+        "settings.account.screens.profile.validation.invalidFirstNameFormat",
     }),
   lastName: z
     .string()
     .min(3, {
-      message: "userManagement.validation.invalidLastNameLength",
+      message:
+        "settings.account.screens.profile.validation.invalidLastNameLength",
     })
-    .max(25, { message: "userManagement.validation.lastNameTooLong" })
+    .max(25, {
+      message: "settings.account.screens.profile.validation.lastNameTooLong",
+    })
     .regex(/^[a-zA-Z\s]+$/, {
-      message: "userManagement.validation.invalidLastNameFormat",
+      message:
+        "settings.account.screens.profile.validation.invalidLastNameFormat",
     }),
   dateOfBirth: z
     .preprocess(
@@ -38,25 +44,36 @@ const baseUserSchema = z.object({
 
           return age > 13 || (age === 13 && isBirthdayPassed);
         },
-        { message: "userManagement.validation.invalidAge" },
+        { message: "settings.account.screens.profile.validation.invalidAge" },
       ),
     )
     .optional(),
   website: z
     .string()
-    .url({ message: "userManagement.validation.invalidWebsiteUrl" })
-    .max(255, { message: "userManagement.validation.websiteTooLong" })
+    .url({
+      message: "settings.account.screens.profile.validation.invalidWebsiteUrl",
+    })
+    .max(255, {
+      message: "settings.account.screens.profile.validation.websiteTooLong",
+    })
     .or(z.literal(""))
     .optional()
     .nullable(),
   linkedin: z
     .string()
-    .url({ message: "userManagement.validation.invalidLinkedinUrl" })
+    .url({
+      message: "settings.account.screens.profile.validation.invalidLinkedinUrl",
+    })
     .regex(
       /^https:\/\/(www\.)?linkedin\.com\/in\/[a-zA-Z0-9\-_%]+\/?(\?.*)?$/,
-      { message: "userManagement.validation.invalidLinkedinFormat" },
+      {
+        message:
+          "settings.account.screens.profile.validation.invalidLinkedinFormat",
+      },
     )
-    .max(1024, { message: "userManagement.validation.linkedinTooLong" })
+    .max(1024, {
+      message: "settings.account.screens.profile.validation.linkedinTooLong",
+    })
     .or(z.literal(""))
     .optional()
     .nullable(),

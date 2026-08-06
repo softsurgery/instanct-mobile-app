@@ -96,6 +96,16 @@
                 "update": "Modifier la formation"
             }
         },
+        "validation": {
+            "titleTooShort": "Le titre doit contenir au moins 2 caractères",
+            "titleTooLong": "Le titre ne doit pas dépasser 255 caractères",
+            "institutionTooShort": "Le nom de l'établissement doit contenir au moins 2 caractères",
+            "institutionTooLong": "Le nom de l'établissement ne doit pas dépasser 100 caractères",
+            "descriptionTooLong": "La description ne doit pas dépasser 500 caractères",
+            "startDateInFuture": "La date de début ne peut pas être dans le futur",
+            "endDateBeforeStart": "La date de fin doit être postérieure à la date de début",
+            "endDateInFuture": "La date de fin ne peut pas être dans le futur"
+        },
         "delete": {
             "title": "Supprimer la formation",
             "message": "Êtes-vous sûr de vouloir supprimer cette formation ? Cette action est irréversible.",
@@ -177,6 +187,21 @@
                 "create": "Créer une expérience",
                 "update": "Modifier l'expérience"
             }
+        },
+        "validation": {
+            "titleRequired": "Le titre est obligatoire.",
+            "titleEmpty": "Le titre ne peut pas être vide.",
+            "titleTooLong": "Le titre ne doit pas dépasser 255 caractères.",
+            "companyRequired": "Le nom de l'entreprise est obligatoire.",
+            "companyEmpty": "Le nom de l'entreprise ne peut pas être vide.",
+            "companyTooLong": "Le nom de l'entreprise ne doit pas dépasser 50 caractères.",
+            "locationTooLong": "Le lieu ne doit pas dépasser 50 caractères.",
+            "invalidWorkType": "Vous devez sélectionner un type de travail valide",
+            "invalidLocationType": "Vous devez sélectionner un mode de travail valide",
+            "startDateRequired": "La date de début est obligatoire.",
+            "startDateInFuture": "La date de début ne peut pas être dans le futur.",
+            "endDateBeforeStart": "La date de fin doit être postérieure à la date de début.",
+            "endDateInFuture": "La date de fin ne peut pas être dans le futur."
         },
         "delete": {
             "title": "Supprimer l'expérience",
