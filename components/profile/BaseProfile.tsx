@@ -16,13 +16,13 @@ import {
   Upload,
 } from "@/types";
 import { useFocusEffect, useNavigation } from "expo-router";
-import { Pressable, View } from "react-native";
+import { Pressable, View, ActivityIndicator } from "react-native";
 import { ImageSource } from "expo-image";
 import { ProfileStat } from "./ProfileStat";
 import { useUserIndustries } from "@/hooks/content/users/useUserIndustries";
 import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
 import { useServerImages } from "@/hooks/content/useServerImages";
-import { Loader } from "../shared/Loader";
+
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { AboutTab } from "./sections/AboutTab";
 import { CareerTab } from "./sections/CareerTab";
@@ -33,7 +33,6 @@ import { toast } from "sonner-native";
 import { api } from "@/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as ImagePicker from "expo-image-picker";
-import { Skeleton } from "../ui/skeleton";
 import { Icon } from "../ui/icon";
 import { Mail, Pencil } from "lucide-react-native";
 import { BaseProfileSkeleton } from "./BaseProfileSkeleton";
@@ -51,6 +50,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLuminance } from "@/hooks/useLuminance";
+import { useLoader } from "@/contexts/LoaderContext";
 
 interface ProfileSection<T = unknown> {
   key: string;
@@ -84,6 +84,8 @@ export const InspectBaseProfile = ({
   const queryClient = useQueryClient();
   const navigation = useNavigation();
   const [draftCoverUri, setDraftCoverUri] = React.useState<string | null>(null);
+  const [isPickingCover, setIsPickingCover] = React.useState(false);
+  const { setLoading } = useLoader();
 
   const storeRef = React.useRef(createClientStore());
 
@@ -206,36 +208,46 @@ export const InspectBaseProfile = ({
     return () => {
       userStore?.reset();
       storeRef.current = null as any;
+      setLoading(false);
     };
   }, []);
+
+  React.useEffect(() => {
+    setLoading(isCoverUploadPending || isUpdateCoverPending || isPickingCover);
+  }, [isCoverUploadPending, isUpdateCoverPending, isPickingCover, setLoading]);
 
   const handlePickCover = async () => {
     if (currentUser?.id !== id) return;
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [16, 9],
-      quality: 0.8,
-    });
+    setIsPickingCover(true);
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        allowsEditing: true,
+        aspect: [16, 9],
+        quality: 0.8,
+      });
 
-    if (result.canceled) return;
+      if (result.canceled) return;
 
-    const asset = result.assets[0];
+      const asset = result.assets[0];
 
-    // INSTANT UI PREVIEW
-    setDraftCoverUri(asset.uri);
+      // INSTANT UI PREVIEW
+      setDraftCoverUri(asset.uri);
 
-    const fileLike = {
-      uri: asset.uri,
-      name: asset.uri.split("/").pop() || "cover.jpg",
-      type: asset.mimeType || "image/jpeg",
-    } as unknown as File;
+      const fileLike = {
+        uri: asset.uri,
+        name: asset.uri.split("/").pop() || "cover.jpg",
+        type: asset.mimeType || "image/jpeg",
+      } as unknown as File;
 
-    // AUTO UPLOAD
-    uploadCover({
-      files: [fileLike],
-    });
+      // AUTO UPLOAD
+      uploadCover({
+        files: [fileLike],
+      });
+    } finally {
+      setIsPickingCover(false);
+    }
   };
 
   const coverPreviewSource = React.useMemo<ImageSource | undefined>(
@@ -342,74 +354,67 @@ export const InspectBaseProfile = ({
         <View onLayout={onLayout}>
           {/* Cover */}
           {coverExtra}
-          <Pressable
-            onHoverIn={() => setIsHovered(true)}
-            onHoverOut={() => setIsHovered(false)}
-            className="w-full relative overflow-hidden"
-          >
-            <PhotoPreview
-              className="relative w-full h-48 overflow-hidden bg-muted items-center justify-center"
-              source={coverPreviewSource}
-              onPress={handlePickCover}
-              footer={() => {
-                if (currentUser?.id !== id) return null;
+          <PhotoPreview
+            className={cn(
+              "relative w-full h-56 overflow-hidden  items-center justify-center",
+              !coverPreviewSource ? "bg-primary/25 active:opacity-0" : "",
+            )}
+            source={coverPreviewSource}
+            onPress={!coverPreviewSource ? handlePickCover : undefined}
+            footer={() => {
+              if (currentUser?.id !== id) return null;
 
-                return (
-                  <Pressable
-                    className="flex flex-row gap-2 items-center px-4 py-2 m-4 mx-auto border border-border rounded-full active:bg-muted"
-                    style={{
-                      marginBottom: insets.bottom * 2,
-                    }}
-                    onPress={handlePickCover}
-                  >
+              return (
+                <Pressable
+                  className="flex flex-row gap-2 items-center px-4 py-2 m-4 mx-auto border border-border rounded-full active:bg-muted"
+                  style={{
+                    marginBottom: insets.bottom * 2,
+                    opacity: isPickingCover ? 0.5 : 1,
+                  }}
+                  onPress={handlePickCover}
+                  disabled={isPickingCover}
+                >
+                  {isPickingCover ? (
+                    <ActivityIndicator color="white" size="small" />
+                  ) : (
                     <Icon as={Pencil} color="white" />
-                    <Text className="text-white">
-                      {t("menu.actions.addCoverPhoto")}
-                    </Text>
-                  </Pressable>
-                );
-              }}
-            >
-              {/* Cover Image */}
-              {coverPreviewSource ? (
-                <Image
-                  source={coverPreviewSource}
-                  style={{ width: "100%", height: "100%" }}
-                  resizeMode="cover"
-                />
-              ) : currentUser?.id === id ? (
-                <View className="flex flex-row gap-2 items-center z-10">
-                  <Icon as={Pencil} color="white" />
-                  <Text className="font-medium text-white">
+                  )}
+                  <Text className="text-white">
                     {t("menu.actions.addCoverPhoto")}
                   </Text>
-                </View>
-              ) : null}
-
-              {/* Dynamic Calque Overlay */}
-              <LinearGradient
-                colors={
-                  isHovered
-                    ? ["rgba(0,0,0,0.65)", "rgba(0,0,0,0.80)"]
-                    : isLightCover
-                      ? ["rgba(0,0,0,0.35)", "rgba(0,0,0,0.55)"]
-                      : ["rgba(0,0,0,0.15)", "rgba(0,0,0,0.35)"]
-                }
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  bottom: 0,
-                }}
+                </Pressable>
+              );
+            }}
+          >
+            {/* Cover Image */}
+            {coverPreviewSource ? (
+              <Image
+                source={coverPreviewSource}
+                style={{ width: "100%", height: "100%" }}
+                resizeMode="cover"
               />
-            </PhotoPreview>
-          </Pressable>
-          {(isCoverUploadPending || isUpdateCoverPending) && (
-            <View className="absolute inset-0 bg-black/40 flex items-center justify-center z-50">
-              <Loader isPending={true} size="large" />
-            </View>
-          )}
+            ) : currentUser?.id === id ? (
+              <View className="flex flex-row items-center justify-center gap-2 z-10" />
+            ) : null}
+
+            {/* Dynamic Calque Overlay */}
+            <LinearGradient
+              colors={
+                isHovered
+                  ? ["rgba(0,0,0,0.65)", "rgba(0,0,0,0.80)"]
+                  : isLightCover
+                    ? ["rgba(0,0,0,0.35)", "rgba(0,0,0,0.55)"]
+                    : ["rgba(0,0,0,0.15)", "rgba(0,0,0,0.35)"]
+              }
+              style={{
+                position: "absolute",
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0,
+              }}
+            />
+          </PhotoPreview>
           {/* Header */}
           <View className="-mt-12 px-5 z-50">
             <View className="flex-row items-end justify-between">
