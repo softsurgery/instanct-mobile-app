@@ -16,13 +16,15 @@ import { ServerErrorResponse, Upload } from "@/types";
 import { toast } from "sonner-native";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/api";
-
+import { useTranslation } from "react-i18next";
 import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
+
 interface SignupLayoutProps {
   className?: string;
 }
 
 export const SignupLayout = ({ className }: SignupLayoutProps) => {
+  const { t } = useTranslation("auth");
   const authStore = useAuthStore();
   const { industries } = useIndustries();
 
@@ -35,7 +37,7 @@ export const SignupLayout = ({ className }: SignupLayoutProps) => {
     },
     onError: (error: ServerErrorResponse) => {
       toast.error(
-        error.response?.data?.message || "Failed to upload image",
+        error.response?.data?.message || t("auth.signUp.toasts.uploadError"),
         {},
       );
     },
@@ -68,12 +70,12 @@ export const SignupLayout = ({ className }: SignupLayoutProps) => {
   const { mutate: signUp, isPending: isSignUpPending } = useMutation({
     mutationFn: async () => api.auth.signUp(authStore.signUpRequest),
     onSuccess: () => {
-      toast.success("Account created successfully! Please sign in.");
+      toast.success(t("auth.signUp.toasts.success"));
       router.push("/auth/sign-in");
     },
     onError: (error: ServerErrorResponse) => {
       const message =
-        error.response?.data?.message || "Failed to create account";
+        error.response?.data?.message || t("auth.signUp.toasts.error");
       toast.error(message);
     },
   });
@@ -112,9 +114,8 @@ export const SignupLayout = ({ className }: SignupLayoutProps) => {
             }}
             steps={[
               {
-                title: "Introduce Yourself",
-                description:
-                  "Start by providing the basic details about yourself.",
+                title: t("auth.signUp.steps.identity.title"),
+                description: t("auth.signUp.steps.identity.description"),
                 component: (
                   <View>
                     <FormBuilder structure={signUpFormStructure} />
@@ -130,23 +131,21 @@ export const SignupLayout = ({ className }: SignupLayoutProps) => {
                 validation: step1Validation,
               },
               {
-                title: "Industries",
-                description:
-                  "Select the industries and objectives relevant to you.",
+                title: t("auth.signUp.steps.industries.title"),
+                description: t("auth.signUp.steps.industries.description"),
                 component: <FormBuilder structure={industriesFormStructure} />,
                 validation: !!authStore.signUpRequest.industries.length,
               },
               {
-                title: "Show us your face",
-                description:
-                  "Upload a profile picture to personalize your account.",
+                title: t("auth.signUp.steps.picture.title"),
+                description: t("auth.signUp.steps.picture.description"),
                 component: <FormBuilder structure={profilePictureFieldset} />,
                 validation: !!authStore.signUpRequest.pictureId,
               },
             ]}
             closingActions={[
               {
-                label: "Create My Account",
+                label: t("auth.signUp.actions.createAccount"),
                 onPress: () => signUp(),
                 disabled: isSignUpPending,
               },

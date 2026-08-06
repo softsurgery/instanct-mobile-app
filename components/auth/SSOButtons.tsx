@@ -110,8 +110,8 @@ export const SSOButtons = ({
       </Button>
 
       {classic && (
-        <>
-          <DividedText text="OR" />
+        <React.Fragment>
+          <DividedText text={t("onBoarding.or")} />
 
           <Button
             disabled={isDisabled}
@@ -123,7 +123,7 @@ export const SSOButtons = ({
               {t("onBoarding.actions.email")}
             </Text>
           </Button>
-        </>
+        </React.Fragment>
       )}
     </View>
   );

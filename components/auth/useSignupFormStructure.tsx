@@ -9,6 +9,7 @@ import {
   TextFieldProps,
 } from "../shared/form-builder/types";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface useSignUpFormStructureProps {
   store: AuthStore;
@@ -40,18 +41,20 @@ export const useSignUpFormStructure = ({
   uploadPicture,
   isProfilePictureUploadPending,
 }: useSignUpFormStructureProps) => {
+  const { t } = useTranslation("auth");
+
   // firstName
   const firstnameField: Field = {
     id: "firstName",
-    label: "Firstname",
-    description: "Tell us your first name.",
-    placeholder: "Please enter your first name",
+    label: t("auth.signUp.labels.firstName"),
+    description: t("auth.signUp.descriptions.firstName"),
+    placeholder: t("auth.signUp.placeholders.firstName"),
     variant: FieldVariant.TEXT,
     className:
       store.signUpRequest.firstName && !store.signUpRequestErrors.firstName?.[0]
         ? "border border-green-500"
         : "",
-    error: store.signUpRequestErrors?.firstName?.[0],
+    error: t(store.signUpRequestErrors?.firstName?.[0]),
     props: {
       value: store.signUpRequest.firstName,
       onChangeText: (text: string) => {
@@ -65,15 +68,15 @@ export const useSignUpFormStructure = ({
   // lastName
   const lastnameField: Field = {
     id: "lastName",
-    label: "Lastname",
-    description: "Tell us your last name.",
-    placeholder: "Please enter your last name",
+    label: t("auth.signUp.labels.lastName"),
+    description: t("auth.signUp.descriptions.lastName"),
+    placeholder: t("auth.signUp.placeholders.lastName"),
     variant: FieldVariant.TEXT,
     className:
       store.signUpRequest.lastName && !store.signUpRequestErrors.lastName?.[0]
         ? "border border-green-500"
         : "",
-    error: store.signUpRequestErrors?.lastName?.[0],
+    error: t(store.signUpRequestErrors?.lastName?.[0]),
     props: {
       value: store.signUpRequest.lastName,
       onChangeText: (text: string) => {
@@ -86,12 +89,12 @@ export const useSignUpFormStructure = ({
 
   // email
   const emailFieldDescription = !store.signUpRequest.email
-    ? "This will be used for logging in and account recovery"
+    ? t("auth.signUp.descriptions.email.default")
     : isCheckingEmail
-      ? "Checking availability..."
+      ? t("auth.signUp.descriptions.email.checking")
       : isEmailTaken
-        ? "E-mail already taken"
-        : "This e-mail is available";
+        ? t("auth.signUp.descriptions.email.taken")
+        : t("auth.signUp.descriptions.email.available");
 
   const emailFieldClassName = cn(
     !emailError &&
@@ -105,14 +108,15 @@ export const useSignUpFormStructure = ({
 
   const emailFieldError =
     store.signUpRequest.email.length > 0
-      ? emailError || (isEmailTaken ? "E-mail is already taken" : "")
+      ? t(emailError!) ||
+        (isEmailTaken ? t("auth.signUp.errors.emailTaken") : "")
       : "";
 
   const emailField: Field = {
     id: "email",
-    label: "E-mail",
+    label: t("auth.signUp.labels.email"),
     description: emailFieldDescription,
-    placeholder: "Please enter your e-mail",
+    placeholder: t("auth.signUp.placeholders.email"),
     variant: FieldVariant.EMAIL,
     className: emailFieldClassName,
     error: emailFieldError,
@@ -128,12 +132,12 @@ export const useSignUpFormStructure = ({
 
   // username
   const usernameFieldDescription = !store.signUpRequest.username
-    ? "Choose a unique username for your profile"
+    ? t("auth.signUp.descriptions.username.default")
     : isCheckingUsername
-      ? "Checking availability..."
+      ? t("auth.signUp.descriptions.username.checking")
       : isUsernameTaken
-        ? "Username already taken"
-        : "This username is available";
+        ? t("auth.signUp.descriptions.username.taken")
+        : t("auth.signUp.descriptions.username.available");
 
   const usernameFieldClassName = cn(
     "w-full",
@@ -145,14 +149,15 @@ export const useSignUpFormStructure = ({
 
   const usernameFieldError =
     store.signUpRequest.username.length > 0
-      ? usernameError || (isUsernameTaken ? "Username is already taken" : "")
+      ? t(usernameError!) ||
+        (isUsernameTaken ? t("auth.signUp.errors.usernameTaken") : "")
       : "";
 
   const usernameField: Field<TextFieldProps> = {
     id: "username",
-    label: "Username",
+    label: t("auth.signUp.labels.username"),
     description: usernameFieldDescription,
-    placeholder: "Please enter your username",
+    placeholder: t("auth.signUp.placeholders.username"),
     variant: FieldVariant.TEXT,
     className: usernameFieldClassName,
     error: usernameFieldError,
@@ -169,15 +174,15 @@ export const useSignUpFormStructure = ({
   // password
   const passwordField: Field = {
     id: "password",
-    label: "Password",
-    description: "Enter your password",
-    placeholder: "Please enter your password (8+ characters)",
+    label: t("auth.signUp.labels.password"),
+    description: t("auth.signUp.descriptions.password"),
+    placeholder: t("auth.signUp.placeholders.password"),
     variant: FieldVariant.PASSWORD,
     className:
       store.signUpRequest.password && !store.signUpRequestErrors.password?.[0]
         ? "border border-green-500"
         : "",
-    error: store.signUpRequestErrors?.password?.[0],
+    error: t(store.signUpRequestErrors?.password?.[0]),
     props: {
       value: store.signUpRequest.password,
       onChangeText: (text: string) => {
@@ -191,16 +196,16 @@ export const useSignUpFormStructure = ({
   // confirmPassword
   const confirmPasswordField: Field = {
     id: "confirmPassword",
-    label: "Confirm Password",
-    description: "Re-enter your password",
-    placeholder: "Please confirm your password",
+    label: t("auth.signUp.labels.confirmPassword"),
+    description: t("auth.signUp.descriptions.confirmPassword"),
+    placeholder: t("auth.signUp.placeholders.confirmPassword"),
     variant: FieldVariant.PASSWORD,
     className:
       store.utilities.confirmPassword &&
       !store.signUpRequestErrors.confirmPassword?.[0]
         ? "border border-green-500"
         : "",
-    error: store.signUpRequestErrors?.confirmPassword?.[0],
+    error: t(store.signUpRequestErrors?.confirmPassword?.[0]),
     props: {
       value: store.utilities.confirmPassword,
       onChangeText: (text: string) => {
@@ -237,7 +242,7 @@ export const useSignUpFormStructure = ({
   };
 
   const industriesFormStructure: FormStructure = {
-    title: "Industries",
+    title: t("auth.signUp.steps.industries.title"),
     fieldsets: [
       {
         rows: [
@@ -248,8 +253,7 @@ export const useSignUpFormStructure = ({
                 id: "industries",
                 variant: FieldVariant.MULTISELECT,
                 label: "",
-                description:
-                  "Select the industries relevant to you. You can select up to 5 industries.",
+                description: t("auth.signUp.descriptions.industries"),
                 props: {
                   value: store.signUpRequest.industries.map(String),
                   onSelect: (ids) =>
@@ -270,9 +274,9 @@ export const useSignUpFormStructure = ({
 
   const pictureField: Field<PictureFieldProps> = {
     id: "picture",
-    label: "Profile Picture",
+    label: t("auth.signUp.labels.picture"),
     variant: FieldVariant.PICTURE,
-    description: "Upload a profile picture to personalize your account.",
+    description: t("auth.signUp.descriptions.picture"),
     className: "h-40 w-40 rounded-full mt-2",
     wrapperClassName: "flex flex-row items-center justify-center",
     fieldClassName: "flex flex-col items-center justify-center",
@@ -297,8 +301,8 @@ export const useSignUpFormStructure = ({
   };
 
   const profilePictureFieldset: FormStructure = {
-    title: "Show us your face",
-    description: "Upload a profile picture to personalize your account.",
+    title: t("auth.signUp.steps.picture.title"),
+    description: t("auth.signUp.descriptions.picture"),
     fieldsets: [
       {
         title: "",
