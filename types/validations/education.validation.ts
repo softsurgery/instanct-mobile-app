@@ -10,7 +10,7 @@ const baseEducationSchema = z.object({
   title: z
     .string()
     .min(2, { message: "Title must be at least 2 characters long" })
-    .max(100, { message: "Title must not exceed 100 characters" }),
+    .max(255, { message: "Title must not exceed 255 characters" }),
   institution: z
     .string()
     .min(2, { message: "Institution name must be at least 2 characters long" })

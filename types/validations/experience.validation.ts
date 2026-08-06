@@ -9,8 +9,8 @@ const baseExperienceSchema = z.object({
     .min(1, {
       message: "Title cannot be empty.",
     })
-    .max(50, {
-      message: "Title cannot exceed 50 characters.",
+    .max(255, {
+      message: "Title cannot exceed 255 characters.",
     }),
 
   company: z
