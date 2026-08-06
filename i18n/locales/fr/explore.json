@@ -36,6 +36,23 @@
             "title": "Démarrer une session",
             "description": "Veuillez fournir les détails de votre session. Ces informations aideront les autres à comprendre quand vous êtes disponible et intéressé par la connexion.",
             "nextDayWarning": "Votre session se terminera le jour suivant car l'heure de fin est antérieure à l'heure de début.",
+            "startingOption": "Option de démarrage",
+            "startTime": "Heure de début",
+            "endTime": "Heure de fin",
+            "objectives": "Objectifs",
+            "options": {
+                "now": "Démarrer maintenant",
+                "schedule": "Planifier"
+            },
+            "placeholders": {
+                "objectives": "Sélectionnez des objectifs"
+            },
+            "descriptions": {
+                "startingOption": "Choisissez de démarrer la session immédiatement ou de la planifier pour plus tard.",
+                "startTime": "L'heure de début de la session. Si « Démarrer maintenant » est sélectionné, elle sera ignorée et la session démarrera immédiatement.",
+                "endTime": "L'heure de fin de la session. Elle sera ignorée si « Démarrer maintenant » est sélectionné.",
+                "objectives": "Sélectionnez les objectifs de cette session."
+            },
             "actions": {
                 "startSession": "Démarrer la session",
                 "startSessionPending": "Démarrage..."
@@ -74,6 +91,15 @@
                 "endSession": "Terminer la session",
                 "confirm": "Confirmer les modifications"
             }
+        },
+        "validation": {
+            "sessionTypeRequired": "Le type de session est obligatoire.",
+            "invalidPlannedStart": "Le début prévu doit être une date valide.",
+            "plannedStartInPast": "Le début prévu doit être dans le futur.",
+            "invalidPlannedEnd": "La fin prévue doit être une date valide.",
+            "plannedEndBeforeStart": "La fin prévue doit être postérieure au début prévu.",
+            "invalidObjective": "L'objectif doit être un nombre.",
+            "objectivesRequired": "Vous devez sélectionner au moins un objectif."
         }
     },
     "request": {
@@ -110,6 +136,14 @@
             "toasts": {
                 "success": "Demande envoyée avec succès",
                 "error": "Une erreur est survenue"
+            },
+            "validation": {
+                "receiversRequired": "Au moins un destinataire est requis",
+                "invalidMessage": "Le message doit être une chaîne de caractères.",
+                "messageRequired": "Le message ne peut pas être vide.",
+                "locationRequired": "Le lieu est obligatoire.",
+                "coordinatesRequired": "Les coordonnées du lieu sont obligatoires.",
+                "timeRequired": "L'heure est obligatoire."
             }
         }
     },
@@ -134,6 +168,7 @@
             "email": "Continuer avec Email",
             "apple": "Continuer avec Apple"
         },
+        "or": "ou",
         "terms": {
             "iAccept": "J'accepte les",
             "termsOfUse": "Conditions d'utilisation",

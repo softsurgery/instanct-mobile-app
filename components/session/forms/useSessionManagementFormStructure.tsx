@@ -25,7 +25,7 @@ export const useSessionManagementFormStructure = ({
     id: "end-date",
     label: t("session.manage.endTime"),
     variant: FieldVariant.TIME,
-    error: store.errors.plannedEnd?.[0],
+    error: t(store.errors.plannedEnd?.[0]),
     description: t("session.manage.descriptions.endTime"),
     props: {
       editable: !isPending,
@@ -43,7 +43,7 @@ export const useSessionManagementFormStructure = ({
     variant: FieldVariant.MULTISELECT,
     description: t("session.manage.descriptions.objectives"),
     placeholder: t("session.manage.placeholders.objectives"),
-    error: store.errors?.payload?.objectives?.[0],
+    error: t(store.errors?.payload?.objectives?.[0]),
     props: {
       editable: !isPending,
       value: store.updateDto?.payload?.objectives.map(String) || [],

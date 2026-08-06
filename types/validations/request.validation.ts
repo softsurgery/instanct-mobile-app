@@ -1,32 +1,34 @@
 import { z } from "zod";
 
+// Messages are translation keys, resolved by the consumer in the "explore"
+// namespace (see useCreateRequestFormStructure).
 export const CreateRequestDtoSchema = (mention: boolean) =>
   z.object({
     receiverIds: z
       .array(z.string())
-      .min(1, "At least one receiver is required"),
+      .min(1, "request.newRequest.validation.receiversRequired"),
 
     message: z
       .string({
-        message: "Message must be a string.",
+        error: "request.newRequest.validation.invalidMessage",
       })
-      .min(1, "Message cannot be empty."),
+      .min(1, "request.newRequest.validation.messageRequired"),
 
     location: mention
-      ? z.string().min(1, "Location is required.")
+      ? z.string().min(1, "request.newRequest.validation.locationRequired")
       : z.string().optional(),
 
     latitude: mention
-      ? z.number({ message: "Location coordinates are required." })
+      ? z.number({ error: "request.newRequest.validation.coordinatesRequired" })
       : z.number().optional(),
 
     longitude: mention
-      ? z.number({ message: "Location coordinates are required." })
+      ? z.number({ error: "request.newRequest.validation.coordinatesRequired" })
       : z.number().optional(),
 
     time: mention
       ? z.date({
-          message: "Time is required.",
+          error: "request.newRequest.validation.timeRequired",
         })
       : z.date().optional(),
   });

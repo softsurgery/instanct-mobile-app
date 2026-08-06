@@ -36,6 +36,23 @@
             "title": "Start a session",
             "description": "Please provide the details of your session. This information will help others understand when you are available and interested in connecting.",
             "nextDayWarning": "Your session will end the next day because the end time is earlier than the start time.",
+            "startingOption": "Starting Option",
+            "startTime": "Start Time",
+            "endTime": "End Time",
+            "objectives": "Objectives",
+            "options": {
+                "now": "Start now",
+                "schedule": "Schedule"
+            },
+            "placeholders": {
+                "objectives": "Select objectives"
+            },
+            "descriptions": {
+                "startingOption": "Choose whether to start the session immediately or schedule it for later.",
+                "startTime": "The start time of the session. If 'Start Now' is checked, this will be ignored and the session will start immediately.",
+                "endTime": "The end time of the session. This will be ignored if 'Start Now' is checked.",
+                "objectives": "Select the objectives for this session."
+            },
             "actions": {
                 "startSession": "Start the session",
                 "startSessionPending": "Starting..."
@@ -76,6 +93,15 @@
                 "confirm": "Confirm changes",
                 "confirmPending": "Confirming changes..."
             }
+        },
+        "validation": {
+            "sessionTypeRequired": "Session type is required.",
+            "invalidPlannedStart": "Planned start must be a valid date.",
+            "plannedStartInPast": "Planned start must be in the future.",
+            "invalidPlannedEnd": "Planned end must be a valid date.",
+            "plannedEndBeforeStart": "Planned end must be after planned start.",
+            "invalidObjective": "Objective must be a number.",
+            "objectivesRequired": "At least one objective must be selected."
         }
     },
     "request": {
@@ -112,6 +138,14 @@
             "toasts": {
                 "success": "Request sent successfully",
                 "error": "An error occurred"
+            },
+            "validation": {
+                "receiversRequired": "At least one receiver is required",
+                "invalidMessage": "Message must be a string.",
+                "messageRequired": "Message cannot be empty.",
+                "locationRequired": "Location is required.",
+                "coordinatesRequired": "Location coordinates are required.",
+                "timeRequired": "Time is required."
             }
         }
     },
@@ -136,6 +170,7 @@
             "email": "Continue with Email",
             "apple": "Continue with Apple"
         },
+        "or": "or",
         "terms": {
             "iAccept": "I accept the",
             "termsOfUse": "Terms of Use",

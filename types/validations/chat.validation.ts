@@ -4,16 +4,16 @@ import { ConversationReportReason } from "@/types";
 export const ConversationReportReasonEnum = z.enum(
   Object.values(ConversationReportReason) as [string, ...string[]],
   {
-    error: () => ({ message: "You must select a reason." }),
+    error: "chat.report.validation.reasonRequired",
   },
 );
 
 export const createConversationReportSchema = z.object({
   reason: ConversationReportReasonEnum,
   description: z
-    .string({ error: "Description is required." })
-    .min(10, { message: "Description must be at least 10 characters long." })
+    .string({ error: "chat.report.validation.descriptionRequired" })
+    .min(10, { error: "chat.report.validation.descriptionTooShort" })
     .max(1024, {
-      message: "Description must be at most 1024 characters long.",
+      error: "chat.report.validation.descriptionTooLong",
     }),
 });
