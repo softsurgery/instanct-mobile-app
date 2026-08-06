@@ -176,6 +176,11 @@
               "bug-description": "Décrivez le bug en détail",
               "bug-category": "Sélectionnez la catégorie qui décrit le mieux le bug"
             },
+            "descriptions": {
+              "bug-title": "Un titre court qui résume le bug rencontré.",
+              "bug-description": "Une description détaillée du bug, incluant les étapes pour le reproduire, le comportement attendu ainsi que toute capture d'écran ou message d'erreur pertinent.",
+              "bug-category": "Sélectionnez la catégorie qui décrit le mieux le bug rencontré."
+            },
             "actions": {
               "submit-bug": "Soumettre le rapport",
               "submit-bug-pending": "Soumission en cours..."
