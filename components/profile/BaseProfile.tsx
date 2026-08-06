@@ -413,13 +413,9 @@ export const InspectBaseProfile = ({
           {/* Header */}
           <View className="-mt-12 px-5 z-50">
             <View className="flex-row items-end justify-between">
-              {!profilePictureSource ? (
-                <Skeleton className="h-[100px] w-[100px] rounded-full" />
-              ) : (
-                <PhotoPreview source={profilePictureSource}>
-                  {profilePictures[0]}
-                </PhotoPreview>
-              )}
+              <PhotoPreview source={profilePictureSource}>
+                {profilePictures[0]}
+              </PhotoPreview>
               {currentUser?.id === id && <ProfileStat />}
             </View>
 
