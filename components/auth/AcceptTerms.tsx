@@ -20,7 +20,7 @@ export const AcceptTerms = ({
 }: AcceptTermsProps) => {
   const { t } = useTranslation("explore");
   return (
-    <View className={cn("flex flex-row items-start gap-2.5", className)}>
+    <View className={cn("flex flex-row items-center gap-2.5", className)}>
       <Checkbox
         checked={checked}
         onCheckedChange={onCheckedChange}
