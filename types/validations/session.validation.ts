@@ -1,15 +1,17 @@
 import { z } from "zod";
 import { SessionType } from "../session";
 
+// Messages are translation keys, resolved by the consumer in the "explore"
+// namespace (see useSessionStarterFormStructure / useSessionManagementFormStructure).
 export const createSessionSchema = (now: boolean) => {
   return z
     .object({
       sessionType: z.enum(SessionType, {
-        message: "Session type is required.",
+        error: "session.validation.sessionTypeRequired",
       }),
 
       plannedStart: z
-        .date({ message: "Planned start must be a valid date." })
+        .date({ error: "session.validation.invalidPlannedStart" })
         .optional()
         .refine(
           (date) => {
@@ -17,17 +19,17 @@ export const createSessionSchema = (now: boolean) => {
             return !!date && date.getTime() > Date.now();
           },
           {
-            message: "Planned start must be in the future.",
+            error: "session.validation.plannedStartInPast",
           },
         ),
 
       // plannedEnd is always required
-      plannedEnd: z.date({ message: "Planned end must be a valid date." }),
+      plannedEnd: z.date({ error: "session.validation.invalidPlannedEnd" }),
 
       payload: z.object({
         objectives: z
-          .array(z.number({ message: "Objective must be a number." }))
-          .min(1, { message: "At least one objective must be selected." })
+          .array(z.number({ error: "session.validation.invalidObjective" }))
+          .min(1, { error: "session.validation.objectivesRequired" })
           .optional(),
       }),
     })
@@ -39,7 +41,7 @@ export const createSessionSchema = (now: boolean) => {
         return true;
       },
       {
-        message: "Planned end must be after planned start.",
+        error: "session.validation.plannedEndBeforeStart",
         path: ["plannedEnd"],
       },
     );
@@ -47,13 +49,13 @@ export const createSessionSchema = (now: boolean) => {
 
 export const updateSessionSchema = z.object({
   plannedEnd: z
-    .date({ message: "Planned end must be a valid date." })
+    .date({ error: "session.validation.invalidPlannedEnd" })
     .optional(),
 
   payload: z.object({
     objectives: z
-      .array(z.number({ message: "Objective must be a number." }))
-      .min(1, { message: "At least one objective must be selected." })
+      .array(z.number({ error: "session.validation.invalidObjective" }))
+      .min(1, { error: "session.validation.objectivesRequired" })
       .optional(),
   }),
 });

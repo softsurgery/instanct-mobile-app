@@ -9,6 +9,7 @@ import {
   TimeFieldProps,
 } from "../../shared/form-builder/types";
 import { SegmentedToggle } from "@/components/shared/SegmentedToggle";
+import { useTranslation } from "react-i18next";
 
 interface useSessionStarterFormStructureProps {
   store: SessionStore;
@@ -21,11 +22,12 @@ export const useSessionStarterFormStructure = ({
   objectives,
   isPending,
 }: useSessionStarterFormStructureProps) => {
+  const { t } = useTranslation("explore");
+
   const nowField: Field<CustomFieldProps> = {
     id: "start-now",
-    label: "Starting Option",
-    description:
-      "Choose whether to start the session immediately or schedule it for later.",
+    label: t("session.start.startingOption"),
+    description: t("session.start.descriptions.startingOption"),
     variant: FieldVariant.CUSTOM,
     props: {
       children: (
@@ -41,8 +43,8 @@ export const useSessionStarterFormStructure = ({
             }
           }}
           options={[
-            { label: "Démarrer maintenant", value: "now" },
-            { label: "Planifier", value: "schedule" },
+            { label: t("session.start.options.now"), value: "now" },
+            { label: t("session.start.options.schedule"), value: "schedule" },
           ]}
         />
       ),
@@ -51,12 +53,11 @@ export const useSessionStarterFormStructure = ({
 
   const startDateField: Field<TimeFieldProps> = {
     id: "start-date",
-    label: "Start Time",
+    label: t("session.start.startTime"),
     variant: FieldVariant.TIME,
     hidden: store.flags.startNow,
-    error: store.errors.plannedStart?.[0],
-    description:
-      "The start time of the session. If 'Start Now' is checked, this will be ignored and the session will start immediately.",
+    error: t(store.errors.plannedStart?.[0]),
+    description: t("session.start.descriptions.startTime"),
     props: {
       editable: !isPending,
       value: store.createDto.plannedStart,
@@ -69,11 +70,10 @@ export const useSessionStarterFormStructure = ({
 
   const endDateField: Field<TimeFieldProps> = {
     id: "end-date",
-    label: "End Time",
+    label: t("session.start.endTime"),
     variant: FieldVariant.TIME,
-    error: store.errors.plannedEnd?.[0],
-    description:
-      "The end time of the session. This will be ignored if 'Start Now' is checked.",
+    error: t(store.errors.plannedEnd?.[0]),
+    description: t("session.start.descriptions.endTime"),
     props: {
       editable: !isPending,
       value: store.createDto.plannedEnd,
@@ -86,11 +86,11 @@ export const useSessionStarterFormStructure = ({
 
   const objectivesField: Field<MultiSelectFieldProps> = {
     id: "objectives",
-    label: "Objectives",
+    label: t("session.start.objectives"),
     variant: FieldVariant.MULTISELECT,
-    description: "Select the objectives for this session.",
-    placeholder: "Select objectives",
-    error: store.errors?.payload?.objectives?.[0],
+    description: t("session.start.descriptions.objectives"),
+    placeholder: t("session.start.placeholders.objectives"),
+    error: t(store.errors?.payload?.objectives?.[0]),
     props: {
       editable: !isPending,
       value: store.createDto?.payload?.objectives.map(String) || [],
@@ -104,7 +104,7 @@ export const useSessionStarterFormStructure = ({
   };
 
   const structure: FormStructure = {
-    title: "Start a Session",
+    title: t("session.start.title"),
     fieldsets: [
       {
         title: "",

@@ -29,7 +29,7 @@ export const useCreateNewRequestFormStructure = ({
     required: true,
     placeholder: t("request.newRequest.placeholders.message"),
     description: t("request.newRequest.descriptions.message"),
-    error: store.errors?.message?.[0] || "",
+    error: t(store.errors?.message?.[0] || ""),
     props: {
       editable: !isPending,
       value: store.createDto?.message,
@@ -84,7 +84,7 @@ export const useCreateNewRequestFormStructure = ({
     placeholder: t("request.newRequest.placeholders.time"),
     description: t("request.newRequest.descriptions.time"),
     hidden: !store.flags.mentionTimeAndPlace,
-    error: store.errors?.time?.[0] || "",
+    error: t(store.errors?.time?.[0] || ""),
     props: {
       editable: !isPending,
       value: store.createDto?.time,
@@ -103,7 +103,7 @@ export const useCreateNewRequestFormStructure = ({
     placeholder: t("request.newRequest.placeholders.location"),
     description: t("request.newRequest.descriptions.location"),
     hidden: !store.flags.mentionTimeAndPlace,
-    error: store.errors?.location?.[0] || "",
+    error: t(store.errors?.location?.[0] || ""),
     props: {
       editable: !isPending,
       changedOnFocus: true,
