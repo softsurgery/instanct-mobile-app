@@ -42,8 +42,8 @@ export function PhotoPreview({
     : 0;
 
   const open = async () => {
-    if (!images.length) return;
     onPress?.();
+    if (!images.length) return;
     setVisible(true);
   };
 
