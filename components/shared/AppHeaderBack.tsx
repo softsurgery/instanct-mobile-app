@@ -1,6 +1,6 @@
 import React from "react";
 import { ChevronLeft } from "lucide-react-native";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, Dimensions } from "react-native";
 import { Icon } from "../ui/icon";
 import { router, useNavigation } from "expo-router";
 import { Text } from "../ui/text";
@@ -153,7 +153,13 @@ export const AppHeaderBack = ({ className }: AppHeaderBackProps) => {
       />
       <Text
         variant={"large"}
-        style={{ color: palette.foreground, opacity: 0.75 }}
+        style={{
+          color: palette.foreground,
+          opacity: 0.75,
+          maxWidth: Dimensions.get("window").width / 2,
+        }}
+        numberOfLines={1}
+        ellipsizeMode="tail"
       >
         {getPreviousRouteTitle()}
       </Text>
