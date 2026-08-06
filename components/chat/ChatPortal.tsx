@@ -116,6 +116,7 @@ export const ChatPortal = ({ className }: ChatPortalProps) => {
           placeholder={t("chat.searchPlaceholder")}
           value={searchQuery}
           onChangeText={setSearchQuery}
+          editable={!isPending && conversations?.length > 0}
           className="m-4"
         />
         <Separator />
