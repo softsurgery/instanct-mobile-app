@@ -19,6 +19,7 @@ import { useLogout } from "@/hooks/useLogout";
 import { AppHeaderBack } from "../shared/AppHeaderBack";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
+import { api } from "@/api";
 
 interface SettingsPortalProps {
   className?: string;
@@ -192,6 +193,32 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
   const { currentUser } = useCurrentUser();
   const logout = useLogout();
 
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      "Delete Account",
+      "Are you sure you want to delete your account? This action cannot be undone.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await api.user.deleteCurrent();
+              toast.success("Account deleted successfully.");
+              logout();
+            } catch (error) {
+              toast.error("Failed to delete account. Please try again.");
+            }
+          },
+        },
+      ],
+    );
+  };
+
   return (
     <StableSafeAreaView className={cn("flex flex-1 bg-card", className)}>
       <ApplicationHeader
@@ -281,7 +308,7 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
                   variant="destructive"
                   size="lg"
                   className="flex flex-row items-center justify-center gap-2 rounded-xl"
-                  onPress={() => Alert.alert("Delete account", "Coming soon!")}
+                  onPress={handleDeleteAccount}
                 >
                   <Icon as={Trash2} size={18} color="white" />
                   <Text className="text-md font-bold">

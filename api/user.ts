@@ -138,6 +138,11 @@ const findPaginatedBookmarks = async ({
   return response.data;
 };
 
+const deleteCurrent = async (): Promise<ResponseUserDto> => {
+  const response = await axios.delete<ResponseUserDto>(`/current-user`);
+  return response.data;
+};
+
 export const user = {
   findAll,
   findCurrent,
@@ -151,4 +156,5 @@ export const user = {
   getCurrentMapConfiguration,
   updateMapConfiguration,
   findPaginatedBookmarks,
+  deleteCurrent,
 };
