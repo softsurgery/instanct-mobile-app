@@ -11,10 +11,12 @@ import { cn } from "~/lib/utils";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import { SSOButtons } from "./SSOButtons";
 import { AcceptTerms } from "./AcceptTerms";
-import { Rocket, Zap, ShieldCheck } from "lucide-react-native";
+import { Rocket, Zap, ShieldCheck, Languages } from "lucide-react-native";
 import { useColorPalette } from "@/hooks/useColorPalette";
 import { ThemeToggle } from "../shared/ThemeToggle";
 import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "../shared/LanguageSwitcher";
+import { Icon } from "../ui/icon";
 
 const width = Dimensions.get("window").width;
 
@@ -58,7 +60,16 @@ export default function OnBoarding({ className }: OnBoardingProps) {
               Instanct
             </Text>
           </View>
-          <ThemeToggle className="mx-6" />
+          <View className="flex flex-row items-center mr-4">
+            <LanguageSwitcher
+              customTrigger={
+                <View className="mx-2">
+                  <Icon as={Languages} className="text-foreground" size={24} />
+                </View>
+              }
+            />
+            <ThemeToggle className="mx-2" />
+          </View>
         </View>
 
         <View className="flex-1 justify-center mt-8">

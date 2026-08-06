@@ -6,15 +6,18 @@ interface LanguageSwitcherProps {
   classNames?: {
     trigger?: string;
     content?: string;
+    input?: string;
   };
+  customTrigger?: React.ReactNode;
 }
 
-export const LanguageSwitcher = ({ classNames }: LanguageSwitcherProps) => {
+export const LanguageSwitcher = ({ classNames, customTrigger }: LanguageSwitcherProps) => {
   const preferencePersistStore = usePreferencePersistStore();
   const { t, i18n } = useTranslation("common");
   return (
     <Select
       classNames={classNames}
+      customTrigger={customTrigger}
       title={t("language.select.title")}
       description={t("language.select.description").toString()}
       placeholder={t("language.select.placeholder").toString()}

@@ -33,6 +33,7 @@ interface SelectProps {
 
   options?: SelectOption[];
   searchable?: boolean;
+  customTrigger?: React.ReactNode;
 }
 
 export default function Select({
@@ -48,6 +49,7 @@ export default function Select({
 
   options = [],
   searchable = false,
+  customTrigger,
 }: SelectProps) {
   const isRTL = useRTL();
   const { palette } = useColorPalette();
@@ -83,22 +85,28 @@ export default function Select({
           if (!disabled) sheetRef.current?.show();
         }}
       >
-        <Input
-          pointerEvents="none"
-          editable={false}
-          value={selectedOption?.label || ""}
-          justify-center
-          placeholder={placeholder || "Select an option"}
-          className={cn("block opacity-100", classNames?.input)}
-        />
-        <View
-          className={cn(
-            "absolute text-muted-foreground",
-            isRTL ? "left-3" : "right-3",
-          )}
-        >
-          <Icon as={ChevronDown} size={16} color={"gray"} />
-        </View>
+        {customTrigger ? (
+          customTrigger
+        ) : (
+          <>
+            <Input
+              pointerEvents="none"
+              editable={false}
+              value={selectedOption?.label || ""}
+              justify-center
+              placeholder={placeholder || "Select an option"}
+              className={cn("block opacity-100", classNames?.input)}
+            />
+            <View
+              className={cn(
+                "absolute text-muted-foreground",
+                isRTL ? "left-3" : "right-3",
+              )}
+            >
+              <Icon as={ChevronDown} size={16} color={"gray"} />
+            </View>
+          </>
+        )}
       </Pressable>
       <ActionSheet
         ref={sheetRef}
