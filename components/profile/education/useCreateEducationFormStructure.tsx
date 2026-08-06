@@ -23,7 +23,7 @@ export const useCreateEducationFormStructure = ({
     required: true,
     placeholder: t("education.form.placeholders.title"),
     description: t("education.form.descriptions.title"),
-    error: store.educationErrors?.title?.[0],
+    error: t(store.educationErrors?.title?.[0]),
     props: {
       value: store.createEducationDto?.title,
       onChangeText: (value) => {
@@ -40,7 +40,7 @@ export const useCreateEducationFormStructure = ({
     required: true,
     placeholder: t("education.form.placeholders.institution"),
     description: t("education.form.descriptions.institution"),
-    error: store.educationErrors?.institution?.[0],
+    error: t(store.educationErrors?.institution?.[0]),
     props: {
       value: store.createEducationDto?.institution,
       onChangeText: (value) => {
@@ -57,7 +57,7 @@ export const useCreateEducationFormStructure = ({
     required: false,
     placeholder: t("education.form.placeholders.description"),
     description: t("education.form.descriptions.description"),
-    error: store.educationErrors?.description?.[0],
+    error: t(store.educationErrors?.description?.[0]),
     props: {
       value: store.createEducationDto?.description,
       onChangeText: (value) => {

@@ -93,9 +93,13 @@ export const useUpdateProfileFormStructure = ({
     label: t("settings.account.screens.profile.form.first-name"),
     variant: FieldVariant.TEXT,
     required: true,
-    placeholder: t("settings.account.screens.profile.form.placeholders.first-name"),
-    description: t("settings.account.screens.profile.form.descriptions.first-name"),
-    error: store?.errors?.firstName?.[0],
+    placeholder: t(
+      "settings.account.screens.profile.form.placeholders.first-name",
+    ),
+    description: t(
+      "settings.account.screens.profile.form.descriptions.first-name",
+    ),
+    error: t(store?.errors?.firstName?.[0]),
     props: {
       editable: !isPending,
       value: store?.updateDto?.firstName,
@@ -112,9 +116,13 @@ export const useUpdateProfileFormStructure = ({
     label: t("settings.account.screens.profile.form.last-name"),
     variant: FieldVariant.TEXT,
     required: true,
-    placeholder: t("settings.account.screens.profile.form.placeholders.last-name"),
-    description: t("settings.account.screens.profile.form.descriptions.last-name"),
-    error: store?.errors?.lastName?.[0],
+    placeholder: t(
+      "settings.account.screens.profile.form.placeholders.last-name",
+    ),
+    description: t(
+      "settings.account.screens.profile.form.descriptions.last-name",
+    ),
+    error: t(store?.errors?.lastName?.[0]),
     props: {
       editable: !isPending,
       value: store?.updateDto?.lastName,
@@ -130,8 +138,10 @@ export const useUpdateProfileFormStructure = ({
     id: "dateOfBirth",
     label: t("settings.account.screens.profile.form.date-of-birth"),
     variant: FieldVariant.DATE,
-    description: t("settings.account.screens.profile.form.descriptions.date-of-birth"),
-    error: store?.errors?.dateOfBirth?.[0],
+    description: t(
+      "settings.account.screens.profile.form.descriptions.date-of-birth",
+    ),
+    error: t(store?.errors?.dateOfBirth?.[0]),
     props: {
       editable: !isPending,
       value: store?.updateDto?.dateOfBirth,
@@ -139,7 +149,7 @@ export const useUpdateProfileFormStructure = ({
         store.setNested("updateDto.dateOfBirth", value);
         store.setNested("errors.dateOfBirth", []);
       },
-    },
+  },
   };
 
   //bio
@@ -149,7 +159,7 @@ export const useUpdateProfileFormStructure = ({
     variant: FieldVariant.TEXTAREA,
     placeholder: t("settings.account.screens.profile.form.placeholders.bio"),
     description: t("settings.account.screens.profile.form.descriptions.bio"),
-    error: store?.errors?.bio?.[0],
+    error: t(store?.errors?.bio?.[0]),
     props: {
       editable: !isPending,
       value: store?.updateDto?.bio,
@@ -166,7 +176,7 @@ export const useUpdateProfileFormStructure = ({
     label: t("settings.account.screens.profile.form.gender"),
     variant: FieldVariant.SELECT,
     description: t("settings.account.screens.profile.form.descriptions.gender"),
-    error: store?.errors?.gender?.[0],
+    error: t(store?.errors?.gender?.[0]),
     props: {
       editable: !isPending,
       value: store?.updateDto?.gender?.toString(),
@@ -187,9 +197,13 @@ export const useUpdateProfileFormStructure = ({
     label: t("settings.account.screens.profile.form.website"),
     variant: FieldVariant.TEXT,
     required: false,
-    placeholder: t("settings.account.screens.profile.form.placeholders.website"),
-    description: t("settings.account.screens.profile.form.descriptions.website"),
-    error: store?.errors?.website?.[0],
+    placeholder: t(
+      "settings.account.screens.profile.form.placeholders.website",
+    ),
+    description: t(
+      "settings.account.screens.profile.form.descriptions.website",
+    ),
+    error: t(store?.errors?.website?.[0]),
     props: {
       value: store?.updateDto?.website,
       onChangeText: (value: string) => {
@@ -205,9 +219,13 @@ export const useUpdateProfileFormStructure = ({
     label: t("settings.account.screens.profile.form.linkedin"),
     variant: FieldVariant.TEXT,
     required: false,
-    placeholder: t("settings.account.screens.profile.form.placeholders.linkedin"),
-    description: t("settings.account.screens.profile.form.descriptions.linkedin"),
-    error: store?.errors?.linkedin?.[0],
+    placeholder: t(
+      "settings.account.screens.profile.form.placeholders.linkedin",
+    ),
+    description: t(
+      "settings.account.screens.profile.form.descriptions.linkedin",
+    ),
+    error: t(store?.errors?.linkedin?.[0]),
     props: {
       value: store?.updateDto?.linkedin,
       onChangeText: (value: string) => {

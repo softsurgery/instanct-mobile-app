@@ -1,41 +1,46 @@
 import { z } from "zod";
 import { BugVariant, FeedbackCategory } from "@/types";
 
+// Messages are translation keys, resolved by the consumer in the "settings"
+// namespace (see useBugReportFormStructure / useSendFeedbackFormStructure).
+const BUG = "settings.support.screens.report-bug.validation";
+const FEEDBACK = "settings.support.screens.send-feedback.validation";
+
 export const BugVariantEnum = z.enum(
   Object.values(BugVariant) as [string, ...string[]],
   {
-    error: () => ({ message: "You must select a Bug Variant." }),
+    error: `${BUG}.variantRequired`,
   },
 );
 
 export const createBugSchema = z.object({
   variant: BugVariantEnum,
   title: z
-    .string({ error: "Title is required." })
-    .min(10, { message: "Title must be at least 10 characters long." })
-    .max(255, { message: "Title must be at most 255 characters long." }),
+    .string({ error: `${BUG}.titleRequired` })
+    .min(10, { error: `${BUG}.titleTooShort` })
+    .max(255, { error: `${BUG}.titleTooLong` }),
   description: z
-    .string({ error: "Description is required." })
-    .min(10, { message: "Description must be at least 10 characters long." })
+    .string({ error: `${BUG}.descriptionRequired` })
+    .min(10, { error: `${BUG}.descriptionTooShort` })
     .max(1024, {
-      message: "Description must be at most 1024 characters long.",
+      error: `${BUG}.descriptionTooLong`,
     }),
 });
 
 export const FeedbackCategoryEnum = z.enum(
   Object.values(FeedbackCategory) as [string, ...string[]],
   {
-    error: () => ({ message: "You must select a Feedback Category." }),
+    error: `${FEEDBACK}.categoryRequired`,
   },
 );
 
 export const createFeedbackSchema = z.object({
   category: FeedbackCategoryEnum,
   message: z
-    .string({ error: "Message is required." })
-    .min(10, { message: "Message must be at least 10 characters long." })
+    .string({ error: `${FEEDBACK}.messageRequired` })
+    .min(10, { error: `${FEEDBACK}.messageTooShort` })
     .max(1024, {
-      message: "Message must be at most 1024 characters long.",
+      error: `${FEEDBACK}.messageTooLong`,
     }),
-  rating: z.number().min(1, { message: "Rating must be at least 1." }),
+  rating: z.number().min(1, { error: `${FEEDBACK}.ratingRequired` }),
 });
