@@ -106,67 +106,66 @@ export const useAuthValidation = ({}: useAuthValidationProps = {}) => {
 };
 
 export const validateFirstName = (value: string) => {
-  if (!value.trim()) return "First name is required";
+  if (!value.trim()) return `auth.validation.signUp.firstNameRequired`;
 
   if (value.trim().length < 2)
-    return "First name must contain at least 2 characters";
+    return `auth.validation.signUp.firstNameTooShort`;
 
   // Allow letters and spaces
   if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(value))
-    return "First name must contain only letters and spaces";
+    return `auth.validation.signUp.firstNameFormat`;
 
   return null;
 };
 
 export const validateLastName = (value: string) => {
-  if (!value.trim()) return "Last name is required";
+  if (!value.trim()) return `auth.validation.signUp.lastNameRequired`;
 
-  if (value.trim().length < 2)
-    return "Last name must contain at least 2 characters";
+  if (value.trim().length < 2) return `auth.validation.signUp.lastNameTooShort`;
 
   // Allow letters and spaces
   if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(value))
-    return "Last name must contain only letters and spaces";
+    return `auth.validation.signUp.lastNameFormat`;
 
   return null;
 };
 
 export const validateEmail = (value: string) => {
-  if (!value.trim()) return "E-mail is required";
+  if (!value.trim()) return `auth.validation.signUp.emailRequired`;
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  if (!emailRegex.test(value)) return "Invalid e-mail address";
+  if (!emailRegex.test(value)) return `auth.validation.signUp.emailInvalid`;
 
   return null;
 };
 
 export const validateUsername = (value: string) => {
-  if (!value.trim()) return "Username is required";
+  if (!value.trim()) return `auth.validation.signUp.usernameRequired`;
 
-  if (value.length < 3) return "Username must contain at least 3 characters";
+  if (value.length < 3) return `auth.validation.signUp.usernameTooShort`;
 
-  if (value.length > 20) return "Username cannot exceed 20 characters";
+  if (value.length > 20) return `auth.validation.signUp.usernameTooLong`;
 
   if (!/^[a-zA-Z0-9._]+$/.test(value))
-    return "Only letters, numbers, dots and underscores are allowed";
+    return `auth.validation.signUp.usernameFormat`;
 
   return null;
 };
 
 export const validatePassword = (value: string) => {
-  if (!value) return "Password is required";
+  if (!value) return `auth.validation.signUp.passwordRequired`;
 
-  if (value.length < 8) return "Password must contain at least 8 characters";
+  if (value.length < 8) return `auth.validation.signUp.passwordTooShort`;
 
-  if (!/[A-Z]/.test(value)) return "Password must contain an uppercase letter";
+  if (!/[A-Z]/.test(value)) return `auth.validation.signUp.passwordUppercase`;
 
-  if (!/[a-z]/.test(value)) return "Password must contain a lowercase letter";
+  if (!/[a-z]/.test(value)) return `auth.validation.signUp.passwordLowercase`;
 
-  if (!/[0-9]/.test(value)) return "Password must contain a number";
+  if (!/[0-9]/.test(value)) return `auth.validation.signUp.passwordNumber`;
 
   if (!/[!@#$%^&*(),.?":{}|<>]/.test(value))
-    return "Password must contain a special character";
+    return `auth.validation.signUp.passwordSpecialChar`;
 
   return null;
 };
@@ -175,9 +174,10 @@ export const validateConfirmPassword = (
   password: string,
   confirmPassword: string,
 ) => {
-  if (!confirmPassword) return "Please confirm your password";
+  if (!confirmPassword) return `auth.validation.signUp.confirmPasswordRequired`;
 
-  if (password !== confirmPassword) return "Passwords do not match";
+  if (password !== confirmPassword)
+    return `auth.validation.signUp.passwordsMismatch`;
 
   return null;
 };
