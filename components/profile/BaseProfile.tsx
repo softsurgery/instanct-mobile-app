@@ -371,6 +371,8 @@ export const InspectBaseProfile = ({
                     marginBottom: insets.bottom * 2,
                     opacity: isPickingCover ? 0.5 : 1,
                   }}
+                  onHoverIn={() => setIsHovered(true)}
+                  onHoverOut={() => setIsHovered(false)}
                   onPress={handlePickCover}
                   disabled={isPickingCover}
                 >
