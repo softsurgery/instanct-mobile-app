@@ -170,6 +170,12 @@
                     "description": "Fournissez autant de détails que possible pour nous aider à examiner votre signalement."
                 }
             },
+            "validation": {
+                "reasonRequired": "Vous devez sélectionner un motif.",
+                "descriptionRequired": "La description est obligatoire.",
+                "descriptionTooShort": "La description doit contenir au moins 10 caractères.",
+                "descriptionTooLong": "La description ne doit pas dépasser 1024 caractères."
+            },
             "reasons": {
                 "spam": "Spam",
                 "harassment": "Harcèlement",

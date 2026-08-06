@@ -170,6 +170,12 @@
                     "description": "Provide as much detail as possible to help us review your report."
                 }
             },
+            "validation": {
+                "reasonRequired": "You must select a reason.",
+                "descriptionRequired": "Description is required.",
+                "descriptionTooShort": "Description must be at least 10 characters long.",
+                "descriptionTooLong": "Description must be at most 1024 characters long."
+            },
             "reasons": {
                 "spam": "Spam",
                 "harassment": "Harassment",
