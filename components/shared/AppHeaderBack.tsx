@@ -140,23 +140,39 @@ export const AppHeaderBack = ({ className }: AppHeaderBackProps) => {
     return t("");
   };
 
+  const SCREEN_WIDTH = Dimensions.get("screen").width;
+
   return (
     <TouchableOpacity
       onPress={router.back}
-      className={cn("flex flex-row items-center h-9", className)}
+      className={cn("flex-row items-center h-9", className)}
+      style={{
+        width: SCREEN_WIDTH * 0.4,
+        flexShrink: 1,
+      }}
     >
       <Icon
         as={ChevronLeft}
         size={28}
         color={palette.foreground}
-        style={{ opacity: 0.75 }}
+        style={{
+          opacity: 0.75,
+          flexShrink: 0,
+        }}
       />
+
       <Text
-        variant={"large"}
+        variant="large"
         style={{
           color: palette.foreground,
           opacity: 0.75,
-          maxWidth: Dimensions.get("window").width / 2,
+
+          // Important
+          flex: 1,
+          flexShrink: 1,
+          minWidth: 0,
+
+          marginLeft: 4,
         }}
         numberOfLines={1}
         ellipsizeMode="tail"
