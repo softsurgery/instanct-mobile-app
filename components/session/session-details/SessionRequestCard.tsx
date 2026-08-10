@@ -8,7 +8,8 @@ import { cn } from "@/lib/utils";
 import { timeAgo } from "@/lib/date";
 import { RequestStatus, ResponseRequestDto } from "@/types";
 import { Icon } from "@/components/ui/icon";
-import { ArrowDownLeft, ArrowUpRight } from "lucide-react-native";
+import { ArrowDownLeft, ArrowUpRight, ChevronRight } from "lucide-react-native";
+import { useColorPalette } from "@/hooks/useColorPalette";
 
 interface SessionRequestCardProps {
   className?: string;
@@ -31,6 +32,7 @@ export const SessionRequestCard: React.FC<SessionRequestCardProps> = ({
 }) => {
   const sender = request?.session?.user;
   const receiver = request?.receivers?.[0];
+  const { palette } = useColorPalette();
 
   const ids = [sender?.pictureId, receiver?.pictureId];
   const fallbacks = [identifyUserAvatar(sender), identifyUserAvatar(receiver)];
@@ -69,6 +71,7 @@ export const SessionRequestCard: React.FC<SessionRequestCardProps> = ({
       }}
     >
       {/* Avatar with brand ring + saved marker */}
+
       <View className="relative">
         <View
           className="rounded-full p-[3px]"
@@ -111,6 +114,7 @@ export const SessionRequestCard: React.FC<SessionRequestCardProps> = ({
           )}
         </View>
       </View>
+      <Icon as={ChevronRight} size={20} color={palette.foreground} />
     </Pressable>
   );
 };
