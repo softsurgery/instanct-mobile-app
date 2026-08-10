@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 import { useVideoPlayer, VideoView } from "expo-video";
-import { ImagePlus, Play, SendHorizonal, X } from "lucide-react-native";
+import { ImagePlus, Play, SendHorizonalIcon, X } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "~/components/ui/icon";
 import { Text } from "~/components/ui/text";
@@ -182,15 +182,9 @@ export const ConversationMediaStaging = ({
 
           <TouchableOpacity
             onPress={handleSend}
-            className="w-10 h-10 items-center justify-center rounded-full"
+            className="w-10 h-10 items-center justify-center rounded-full bg-muted"
           >
-            <Icon
-              as={SendHorizonal}
-              size={28}
-              strokeWidth={1.5}
-              fill="white"
-              color="white"
-            />
+            <Icon as={SendHorizonalIcon} size={28} strokeWidth={1.5} />
           </TouchableOpacity>
         </View>
 
