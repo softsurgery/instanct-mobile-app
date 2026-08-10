@@ -1,4 +1,4 @@
-import { Hand, Plus, SendHorizonal } from "lucide-react-native";
+import { Hand, Plus, SendHorizonalIcon } from "lucide-react-native";
 import React from "react";
 import { View, ViewStyle, TouchableOpacity, Platform } from "react-native";
 import { type ActionSheetRef } from "react-native-actions-sheet";
@@ -122,13 +122,7 @@ export const ConversationInput = ({
               exiting={FadeOut.duration(120)}
             >
               <TouchableOpacity onPress={handleSend}>
-                <Icon
-                  as={SendHorizonal}
-                  size={24}
-                  strokeWidth={1.5}
-                  fill="white"
-                  color="white"
-                />
+                <Icon as={SendHorizonalIcon} size={24} strokeWidth={1.5} />
               </TouchableOpacity>
             </Animated.View>
           ) : (
