@@ -6,23 +6,20 @@ import { ScrollViewContext } from "@/contexts/ScrollViewContext";
 import { cn } from "@/lib/utils";
 import { Calendar, ChevronDown } from "lucide-react-native";
 import React from "react";
-import {
-  Keyboard,
-  LayoutAnimation,
-  Platform,
-  UIManager,
-  View,
-} from "react-native";
+import { Keyboard, Platform, UIManager, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
   Easing,
+  FadeIn,
+  FadeOut,
+  LinearTransition,
 } from "react-native-reanimated";
 import { StableScrollable } from "../../StableScrollable";
 import { StablePressable } from "../../StablePressable";
 import { Separator } from "@/components/ui/separator";
-import * as Haptics from "expo-haptics";
+import { triggerHaptic } from "@/lib/haptics";
 
 if (
   Platform.OS === "android" &&
@@ -74,10 +71,6 @@ export const DatePicker = ({
   const toggle = () => {
     if (disabled) return;
     Keyboard.dismiss();
-    LayoutAnimation.configureNext({
-      duration: 250,
-      update: { type: LayoutAnimation.Types.easeInEaseOut },
-    });
     const next = !expanded;
     setExpanded(next);
     rotation.value = withTiming(next ? 180 : 0, {
@@ -174,7 +167,10 @@ export const DatePicker = ({
   };
 
   return (
-    <View className={cn("w-full", className)}>
+    <Animated.View
+      layout={LinearTransition}
+      className={cn("w-full", className)}
+    >
       {/* Trigger */}
       <Button
         disabled={disabled}
@@ -197,7 +193,9 @@ export const DatePicker = ({
 
       {/* Accordion content */}
       {expanded && (
-        <View
+        <Animated.View
+          entering={FadeIn}
+          exiting={FadeOut}
           ref={contentRef}
           className={cn(
             "mt-2 rounded-xl border border-border bg-card p-3",
@@ -233,7 +231,7 @@ export const DatePicker = ({
             <StablePressable
               className="p-2 rounded-lg"
               onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                triggerHaptic();
                 setExpanded(false);
                 clearDate();
               }}
@@ -243,15 +241,15 @@ export const DatePicker = ({
             <StablePressable
               className="p-2 rounded-lg"
               onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                triggerHaptic();
                 setExpanded(false);
               }}
             >
               <Text className="text-primary font-bold">Done</Text>
             </StablePressable>
           </View>
-        </View>
+        </Animated.View>
       )}
-    </View>
+    </Animated.View>
   );
 };
