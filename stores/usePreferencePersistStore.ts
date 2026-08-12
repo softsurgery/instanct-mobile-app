@@ -2,20 +2,20 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 interface PreferencePersistData {
-  language: "en" | "fr" | "ar";
-  theme: "dark" | "light";
+  language: "en" | "fr" | "ar" | "system";
+  theme: "dark" | "light" | "system";
 }
 
 interface PreferencePersistStore extends PreferencePersistData {
   isReady: boolean;
-  setTheme: (theme: "dark" | "light") => void;
-  setLanguage: (language: "en" | "fr" | "ar") => void;
+  setTheme: (theme: "dark" | "light" | "system") => void;
+  setLanguage: (language: "en" | "fr" | "ar" | "system") => void;
   toggleTheme: () => void;
 }
 
 const preferencePersistStore: PreferencePersistData = {
-  language: "en",
-  theme: "light",
+  language: "system",
+  theme: "system",
 };
 
 let _set: (fn: Partial<PreferencePersistStore>) => void;
