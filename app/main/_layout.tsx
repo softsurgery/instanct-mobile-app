@@ -465,6 +465,7 @@ export default function MainLayout() {
             <Stack.Screen
               name="test/deep-link-test"
               options={{
+                headerShown: false,
                 title: "Deep Link Test",
                 animation: "fade_from_bottom",
                 animationDuration: 200,

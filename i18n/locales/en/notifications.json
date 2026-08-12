@@ -12,5 +12,52 @@
     "REQUEST_RECEIVED": "You have received a new request from {{senderIdentification}}. Click to view the request details and respond.",
     "REQUEST_ACCEPTED": "{{responderIdentification}} has accepted your request. You can now connect and start collaborating!",
     "REQUEST_REJECTED": "{{responderIdentification}} has rejected your request. Don't worry"
+  },
+  "screens": {
+    "new-signin": {
+      "header": "Security alert",
+      "title": "New sign-in to your account",
+      "description": "We noticed a sign-in from a device you don't usually use. Review the details below to make sure it was you.",
+      "defaults": {
+        "when": "2 minutes ago"
+      },
+      "sections": {
+        "details": "Sign-in details"
+      },
+      "details": {
+        "device": "Device",
+        "app": "Application",
+        "appHint": "Version {{version}}",
+        "location": "Location",
+        "locationHint": "Approximate, based on the IP address",
+        "ip": "IP address",
+        "time": "Date & time"
+      },
+      "footnote": "If you don't recognise this activity, secure your account right away — we'll sign that device out and ask you to choose a new password.",
+      "actions": {
+        "trust": "Yes, it was me",
+        "secure": "Secure account"
+      },
+      "resolutions": {
+        "trusted": {
+          "title": "Sign-in confirmed",
+          "description": "Thanks for letting us know. We won't ask about this device again."
+        },
+        "secured": {
+          "title": "Device signed out",
+          "description": "That device no longer has access to your account. Change your password to finish securing it."
+        }
+      },
+      "toasts": {
+        "trusted": {
+          "title": "Sign-in confirmed",
+          "description": "We won't ask about this device again."
+        },
+        "secured": {
+          "title": "Device signed out",
+          "description": "Change your password to finish securing your account."
+        }
+      }
+    }
   }
 }
