@@ -159,7 +159,23 @@
         "description": "Description",
         "location": "Lieu",
         "workType": "Type de travail",
+        "workTypeOptions": {
+          "Full-Time": "Temps plein",
+          "Part-Time": "Temps partiel",
+          "Contract": "Contrat",
+          "Freelance": "Travailleur indépendant",
+          "Temporary": "Temporaire",
+          "Internship": "Stage",
+          "Volunteer": "Bénévole",
+          "Apprenticeship": "Apprentissage",
+          "Other": "Autre"
+        },
         "locationType": "Mode de travail",
+        "locationTypeOptions": {
+          "On-Site": "Sur site",
+          "Remote": "À distance",
+          "Hybrid": "Hybride"
+        },
         "startDate": "Date de début",
         "endDate": "Date de fin"
       },

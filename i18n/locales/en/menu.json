@@ -159,7 +159,23 @@
         "description": "Description",
         "location": "Location",
         "workType": "Work Type",
+        "workTypeOptions": {
+          "Full-Time": "Full-time",
+          "Part-Time": "Part-time",
+          "Contract": "Contract",
+          "Freelance": "Freelance",
+          "Temporary": "Temporary",
+          "Internship": "Internship",
+          "Volunteer": "Volunteer",
+          "Apprenticeship": "Apprenticeship",
+          "Other": "Other"
+        },
         "locationType": "Location Type",
+        "locationTypeOptions": {
+          "On-Site": "On-site",
+          "Remote": "Remote",
+          "Hybrid": "Hybrid"
+        },
         "startDate": "Start Date",
         "endDate": "End Date"
       },

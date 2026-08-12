@@ -48,7 +48,10 @@ export const ExperienceInstance = ({
       }`
     : null;
 
-  const place = [experience.location, experience.locationType]
+  const place = [
+    experience.location,
+    t(`experience.form.labels.locationTypeOptions.${experience.locationType}`),
+  ]
     .filter(Boolean)
     .join(" · ");
 
@@ -83,7 +86,9 @@ export const ExperienceInstance = ({
             {!!experience.workType && (
               <MetaChip
                 icon={Laptop}
-                label={experience.workType}
+                label={t(
+                  `experience.form.labels.workTypeOptions.${experience.workType}`,
+                )}
                 color={primary}
               />
             )}

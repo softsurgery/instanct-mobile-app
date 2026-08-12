@@ -104,7 +104,7 @@ export const useCreateExperienceFormStructure = ({
         store.setNested("experienceErrors.workType", []);
       },
       options: Object.values(WorkTypes).map((type) => ({
-        label: type,
+        label: t(`experience.form.labels.workTypeOptions.${type}`),
         value: type,
       })),
     },
@@ -124,7 +124,7 @@ export const useCreateExperienceFormStructure = ({
         store.setNested("experienceErrors.locationType", []);
       },
       options: Object.values(LocationTypes).map((type) => ({
-        label: type,
+        label: t(`experience.form.labels.locationTypeOptions.${type}`),
         value: type,
       })),
     },
