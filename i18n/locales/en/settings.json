@@ -278,6 +278,14 @@
       "actions": {
         "sign-out": "Sign Out",
         "remove-account": "Remove Account"
+      },
+      "deleteAlert": {
+        "title": "Delete account",
+        "message": "Are you sure you want to delete your account? All your data will be permanently removed and this cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete",
+        "success": "Account deleted successfully.",
+        "error": "Failed to delete account. Please try again."
       }
     }
   },

@@ -1,10 +1,11 @@
+import React from "react";
 import { cn } from "@/lib/utils";
 import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { identifyUser } from "@/lib/user";
 import { router } from "expo-router";
 import { ChevronRight, LogOut, Trash2 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
-import { Alert, View } from "react-native";
+import { View } from "react-native";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { StableSafeAreaView } from "../shared/StableSafeAreaView";
 import StableScrollView from "../shared/StableScrollView";
@@ -17,9 +18,12 @@ import { createSettingRow, SettingRow } from "./SettingsRow";
 import type { SettingRowConfig } from "./SettingsRow";
 import { useLogout } from "@/hooks/useLogout";
 import { AppHeaderBack } from "../shared/AppHeaderBack";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 import { api } from "@/api";
+import { type ActionSheetRef } from "react-native-actions-sheet";
+import { DeleteAccountActionSheet } from "./DeleteAccountActionSheet";
+import type { ServerErrorResponse } from "~/types";
 
 interface SettingsPortalProps {
   className?: string;
@@ -193,30 +197,28 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
   const { currentUser } = useCurrentUser();
   const logout = useLogout();
 
+  const deleteAccountSheetRef = React.useRef<ActionSheetRef>(null);
+
+  const { mutate: deleteAccount, isPending: isDeleteAccountPending } =
+    useMutation({
+      mutationFn: () => api.user.deleteCurrent(),
+      onSuccess: () => {
+        deleteAccountSheetRef.current?.hide();
+        toast.success(tSettings("settings.session.deleteAlert.success"));
+        logout();
+      },
+      onError: (error: ServerErrorResponse) => {
+        deleteAccountSheetRef.current?.hide();
+        toast.error(tSettings("settings.session.deleteAlert.error"), {
+          description: error.response?.data?.message,
+        });
+      },
+    });
+
   const handleDeleteAccount = () => {
-    Alert.alert(
-      "Delete Account",
-      "Are you sure you want to delete your account? This action cannot be undone.",
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await api.user.deleteCurrent();
-              toast.success("Account deleted successfully.");
-              logout();
-            } catch (error) {
-              toast.error("Failed to delete account. Please try again.");
-            }
-          },
-        },
-      ],
-    );
+    if (isDeleteAccountPending) return;
+
+    deleteAccountSheetRef.current?.show();
   };
 
   return (
@@ -309,6 +311,7 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
                   size="lg"
                   className="flex flex-row items-center justify-center gap-2 rounded-xl"
                   onPress={handleDeleteAccount}
+                  disabled={isDeleteAccountPending}
                 >
                   <Icon as={Trash2} size={18} color="white" />
                   <Text className="text-md font-bold">
@@ -320,6 +323,13 @@ export const SettingsPortal = ({ className }: SettingsPortalProps) => {
           </View>
         </View>
       </StableScrollView>
+
+      <DeleteAccountActionSheet
+        ref={deleteAccountSheetRef}
+        onConfirm={() => deleteAccount()}
+        onClose={() => deleteAccountSheetRef.current?.hide()}
+        isPending={isDeleteAccountPending}
+      />
     </StableSafeAreaView>
   );
 };

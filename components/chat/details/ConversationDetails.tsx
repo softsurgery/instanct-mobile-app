@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Alert, Pressable } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Image as ImageIcon,
@@ -29,6 +29,9 @@ import { AppHeaderBack } from "@/components/shared/AppHeaderBack";
 import { ConversationSearchOverlay } from "../conversation/search/ConversationSearchOverlay";
 import { useChatContext } from "@/contexts/ChatContext";
 import { useTranslation } from "react-i18next";
+import { type ActionSheetRef } from "react-native-actions-sheet";
+import { DeleteConversationActionSheet } from "./DeleteConversationActionSheet";
+import { BlockUserActionSheet } from "./BlockUserActionSheet";
 
 interface ConversationDetailsProps {
   id: string;
@@ -63,6 +66,14 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
 
   const [isSearching, setIsSearching] = React.useState(false);
 
+  const blockSheetRef = React.useRef<ActionSheetRef>(null);
+  const deleteSheetRef = React.useRef<ActionSheetRef>(null);
+
+  const hideActionSheets = React.useCallback(() => {
+    blockSheetRef.current?.hide();
+    deleteSheetRef.current?.hide();
+  }, []);
+
   const { jsxArray: profilePictures } = useServerImages({
     ids: [user?.pictureId],
     className: "rounded-full",
@@ -85,22 +96,24 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
 
   const handleConversationActionSuccess = React.useCallback(
     (message: string) => {
+      hideActionSheets();
       removeConversationFromCache();
       resetCount();
       toast.success(message);
       router.dismissTo({ pathname: "/main/chat" });
     },
-    [removeConversationFromCache, resetCount],
+    [hideActionSheets, removeConversationFromCache, resetCount],
   );
 
   const handleConversationActionError = React.useCallback(
     (title: string, error: ServerErrorResponse) => {
+      hideActionSheets();
       toast.error(title, {
         description:
           error.response?.data?.message || t("chat.details.errors.generic"),
       });
     },
-    [t],
+    [hideActionSheets, t],
   );
 
   const { mutate: deleteConversation, isPending: isDeletePending } =
@@ -123,7 +136,10 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
     onSuccess: () =>
       handleConversationActionSuccess(t("chat.details.toasts.userBlocked")),
     onError: (error: ServerErrorResponse) =>
-      handleConversationActionError(t("chat.details.errors.blockFailed"), error),
+      handleConversationActionError(
+        t("chat.details.errors.blockFailed"),
+        error,
+      ),
   });
 
   const handleSearchResultPress = React.useCallback(
@@ -138,44 +154,16 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
     [conversationId, user],
   );
 
-  /**
-   * Prompts user with a destructive confirmation alert before deleting the conversation history.
-   */
   const handleDeleteConversation = () => {
     if (isDeletePending) return;
 
-    Alert.alert(
-      t("chat.details.deleteAlert.title"),
-      t("chat.details.deleteAlert.message"),
-      [
-        { text: t("chat.details.deleteAlert.cancel"), style: "cancel" },
-        {
-          text: t("chat.details.deleteAlert.confirm"),
-          style: "destructive",
-          onPress: () => deleteConversation(),
-        },
-      ],
-    );
+    deleteSheetRef.current?.show();
   };
 
-  /**
-   * Prompts confirmation dialog to block the other conversation participant.
-   */
   const handleBlockUser = () => {
     if (!user || isBlockPending) return;
 
-    Alert.alert(
-      t("chat.details.blockAlert.title"),
-      t("chat.details.blockAlert.message", { name: identification }),
-      [
-        { text: t("chat.details.blockAlert.cancel"), style: "cancel" },
-        {
-          text: t("chat.details.blockAlert.confirm"),
-          style: "destructive",
-          onPress: () => blockUser(),
-        },
-      ],
-    );
+    blockSheetRef.current?.show();
   };
 
   /**
@@ -292,6 +280,21 @@ export const ConversationDetails = ({ id }: ConversationDetailsProps) => {
           />
         </View>
       </ScrollView>
+
+      <BlockUserActionSheet
+        ref={blockSheetRef}
+        identification={identification}
+        onConfirm={() => blockUser()}
+        onClose={() => blockSheetRef.current?.hide()}
+        isPending={isBlockPending}
+      />
+
+      <DeleteConversationActionSheet
+        ref={deleteSheetRef}
+        onConfirm={() => deleteConversation()}
+        onClose={() => deleteSheetRef.current?.hide()}
+        isPending={isDeletePending}
+      />
     </StableSafeAreaView>
   );
 };
