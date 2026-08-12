@@ -278,6 +278,14 @@
       "actions": {
         "sign-out": "Se déconnecter",
         "remove-account": "Supprimer le compte"
+      },
+      "deleteAlert": {
+        "title": "Supprimer le compte",
+        "message": "Êtes-vous sûr de vouloir supprimer votre compte ? Toutes vos données seront définitivement supprimées et cette action est irréversible.",
+        "cancel": "Annuler",
+        "confirm": "Supprimer",
+        "success": "Compte supprimé avec succès.",
+        "error": "Échec de la suppression du compte. Veuillez réessayer."
       }
     }
   },
