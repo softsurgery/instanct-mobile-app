@@ -47,7 +47,7 @@ export const NotificationEntry = ({
         });
         break;
       case NotificationType.NEW_SIGNIN:
-        router.push("/main/(tabs)/menu");
+        router.push("/main/new-signin");
         break;
       default:
         break;
