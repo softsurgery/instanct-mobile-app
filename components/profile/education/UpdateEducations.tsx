@@ -130,8 +130,8 @@ export const UpdateEducations = ({ className }: UpdateEducationsProps) => {
                       </View>
 
                       {/* Description */}
-                      {edu.description && (
-                        <View className="flex flex-row gap-3 mt-1">
+                      {!!edu.description && (
+                        <View className="flex flex-row gap-3">
                           <Icon as={FileText} size={18} />
                           <Text className="text-sm text-foreground flex-1 leading-5">
                             {edu.description}

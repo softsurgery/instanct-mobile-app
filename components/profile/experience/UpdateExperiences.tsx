@@ -14,12 +14,7 @@ import { ResponseExperienceDto, ServerErrorResponse } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { router } from "expo-router";
-import {
-  Briefcase,
-  Building2,
-  Calendar,
-  FileText,
-} from "lucide-react-native";
+import { Briefcase, Building2, Calendar, FileText } from "lucide-react-native";
 import { View } from "react-native";
 import { toast } from "sonner-native";
 import { ActionSheetRef } from "react-native-actions-sheet";
@@ -172,7 +167,7 @@ export const UpdateExperiences = ({ className }: UpdateExperiencesProps) => {
                       </View>
 
                       {/* Description */}
-                      {exp.description && (
+                      {!!exp.description && (
                         <View className="flex flex-row gap-3 mt-1">
                           <Icon as={FileText} size={18} />
                           <Text className="text-sm text-foreground flex-1 leading-5">
