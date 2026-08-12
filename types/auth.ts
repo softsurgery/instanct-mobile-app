@@ -8,6 +8,10 @@ export interface ResponseClientSigninDto {
 export interface RequestClientSignInDto {
   email: string;
   password: string;
+  device?: string;
+  os?: string;
+  location?: string;
+  fingerprint?: string;
 }
 
 export interface RequestClientSignUpDto {
@@ -48,4 +52,8 @@ export interface RequestClientOAuthDto {
   idToken: string;
   redirectUri?: string;
   codeVerifier?: string;
+  device?: string;
+  os?: string;
+  location?: string;
+  fingerprint?: string;
 }

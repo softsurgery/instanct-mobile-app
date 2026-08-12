@@ -10,6 +10,9 @@ import {
 } from "@/types";
 import axios from "./axios";
 
+import { getClientDeviceInfo } from "@/lib/device-info";
+import { getDeviceId } from "@/lib/device-id";
+
 const saveToken = (access_token: string, refresh_token: string) => {
   const authPersistStore = useAuthPersistStore.getState();
   authPersistStore.setAccessToken(access_token);
@@ -20,10 +23,14 @@ const saveToken = (access_token: string, refresh_token: string) => {
 const signIn = async (
   requestClientSignInDto: RequestClientSignInDto,
 ): Promise<ResponseClientSigninDto> => {
-  const response = await axios.post(
-    "/client-auth/sign-in",
-    requestClientSignInDto,
-  );
+  const deviceInfo = getClientDeviceInfo();
+  const fingerprint = await getDeviceId();
+  const response = await axios.post("/client-auth/sign-in", {
+    device: deviceInfo.device,
+    os: deviceInfo.os,
+    ...requestClientSignInDto,
+    fingerprint: requestClientSignInDto.fingerprint || fingerprint,
+  });
   saveToken(response.data.access_token, response.data.refresh_token);
   return response.data;
 };
@@ -31,7 +38,14 @@ const signIn = async (
 const ssoSignIn = async (
   request: RequestClientOAuthDto,
 ): Promise<ResponseClientSigninDto> => {
-  const response = await axios.post("/client-auth/oauth", request);
+  const deviceInfo = getClientDeviceInfo();
+  const fingerprint = await getDeviceId();
+  const response = await axios.post("/client-auth/oauth", {
+    device: deviceInfo.device,
+    os: deviceInfo.os,
+    ...request,
+    fingerprint: request.fingerprint || fingerprint,
+  });
   saveToken(response.data.access_token, response.data.refresh_token);
   return response.data;
 };

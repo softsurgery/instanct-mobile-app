@@ -26,8 +26,6 @@
       },
       "details": {
         "device": "Device",
-        "app": "Application",
-        "appHint": "Version {{version}}",
         "location": "Location",
         "locationHint": "Approximate, based on the IP address",
         "ip": "IP address",

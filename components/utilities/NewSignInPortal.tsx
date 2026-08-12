@@ -3,7 +3,6 @@ import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   Clock,
-  Globe,
   MapPin,
   ShieldAlert,
   ShieldCheck,
@@ -27,13 +26,10 @@ import { Text } from "../ui/text";
 
 const TRANSLATION_PREFIX = "screens.new-signin";
 
-const APP_VERSION = "2.4.1";
-
 interface NewSignInPortalProps {
   className?: string;
   device?: string;
   os?: string;
-  app?: string;
   location?: string;
   ip?: string;
   time?: string;
@@ -69,7 +65,7 @@ const RESOLUTIONS: Record<
 /**
  * Row displaying a single piece of information about the reported sign-in.
  */
-const SignInDetailRow = ({ icon, label, value, hint }: SignInDetail) => (
+const SignInDetailRow = ({ icon, label, value, hint }: Omit<SignInDetail, 'key'>) => (
   <View className="flex-row items-center gap-3 px-4 py-3">
     <View className="h-9 w-9 items-center justify-center rounded-xl bg-background">
       <Icon as={icon} size={18} className="text-muted-foreground" />
@@ -95,7 +91,6 @@ export const NewSignInPortal = ({
   className,
   device,
   os,
-  app,
   location,
   ip,
   time,
@@ -115,15 +110,6 @@ export const NewSignInPortal = ({
       label: t(`${TRANSLATION_PREFIX}.details.device`),
       value: device || "iPhone 15 Pro",
       hint: os || "iOS 18.5",
-    },
-    {
-      key: "app",
-      icon: Globe,
-      label: t(`${TRANSLATION_PREFIX}.details.app`),
-      value: app || "Instinct for iOS",
-      hint: t(`${TRANSLATION_PREFIX}.details.appHint`, {
-        version: APP_VERSION,
-      }),
     },
     {
       key: "location",
@@ -185,7 +171,7 @@ export const NewSignInPortal = ({
       />
 
       <StableScrollView className="bg-background">
-        <View className="items-center px-6 pt-8 pb-6">
+        <View className="items-center px-6 pt-8 pb-8">
           <View className="h-16 w-16 items-center justify-center rounded-full border border-primary/20 bg-primary/10">
             <Icon as={ShieldAlert} size={30} className="text-primary" />
           </View>
@@ -212,14 +198,17 @@ export const NewSignInPortal = ({
         </View>
 
         <View className="bg-card border border-border mx-4 rounded-2xl overflow-hidden">
-          {details.map((detail, index) => (
-            <View key={detail.key}>
-              <SignInDetailRow {...detail} />
-              {index < details.length - 1 ? (
-                <Separator className="ml-16" />
-              ) : null}
-            </View>
-          ))}
+          {details.map((detail, index) => {
+            const { key, ...rest } = detail;
+            return (
+              <View key={key}>
+                <SignInDetailRow {...rest} />
+                {index < details.length - 1 ? (
+                  <Separator className="ml-16" />
+                ) : null}
+              </View>
+            );
+          })}
         </View>
 
         <Text className="text-xs text-muted-foreground px-6 mt-3 mb-8">
@@ -252,38 +241,37 @@ export const NewSignInPortal = ({
             </View>
           </View>
         ) : null}
+        <View
+          className="flex-col gap-3 px-4 pt-4"
+          style={{ paddingBottom: Math.max(insets.bottom, 16) }}
+        >
+          <Button
+            size="lg"
+            variant={resolution === "secured" ? "outline" : "default"}
+            className="flex-1 h-12 gap-2 rounded-2xl"
+            onPress={handleTrust}
+            disabled={isResolved}
+          >
+            <Icon as={ShieldCheck} size={18} />
+            <Text className="text-sm font-bold" numberOfLines={1}>
+              {t(`${TRANSLATION_PREFIX}.actions.trust`)}
+            </Text>
+          </Button>
+
+          <Button
+            size="lg"
+            variant={resolution === "trusted" ? "outline" : "destructive"}
+            className="flex-1 h-12 gap-2 rounded-2xl"
+            onPress={handleSecure}
+            disabled={isResolved}
+          >
+            <Icon as={ShieldX} size={18} />
+            <Text className="text-sm font-bold" numberOfLines={1}>
+              {t(`${TRANSLATION_PREFIX}.actions.secure`)}
+            </Text>
+          </Button>
+        </View>
       </StableScrollView>
-
-      <View
-        className="flex-row gap-3 px-4 pt-4"
-        style={{ paddingBottom: Math.max(insets.bottom, 16) }}
-      >
-        <Button
-          size="lg"
-          variant={resolution === "secured" ? "outline" : "default"}
-          className="flex-1 h-12 gap-2 rounded-2xl"
-          onPress={handleTrust}
-          disabled={isResolved}
-        >
-          <Icon as={ShieldCheck} size={18} />
-          <Text className="text-sm font-bold" numberOfLines={1}>
-            {t(`${TRANSLATION_PREFIX}.actions.trust`)}
-          </Text>
-        </Button>
-
-        <Button
-          size="lg"
-          variant={resolution === "trusted" ? "outline" : "destructive"}
-          className="flex-1 h-12 gap-2 rounded-2xl"
-          onPress={handleSecure}
-          disabled={isResolved}
-        >
-          <Icon as={ShieldX} size={18} />
-          <Text className="text-sm font-bold" numberOfLines={1}>
-            {t(`${TRANSLATION_PREFIX}.actions.secure`)}
-          </Text>
-        </Button>
-      </View>
     </StableSafeAreaView>
   );
 };

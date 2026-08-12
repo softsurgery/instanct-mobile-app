@@ -47,7 +47,17 @@ export const NotificationEntry = ({
         });
         break;
       case NotificationType.NEW_SIGNIN:
-        router.push("/main/new-signin");
+        router.push({
+          pathname: "/main/new-signin",
+          params: {
+            device: notification.payload?.device as string,
+            os: notification.payload?.os as string,
+            location: notification.payload?.location as string,
+            ip: notification.payload?.ip as string,
+            time: notification.payload?.time as string,
+            when: notification.payload?.when as string,
+          },
+        });
         break;
       default:
         break;

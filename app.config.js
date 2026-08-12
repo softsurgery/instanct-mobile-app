@@ -47,6 +47,7 @@ export default ({ config }) => ({
     "expo-image",
     "expo-status-bar",
     "expo-sharing",
+    "expo-secure-store",
     [
       "expo-splash-screen",
       {

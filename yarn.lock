@@ -2183,6 +2183,24 @@
     invariant "^2.2.4"
     nullthrows "^1.1.1"
 
+"@react-navigation/elements@^2.9.38":
+  version "2.9.38"
+  resolved "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-2.9.38.tgz#902fc709ddf068a3bcdfc6eca286ffb32bbe8c5a"
+  integrity sha512-M/2HWDiSO4zO7VyfAnovrTPWOAzTC+1DnVT7ZWZW93+/KVRF9OYlqixIUpPenQ0iQh2j1EaQ4zOe/134Arisqw==
+  dependencies:
+    color "^4.2.3"
+    use-latest-callback "^0.2.4"
+    use-sync-external-store "^1.5.0"
+
+"@react-navigation/material-top-tabs@^7.6.13":
+  version "7.6.15"
+  resolved "https://registry.yarnpkg.com/@react-navigation/material-top-tabs/-/material-top-tabs-7.6.15.tgz#dd12f79442d131a95560707aa9d5ab05755fa62c"
+  integrity sha512-6EYUL8AhQ3uiZ6+TXfye2D2E3X05Q4CnvVlImpaVeZ585hfbRlT4oPlP1JT/8GiGz3puhr4ZZfI7JWRs99OgQA==
+  dependencies:
+    "@react-navigation/elements" "^2.9.38"
+    color "^4.2.3"
+    react-native-tab-view "^4.3.2"
+
 "@rn-primitives/accordion@^1.2.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@rn-primitives/accordion/-/accordion-1.4.0.tgz#bc5aaeba09e817c4180f57e39af821e039c7ea72"
@@ -4799,6 +4817,11 @@ expo-router@~56.2.17:
     shallowequal "^1.1.0"
     standard-navigation "^0.0.5"
     vaul "^1.1.2"
+
+expo-secure-store@~56.0.4:
+  version "56.0.4"
+  resolved "https://registry.yarnpkg.com/expo-secure-store/-/expo-secure-store-56.0.4.tgz#5f897b4446c208e4670a71c7d8b1cf1467161dd2"
+  integrity sha512-hjEi/gmpdFFJ9lYbdp3k3p/WchV7Gi0Qt8jt/m/0WJadqQrskafHAlDxbZkII1cN3Yd7zp9Lvkeq3UfGhSwirQ==
 
 expo-server@^56.0.5:
   version "56.0.5"
@@ -7814,6 +7837,13 @@ react-native-tab-view@^4.2.2:
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-4.3.1.tgz#9a7f4a40ffef6a40d2bbf8c69aefe6898275e3e4"
   integrity sha512-z2x4ZAJfdiy3Rk78/2tIfKu1DezMKHWOfIIw4bpfPlwVqg3i2ViFtvZJTadKWZpZJEnG43cfhJPNDzH5RZTK2Q==
+  dependencies:
+    use-latest-callback "^0.2.4"
+
+react-native-tab-view@^4.3.2:
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-4.3.2.tgz#0bb44d92ba13f3be93a385e34b77cce256913369"
+  integrity sha512-QCHX9bTGMeME5pt4jJ1/H7oshX7Z2nA/Ts3m7FpKUbWfPPIL8rlNLZwkedgV273Eqau8jj8deRtfSZl9LCctCw==
   dependencies:
     use-latest-callback "^0.2.4"
 
