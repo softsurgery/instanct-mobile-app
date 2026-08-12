@@ -1,181 +1,181 @@
 {
-    "explore": {
-        "nearbyPeopleShortly": "Nearby people will be available shortly, if any are around.",
-        "noMatchFilters": "No one matches your filters right now. Try adjusting or removing some filters to see more people around you.",
-        "industries": "Industries",
-        "objectives": "Objectives",
-        "about": "About",
-        "noBioAvailable": "No bio available.",
-        "filter": {
-            "title": "User Filters",
-            "filtersDescription": "You can apply filters to find users that match specific criteria. These filters will help you discover users based on their objectives, industries, and more.",
-            "placeholders": {
-                "objectives": "Select objectives",
-                "industries": "Select industries"
-            },
-            "descriptions": {
-                "objectives": "Select the objectives you're looking for.",
-                "industries": "Select the industries you're interested in."
-            },
-            "toasts": {
-                "filtersApplied": "Filters applied successfully",
-                "filtersRemoved": "Filters removed successfully"
-            },
-            "actions": {
-                "removeFilters": "Remove Filters",
-                "saveFilters": "Save Filters"
-            }
-        }
-    },
-    "session": {
-        "starter": {
-            "title": "Ready to connect?",
-            "description": "Start your first session!"
-        },
-        "start": {
-            "title": "Start a session",
-            "description": "Please provide the details of your session. This information will help others understand when you are available and interested in connecting.",
-            "nextDayWarning": "Your session will end the next day because the end time is earlier than the start time.",
-            "startingOption": "Starting Option",
-            "startTime": "Start Time",
-            "endTime": "End Time",
-            "objectives": "Objectives",
-            "options": {
-                "now": "Start now",
-                "schedule": "Schedule"
-            },
-            "placeholders": {
-                "objectives": "Select objectives"
-            },
-            "descriptions": {
-                "startingOption": "Choose whether to start the session immediately or schedule it for later.",
-                "startTime": "The start time of the session. If 'Start Now' is checked, this will be ignored and the session will start immediately.",
-                "endTime": "The end time of the session. This will be ignored if 'Start Now' is checked.",
-                "objectives": "Select the objectives for this session."
-            },
-            "actions": {
-                "startSession": "Start the session",
-                "startSessionPending": "Starting..."
-            },
-            "toasts": {
-                "success": {
-                    "title": "Session started",
-                    "description": "Your session has been started successfully."
-                },
-                "error": {
-                    "title": "Failed to start the session",
-                    "description": "An error occurred while starting the session."
-                }
-            }
-        },
-        "manage": {
-            "title": "Manage Session",
-            "description": "You can manage your session here. You can end the session or adjust your settings.",
-            "endTime": "End Time",
-            "objectives": "Objectives",
-            "placeholders": {
-                "endTime": "You can adjust the end time of your session here.",
-                "objectives": "You can adjust your objectives here."
-            },
-            "descriptions": {
-                "endTime": "You can adjust the end time of your session here.",
-                "objectives": "You can adjust your objectives here."
-            },
-            "actionSheet": {
-                "title": "End Session",
-                "message": "Are you sure you want to end this session? This action cannot be undone.",
-                "cancel": "No, cancel",
-                "confirm": "Yes, end Session"
-            },
-            "actions": {
-                "endSession": "End Session",
-                "endSessionPending": "Ending Session...",
-                "confirm": "Confirm changes",
-                "confirmPending": "Confirming changes..."
-            }
-        },
-        "validation": {
-            "sessionTypeRequired": "Session type is required.",
-            "invalidPlannedStart": "Planned start must be a valid date.",
-            "plannedStartInPast": "Planned start must be in the future.",
-            "invalidPlannedEnd": "Planned end must be a valid date.",
-            "plannedEndBeforeStart": "Planned end must be after planned start.",
-            "invalidObjective": "Objective must be a number.",
-            "objectivesRequired": "At least one objective must be selected."
-        }
-    },
-    "request": {
-        "newRequest": {
-            "title": "Meeting Request",
-            "formTitle": "Send a request",
-            "sectionTitle": "Request details",
-            "partner": "Meeting partner",
-            "labels": {
-                "message": "Message",
-                "choice": "Location and time",
-                "time": "Time",
-                "location": "Location"
-            },
-            "placeholders": {
-                "message": "Write a message to the recipient",
-                "choice": "Choose an option",
-                "time": "Select a time",
-                "location": "Select a location on the map"
-            },
-            "descriptions": {
-                "message": "This message will be sent to the recipient with your request.",
-                "time": "Choose the time of the meeting",
-                "location": "Indicate where the meeting will take place"
-            },
-            "options": {
-                "choose": "I choose",
-                "letDecide": "Let them decide"
-            },
-            "actions": {
-                "sendRequest": "Send the request",
-                "sendRequestPending": "Sending..."
-            },
-            "toasts": {
-                "success": "Request sent successfully",
-                "error": "An error occurred"
-            },
-            "validation": {
-                "receiversRequired": "At least one receiver is required",
-                "invalidMessage": "Message must be a string.",
-                "messageRequired": "Message cannot be empty.",
-                "locationRequired": "Location is required.",
-                "coordinatesRequired": "Location coordinates are required.",
-                "timeRequired": "Time is required."
-            }
-        }
-    },
-    "onBoarding": {
-        "slides": {
-            "welcome": {
-                "title": "Welcome to Instanct",
-                "description": "Experience the next generation of connectivity with our cutting-edge platform tailored just for you."
-            },
-            "integration": {
-                "title": "Seamless Integration",
-                "description": "Sync your data effortlessly and enjoy a flawless experience across all your devices, anywhere, anytime."
-            },
-            "security": {
-                "title": "Secure & Private",
-                "description": "Your privacy is our top priority. We employ industry-leading security to keep your information safe."
-            }
-        },
-        "actions": {
-            "linkedIn": "Continue with LinkedIn",
-            "google": "Continue with Google",
-            "email": "Continue with Email",
-            "apple": "Continue with Apple"
-        },
-        "or": "or",
-        "terms": {
-            "iAccept": "I accept the",
-            "termsOfUse": "Terms of Use",
-            "privacyPolicy": "Privacy Policy",
-            "and": "and"
-        }
+  "explore": {
+    "nearbyPeopleShortly": "Nearby people will be available shortly, if any are around.",
+    "noMatchFilters": "No one matches your filters right now. Try adjusting or removing some filters to see more people around you.",
+    "industries": "Industries",
+    "objectives": "Objectives",
+    "about": "About",
+    "noBioAvailable": "No bio available.",
+    "filter": {
+      "title": "User Filters",
+      "filtersDescription": "You can apply filters to find users that match specific criteria. These filters will help you discover users based on their objectives, industries, and more.",
+      "placeholders": {
+        "objectives": "Select objectives",
+        "industries": "Select industries"
+      },
+      "descriptions": {
+        "objectives": "Select the objectives you're looking for.",
+        "industries": "Select the industries you're interested in."
+      },
+      "toasts": {
+        "filtersApplied": "Filters applied successfully",
+        "filtersRemoved": "Filters removed successfully"
+      },
+      "actions": {
+        "removeFilters": "Remove Filters",
+        "saveFilters": "Save Filters"
+      }
     }
+  },
+  "session": {
+    "starter": {
+      "title": "Ready to connect?",
+      "description": "Start your first session!"
+    },
+    "start": {
+      "title": "Start a session",
+      "description": "Please provide the details of your session. This information will help others understand when you are available and interested in connecting.",
+      "nextDayWarning": "Your session will end the next day because the end time is earlier than the start time.",
+      "startingOption": "Starting Option",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "objectives": "Objectives",
+      "options": {
+        "now": "Start now",
+        "schedule": "Schedule"
+      },
+      "placeholders": {
+        "objectives": "Select objectives"
+      },
+      "descriptions": {
+        "startingOption": "Choose whether to start the session immediately or schedule it for later.",
+        "startTime": "The start time of the session. If 'Start Now' is checked, this will be ignored and the session will start immediately.",
+        "endTime": "The end time of the session. This will be ignored if 'Start Now' is checked.",
+        "objectives": "Select the objectives for this session."
+      },
+      "actions": {
+        "startSession": "Start the session",
+        "startSessionPending": "Starting..."
+      },
+      "toasts": {
+        "success": {
+          "title": "Session started",
+          "description": "Your session has been started successfully."
+        },
+        "error": {
+          "title": "Failed to start the session",
+          "description": "An error occurred while starting the session."
+        }
+      }
+    },
+    "manage": {
+      "title": "Manage Session",
+      "description": "You can manage your session here. You can end the session or adjust your settings.",
+      "endTime": "End Time",
+      "objectives": "Objectives",
+      "placeholders": {
+        "endTime": "You can adjust the end time of your session here.",
+        "objectives": "You can adjust your objectives here."
+      },
+      "descriptions": {
+        "endTime": "You can adjust the end time of your session here.",
+        "objectives": "You can adjust your objectives here."
+      },
+      "actionSheet": {
+        "title": "End Session",
+        "message": "Are you sure you want to end this session? This action cannot be undone.",
+        "cancel": "No, cancel",
+        "confirm": "Yes, end Session"
+      },
+      "actions": {
+        "endSession": "End Session",
+        "endSessionPending": "Ending Session...",
+        "confirm": "Confirm changes",
+        "confirmPending": "Confirming changes..."
+      }
+    },
+    "validation": {
+      "sessionTypeRequired": "Session type is required.",
+      "invalidPlannedStart": "Planned start must be a valid date.",
+      "plannedStartInPast": "Planned start must be in the future.",
+      "invalidPlannedEnd": "Planned end must be a valid date.",
+      "plannedEndBeforeStart": "Planned end must be after planned start.",
+      "invalidObjective": "Objective must be a number.",
+      "objectivesRequired": "At least one objective must be selected."
+    }
+  },
+  "request": {
+    "newRequest": {
+      "title": "Meeting Request",
+      "formTitle": "Send a request",
+      "sectionTitle": "Request details",
+      "partner": "Meeting partner",
+      "labels": {
+        "message": "Message",
+        "choice": "Location and time",
+        "time": "Time",
+        "location": "Location"
+      },
+      "placeholders": {
+        "message": "Write a message to the recipient",
+        "choice": "Choose an option",
+        "time": "Select a time",
+        "location": "Select a location on the map"
+      },
+      "descriptions": {
+        "message": "This message will be sent to the recipient with your request.",
+        "time": "Choose the time of the meeting",
+        "location": "Indicate where the meeting will take place"
+      },
+      "options": {
+        "choose": "I choose",
+        "letDecide": "Let them decide"
+      },
+      "actions": {
+        "sendRequest": "Send the request",
+        "sendRequestPending": "Sending..."
+      },
+      "toasts": {
+        "success": "Request sent successfully",
+        "error": "An error occurred"
+      },
+      "validation": {
+        "receiversRequired": "At least one receiver is required",
+        "invalidMessage": "Message must be a string.",
+        "messageRequired": "Message cannot be empty.",
+        "locationRequired": "Location is required.",
+        "coordinatesRequired": "Location coordinates are required.",
+        "timeRequired": "Time is required."
+      }
+    }
+  },
+  "onBoarding": {
+    "slides": {
+      "welcome": {
+        "title": "Welcome to Instanct",
+        "description": "Experience the next generation of connectivity with our cutting-edge platform tailored just for you."
+      },
+      "integration": {
+        "title": "Seamless Integration",
+        "description": "Sync your data effortlessly and enjoy a flawless experience across all your devices, anywhere, anytime."
+      },
+      "security": {
+        "title": "Secure & Private",
+        "description": "Your privacy is our top priority. We employ industry-leading security to keep your information safe."
+      }
+    },
+    "actions": {
+      "linkedIn": "Continue with LinkedIn",
+      "google": "Continue with Google",
+      "email": "Continue with Email",
+      "apple": "Continue with Apple"
+    },
+    "or": "or",
+    "terms": {
+      "iAccept": "I accept the",
+      "termsOfUse": "Terms of Use",
+      "privacyPolicy": "Privacy Policy",
+      "and": "and"
+    }
+  }
 }

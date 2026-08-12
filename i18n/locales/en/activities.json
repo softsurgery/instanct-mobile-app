@@ -1,89 +1,89 @@
 {
-    "activities": {
-        "title": "Activities",
-        "tabs": {
-            "bookmarks": {
-                "title": "Bookmarks"
-            },
-            "incomming": {
-                "title": "Incoming"
-            },
-            "outgoing": {
-                "title": "Outgoing"
-            }
+  "activities": {
+    "title": "Activities",
+    "tabs": {
+      "bookmarks": {
+        "title": "Bookmarks"
+      },
+      "incomming": {
+        "title": "Incoming"
+      },
+      "outgoing": {
+        "title": "Outgoing"
+      }
+    },
+    "groups": {
+      "today": "Today",
+      "yesterday": "Yesterday"
+    },
+    "bookmarks": {
+      "empty": "No bookmarks were found",
+      "caughtUp": "You have caught up with all bookmarks!",
+      "actions": {
+        "viewProfile": "View profile",
+        "sendMessage": "Send message",
+        "removeBookmark": "Remove bookmark"
+      }
+    },
+    "request": {
+      "title": "Meeting request",
+      "labels": {
+        "message": "Message",
+        "dateTime": "Date and time"
+      },
+      "placeholders": {
+        "message": "No description provided",
+        "dateTime": "Not specified"
+      },
+      "location": {
+        "updating": "Updating the location..."
+      },
+      "banners": {
+        "accepted": "This meeting has been added to your schedule.",
+        "rejected": "This meeting request was declined."
+      },
+      "toasts": {
+        "locationUpdated": "Location updated",
+        "locationError": "Unable to update the location",
+        "error": "Something went wrong. Please try again."
+      }
+    },
+    "incomming": {
+      "empty": "No incoming requests were found",
+      "caughtUp": "You have caught up with all incoming requests",
+      "request": {
+        "actions": {
+          "accept": "Accept",
+          "reject": "Decline"
         },
-        "groups": {
-            "today": "Today",
-            "yesterday": "Yesterday"
+        "toasts": {
+          "accepted": "Request accepted",
+          "rejected": "Request declined"
         },
-        "bookmarks": {
-            "empty": "No bookmarks were found",
-            "caughtUp": "You have caught up with all bookmarks!",
-            "actions": {
-                "viewProfile": "View profile",
-                "sendMessage": "Send message",
-                "removeBookmark": "Remove bookmark"
-            }
-        },
-        "request": {
-            "title": "Meeting request",
-            "labels": {
-                "message": "Message",
-                "dateTime": "Date and time"
-            },
-            "placeholders": {
-                "message": "No description provided",
-                "dateTime": "Not specified"
-            },
-            "location": {
-                "updating": "Updating the location..."
-            },
-            "banners": {
-                "accepted": "This meeting has been added to your schedule.",
-                "rejected": "This meeting request was declined."
-            },
-            "toasts": {
-                "locationUpdated": "Location updated",
-                "locationError": "Unable to update the location",
-                "error": "Something went wrong. Please try again."
-            }
-        },
-        "incomming": {
-            "empty": "No incoming requests were found",
-            "caughtUp": "You have caught up with all incoming requests",
-            "request": {
-                "actions": {
-                    "accept": "Accept",
-                    "reject": "Decline"
-                },
-                "toasts": {
-                    "accepted": "Request accepted",
-                    "rejected": "Request declined"
-                },
-                "actionSheet": {
-                    "accept": {
-                        "title": "Accept the request",
-                        "message": "Are you sure you want to accept this meeting request?",
-                        "confirm": "Yes, accept",
-                        "cancel": "No, cancel"
-                    },
-                    "reject": {
-                        "title": "Decline the request",
-                        "message": "Are you sure you want to decline this meeting request?",
-                        "confirm": "Yes, decline",
-                        "cancel": "No, cancel"
-                    }
-                }
-            }
-        },
-        "outgoing": {
-            "empty": "No outgoing requests were found",
-            "caughtUp": "You have caught up with all outgoing requests",
-            "request": {
-                "banners": {
-                    "pending": "Waiting for the recipient's response."
-                }
-            }
+        "actionSheet": {
+          "accept": {
+            "title": "Accept the request",
+            "message": "Are you sure you want to accept this meeting request?",
+            "confirm": "Yes, accept",
+            "cancel": "No, cancel"
+          },
+          "reject": {
+            "title": "Decline the request",
+            "message": "Are you sure you want to decline this meeting request?",
+            "confirm": "Yes, decline",
+            "cancel": "No, cancel"
+          }
         }
+      }
+    },
+    "outgoing": {
+      "empty": "No outgoing requests were found",
+      "caughtUp": "You have caught up with all outgoing requests",
+      "request": {
+        "banners": {
+          "pending": "Waiting for the recipient's response."
+        }
+      }
     }
+  }
 }
