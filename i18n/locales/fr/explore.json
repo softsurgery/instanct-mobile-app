@@ -1,179 +1,179 @@
 {
-    "explore": {
-        "nearbyPeopleShortly": "Des personnes à proximité seront bientôt disponibles, si certaines se trouvent autour de vous.",
-        "noMatchFilters": "Aucune personne ne correspond à vos filtres pour le moment. Essayez de modifier ou de supprimer certains filtres pour découvrir davantage de personnes autour de vous.",
-        "industries": "Secteurs d'activité",
-        "objectives": "Objectifs",
-        "about": "À propos",
-        "noBioAvailable": "Aucune biographie disponible.",
-        "filter": {
-            "title": "Filtres utilisateurs",
-            "filtersDescription": "Vous pouvez appliquer des filtres pour trouver des utilisateurs correspondant à des critères spécifiques. Ces filtres vous aideront à découvrir des utilisateurs en fonction de leurs objectifs, de leur secteur d'activité et bien plus encore.",
-            "placeholders": {
-                "objectives": "Sélectionnez des objectifs",
-                "industries": "Sélectionnez des secteurs d'activité"
-            },
-            "descriptions": {
-                "objectives": "Sélectionnez les objectifs que vous recherchez.",
-                "industries": "Sélectionnez les secteurs d'activité qui vous intéressent."
-            },
-            "toasts": {
-                "filtersApplied": "Filtres appliqués avec succès",
-                "filtersRemoved": "Filtres supprimés avec succès"
-            },
-            "actions": {
-                "removeFilters": "Supprimer les filtres",
-                "saveFilters": "Enregistrer les filtres"
-            }
-        }
-    },
-    "session": {
-        "starter": {
-            "title": "Prêt à connecter ?",
-            "description": "Commencez votre première session !"
-        },
-        "start": {
-            "title": "Démarrer une session",
-            "description": "Veuillez fournir les détails de votre session. Ces informations aideront les autres à comprendre quand vous êtes disponible et intéressé par la connexion.",
-            "nextDayWarning": "Votre session se terminera le jour suivant car l'heure de fin est antérieure à l'heure de début.",
-            "startingOption": "Option de démarrage",
-            "startTime": "Heure de début",
-            "endTime": "Heure de fin",
-            "objectives": "Objectifs",
-            "options": {
-                "now": "Démarrer maintenant",
-                "schedule": "Planifier"
-            },
-            "placeholders": {
-                "objectives": "Sélectionnez des objectifs"
-            },
-            "descriptions": {
-                "startingOption": "Choisissez de démarrer la session immédiatement ou de la planifier pour plus tard.",
-                "startTime": "L'heure de début de la session. Si « Démarrer maintenant » est sélectionné, elle sera ignorée et la session démarrera immédiatement.",
-                "endTime": "L'heure de fin de la session. Elle sera ignorée si « Démarrer maintenant » est sélectionné.",
-                "objectives": "Sélectionnez les objectifs de cette session."
-            },
-            "actions": {
-                "startSession": "Démarrer la session",
-                "startSessionPending": "Démarrage..."
-            },
-            "toasts": {
-                "success": {
-                    "title": "Session démarrée",
-                    "description": "Votre session a bien été démarrée."
-                },
-                "error": {
-                    "title": "Échec du démarrage de la session",
-                    "description": "Une erreur est survenue lors du démarrage de la session."
-                }
-            }
-        },
-        "manage": {
-            "title": "Gérer la session",
-            "description": "Vous pouvez gérer votre session ici. Vous pouvez y mettre fin ou modifier ses paramètres.",
-            "endTime": "Heure de fin",
-            "objectives": "Objectifs",
-            "placeholders": {
-                "endTime": "Vous pouvez modifier l'heure de fin de votre session ici.",
-                "objectives": "Vous pouvez modifier vos objectifs ici."
-            },
-            "descriptions": {
-                "endTime": "Vous pouvez modifier l'heure de fin de votre session ici.",
-                "objectives": "Vous pouvez modifier vos objectifs ici."
-            },
-            "actionSheet": {
-                "title": "Terminer la session",
-                "message": "Êtes-vous sûr de vouloir terminer cette session ? Cette action est irréversible.",
-                "cancel": "Non, annuler",
-                "confirm": "Oui, terminer la session"
-            },
-            "actions": {
-                "endSession": "Terminer la session",
-                "confirm": "Confirmer les modifications"
-            }
-        },
-        "validation": {
-            "sessionTypeRequired": "Le type de session est obligatoire.",
-            "invalidPlannedStart": "Le début prévu doit être une date valide.",
-            "plannedStartInPast": "Le début prévu doit être dans le futur.",
-            "invalidPlannedEnd": "La fin prévue doit être une date valide.",
-            "plannedEndBeforeStart": "La fin prévue doit être postérieure au début prévu.",
-            "invalidObjective": "L'objectif doit être un nombre.",
-            "objectivesRequired": "Vous devez sélectionner au moins un objectif."
-        }
-    },
-    "request": {
-        "newRequest": {
-            "title": "Demande de rendez-vous",
-            "formTitle": "Envoyer une demande",
-            "sectionTitle": "Détails de la demande",
-            "partner": "Partenaire de réunion",
-            "labels": {
-                "message": "Message",
-                "choice": "Lieu et horaire",
-                "time": "Heure",
-                "location": "Lieu"
-            },
-            "placeholders": {
-                "message": "Écrivez un message au destinataire",
-                "choice": "Choisir une option",
-                "time": "Sélectionner une heure",
-                "location": "Sélectionner un lieu sur la carte"
-            },
-            "descriptions": {
-                "message": "Ce message sera envoyé au destinataire avec votre demande.",
-                "time": "Choisissez l'heure de la réunion",
-                "location": "Indiquez où se déroulera la réunion"
-            },
-            "options": {
-                "choose": "Je choisis",
-                "letDecide": "Laisser décider"
-            },
-            "actions": {
-                "sendRequest": "Envoyer la demande",
-                "sendRequestPending": "Envoi en cours..."
-            },
-            "toasts": {
-                "success": "Demande envoyée avec succès",
-                "error": "Une erreur est survenue"
-            },
-            "validation": {
-                "receiversRequired": "Au moins un destinataire est requis",
-                "invalidMessage": "Le message doit être une chaîne de caractères.",
-                "messageRequired": "Le message ne peut pas être vide.",
-                "locationRequired": "Le lieu est obligatoire.",
-                "coordinatesRequired": "Les coordonnées du lieu sont obligatoires.",
-                "timeRequired": "L'heure est obligatoire."
-            }
-        }
-    },
-    "onBoarding": {
-        "slides": {
-            "welcome": {
-                "title": "Bienvenue sur Instanct",
-                "description": "Découvrez la nouvelle génération de connectivité grâce à notre plateforme innovante, conçue spécialement pour vous."
-            },
-            "integration": {
-                "title": "Intégration fluide",
-                "description": "Synchronisez vos données sans effort et profitez d'une expérience parfaite sur tous vos appareils, partout et à tout moment."
-            },
-            "security": {
-                "title": "Sécurisé et confidentiel",
-                "description": "Votre confidentialité est notre priorité absolue. Nous utilisons une sécurité de pointe pour protéger vos informations."
-            }
-        },
-        "actions": {
-            "linkedIn": "Continuer avec LinkedIn",
-            "google": "Continuer avec Google",
-            "email": "Continuer avec Email",
-            "apple": "Continuer avec Apple"
-        },
-        "or": "ou",
-        "terms": {
-            "iAccept": "J'accepte les",
-            "termsOfUse": "Conditions d'utilisation",
-            "and": "et",
-            "privacyPolicy": "Politique de confidentialité"
-        }
+  "explore": {
+    "nearbyPeopleShortly": "Des personnes à proximité seront bientôt disponibles, si certaines se trouvent autour de vous.",
+    "noMatchFilters": "Aucune personne ne correspond à vos filtres pour le moment. Essayez de modifier ou de supprimer certains filtres pour découvrir davantage de personnes autour de vous.",
+    "industries": "Secteurs d'activité",
+    "objectives": "Objectifs",
+    "about": "À propos",
+    "noBioAvailable": "Aucune biographie disponible.",
+    "filter": {
+      "title": "Filtres utilisateurs",
+      "filtersDescription": "Vous pouvez appliquer des filtres pour trouver des utilisateurs correspondant à des critères spécifiques. Ces filtres vous aideront à découvrir des utilisateurs en fonction de leurs objectifs, de leur secteur d'activité et bien plus encore.",
+      "placeholders": {
+        "objectives": "Sélectionnez des objectifs",
+        "industries": "Sélectionnez des secteurs d'activité"
+      },
+      "descriptions": {
+        "objectives": "Sélectionnez les objectifs que vous recherchez.",
+        "industries": "Sélectionnez les secteurs d'activité qui vous intéressent."
+      },
+      "toasts": {
+        "filtersApplied": "Filtres appliqués avec succès",
+        "filtersRemoved": "Filtres supprimés avec succès"
+      },
+      "actions": {
+        "removeFilters": "Supprimer les filtres",
+        "saveFilters": "Enregistrer les filtres"
+      }
     }
+  },
+  "session": {
+    "starter": {
+      "title": "Prêt à connecter ?",
+      "description": "Commencez votre première session !"
+    },
+    "start": {
+      "title": "Démarrer une session",
+      "description": "Veuillez fournir les détails de votre session. Ces informations aideront les autres à comprendre quand vous êtes disponible et intéressé par la connexion.",
+      "nextDayWarning": "Votre session se terminera le jour suivant car l'heure de fin est antérieure à l'heure de début.",
+      "startingOption": "Option de démarrage",
+      "startTime": "Heure de début",
+      "endTime": "Heure de fin",
+      "objectives": "Objectifs",
+      "options": {
+        "now": "Démarrer maintenant",
+        "schedule": "Planifier"
+      },
+      "placeholders": {
+        "objectives": "Sélectionnez des objectifs"
+      },
+      "descriptions": {
+        "startingOption": "Choisissez de démarrer la session immédiatement ou de la planifier pour plus tard.",
+        "startTime": "L'heure de début de la session. Si « Démarrer maintenant » est sélectionné, elle sera ignorée et la session démarrera immédiatement.",
+        "endTime": "L'heure de fin de la session. Elle sera ignorée si « Démarrer maintenant » est sélectionné.",
+        "objectives": "Sélectionnez les objectifs de cette session."
+      },
+      "actions": {
+        "startSession": "Démarrer la session",
+        "startSessionPending": "Démarrage..."
+      },
+      "toasts": {
+        "success": {
+          "title": "Session démarrée",
+          "description": "Votre session a bien été démarrée."
+        },
+        "error": {
+          "title": "Échec du démarrage de la session",
+          "description": "Une erreur est survenue lors du démarrage de la session."
+        }
+      }
+    },
+    "manage": {
+      "title": "Gérer la session",
+      "description": "Vous pouvez gérer votre session ici. Vous pouvez y mettre fin ou modifier ses paramètres.",
+      "endTime": "Heure de fin",
+      "objectives": "Objectifs",
+      "placeholders": {
+        "endTime": "Vous pouvez modifier l'heure de fin de votre session ici.",
+        "objectives": "Vous pouvez modifier vos objectifs ici."
+      },
+      "descriptions": {
+        "endTime": "Vous pouvez modifier l'heure de fin de votre session ici.",
+        "objectives": "Vous pouvez modifier vos objectifs ici."
+      },
+      "actionSheet": {
+        "title": "Terminer la session",
+        "message": "Êtes-vous sûr de vouloir terminer cette session ? Cette action est irréversible.",
+        "cancel": "Non, annuler",
+        "confirm": "Oui, terminer la session"
+      },
+      "actions": {
+        "endSession": "Terminer la session",
+        "confirm": "Confirmer les modifications"
+      }
+    },
+    "validation": {
+      "sessionTypeRequired": "Le type de session est obligatoire.",
+      "invalidPlannedStart": "Le début prévu doit être une date valide.",
+      "plannedStartInPast": "Le début prévu doit être dans le futur.",
+      "invalidPlannedEnd": "La fin prévue doit être une date valide.",
+      "plannedEndBeforeStart": "La fin prévue doit être postérieure au début prévu.",
+      "invalidObjective": "L'objectif doit être un nombre.",
+      "objectivesRequired": "Vous devez sélectionner au moins un objectif."
+    }
+  },
+  "request": {
+    "newRequest": {
+      "title": "Demande de rendez-vous",
+      "formTitle": "Envoyer une demande",
+      "sectionTitle": "Détails de la demande",
+      "partner": "Partenaire de réunion",
+      "labels": {
+        "message": "Message",
+        "choice": "Lieu et horaire",
+        "time": "Heure",
+        "location": "Lieu"
+      },
+      "placeholders": {
+        "message": "Écrivez un message au destinataire",
+        "choice": "Choisir une option",
+        "time": "Sélectionner une heure",
+        "location": "Sélectionner un lieu sur la carte"
+      },
+      "descriptions": {
+        "message": "Ce message sera envoyé au destinataire avec votre demande.",
+        "time": "Choisissez l'heure de la réunion",
+        "location": "Indiquez où se déroulera la réunion"
+      },
+      "options": {
+        "choose": "Je choisis",
+        "letDecide": "Laisser décider"
+      },
+      "actions": {
+        "sendRequest": "Envoyer la demande",
+        "sendRequestPending": "Envoi en cours..."
+      },
+      "toasts": {
+        "success": "Demande envoyée avec succès",
+        "error": "Une erreur est survenue"
+      },
+      "validation": {
+        "receiversRequired": "Au moins un destinataire est requis",
+        "invalidMessage": "Le message doit être une chaîne de caractères.",
+        "messageRequired": "Le message ne peut pas être vide.",
+        "locationRequired": "Le lieu est obligatoire.",
+        "coordinatesRequired": "Les coordonnées du lieu sont obligatoires.",
+        "timeRequired": "L'heure est obligatoire."
+      }
+    }
+  },
+  "onBoarding": {
+    "slides": {
+      "welcome": {
+        "title": "Bienvenue sur Instanct",
+        "description": "Découvrez la nouvelle génération de connectivité grâce à notre plateforme innovante, conçue spécialement pour vous."
+      },
+      "integration": {
+        "title": "Intégration fluide",
+        "description": "Synchronisez vos données sans effort et profitez d'une expérience parfaite sur tous vos appareils, partout et à tout moment."
+      },
+      "security": {
+        "title": "Sécurisé et confidentiel",
+        "description": "Votre confidentialité est notre priorité absolue. Nous utilisons une sécurité de pointe pour protéger vos informations."
+      }
+    },
+    "actions": {
+      "linkedIn": "Continuer avec LinkedIn",
+      "google": "Continuer avec Google",
+      "email": "Continuer avec Email",
+      "apple": "Continuer avec Apple"
+    },
+    "or": "ou",
+    "terms": {
+      "iAccept": "J'accepte les",
+      "termsOfUse": "Conditions d'utilisation",
+      "and": "et",
+      "privacyPolicy": "Politique de confidentialité"
+    }
+  }
 }
