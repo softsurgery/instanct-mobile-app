@@ -5,6 +5,7 @@ import * as Haptics from "expo-haptics";
 import * as Location from "expo-location";
 import { ChevronDown, MapPin, Navigation, Pin } from "lucide-react-native";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   LayoutAnimation,
   ActivityIndicator,
@@ -38,6 +39,7 @@ export default function MapPinField({
   changedOnFocus = false,
 }: MapPinInputProps) {
   const { colorScheme, palette } = useColorPalette();
+  const { t } = useTranslation("common");
 
   const sheetRef = React.useRef<ActionSheetRef>(null);
   const mapRef = React.useRef<MapView>(null);
@@ -180,7 +182,7 @@ export default function MapPinField({
           <View className="flex flex-row items-center gap-2">
             <Icon as={Pin} size={16} color={"gray"} />
             <Text className="text-sm">
-              {name || placeholder || "Select a location"}
+              {name || placeholder}
             </Text>
           </View>
           <Icon as={ChevronDown} size={16} color={"gray"} />
@@ -207,7 +209,7 @@ export default function MapPinField({
           {/* Header */}
           <View className="flex-row items-center justify-between mb-3">
             <Text className="text-lg font-semibold text-foreground">
-              Pick a Location
+              {t("formBuilder.mapPinField.title")}
             </Text>
             {loading && <ActivityIndicator size="small" />}
           </View>
@@ -225,7 +227,7 @@ export default function MapPinField({
             </View>
           ) : (
             <Text className="text-sm text-muted-foreground mb-3 px-1">
-              Tap on the map to drop a pin
+              {t("formBuilder.mapPinField.hint")}
             </Text>
           )}
 
@@ -274,10 +276,10 @@ export default function MapPinField({
             <Text
               className={cn(
                 "text-md font-bold",
-                pin ? "text-primary-foreground" : "text-muted-foreground",
+                pin ? "dark:text-primary-foreground" : "text-muted-foreground",
               )}
             >
-              Confirm Location
+              {t("formBuilder.mapPinField.confirm")}
             </Text>
           </Button>
         </View>

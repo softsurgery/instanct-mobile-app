@@ -5,6 +5,7 @@ import { ScrollViewContext } from "@/contexts/ScrollViewContext";
 import { cn } from "@/lib/utils";
 import { Clock, ChevronDown } from "lucide-react-native";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Keyboard, Platform, UIManager, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -70,6 +71,7 @@ export const TimePicker = ({
   onTimeChange,
   nullable = true,
 }: TimePickerProps) => {
+  const { t } = useTranslation("common");
   const [expanded, setExpanded] = React.useState(false);
   const rotation = useSharedValue(0);
   const { scrollToView } = React.useContext(ScrollViewContext);
@@ -97,8 +99,8 @@ export const TimePicker = ({
   }));
 
   const displayText = React.useMemo(
-    () => (time ? formatTime(time) : "Select a time"),
-    [time],
+    () => (time ? formatTime(time) : t("formBuilder.timePicker.placeholder")),
+    [time, t],
   );
 
   const getInitialHour = () => {
@@ -240,7 +242,9 @@ export const TimePicker = ({
                 clearTime();
               }}
             >
-              <Text className="font-bold">Remove Time</Text>
+              <Text className="font-bold">
+                {t("formBuilder.timePicker.remove")}
+              </Text>
             </StablePressable>
             <StablePressable
               className="p-2 rounded-lg"
@@ -249,7 +253,9 @@ export const TimePicker = ({
                 setExpanded(false);
               }}
             >
-              <Text className="text-primary font-bold">Done</Text>
+              <Text className="text-primary font-bold">
+                {t("formBuilder.timePicker.done")}
+              </Text>
             </StablePressable>
           </View>
         </Animated.View>
