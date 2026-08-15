@@ -43,17 +43,21 @@ export const PrivacySecurityPortal = ({
       key: "security",
       title: t(
         "settings.account.screens.privacy-security.screens.account-security.title",
+        "Account Security"
       ),
       description: t(
         "settings.account.screens.privacy-security.screens.account-security.description",
+        "Manage the most important account security actions."
       ),
       rows: [
         createSettingRow({
           title: t(
             "settings.account.screens.privacy-security.screens.account-security.change-email.title",
+            "Change Email"
           ),
           description: t(
             "settings.account.screens.privacy-security.screens.account-security.change-email.description",
+            "Update the email address linked to your account"
           ),
           leftIcon: Mail,
           rightIcon: ChevronRight,
@@ -63,9 +67,11 @@ export const PrivacySecurityPortal = ({
         createSettingRow({
           title: t(
             "settings.account.screens.privacy-security.screens.account-security.change-password.title",
+            "Change Password"
           ),
           description: t(
             "settings.account.screens.privacy-security.screens.account-security.change-password.description",
+            "Update your password and keep your account protected"
           ),
           leftIcon: Lock,
           rightIcon: ChevronRight,
@@ -74,68 +80,82 @@ export const PrivacySecurityPortal = ({
         }),
         createSettingRow({
           title: t(
-            "settings.account.screens.privacy-security.screens.account-security.two-factor-authentication.title",
+            "settings.account.screens.privacy-security.screens.account-security.devices.title",
+            "Devices & Allowed Access",
           ),
           description: t(
-            "settings.account.screens.privacy-security.screens.account-security.two-factor-authentication.description",
+            "settings.account.screens.privacy-security.screens.account-security.devices.description",
+            "Manage devices that are allowed access to your account",
           ),
           leftIcon: Smartphone,
+          rightIcon: ChevronRight,
           className: "p-1 px-4",
-          rightComponent: (
-            <Badge variant="outline">
-              <Text className="text-xs font-medium">
-                {t("settings.general.soon")}
-              </Text>
-            </Badge>
-          ),
+          onPress: () => router.push("/main/profile/devices"),
         }),
+        // createSettingRow({
+        //   title: t(
+        //     "settings.account.screens.privacy-security.screens.account-security.two-factor-authentication.title",
+        //   ),
+        //   description: t(
+        //     "settings.account.screens.privacy-security.screens.account-security.two-factor-authentication.description",
+        //   ),
+        //   leftIcon: Smartphone,
+        //   className: "p-1 px-4",
+        //   rightComponent: (
+        //     <Badge variant="outline">
+        //       <Text className="text-xs font-medium">
+        //         {t("settings.general.soon")}
+        //       </Text>
+        //     </Badge>
+        //   ),
+        // }),
       ],
     },
-    {
-      key: "privacy",
-      title: t(
-        "settings.account.screens.privacy-security.screens.privacy.title",
-      ),
-      description: t(
-        "settings.account.screens.privacy-security.screens.privacy.description",
-      ),
-      rows: [
-        createSettingRow({
-          title: t(
-            "settings.account.screens.privacy-security.screens.privacy.data-visibility.title",
-          ),
-          description: t(
-            "settings.account.screens.privacy-security.screens.privacy.data-visibility.description",
-          ),
-          leftIcon: Eye,
-          className: "p-1 px-4",
-          rightComponent: (
-            <Badge variant="outline">
-              <Text className="text-xs font-medium">
-                {t("settings.general.soon")}
-              </Text>
-            </Badge>
-          ),
-        }),
-        createSettingRow({
-          title: t(
-            "settings.account.screens.privacy-security.screens.privacy.download-data.title",
-          ),
-          description: t(
-            "settings.account.screens.privacy-security.screens.privacy.download-data.description",
-          ),
-          leftIcon: Download,
-          className: "p-1 px-4",
-          rightComponent: (
-            <Badge variant="outline">
-              <Text className="text-xs font-medium">
-                {t("settings.general.soon")}
-              </Text>
-            </Badge>
-          ),
-        }),
-      ],
-    },
+    // {
+    //   key: "privacy",
+    //   title: t(
+    //     "settings.account.screens.privacy-security.screens.privacy.title",
+    //   ),
+    //   description: t(
+    //     "settings.account.screens.privacy-security.screens.privacy.description",
+    //   ),
+    //   rows: [
+    //     createSettingRow({
+    //       title: t(
+    //         "settings.account.screens.privacy-security.screens.privacy.data-visibility.title",
+    //       ),
+    //       description: t(
+    //         "settings.account.screens.privacy-security.screens.privacy.data-visibility.description",
+    //       ),
+    //       leftIcon: Eye,
+    //       className: "p-1 px-4",
+    //       rightComponent: (
+    //         <Badge variant="outline">
+    //           <Text className="text-xs font-medium">
+    //             {t("settings.general.soon")}
+    //           </Text>
+    //         </Badge>
+    //       ),
+    //     }),
+    //     createSettingRow({
+    //       title: t(
+    //         "settings.account.screens.privacy-security.screens.privacy.download-data.title",
+    //       ),
+    //       description: t(
+    //         "settings.account.screens.privacy-security.screens.privacy.download-data.description",
+    //       ),
+    //       leftIcon: Download,
+    //       className: "p-1 px-4",
+    //       rightComponent: (
+    //         <Badge variant="outline">
+    //           <Text className="text-xs font-medium">
+    //             {t("settings.general.soon")}
+    //           </Text>
+    //         </Badge>
+    //       ),
+    //     }),
+    //   ],
+    // },
   ];
 
   return (

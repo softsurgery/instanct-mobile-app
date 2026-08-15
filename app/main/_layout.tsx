@@ -260,6 +260,13 @@ export default function MainLayout() {
                 headerShown: false,
               }}
             />
+            <Stack.Screen
+              name="profile/devices"
+              options={{
+                title: "devices",
+                headerShown: false,
+              }}
+            />
             {/* *************************************************************************************************** */}
             {/* Chat  ********************************************************************************************* */}
             <Stack.Screen

@@ -123,6 +123,38 @@
                   }
                 }
               },
+              "devices": {
+                "title": "Devices & Allowed Access",
+                "description": "Manage devices that are allowed access to your account",
+                "sectionTitle": "Registered Devices",
+                "sectionDescription": "Manage devices that have signed into your account. Control whether each device is allowed access or revoke permission.",
+                "loading": "Loading devices...",
+                "emptyTitle": "No registered devices",
+                "emptyDescription": "Devices you sign in from will appear here.",
+                "thisDevice": "This Device",
+                "statusAllowed": "Allowed",
+                "statusNotAllowed": "Not Allowed",
+                "accessAllowed": "Access Allowed",
+                "accessRestricted": "Access Restricted",
+                "lastSignIn": "Last active",
+                "actions": {
+                  "revoke": "Revoke"
+                },
+                "revokeAlert": {
+                  "title": "Revoke Device Access",
+                  "message": "Are you sure you want to revoke access for this device? You will need to sign in again from that device.",
+                  "cancel": "Cancel",
+                  "confirm": "Revoke"
+                },
+                "toasts": {
+                  "allowedSuccess": "Device allowed access",
+                  "allowedError": "Failed to update device permission",
+                  "disallowedSuccess": "Device access restricted",
+                  "disallowedError": "Failed to update device permission",
+                  "revokeSuccess": "Device access revoked successfully",
+                  "revokeError": "Failed to revoke device"
+                }
+              },
               "two-factor-authentication": {
                 "title": "Two-Factor Authentication",
                 "description": "Add an extra layer of protection for sign in"

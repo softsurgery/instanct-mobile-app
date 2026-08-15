@@ -123,6 +123,38 @@
                   }
                 }
               },
+              "devices": {
+                "title": "Appareils et accès autorisés",
+                "description": "Gérez les appareils autorisés à accéder à votre compte",
+                "sectionTitle": "Appareils enregistrés",
+                "sectionDescription": "Gérez les appareils connectés à votre compte. Contrôlez si chaque appareil est autorisé ou révoquez son accès.",
+                "loading": "Chargement des appareils...",
+                "emptyTitle": "Aucun appareil enregistré",
+                "emptyDescription": "Les appareils depuis lesquels vous vous connectez apparaîtront ici.",
+                "thisDevice": "Cet appareil",
+                "statusAllowed": "Autorisé",
+                "statusNotAllowed": "Non autorisé",
+                "accessAllowed": "Accès autorisé",
+                "accessRestricted": "Accès restreint",
+                "lastSignIn": "Dernière activité",
+                "actions": {
+                  "revoke": "Révoquer"
+                },
+                "revokeAlert": {
+                  "title": "Révoquer l'accès de l'appareil",
+                  "message": "Êtes-vous sûr de vouloir révoquer l'accès de cet appareil ? Vous devrez vous reconnecter depuis cet appareil.",
+                  "cancel": "Annuler",
+                  "confirm": "Révoquer"
+                },
+                "toasts": {
+                  "allowedSuccess": "Accès de l'appareil autorisé",
+                  "allowedError": "Échec de la mise à jour des autorisations de l'appareil",
+                  "disallowedSuccess": "Accès de l'appareil restreint",
+                  "disallowedError": "Échec de la mise à jour des autorisations de l'appareil",
+                  "revokeSuccess": "Accès de l'appareil révoqué avec succès",
+                  "revokeError": "Échec de la révocation de l'appareil"
+                }
+              },
               "two-factor-authentication": {
                 "title": "Authentification à deux facteurs",
                 "description": "Ajoutez une couche de sécurité supplémentaire lors de la connexion."

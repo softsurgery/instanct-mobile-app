@@ -71,6 +71,11 @@ export function useNotifications(
         queryKey: NOTIFICATIONS_UNREAD_COUNT_QUERY_KEY,
       });
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
+
+      if (notification.type === NotificationType.NEW_SIGNIN) {
+        queryClient.invalidateQueries({ queryKey: ["user-devices"] });
+      }
+
       consequences?.[notification.type]?.(notification);
       await Notifications.scheduleNotificationAsync({
         content: {
