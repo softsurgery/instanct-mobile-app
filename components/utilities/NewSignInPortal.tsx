@@ -7,12 +7,12 @@ import {
   ShieldAlert,
   ShieldCheck,
   ShieldX,
-  Smartphone,
   Wifi,
   type LucideIcon,
 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner-native";
+import { getDeviceIcon } from "@/lib/device-icon";
 import { cn } from "~/lib/utils";
 import { ApplicationHeader } from "../shared/AppHeader";
 import { AppHeaderBack } from "../shared/AppHeaderBack";
@@ -106,7 +106,7 @@ export const NewSignInPortal = ({
   const details: SignInDetail[] = [
     {
       key: "device",
-      icon: Smartphone,
+      icon: getDeviceIcon(os, device),
       label: t(`${TRANSLATION_PREFIX}.details.device`),
       value: device || "iPhone 15 Pro",
       hint: os || "iOS 18.5",

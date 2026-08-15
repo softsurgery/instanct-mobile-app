@@ -24,7 +24,11 @@ export function getClientDeviceInfo(): ClientDeviceInfo {
   }
 
   const osName =
-    Device.osName || (Platform.OS === "ios" ? "iOS" : Platform.OS === "android" ? "Android" : "Mobile OS");
+    Platform.OS === "ios"
+      ? "iOS"
+      : Platform.OS === "android"
+        ? "Android"
+        : Device.osName || "Mobile OS";
   const osVersion = Device.osVersion || "";
   const os = `${osName} ${osVersion}`.trim();
 
