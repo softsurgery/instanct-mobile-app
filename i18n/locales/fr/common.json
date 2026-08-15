@@ -78,5 +78,18 @@
   "actions": {
     "next": "Suivant",
     "previous": "Précédent"
+  },
+  "formBuilder": {
+    "mapPinField": {
+      "placeholder": "Sélectionner un lieu",
+      "title": "Choisir un lieu",
+      "hint": "Appuyez sur la carte pour placer un repère",
+      "confirm": "Confirmer le lieu"
+    },
+    "timePicker": {
+      "placeholder": "Sélectionner une heure",
+      "remove": "Supprimer l'heure",
+      "done": "Terminé"
+    }
   }
 }

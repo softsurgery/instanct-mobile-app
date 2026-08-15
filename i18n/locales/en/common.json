@@ -78,5 +78,18 @@
   "actions": {
     "next": "Next",
     "previous": "Previous"
+  },
+  "formBuilder": {
+    "mapPinField": {
+      "placeholder": "Select a location",
+      "title": "Pick a Location",
+      "hint": "Tap on the map to drop a pin",
+      "confirm": "Confirm Location"
+    },
+    "timePicker": {
+      "placeholder": "Select a time",
+      "remove": "Remove Time",
+      "done": "Done"
+    }
   }
 }
