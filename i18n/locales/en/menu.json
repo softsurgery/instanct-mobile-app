@@ -27,7 +27,9 @@
     "actions": {
       "editProfile": "Edit Profile",
       "addCoverPhoto": "Add Cover Photo",
-      "verifyEmail": "Verify Email"
+      "verifyEmail": "Verify Email",
+      "viewPhoto": "View Photo",
+      "updatePhoto": "Update Photo"
     },
     "toasts": {
       "coverUpdated": "Cover updated successfully",
@@ -36,7 +38,10 @@
       "uploadError": "Failed to upload image",
       "emailSent": "Email sent successfully",
       "emailSentDescription": "Check your email for verification link.",
-      "emailError": "Failed to send verification email"
+      "emailError": "Failed to send verification email",
+      "profilePictureUpdated": "Profile picture updated successfully",
+      "profilePictureUpdatedDescription": "Your profile picture has been successfully updated.",
+      "profilePictureError": "Failed to update profile picture"
     },
     "industries": {
       "title": "Industries",

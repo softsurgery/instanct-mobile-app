@@ -27,7 +27,9 @@
     "actions": {
       "editProfile": "Modifier le profil",
       "addCoverPhoto": "Ajouter une photo de couverture",
-      "verifyEmail": "Vérifier l'e-mail"
+      "verifyEmail": "Vérifier l'e-mail",
+      "viewPhoto": "Voir la photo",
+      "updatePhoto": "Mettre à jour la photo"
     },
     "toasts": {
       "coverUpdated": "Couverture mise à jour",
@@ -36,7 +38,10 @@
       "uploadError": "Échec du téléversement de l'image",
       "emailSent": "E-mail envoyé",
       "emailSentDescription": "Consultez votre boîte de réception pour le lien de vérification.",
-      "emailError": "Échec de l'envoi de l'e-mail de vérification"
+      "emailError": "Échec de l'envoi de l'e-mail de vérification",
+      "profilePictureUpdated": "Photo de profil mise à jour avec succès",
+      "profilePictureUpdatedDescription": "Votre photo de profil a bien été mise à jour.",
+      "profilePictureError": "Échec de la mise à jour de la photo de profil"
     },
     "industries": {
       "title": "Secteurs d'activité",

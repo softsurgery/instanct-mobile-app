@@ -4,7 +4,7 @@ import { useCurrentUser } from "@/hooks/content/users/useCurrentUser";
 import { useEducations } from "@/hooks/content/users/useEducations";
 import { useExperiences } from "@/hooks/content/users/useExperiences";
 import { useIdentifiedUser } from "@/hooks/content/users/useIdentifiedUser";
-import { identifyUser, identifyUserAvatar } from "@/lib/user";
+import { identifyUser } from "@/lib/user";
 import { cn } from "@/lib/utils";
 import { createClientStore, useUserStore } from "@/stores/useUserStore";
 import {
@@ -12,12 +12,9 @@ import {
   ResponseExperienceDto,
   ResponseRefParamDto,
   ServerErrorResponse,
-  UpdateUserCoverDto,
-  Upload,
 } from "@/types";
 import { useFocusEffect, useNavigation } from "expo-router";
-import { Pressable, View, ActivityIndicator } from "react-native";
-import { ImageSource } from "expo-image";
+import { View, Pressable } from "react-native";
 import { ProfileStat } from "./ProfileStat";
 import { useUserIndustries } from "@/hooks/content/users/useUserIndustries";
 import { useIndustries } from "@/hooks/content/reference-types/useIndustries";
@@ -26,14 +23,13 @@ import { createMaterialTopTabNavigator } from "expo-router/js-top-tabs";
 import { AboutTab } from "./sections/AboutTab";
 import { CareerTab } from "./sections/CareerTab";
 import { RenderSection } from "./sections/RenderSection";
-import { PhotoPreview } from "../shared/PhotoPreview";
-import { useUploadMutation } from "@/hooks/useUploadMutation";
+import { ProfileAvatar } from "./ProfileAvatar";
+import { ProfileCover } from "./ProfileCover";
 import { toast } from "sonner-native";
 import { api } from "@/api";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import * as ImagePicker from "expo-image-picker";
+import { useMutation } from "@tanstack/react-query";
 import { Icon } from "../ui/icon";
-import { Mail, Pencil } from "lucide-react-native";
+import { Mail } from "lucide-react-native";
 import { BaseProfileSkeleton } from "./BaseProfileSkeleton";
 import { ExperienceInstance } from "./experience/ExperienceInstance";
 import { EducationInstance } from "./education/EducationInstance";
@@ -44,11 +40,8 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
-import { Image } from "@/components/ui/image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
-import { LinearGradient } from "expo-linear-gradient";
-import { useLuminance } from "@/hooks/useLuminance";
 import { useLoader } from "@/contexts/LoaderContext";
 
 interface ProfileSection<T = unknown> {
@@ -80,10 +73,7 @@ export const InspectBaseProfile = ({
   const insets = useSafeAreaInsets();
   const { palette } = useColorPalette();
   const { t } = useTranslation("menu");
-  const queryClient = useQueryClient();
   const navigation = useNavigation();
-  const [draftCoverUri, setDraftCoverUri] = React.useState<string | null>(null);
-  const [isPickingCover, setIsPickingCover] = React.useState(false);
   const { setLoading } = useLoader();
 
   const storeRef = React.useRef(createClientStore());
@@ -125,67 +115,6 @@ export const InspectBaseProfile = ({
   });
 
   const identity = React.useMemo(() => identifyUser(user), [user]);
-  const fallback = React.useMemo(() => identifyUserAvatar(user), [user]);
-
-  //profile picture side-effect
-  const { uploads: profilePictureUploads, jsxArray: profilePictures } =
-    useServerImages({
-      ids: [user?.pictureId],
-      fallbacks: [fallback],
-      className: "rounded-full",
-      wrapperClassName: "border border-border bg-background rounded-full",
-      size: { width: 100, height: 100 },
-    });
-  const profilePictureSource = profilePictureUploads?.[0];
-
-  // cover picture side-effect
-  const { uploads: coverUploads } = useServerImages({
-    ids: [user?.coverId],
-    fallbacks: [""],
-    wrapperClassName: "",
-    size: { width: 100, height: 100 },
-  });
-  const coverSource = coverUploads?.[0];
-
-  const { uploadFiles: uploadCover, isUploadPending: isCoverUploadPending } =
-    useUploadMutation({
-      onSuccess: (response: Upload[]) => {
-        const coverId = response?.[0]?.id;
-        if (coverId) {
-          updateUserCover({ coverId: coverId });
-        }
-      },
-      onError: (error: ServerErrorResponse) => {
-        toast.error(
-          error.response?.data?.message || t("menu.toasts.uploadError"),
-          {},
-        );
-      },
-    });
-
-  const { mutate: updateUserCover, isPending: isUpdateCoverPending } =
-    useMutation({
-      mutationFn: (coverDto: UpdateUserCoverDto) =>
-        api.user.updateCover(coverDto),
-      onSuccess: () => {
-        userStore.reset();
-        queryClient.invalidateQueries({ queryKey: ["user", currentUser?.id] });
-        queryClient.invalidateQueries({ queryKey: ["current-user"] });
-        queryClient.invalidateQueries({
-          queryKey: ["server-image", currentUser?.coverId],
-        });
-        refetchCurrentUser();
-        toast.success(t("menu.toasts.coverUpdated"), {
-          description: t("menu.toasts.coverUpdatedDescription"),
-        });
-      },
-      onError: (error: ServerErrorResponse) => {
-        toast.error(
-          error.response?.data?.message || t("menu.toasts.coverError"),
-          {},
-        );
-      },
-    });
 
   const { mutate: sendVerifyEmail, isPending: isSendVerifyEmailPending } =
     useMutation({
@@ -210,52 +139,6 @@ export const InspectBaseProfile = ({
       setLoading(false);
     };
   }, []);
-
-  React.useEffect(() => {
-    setLoading(isCoverUploadPending || isUpdateCoverPending || isPickingCover);
-  }, [isCoverUploadPending, isUpdateCoverPending, isPickingCover, setLoading]);
-
-  const handlePickCover = async () => {
-    if (currentUser?.id !== id) return;
-
-    setIsPickingCover(true);
-    try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ["images"],
-        allowsEditing: true,
-        aspect: [16, 9],
-        quality: 0.8,
-      });
-
-      if (result.canceled) return;
-
-      const asset = result.assets[0];
-
-      // INSTANT UI PREVIEW
-      setDraftCoverUri(asset.uri);
-
-      const fileLike = {
-        uri: asset.uri,
-        name: asset.uri.split("/").pop() || "cover.jpg",
-        type: asset.mimeType || "image/jpeg",
-      } as unknown as File;
-
-      // AUTO UPLOAD
-      uploadCover({
-        files: [fileLike],
-      });
-    } finally {
-      setIsPickingCover(false);
-    }
-  };
-
-  const coverPreviewSource = React.useMemo<ImageSource | undefined>(
-    () =>
-      draftCoverUri
-        ? { uri: draftCoverUri }
-        : (coverSource as ImageSource | undefined),
-    [draftCoverUri, coverSource],
-  );
 
   const onRefresh = React.useCallback(async () => {
     await Promise.allSettled([
@@ -330,9 +213,6 @@ export const InspectBaseProfile = ({
     ],
   );
 
-  const { isLight: isLightCover } = useLuminance(coverPreviewSource);
-  const [isHovered, setIsHovered] = React.useState(false);
-
   const Tab = createMaterialTopTabNavigator();
 
   const animatedTabsStyle = useAnimatedStyle(() => {
@@ -352,76 +232,20 @@ export const InspectBaseProfile = ({
       <Animated.View style={animatedHeaderStyle}>
         <View onLayout={onLayout}>
           {/* Cover */}
-          {coverExtra}
-          <PhotoPreview
-            className={cn(
-              "relative w-full h-56 overflow-hidden  items-center justify-center",
-              !coverPreviewSource ? "bg-primary/25 active:opacity-0" : "",
-            )}
-            source={coverPreviewSource}
-            onPress={!coverPreviewSource ? handlePickCover : undefined}
-            footer={() => {
-              if (currentUser?.id !== id) return null;
-
-              return (
-                <Pressable
-                  className="flex flex-row gap-2 items-center px-4 py-2 m-4 mx-auto border border-border rounded-full active:bg-muted"
-                  style={{
-                    marginBottom: insets.bottom * 2,
-                    opacity: isPickingCover ? 0.5 : 1,
-                  }}
-                  onHoverIn={() => setIsHovered(true)}
-                  onHoverOut={() => setIsHovered(false)}
-                  onPress={handlePickCover}
-                  disabled={isPickingCover}
-                >
-                  {isPickingCover ? (
-                    <ActivityIndicator color="white" size="small" />
-                  ) : (
-                    <Icon as={Pencil} color="white" />
-                  )}
-                  <Text className="text-white">
-                    {t("menu.actions.addCoverPhoto")}
-                  </Text>
-                </Pressable>
-              );
-            }}
-          >
-            {/* Cover Image */}
-            {coverPreviewSource ? (
-              <Image
-                source={coverPreviewSource}
-                style={{ width: "100%", height: "100%" }}
-                contentFit="cover"
-              />
-            ) : currentUser?.id === id ? (
-              <View className="flex flex-row items-center justify-center gap-2 z-10" />
-            ) : null}
-
-            {/* Dynamic Calque Overlay */}
-            <LinearGradient
-              colors={
-                isHovered
-                  ? ["rgba(0,0,0,0.65)", "rgba(0,0,0,0.80)"]
-                  : isLightCover
-                    ? ["rgba(0,0,0,0.35)", "rgba(0,0,0,0.55)"]
-                    : ["rgba(0,0,0,0.15)", "rgba(0,0,0,0.35)"]
-              }
-              style={{
-                position: "absolute",
-                left: 0,
-                right: 0,
-                top: 0,
-                bottom: 0,
-              }}
-            />
-          </PhotoPreview>
+          <ProfileCover
+            user={user}
+            currentUser={currentUser}
+            onRefresh={onRefresh}
+            coverExtra={coverExtra}
+          />
           {/* Header */}
           <View className="-mt-12 px-5 z-50">
             <View className="flex-row items-end justify-between">
-              <PhotoPreview source={profilePictureSource}>
-                {profilePictures[0]}
-              </PhotoPreview>
+              <ProfileAvatar
+                user={user}
+                currentUser={currentUser}
+                onRefresh={onRefresh}
+              />
               {currentUser?.id === id && <ProfileStat />}
             </View>
 
